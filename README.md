@@ -1,7 +1,5 @@
 # YGentertainment-project
 
-![issues](https://img.shields.io/github.com/YGentertainment-project/YGentertainment-project/issues)
-
 ## Documentation 📚
 
 ### 팀장
@@ -17,12 +15,12 @@
 모든 contributer는 해당 지침에 따라 commit해야합니다.
 해당 메뉴에서는 이 repository에서 채택한 git branch 전략을 비롯해 전반적인 workflow를 설명합니다.
 
-###Git Branch 전략
+### Git Branch 전략
 ![gitflow](https://user-images.githubusercontent.com/42880886/143026038-15362eaf-4c3c-4604-8175-1e665ce0043a.png)
 1. 어떤 주제로 개발하는 경우, dev/{주제명}으로 branch를 개설해 사용. ex) Crawler를 수정하는 경우 dev/crawler
 2. 개별적 개발 사항을 저장하고 싶은 경우, user/{사용자명}으로 branch를 개설해 사용. ex) user/yongwoo
 
-###Git Guide
+### Git Guide
 1. 브랜치 생성
  git checkout -b {브랜치 이름}: local에서 branch를 생성
  git push origin {브랜치 이름}: 해당 브런치를 push해 remote branch를 생성 (github에 반영) + 수정사항 push
