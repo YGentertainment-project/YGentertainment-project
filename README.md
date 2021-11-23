@@ -8,29 +8,28 @@
 
 ## <div id = "About_Project">About Project 💡</div>
 
-## <div id = "Members">Member 👨🏻‍🤝‍👨🏻</div>
-김민희(팀장) []()<br>
+## <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
+#### 김민희(팀장) []()<br>
 > 데이터 시각화 기법 조사<br>
 > Web framework - Flask 조사<br>
 
-김정규 []()<br>
+#### 김정규 []()<br>
 > Selenium 조사 및 세미나<br>
 
-양승찬 []()<br>
+#### 양승찬 []()<br>
 > Scrapy 조사 및 세미나<br>
 
-임수민 []()<br>
+#### 임수민 []()<br>
 > Twint 조사 및 세미나<br>
 > Web Framework - Django 조사 및 세미나<br>
 
-최영우 [@cyw320712](https://github.com/cyw320712)<br>
+#### 최영우 [@cyw320712](https://github.com/cyw320712)<br>
 > 데이터 분석 조사 및 세미나 <br>
 > DBMS 조사 및 DB schema 설계 <br>
 > GitHub 관리 <br>
 
 
-## <div id = "Documents">Documentation 📚</div>
-### Project 
+## <div id = "Documents">Documentation 📑</div>
 ### Project Schedule
 | 목표                           | 일정                 | 상태 |
 |--------------------------------|----------------------|--------|
@@ -41,6 +40,18 @@
 | 최종발표 | 2022-02-15 |      |
 | 최종 산출물 제출 | 2022-02-18 |      |
 | S-TOP 전시 | 2022-02-28 |      |
+
+### Tech Stack
+ #### Frontend
+
+ #### Backend
+ > Django
+
+ #### Cralwer
+ > Selenium
+ > Scrapy
+
+ #### DB
 
 ## <div id = "Contribute">Git Contribute 🔨</div>
 모든 contributer는 해당 지침에 따라 commit해야합니다.<br>
@@ -63,20 +74,7 @@
  * git statsh list: 저장된 stash list 확인<br>
  * git stash apply {stash명}: 해당 stash 저장 (stash명 입력 없는 경우 가장 최근 stash적용)<br>
 
-## <div id="Tech_stack">Tech Stack</div>
-
-### Frontend
-
-### Backend
- * Django
-
-### Cralwer
- * Selenium
- * Scrapy
-
-### DB
-
 ## <div id="Advisor">Advisor</div>
-## 황영숙 교수님
+### 황영숙 교수님
  
  
