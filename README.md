@@ -1,17 +1,48 @@
 # YGentertainment-project
+ * [About Project](#About_Project)
+ * [Members](#Members)
+ * [Documentation](#Documents)
+ * [Git Contribute](#Contribute)
+ * [Tech Stack](#Tech_stack)
+ * [Advisor](#Advisor)
 
-## Documentation 📚
+## <div id = "About_Project">About Project 💡</div>
 
-### 팀장
-김민희 []()<br>
+## <div id = "Members">Member 👨🏻‍🤝‍👨🏻</div>
+김민희(팀장) []()<br>
+> 데이터 시각화 기법 조사<br>
+> Web framework - Flask 조사<br>
 
-### 팀원
 김정규 []()<br>
-양승찬 []()<br>
-임수민 []()<br>
-최영우 [@cyw320712](https://github.com/cyw320712)<br>
+> Selenium 조사 및 세미나<br>
 
-## Git Contribute
+양승찬 []()<br>
+> Scrapy 조사 및 세미나<br>
+
+임수민 []()<br>
+> Twint 조사 및 세미나<br>
+> Web Framework - Django 조사 및 세미나<br>
+
+최영우 [@cyw320712](https://github.com/cyw320712)<br>
+> 데이터 분석 조사 및 세미나 <br>
+> DBMS 조사 및 DB schema 설계 <br>
+> GitHub 관리 <br>
+
+
+## <div id = "Documents">Documentation 📚</div>
+### Project 
+### Project Schedule
+| 목표                           | 일정                 | 상태 |
+|--------------------------------|----------------------|--------|
+| 사전학습 및 팀빌딩   | 2021-11-19 | 완료     |
+| 요구사항 명세서 작성 및 개발 환경 구축 | ~2021-11-30 | 진행중  |
+| 프로젝트 상위 설계 | ~2021-12-10 |      |
+| 동계 집중근무 | ~2022-02-18 |      |
+| 최종발표 | 2022-02-15 |      |
+| 최종 산출물 제출 | 2022-02-18 |      |
+| S-TOP 전시 | 2022-02-28 |      |
+
+## <div id = "Contribute">Git Contribute 🔨</div>
 모든 contributer는 해당 지침에 따라 commit해야합니다.<br>
 해당 메뉴에서는 이 repository에서 채택한 git branch 전략을 비롯해 전반적인 workflow를 설명합니다.<br>
 
@@ -31,8 +62,21 @@
  * git stash: 로컬 변경 사항 저장<br>
  * git statsh list: 저장된 stash list 확인<br>
  * git stash apply {stash명}: 해당 stash 저장 (stash명 입력 없는 경우 가장 최근 stash적용)<br>
- 
- ## Advisor
- 황영숙 교수님
+
+## <div id="Tech_stack">Tech Stack</div>
+
+### Frontend
+
+### Backend
+ * Django
+
+### Cralwer
+ * Selenium
+ * Scrapy
+
+### DB
+
+## <div id="Advisor">Advisor</div>
+## 황영숙 교수님
  
  
