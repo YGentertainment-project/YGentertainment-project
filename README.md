@@ -9,17 +9,17 @@
 ## <div id = "About_Project">About Project 💡</div>
 
 ## <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
-#### 김민희(팀장) []()<br>
+#### 김민희(팀장) [minhee33](https://github.com/minhee33)<br>
 > 데이터 시각화 기법 조사<br>
 > Web framework - Flask 조사<br>
 
-#### 김정규 []()<br>
+#### 김정규 [kingh2160](https://github.com/kingh2160)<br>
 > Selenium 조사 및 세미나<br>
 
-#### 양승찬 []()<br>
+#### 양승찬 [Yangseungchan](https://github.com/Yangseungchan)<br>
 > Scrapy 조사 및 세미나<br>
 
-#### 임수민 []()<br>
+#### 임수민 [soomin9106](https://github.com/soomin9106)<br>
 > Twint 조사 및 세미나<br>
 > Web Framework - Django 조사 및 세미나<br>
 
