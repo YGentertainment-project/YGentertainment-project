@@ -9,18 +9,26 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+from utils.shortcuts import get_env
+
+production_env = get_env("YG_ENV", "dev") == "production"
+if production_env:
+    from .production_settings import *
+else:
+    from .dev_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-y#!o8a59u6#()x5ru%j5civc!b5opw7xuxsdeif921t%8x586x'
+with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
+    SECRET_KEY = f.read()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'
+ROOT_URLCONF = 'yg.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+WSGI_APPLICATION = 'yg.wsgi.application'
 
 
 # Database
@@ -75,7 +83,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -105,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -115,7 +123,46 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/public/'
+
+AUTH_USER_MODEL = 'account.User'
+
+TEST_CASE_DIR = os.path.join(DATA_DIR, "test_case")
+LOG_PATH = os.path.join(DATA_DIR, "log")
+
+LOGGING_HANDLERS = ['console']
+
+
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}
+
+REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])
+
+def redis_config(db):
+    def make_key(key, key_prefix, version):
+        return key
+
+    return {
+        "BACKEND": "utils.cache.MyRedisCache",
+        "LOCATION": f"{REDIS_URL}/{db}",
+        "TIMEOUT": None,
+        "KEY_PREFIX": "",
+        "KEY_FUNCTION": make_key
+    }
+
+
+CACHES = {
+    "default": redis_config(db=1)
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+IP_HEADER = "HTTP_X_REAL_IP"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
