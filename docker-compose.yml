@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  yg-mariadb:
+    image: mariadb:10.7.1
+    container_name: yg-mariadb
+    restart: always
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      - ./info.env
+
+  yg-data-analysis:
+    image: data-analysis
+    # image: python:3.9-alpine3.13 #python alpine
+    container_name: yg-data-analysis
+    restart: always
+    depends_on:
+      - yg-mariadb
+    environment:
+      - MYSQL_DB=ygenter
+      - MYSQL_USER=ygenter
+      - MYSQL_PASSWORD=ygenter
+    ports:
+      - "0.0.0.0:80:8000"
+      - "0.0.0.0:443:1443"

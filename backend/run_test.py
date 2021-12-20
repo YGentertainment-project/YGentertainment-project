@@ -7,7 +7,7 @@ opts, args = getopt.getopt(sys.argv[1:], "cm:", ["coverage=", "module="])
 
 is_coverage = False
 test_module = ""
-setting = "oj.settings"
+setting = "yg.settings"
 
 for opt, arg in opts:
     if opt in ["-c", "--coverage"]:

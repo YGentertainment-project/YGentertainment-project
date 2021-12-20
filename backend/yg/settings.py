@@ -77,18 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'yg.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -125,13 +113,9 @@ USE_TZ = True
 
 STATIC_URL = '/public/'
 
-AUTH_USER_MODEL = 'account.User'
-
-TEST_CASE_DIR = os.path.join(DATA_DIR, "test_case")
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
 LOGGING_HANDLERS = ['console']
-
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
@@ -139,28 +123,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     )
 }
-
-REDIS_URL = "redis://%s:%s" % (REDIS_CONF["host"], REDIS_CONF["port"])
-
-def redis_config(db):
-    def make_key(key, key_prefix, version):
-        return key
-
-    return {
-        "BACKEND": "utils.cache.MyRedisCache",
-        "LOCATION": f"{REDIS_URL}/{db}",
-        "TIMEOUT": None,
-        "KEY_PREFIX": "",
-        "KEY_FUNCTION": make_key
-    }
-
-
-CACHES = {
-    "default": redis_config(db=1)
-}
-
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
 
 IP_HEADER = "HTTP_X_REAL_IP"
 

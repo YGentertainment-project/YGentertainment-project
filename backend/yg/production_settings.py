@@ -1,13 +1,14 @@
 from utils.shortcuts import get_env
 
 DATABASES = {
-    #DATABASES adapting required
-}
-
-REDIS_CONF = {
-    #REDIS CONFIGURATION required
-    "host": get_env("REDIS_HOST", "yg-redis"),
-    "port": get_env("REDIS_PORT", "6379")
+    'default':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "ygenter",
+        'USER': "ygenter",
+        'PASSWORD': "ygenter",
+        'HOST': "yg-mariadb",
+        'PORT': "3306",
+    }
 }
 
 DEBUG = False
