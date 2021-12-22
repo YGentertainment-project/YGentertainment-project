@@ -8,7 +8,16 @@ fi
 
 sleep 2
 docker rm -f yg-mariadb-dev
-docker run -it -d -e MYSQL_DB=ygenter -e MYSQL_USER=ygenter -e MYSQL_PASSWORD=ygenter -p 127.0.0.1:3306:3306 --name yg-mariadb-dev mariadb:10.7.1
+docker run -it -d \
+    -e MYSQL_ROOT_PASSWORD=ygenter \
+    -e MYSQL_DATABASE=ygenter \
+    -e MYSQL_USER=ygenter \
+    -e MYSQL_PASSWORD=ygenter \
+    -p 127.0.0.1:3306:3306 \
+    --restart=always \
+    --name yg-mariadb-dev \
+    -v /yg/conf.d:/etc/mysql/conf.d \
+    mariadb:10.7.1
 
 if [ "$1" = "--migrate" ]; then
     sleep 3
