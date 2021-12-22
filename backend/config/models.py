@@ -9,7 +9,7 @@ class Platform(models.Model):
     description = models.TextField(null=True)
 
     class Meta:
-        db_tabe = "platform"
+        db_table = "platform"
 
 
 class CollectTargetItem(models.Model):
@@ -34,7 +34,7 @@ class Schedule(models.Model):
     update_dt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_tabe = "schedule"
+        db_table = "schedule"
 
 
 class AuthInfo(models.Model):

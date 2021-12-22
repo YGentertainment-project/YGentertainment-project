@@ -16,8 +16,9 @@ Including another URLconf
 from django.urls import include, path
 
 urlpatterns = [
+
+    path('dataprocess/', include("dataprocess.urls")),
     # path('api/', include("account.urls")),
     # path('api/', include("config.urls")),
     # path('api/', include("crawler.urls")),
-    # path('api/', include("dataprocess.urls")),
 ]

@@ -6,7 +6,7 @@ from django.db.models import JSONField
 from django.db.models.fields import NullBooleanField
 from django.db.utils import DEFAULT_DB_ALIAS
 
-from config.models import Platform
+#from config.models import Platform
 
 
 class ArtistProfile(models.Model):
@@ -31,8 +31,8 @@ class Artist(AbstractBaseUser):
 
 class CollectTarget(models.Model):
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE) # if Artist is deleted, all of his/her data is removed
-    platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
-    target_url = models.TextField(default=platform.url)
+    platform = models.ForeignKey('config.Platform', on_delete=models.CASCADE)
+    target_url = models.TextField(null=False)
     channel = models.TextField(null=True)
     channel_name = models.TextField(null=True)
     sibling = models.BooleanField(default=False)
@@ -48,4 +48,4 @@ class CollectData(models.Model):
     collect_item = models.JSONField(default=dict)
 
     class Meta:
-        db_tabe = "collect_data"
+        db_table = "collect_data"

@@ -1,0 +1,178 @@
+*{
+    font-family: 'Do Hyeon', sans-serif;
+    box-sizing: border-box;
+}
+
+body{
+    position: relative;
+}
+
+button{
+    outline: none;
+    border: none;
+}
+
+th{
+    width:200px;
+    background-color: lightgray;
+    border: 1px solid lightslategray;
+    text-align: center;
+}
+
+tr{
+    border: 1px solid lightslategray;
+}
+
+.header{
+    display: flex;
+    height: 5rem;
+    padding: 1em 1em;
+    background-color: black;
+    color: white;
+    justify-content: space-between;
+}
+
+.header-element{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 30%;
+    margin-right: 1em;
+}
+
+.logo-img{
+    padding-right: 0.5em;
+    width: 80px;
+    height: 80px;
+}
+
+.menu{
+    display: flex;
+    align-items: center;
+    margin-right: 1em;
+}
+
+.menu-link{
+    text-decoration: none;
+    color:white;
+    transition: transform 250ms ease-in;
+    font-size: 1.5rem;
+    margin-left: 1em;
+}
+
+.menu-link:hover{
+    color:lightgray;
+    transform: scaleX(1.1);
+    cursor: pointer;
+}
+
+.logout-btn{
+    background-color: lightgray;
+    color: black;
+    font-size: 1rem;
+    border: 1px solid black;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+
+.sidebar{
+    position: fixed;
+    left:0;
+    top: 5rem;
+    bottom:0;
+    background:lightgray;
+    width:250px;
+    height: 100%;
+}
+
+.sidebar-items{
+    display: flex;
+    flex-direction: column;
+    padding-top: 50px;
+}
+
+.sidebar-item{
+    background-color: lightgray;
+    color: black;
+    text-decoration: none;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid black;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: transform 250ms ease-in;
+    box-shadow: 3px 3px 3px 3px gray;
+    margin: 20px;
+}
+
+.sidebar-item:hover{
+    transform: scaleX(1.1);
+    cursor: pointer;
+    color: black;
+}
+
+.forms{
+    position: absolute;
+    width: 70%;
+    left : 300px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.select-days-day{
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+
+
+.select-other{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.platform, .target, .search{
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.add-form{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: row;
+    
+}
+
+.add-table{
+    width: 70%;
+    height: 100%;
+    margin: 40px;
+}
+
+.add-target-input{
+    width: 70%;
+}
+
+.url-description{
+    color : darkblue;
+    font-weight: lighter;
+    font-size: small;
+}
+
+.add-submit{
+    position: absolute;
+    right: 520px;
+    top: 2px;
+}
