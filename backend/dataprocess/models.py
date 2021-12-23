@@ -15,6 +15,9 @@ class ArtistProfile(models.Model):
     height = models.TextField(null=True)
     weight = models.TextField(null=True)
 
+    class Meta:
+        db_table = "artist_profile"
+
 
 class Artist(AbstractBaseUser):
     name = models.TextField(unique=True)
