@@ -12,3 +12,5 @@ venve/
 
 backend/yg/__pycache__/
 **/__pycache__/
+
+db/

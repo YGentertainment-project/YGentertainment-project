@@ -13,6 +13,6 @@ urlpatterns = [
     url(r'^collectdatas$', views.CollectData_all),
     url(r'^collectdatas/(?P<pk>[0-9]+)$', views.CollectData_single),
     url(r'^artists$', views.Artist_all),
-    url(r'^artistprofiles$', views.ArtistProfile_all),
+    url(r'^artistprofiles$', views.ArtistProfileView.as_view(),name='artist_profile'),
     url(r'^collecttargets$', views.CollectTarget_all),
 ]

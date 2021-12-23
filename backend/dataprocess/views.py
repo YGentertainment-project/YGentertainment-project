@@ -1,9 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 
-# Create your views here.
-
-
-from django.shortcuts import render
 
 # Create your views here.
 
@@ -17,7 +15,7 @@ from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, renderer_classes
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
@@ -90,6 +88,7 @@ def CollectData_all(request):
         
         CollectData_serializer = CollectDataSerializer(CollectDatas, many=True)
         return JsonResponse(CollectData_serializer.data, safe=False)
+        #return render(request, "dataprocess/collect_data.html",{'collect_datas':CollectData_serializer.data, 'collect_data': CollectDatas})
     
     # POST a new collect data
     elif request.method == 'POST':
@@ -158,22 +157,43 @@ def Artist_all(request):
     #     return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'POST'])
+@renderer_classes((HTMLFormRenderer,))
 def ArtistProfile_all(request):
     # GET list of collect datas
     if request.method == 'GET':
         ArtistProfiles = ArtistProfile.objects.all()
         
         ArtistProfile_serializer = ArtistProfileSerializer(ArtistProfiles, many=True)
-        return JsonResponse(ArtistProfile_serializer.data, safe=False)
+        #return JsonResponse(ArtistProfile_serializer.data, safe=False)
+        return render(request, "dataprocess/collect_data.html",{'serializer':ArtistProfile_serializer,'artists': ArtistProfiles})
     
     # POST a new collect data
     elif request.method == 'POST':
+        ArtistProfiles_ = ArtistProfile.objects.all()
         ArtistProfiles = JSONParser().parse(request)
         ArtistProfile_serializer = ArtistProfileSerializer(data=ArtistProfiles)
         if ArtistProfile_serializer.is_valid():
             ArtistProfile_serializer.save()
-            return JsonResponse(ArtistProfile_serializer.data, status=status.HTTP_201_CREATED) 
-        return JsonResponse(ArtistProfile_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return redirect('dataprocess:artist_profile')
+            #return JsonResponse(ArtistProfile_serializer.data, status=status.HTTP_201_CREATED) 
+        return render(request, "dataprocess/collect_data.html",{'serializer':ArtistProfile_serializer,'artists': ArtistProfiles_})
+
+class ArtistProfileView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'dataprocess/collect_data.html'
+
+    def get(self, request):
+        profile =ArtistProfile.objects.all()
+        serializer = ArtistProfileSerializer(profile)
+        return Response({'serializer': serializer, 'artists': profile})
+
+    def post(self, request):
+        profile =ArtistProfile.objects.all()
+        serializer = ArtistProfileSerializer(profile, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'artists': profile})
+        serializer.save()
+        return redirect('dataprocess:artist_profile')
 
 @api_view(['GET', 'POST'])
 def CollectTarget_all(request):
