@@ -64,7 +64,24 @@ from rest_framework import status
 #             return JsonResponse({'message': 'CollectData was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 #         except CollectData.DoesNotExist:
 #             return JsonResponse({'message': 'The CollectData does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
+@api_view(['GET', 'POST'])
+def Platform_all(request):
+    # GET list of collect datas
+    if request.method == 'GET':
+        Platforms = Platform.objects.all()
+        
+        Platform_serializer = PlatformSerializer(Platforms, many=True)
+        return JsonResponse(Platform_serializer.data, safe=False)
+    
+    # POST a new collect data
+    elif request.method == 'POST':
+        Platforms = JSONParser().parse(request)
+        Platform_serializer = PlatformSerializer(data=Platforms)
+        if Platform_serializer.is_valid():
+            Platform_serializer.save()
+            return JsonResponse(Platform_serializer.data, status=status.HTTP_201_CREATED) 
+        return JsonResponse(Platform_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
 @api_view(['GET', 'POST'])
 def CollectData_all(request):
     # GET list of collect datas

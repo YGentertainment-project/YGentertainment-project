@@ -7,5 +7,5 @@ from config import views
 app_name = 'config'
 
 urlpatterns = [
-    url(r'^platforms$', views.Platform_all),
+    
 ]

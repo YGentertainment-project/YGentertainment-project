@@ -1,12 +1,5 @@
 from .models import *
 from rest_framework import serializers
-
-
-class PlatformSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Platform
-        fields = '__all__'
-
 from dataprocess.serializers import CollectTargetSerializer
 
 class CollectTargetItemSerializer(serializers.ModelSerializer):

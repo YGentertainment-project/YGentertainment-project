@@ -9,6 +9,7 @@ app_name = 'dataprocess'
 
 urlpatterns = [
     path('base/', base ,name='base'),
+    url(r'^platforms$', views.Platform_all),
     url(r'^collectdatas$', views.CollectData_all),
     url(r'^collectdatas/(?P<pk>[0-9]+)$', views.CollectData_single),
     url(r'^artists$', views.Artist_all),
