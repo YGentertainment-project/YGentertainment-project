@@ -3,15 +3,6 @@ from django.db import models
 from dataprocess.models import CollectTarget
 
 
-class Platform(models.Model):
-    name = models.TextField(unique=True)
-    url = models.TextField(unique=True)
-    description = models.TextField(null=True)
-
-    class Meta:
-        db_tabe = "platform"
-
-
 class CollectTargetItem(models.Model):
     collect_target = models.ForeignKey(CollectTarget, on_delete=models.CASCADE)
     target_name = models.TextField(default="")
@@ -34,7 +25,7 @@ class Schedule(models.Model):
     update_dt = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_tabe = "schedule"
+        db_table = "schedule"
 
 
 class AuthInfo(models.Model):
