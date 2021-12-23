@@ -1,3 +1,14 @@
+import json
 from django.db import models
+from django.utils import timezone
 
-# Create your models here.
+
+class SocialbladeItem(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True) # 아티스트 이름
+    uploads = models.IntegerField() # 업로드 개수
+    subscribers = models.IntegerField() # 구독자수
+    views = models.BigIntegerField() # 조회수
+    user_created = models.TextField() # 계정 생성일
+    recorded_date = models.DateTimeField(auto_now_add=True) # 업데이트 일
+    platform = models.TextField(null=True) # socialblade 내 어떤 플랫폼인지 표시
+    url = models.TextField(null=True)

@@ -1,0 +1,11 @@
+/db/data
+
+__pycache__
+
+secret.key
+
+venv
+
+.idea
+
+/backend/scrapy_app/logs
