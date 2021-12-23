@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 
-class SocialbladeItem(models.Model):
+class Socialblade(models.Model):
     artist = models.CharField(max_length=100, unique=True, primary_key=True) # 아티스트 이름
     uploads = models.IntegerField() # 업로드 개수
     subscribers = models.IntegerField() # 구독자수

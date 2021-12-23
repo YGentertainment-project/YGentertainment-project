@@ -1,6 +1,8 @@
 import time
 import scrapy
 from urllib.parse import urlparse
+from scrapy_app.items import SocialbladeItem
+
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "www.youtube.com"
@@ -149,17 +151,28 @@ class YoutubeSpider(scrapy.Spider):
             user_created = response.xpath(
                 '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
 
-        scraped_info = {
-            'artist': artist,
-            'uploads': uploads,
-            'subscribers': subscribers,
-            'views': views,
-            'user_created': user_created,
-            'platform': self.name,
-            'url': response.url,
-        }
+
+        # scraped_info = {
+        #     'artist': artist,
+        #     'uploads': uploads,
+        #     'subscribers': subscribers,
+        #     'views': views,
+        #     'user_created': user_created,
+        #     'platform': self.name,
+        #     'url': response.url,
+        # }
+
+        item = SocialbladeItem()
+        item["artist"] = artist
+        item["uploads"] = uploads
+        item["subscribers"] = subscribers
+        item["views"] = views
+        item["user_created"] = user_created
+        item["platform"] = self.name
+        item["url"] = response.url
+
 
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
-            yield scraped_info
+            yield item

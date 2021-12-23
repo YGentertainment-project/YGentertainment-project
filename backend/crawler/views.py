@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from scrapyd_api import ScrapydAPI
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from crawler.models import SocialbladeItem
+from crawler.models import Socialblade
 import json
 
 # process = CrawlerProcess(get_project_settings())
@@ -59,8 +59,8 @@ def crawl(request):
 def show_data(request):
     platform = request.GET.get('platform', None)
 
-    if SocialbladeItem.objects.filter(platform=platform).exists():
-        platform_queryset_values = SocialbladeItem.objects.filter(platform=platform).values()
+    if Socialblade.objects.filter(platform=platform).exists():
+        platform_queryset_values = Socialblade.objects.filter(platform=platform).values()
         platform_datas = []
         for queryset_value in platform_queryset_values:
             platform_datas.append(queryset_value)

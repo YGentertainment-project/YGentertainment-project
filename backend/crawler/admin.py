@@ -1,5 +1,5 @@
 from django.contrib import admin
-from crawler.models import SocialbladeItem
+from crawler.models import Socialblade
 
 
 class SocialbladeItemAdmin(admin.ModelAdmin):
@@ -8,4 +8,4 @@ class SocialbladeItemAdmin(admin.ModelAdmin):
 
 
 # Register your models here.
-admin.site.register(SocialbladeItem, SocialbladeItemAdmin)
+admin.site.register(Socialblade, SocialbladeItemAdmin)
