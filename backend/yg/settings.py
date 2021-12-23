@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'config',
     'dataprocess',
     'crawler',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
