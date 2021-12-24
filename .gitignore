@@ -1,11 +1,33 @@
-/db/data
-
-__pycache__
-
 secret.key
-
 venv
-
 .idea
 
 /backend/scrapy_app/logs
+### Docker mount ###
+/data
+db/data
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+db.db
+media
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+backend/*/migrations/
+backend/data/config/*
+backend/data/log/*
+backend/data/public/avatar/*
+!backend/data/public/avatar/default.png
+backend/data/public/upload/*
+backend/data/public/website/*
+!backend/data/public/website/favicon.ico
