@@ -3,6 +3,7 @@
 ## 0. requirement 설치
 backend/deploy/requirements.txt를 이용해 해당 패키지들 설치
 
+
 ## 1. Django 서버 실행
 Directory : /backend
 
