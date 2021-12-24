@@ -45,8 +45,6 @@ VENDOR_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crawler',
-    'corsheaders',
 ]
 
 LOCAL_APPS = [
@@ -54,6 +52,7 @@ LOCAL_APPS = [
     'config',
     'crawler',
     'dataprocess',
+    'corsheaders',
 ]
 
 INSTALLED_APPS = VENDOR_APPS + LOCAL_APPS

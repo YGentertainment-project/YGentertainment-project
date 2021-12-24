@@ -1,7 +1,7 @@
 import time
 import scrapy
 from urllib.parse import urlparse
-from scrapy_app.items import SocialbladeItem
+from ..items import SocialbladeItem
 
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
@@ -12,7 +12,7 @@ class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
+            'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
         }
     }
     def start_requests(self):

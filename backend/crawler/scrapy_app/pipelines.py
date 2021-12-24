@@ -18,7 +18,7 @@ class ScrapyAppPipeline(object):
             existingItem.subscribers = item.get('subscribers')
             existingItem.views = item.get('views')
             existingItem.recorded_date = timezone.now()
-            existingItem.sa ve()
+            existingItem.save()
         else:
             item.save()
         return item

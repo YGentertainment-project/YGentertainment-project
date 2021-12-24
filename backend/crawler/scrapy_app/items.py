@@ -6,7 +6,7 @@
 import scrapy
 
 from scrapy_djangoitem import DjangoItem
-from scrapy_app.models import Socialblade
+from crawler.models import Socialblade
 
 class ScrapyAppItem(scrapy.Item):
     # define the fields for your item here like:
