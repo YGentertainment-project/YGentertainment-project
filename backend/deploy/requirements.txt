@@ -9,3 +9,9 @@ flake8-coding==1.3.2
 flake8-quotes==3.2.0
 mysqlclient==2.1.0
 Pillow==8.4.0
+Scrapy==2.5.1
+scrapy-djangoitem==1.1.1
+scrapyd==1.2.1
+selenium==4.1.0
+Twisted==21.7.0
+webdriver-manager==3.5.2
