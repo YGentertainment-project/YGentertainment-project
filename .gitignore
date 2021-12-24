@@ -21,7 +21,11 @@ secret.key
 venv
 .idea
 
+# scrapy
 /backend/crawler/scrapy_app/logs
+/backend/crawler/dbs/
+
+
 ### Docker mount ###
 /data
 db/data
