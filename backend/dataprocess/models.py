@@ -1,11 +1,9 @@
-
 from django.contrib.auth.models import AbstractBaseUser
 from django.conf import settings
 from django.db import models
 from django.db.models import JSONField
 from django.db.models.fields import NullBooleanField
 from django.db.utils import DEFAULT_DB_ALIAS
-
 
 class Platform(models.Model):
     name = models.TextField(unique=True)
