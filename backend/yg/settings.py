@@ -52,11 +52,13 @@ LOCAL_APPS = [
     'config',
     'dataprocess',
     'crawler',
+    'corsheaders',
 ]
 
 INSTALLED_APPS = VENDOR_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,10 +127,9 @@ USE_TZ = True
 #STATICFILES_DIRS = [BASE_DIR/"public",]
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-
 ]
 
 LOG_PATH = os.path.join(DATA_DIR, "log")
@@ -148,3 +149,8 @@ IP_HEADER = "HTTP_X_REAL_IP"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+)

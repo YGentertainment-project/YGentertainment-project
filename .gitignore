@@ -17,6 +17,11 @@ backend/yg/__pycache__/
 **/__pycache__/
 
 db/
+secret.key
+venv
+.idea
+
+/backend/crawler/scrapy_app/logs
 ### Docker mount ###
 /data
 db/data

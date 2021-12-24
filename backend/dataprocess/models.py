@@ -24,7 +24,7 @@ class ArtistProfile(models.Model):
         db_table = "artist_profile"
 
 class Artist(AbstractBaseUser):
-    name = models.TextField(unique=True)
+    name = models.TextField(unique=True, max_length=100)
     agency = models.TextField(null=True)
     image = models.ImageField(null=True)
     profile = models.OneToOneField(ArtistProfile, on_delete=models.CASCADE)

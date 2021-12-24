@@ -22,4 +22,5 @@ urlpatterns = [
     path('dataprocess/', include("dataprocess.urls")),
     # path('api/', include("account.urls")),
     # path('api/', include("crawler.urls")),
+    path('crawler/', include("crawler.urls")),
 ]
