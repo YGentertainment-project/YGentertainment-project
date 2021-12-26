@@ -13,8 +13,12 @@ class YoutubeSpider(scrapy.Spider):
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
-        }
+        },
+        'ITEM_PIPELINES' : {
+            'crawler.scrapy_app.pipelines.SocialbladePipeline': 300,
+        },
     }
+
     def start_requests(self):
         artist_url = {
             "(여자)아이들": "https://socialblade.com/youtube/channel/UCritGVo7pLJLUS8wEu32vow",

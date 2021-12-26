@@ -86,9 +86,10 @@ $(document).ready(function () {
             datatype:'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                task_id = res['task_id'] // api 요청으로부터 task_id 받기
+                // task_id = res['task_id'] // api 요청으로부터 task_id 받기
                 // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
-                statusInterval = setInterval(() => checkCrawlStatus(task_id), 3000)
+                // statusInterval = setInterval(() => checkCrawlStatus(task_id), 3000)
+                console.log('success to receive response')
             },
             error: e => {
                 alert('Failed to send request for scraping')

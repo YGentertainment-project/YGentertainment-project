@@ -19,5 +19,5 @@ SPIDER_MODULES = ['crawler.scrapy_app.spiders']
 ROBOTSTXT_OBEY = True
 
 ITEM_PIPELINES = {
-    'crawler.scrapy_app.pipelines.ScrapyAppPipeline': 300,
+    'crawler.scrapy_app.pipelines.SocialbladePipeline': 300,
 }

@@ -5,37 +5,30 @@ from django.core.exceptions import ValidationError
 from django.core import serializers
 from django.views.decorators.http import require_POST, require_http_methods
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from scrapyd_api import ScrapydAPI
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
 from crawler.models import Socialblade
-import json
-
-# process = CrawlerProcess(get_project_settings())
+import json, os
 
 # connect scrapyd service
 scrapyd = ScrapydAPI('http://localhost:6800')
+
+
+def start_crawl(platform, id):
+    os.system('python manage.py {} {}'.format(platform, id))
+
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])  # only get and post
 def crawl(request):
     # Post requests are for new crawling tasks
     if request.method == 'POST':
-        # unique_id = str(uuid4())  # create a unique ID.
+        unique_id = str(uuid4())  # create a unique ID.
         body = json.loads(request.body.decode('utf-8'))  # body값 추출
         platform = body.get("platform")
-        settings = {
-            # 'unique_id': unique_id,  # unique ID for each record for DB
-            'platform': platform,
-        }
-        # POST 요청에서 보내는 platform 인자 값에 따라 동적으로 spider를 실행
-        task = scrapyd.schedule('default', platform, settings=settings)
-        # process.crawl(platform)
-        # process.start()
-        # return JsonResponse({'status': 'started'})
-        return JsonResponse({'task_id': task, 'status': 'started'})
+        start_crawl(platform, unique_id)
+        return JsonResponse({'task_id': unique_id, 'status': 'started'})
 
     # Get requests are for getting result of a specific crawling task
     elif request.method == 'GET':

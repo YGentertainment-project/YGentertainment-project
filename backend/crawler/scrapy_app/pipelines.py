@@ -7,7 +7,8 @@
 from django.utils import timezone
 from crawler.models import Socialblade
 
-class ScrapyAppPipeline(object):
+
+class SocialbladePipeline(object):
     def process_item(self, item, spider):
         item["recorded_date"] = timezone.now()
 
