@@ -1,0 +1,1081 @@
+2021-12-26 16:23:23 [scrapy.utils.log] INFO: Scrapy 2.5.1 started (bot: scrapy_app)
+2021-12-26 16:23:23 [scrapy.utils.log] INFO: Versions: lxml 4.7.1.0, libxml2 2.9.12, cssselect 1.1.0, parsel 1.6.0, w3lib 1.22.0, Twisted 21.7.0, Python 3.7.12 (default, Dec 17 2021, 10:59:39) - [GCC 9.3.0], pyOpenSSL 21.0.0 (OpenSSL 1.1.1m  14 Dec 2021), cryptography 36.0.1, Platform Linux-5.11.0-41-generic-x86_64-with-debian-bullseye-sid
+2021-12-26 16:23:23 [scrapy.utils.log] DEBUG: Using reactor: twisted.internet.epollreactor.EPollReactor
+2021-12-26 16:23:23 [scrapy.crawler] INFO: Overridden settings:
+{'BOT_NAME': 'scrapy_app',
+ 'LOG_FILE': 'logs/default/youtube/b3f77bfe661c11ec977a9b0e7420e0d0.log',
+ 'ROBOTSTXT_OBEY': True,
+ 'SPIDER_MODULES': ['crawler.scrapy_app.spiders']}
+2021-12-26 16:23:23 [scrapy.extensions.telnet] INFO: Telnet Password: a20e9b7b594e69f7
+2021-12-26 16:23:23 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats']
+2021-12-26 16:23:23 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.robotstxt.RobotsTxtMiddleware',
+ 'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware',
+ 'scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2021-12-26 16:23:23 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2021-12-26 16:23:23 [scrapy.middleware] INFO: Enabled item pipelines:
+['crawler.scrapy_app.pipelines.ScrapyAppPipeline']
+2021-12-26 16:23:23 [scrapy.core.engine] INFO: Spider opened
+2021-12-26 16:23:23 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2021-12-26 16:23:23 [WDM] INFO: 
+
+2021-12-26 16:23:23 [WDM] INFO: ====== WebDriver manager ======
+2021-12-26 16:23:24 [WDM] INFO: Current google-chrome version is 96.0.4664
+2021-12-26 16:23:24 [WDM] INFO: Get LATEST chromedriver version for 96.0.4664 google-chrome
+2021-12-26 16:23:24 [urllib3.connectionpool] DEBUG: Starting new HTTPS connection (1): chromedriver.storage.googleapis.com:443
+2021-12-26 16:23:24 [urllib3.connectionpool] DEBUG: https://chromedriver.storage.googleapis.com:443 "GET /LATEST_RELEASE_96.0.4664 HTTP/1.1" 200 12
+2021-12-26 16:23:24 [WDM] INFO: Trying to download new driver from https://chromedriver.storage.googleapis.com/96.0.4664.45/chromedriver_linux64.zip
+2021-12-26 16:23:24 [urllib3.connectionpool] DEBUG: Starting new HTTPS connection (1): chromedriver.storage.googleapis.com:443
+2021-12-26 16:23:24 [urllib3.connectionpool] DEBUG: https://chromedriver.storage.googleapis.com:443 "GET /96.0.4664.45/chromedriver_linux64.zip HTTP/1.1" 200 10113302
+2021-12-26 16:23:44 [WDM] INFO: Driver has been saved in cache [/home/user/.wdm/drivers/chromedriver/linux64/96.0.4664.45]
+2021-12-26 16:23:45 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session {"capabilities": {"firstMatch": [{}], "alwaysMatch": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-gpu", "user-agent=Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36", "--window-size=1920,1080", "lang=ko_KR"]}}}, "desiredCapabilities": {"browserName": "chrome", "pageLoadStrategy": "normal", "goog:chromeOptions": {"extensions": [], "args": ["--headless", "--no-sandbox", "--disable-gpu", "user-agent=Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36", "--window-size=1920,1080", "lang=ko_KR"]}}}
+2021-12-26 16:23:45 [urllib3.connectionpool] DEBUG: Starting new HTTP connection (1): localhost:51917
+2021-12-26 16:23:45 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session HTTP/1.1" 200 751
+2021-12-26 16:23:45 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:45 [scrapy.extensions.telnet] INFO: Telnet console listening on 127.0.0.1:6023
+2021-12-26 16:23:45 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/robots.txt"}
+2021-12-26 16:23:46 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:23:46 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:46 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:23:46 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 219
+2021-12-26 16:23:46 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:46 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/robots.txt> (referer: None)
+2021-12-26 16:23:46 [protego] DEBUG: Rule at line 1 without any user agent to enforce it on.
+2021-12-26 16:23:46 [protego] DEBUG: Rule at line 2 without any user agent to enforce it on.
+2021-12-26 16:23:46 [protego] DEBUG: Rule at line 3 without any user agent to enforce it on.
+2021-12-26 16:23:46 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCritGVo7pLJLUS8wEu32vow"}
+2021-12-26 16:23:51 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:23:51 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:23:51 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 206809
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:23:51 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCritGVo7pLJLUS8wEu32vow> (referer: None)
+2021-12-26 16:23:51 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCHGJwrjlY6rmZJInxRmiztA"}
+2021-12-26 16:24:06 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:06 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:06 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211138
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:06 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCHGJwrjlY6rmZJInxRmiztA> (referer: None)
+2021-12-26 16:24:06 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/pledisnuest"}
+2021-12-26 16:24:13 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:13 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:13 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:13 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:13 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:13 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:14 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 212539
+2021-12-26 16:24:14 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:14 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/pledisnuest> (referer: None)
+2021-12-26 16:24:14 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCritGVo7pLJLUS8wEu32vow>
+{'artist': '(여자)아이들',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 14, 281659, tzinfo=<UTC>),
+ 'subscribers': 3290000,
+ 'uploads': 204,
+ 'url': 'https://socialblade.com/youtube/channel/UCritGVo7pLJLUS8wEu32vow',
+ 'user_created': 'Apr 19th, 2018',
+ 'views': 1033376032}
+2021-12-26 16:24:14 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCk9GmdlDTBfgGRb7vXeRMoQ"}
+2021-12-26 16:24:16 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:16 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:16 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 206847
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:16 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCk9GmdlDTBfgGRb7vXeRMoQ> (referer: None)
+2021-12-26 16:24:16 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCHGJwrjlY6rmZJInxRmiztA>
+{'artist': '강다니엘',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 16, 920950, tzinfo=<UTC>),
+ 'subscribers': 1110000,
+ 'uploads': 124,
+ 'url': 'https://socialblade.com/youtube/channel/UCHGJwrjlY6rmZJInxRmiztA',
+ 'user_created': 'Jul 17th, 2019',
+ 'views': 183560703}
+2021-12-26 16:24:16 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/wamamamoo"}
+2021-12-26 16:24:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 202275
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:18 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/wamamamoo> (referer: None)
+2021-12-26 16:24:18 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/pledisnuest>
+{'artist': '뉴이스트',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 18, 275923, tzinfo=<UTC>),
+ 'subscribers': 1580000,
+ 'uploads': 662,
+ 'url': 'https://socialblade.com/youtube/user/pledisnuest',
+ 'user_created': 'Jan 16th, 2012',
+ 'views': 238569874}
+2021-12-26 16:24:18 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCZvCP6sWj75MwpUP4LVtpNw"}
+2021-12-26 16:24:21 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:21 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:21 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 205202
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:21 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCZvCP6sWj75MwpUP4LVtpNw> (referer: None)
+2021-12-26 16:24:21 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCk9GmdlDTBfgGRb7vXeRMoQ>
+{'artist': '레드벨벳',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 21, 198518, tzinfo=<UTC>),
+ 'subscribers': 4650000,
+ 'uploads': 153,
+ 'url': 'https://socialblade.com/youtube/channel/UCk9GmdlDTBfgGRb7vXeRMoQ',
+ 'user_created': 'Jul 23rd, 2014',
+ 'views': 732036218}
+2021-12-26 16:24:21 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/bangtantv"}
+2021-12-26 16:24:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 210462
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:23 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/bangtantv> (referer: None)
+2021-12-26 16:24:23 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/wamamamoo>
+{'artist': '마마무',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 23, 339127, tzinfo=<UTC>),
+ 'subscribers': 6420000,
+ 'uploads': 630,
+ 'url': 'https://socialblade.com/youtube/user/wamamamoo',
+ 'user_created': 'May 30th, 2014',
+ 'views': 1816887608}
+2021-12-26 16:24:23 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCOmHUn--16B90oW2L6FRR3A"}
+2021-12-26 16:24:25 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:25 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:25 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:25 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:25 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:25 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:26 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211636
+2021-12-26 16:24:26 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:26 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCOmHUn--16B90oW2L6FRR3A> (referer: None)
+2021-12-26 16:24:26 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCZvCP6sWj75MwpUP4LVtpNw>
+{'artist': '몬스타엑스',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 26, 57335, tzinfo=<UTC>),
+ 'subscribers': 2270000,
+ 'uploads': 149,
+ 'url': 'https://socialblade.com/youtube/channel/UCZvCP6sWj75MwpUP4LVtpNw',
+ 'user_created': 'Nov 14th, 2017',
+ 'views': 296653849}
+2021-12-26 16:24:26 [scrapy.extensions.logstats] INFO: Crawled 9 pages (at 9 pages/min), scraped 6 items (at 6 items/min)
+2021-12-26 16:24:26 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCBo1hnzxV9rz3WVsv__Rn1g"}
+2021-12-26 16:24:28 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:28 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:28 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 182017
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:28 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCBo1hnzxV9rz3WVsv__Rn1g> (referer: None)
+2021-12-26 16:24:28 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/bangtantv>
+{'artist': '방탄소년단',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 28, 441527, tzinfo=<UTC>),
+ 'subscribers': 62300000,
+ 'uploads': 1657,
+ 'url': 'https://socialblade.com/youtube/user/bangtantv',
+ 'user_created': 'Dec 17th, 2012',
+ 'views': 14395441157}
+2021-12-26 16:24:28 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC35HKvKYPkri4Grd5KXl3wQ"}
+2021-12-26 16:24:30 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:30 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:30 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209602
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:30 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC35HKvKYPkri4Grd5KXl3wQ> (referer: None)
+2021-12-26 16:24:30 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCOmHUn--16B90oW2L6FRR3A>
+{'artist': 'BLACKPINK',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 30, 816099, tzinfo=<UTC>),
+ 'subscribers': 70800000,
+ 'uploads': 395,
+ 'url': 'https://socialblade.com/youtube/channel/UCOmHUn--16B90oW2L6FRR3A',
+ 'user_created': 'Jun 29th, 2016',
+ 'views': 21757278582}
+2021-12-26 16:24:30 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCNYi_zGmR519r5gYdOKLTjQ"}
+2021-12-26 16:24:33 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:33 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:33 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 189640
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:33 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCNYi_zGmR519r5gYdOKLTjQ> (referer: None)
+2021-12-26 16:24:33 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCBo1hnzxV9rz3WVsv__Rn1g>
+{'artist': 'BLACKPINK 로제',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 33, 224767, tzinfo=<UTC>),
+ 'subscribers': 3460000,
+ 'uploads': 3,
+ 'url': 'https://socialblade.com/youtube/channel/UCBo1hnzxV9rz3WVsv__Rn1g',
+ 'user_created': 'Dec 17th, 2019',
+ 'views': 13321207}
+2021-12-26 16:24:33 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/bigbang"}
+2021-12-26 16:24:35 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:35 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:35 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 208225
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:35 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/bigbang> (referer: None)
+2021-12-26 16:24:35 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC35HKvKYPkri4Grd5KXl3wQ>
+{'artist': 'BLACKPINK 리사',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 35, 520225, tzinfo=<UTC>),
+ 'subscribers': 9400000,
+ 'uploads': 22,
+ 'url': 'https://socialblade.com/youtube/channel/UC35HKvKYPkri4Grd5KXl3wQ',
+ 'user_created': 'Oct 25th, 2018',
+ 'views': 397719861}
+2021-12-26 16:24:35 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/officialgdragon"}
+2021-12-26 16:24:37 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:37 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:37 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:37 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:37 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:37 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:37 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 204620
+2021-12-26 16:24:37 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:37 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/officialgdragon> (referer: None)
+2021-12-26 16:24:37 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCNYi_zGmR519r5gYdOKLTjQ>
+{'artist': 'BLACKPINK 제니',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 37, 957280, tzinfo=<UTC>),
+ 'subscribers': 7550000,
+ 'uploads': 6,
+ 'url': 'https://socialblade.com/youtube/channel/UCNYi_zGmR519r5gYdOKLTjQ',
+ 'user_created': 'Jan 13th, 2021',
+ 'views': 74388454}
+2021-12-26 16:24:38 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/shinee"}
+2021-12-26 16:24:40 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:40 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:40 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 204409
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:40 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/shinee> (referer: None)
+2021-12-26 16:24:40 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/bigbang>
+{'artist': 'BIGBANG',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 40, 675885, tzinfo=<UTC>),
+ 'subscribers': 13900000,
+ 'uploads': 773,
+ 'url': 'https://socialblade.com/youtube/user/bigbang',
+ 'user_created': 'Oct 10th, 2005',
+ 'views': 6861313703}
+2021-12-26 16:24:40 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/pledis17"}
+2021-12-26 16:24:43 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:43 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:43 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211701
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:43 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/pledis17> (referer: None)
+2021-12-26 16:24:43 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/officialgdragon>
+{'artist': 'BIGBANG 지드래곤',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 43, 531606, tzinfo=<UTC>),
+ 'subscribers': 2120000,
+ 'uploads': 0,
+ 'url': 'https://socialblade.com/youtube/user/officialgdragon',
+ 'user_created': 'Jul 17th, 2012',
+ 'views': 68701517}
+2021-12-26 16:24:43 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/superjunior"}
+2021-12-26 16:24:45 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:45 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:45 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 205821
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:45 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/superjunior> (referer: None)
+2021-12-26 16:24:45 [scrapy.dupefilters] DEBUG: Filtered duplicate request: <GET https://socialblade.com/youtube/user/superjunior> - no more duplicates will be shown (see DUPEFILTER_DEBUG to show all duplicates)
+2021-12-26 16:24:45 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/shinee>
+{'artist': '샤이니',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 45, 688971, tzinfo=<UTC>),
+ 'subscribers': 2250000,
+ 'uploads': 159,
+ 'url': 'https://socialblade.com/youtube/user/shinee',
+ 'user_created': 'Jan 22nd, 2006',
+ 'views': 218880357}
+2021-12-26 16:24:45 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/pledis17>
+{'artist': '세븐틴',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 45, 747745, tzinfo=<UTC>),
+ 'subscribers': 7330000,
+ 'uploads': 983,
+ 'url': 'https://socialblade.com/youtube/user/pledis17',
+ 'user_created': 'Nov 16th, 2012',
+ 'views': 2446632911}
+2021-12-26 16:24:45 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCZqY2yIsAM9wh3vvMwKd27g"}
+2021-12-26 16:24:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 210504
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:47 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCZqY2yIsAM9wh3vvMwKd27g> (referer: None)
+2021-12-26 16:24:47 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC9GtSLeksfK4yuJ_g1lgQbg"}
+2021-12-26 16:24:49 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:50 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:50 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 188487
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:50 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC9GtSLeksfK4yuJ_g1lgQbg> (referer: None)
+2021-12-26 16:24:50 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/superjunior>
+{'artist': '슈퍼주니어',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 50, 141340, tzinfo=<UTC>),
+ 'subscribers': 2190000,
+ 'uploads': 221,
+ 'url': 'https://socialblade.com/youtube/user/superjunior',
+ 'user_created': 'Jan 15th, 2006',
+ 'views': 115450734}
+2021-12-26 16:24:50 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/officialygwinner"}
+2021-12-26 16:24:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:52 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:53 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:53 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:53 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:53 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 207827
+2021-12-26 16:24:53 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:53 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/officialygwinner> (referer: None)
+2021-12-26 16:24:53 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCZqY2yIsAM9wh3vvMwKd27g>
+{'artist': '아스트로',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 53, 169591, tzinfo=<UTC>),
+ 'subscribers': 4550000,
+ 'uploads': 474,
+ 'url': 'https://socialblade.com/youtube/channel/UCZqY2yIsAM9wh3vvMwKd27g',
+ 'user_created': 'Aug 13th, 2015',
+ 'views': 453441682}
+2021-12-26 16:24:53 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCRm-0JVuUFh5HV7NGG7qXlQ"}
+2021-12-26 16:24:55 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:55 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:55 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 197564
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:55 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCRm-0JVuUFh5HV7NGG7qXlQ> (referer: None)
+2021-12-26 16:24:55 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC9GtSLeksfK4yuJ_g1lgQbg>
+{'artist': '에스파',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 55, 433926, tzinfo=<UTC>),
+ 'subscribers': 3110000,
+ 'uploads': 115,
+ 'url': 'https://socialblade.com/youtube/channel/UC9GtSLeksfK4yuJ_g1lgQbg',
+ 'user_created': 'Jun 26th, 2020',
+ 'views': 471799170}
+2021-12-26 16:24:55 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCzgxx_DM2Dcb9Y1spb9mUJA"}
+2021-12-26 16:24:57 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:24:57 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:24:57 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 212590
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:24:57 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCzgxx_DM2Dcb9Y1spb9mUJA> (referer: None)
+2021-12-26 16:24:57 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/officialygwinner>
+{'artist': 'WINNER',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 24, 57, 689703, tzinfo=<UTC>),
+ 'subscribers': 3800000,
+ 'uploads': 461,
+ 'url': 'https://socialblade.com/youtube/user/officialygwinner',
+ 'user_created': 'Dec 10th, 2013',
+ 'views': 1225282873}
+2021-12-26 16:24:57 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCwytna6i1rFCt13a3Qvuk-A"}
+2021-12-26 16:25:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:25:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:25:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 200873
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:05 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCwytna6i1rFCt13a3Qvuk-A> (referer: None)
+2021-12-26 16:25:05 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCRm-0JVuUFh5HV7NGG7qXlQ>
+{'artist': '크래비티',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 25, 5, 518677, tzinfo=<UTC>),
+ 'subscribers': 540000,
+ 'uploads': 399,
+ 'url': 'https://socialblade.com/youtube/channel/UCRm-0JVuUFh5HV7NGG7qXlQ',
+ 'user_created': 'Mar 2nd, 2020',
+ 'views': 37934194}
+2021-12-26 16:25:05 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC2e4Ukj5Pfr7cb3KpJAFBdQ"}
+2021-12-26 16:25:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:25:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:25:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 204119
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:11 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC2e4Ukj5Pfr7cb3KpJAFBdQ> (referer: None)
+2021-12-26 16:25:11 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCzgxx_DM2Dcb9Y1spb9mUJA>
+{'artist': '트와이스',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 25, 11, 311089, tzinfo=<UTC>),
+ 'subscribers': 12700000,
+ 'uploads': 715,
+ 'url': 'https://socialblade.com/youtube/channel/UCzgxx_DM2Dcb9Y1spb9mUJA',
+ 'user_created': 'Mar 27th, 2016',
+ 'views': 2791146087}
+2021-12-26 16:25:11 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCArLZtok93cO5R9RI4_Y5Jw"}
+2021-12-26 16:25:49 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:25:49 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:25:49 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 198705
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:25:49 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCArLZtok93cO5R9RI4_Y5Jw> (referer: None)
+2021-12-26 16:25:49 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCwytna6i1rFCt13a3Qvuk-A>
+{'artist': 'AB6IX',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 25, 49, 450151, tzinfo=<UTC>),
+ 'subscribers': 537000,
+ 'uploads': 317,
+ 'url': 'https://socialblade.com/youtube/channel/UCwytna6i1rFCt13a3Qvuk-A',
+ 'user_created': 'Feb 15th, 2019',
+ 'views': 36810184}
+2021-12-26 16:25:49 [scrapy.extensions.logstats] INFO: Crawled 25 pages (at 16 pages/min), scraped 22 items (at 16 items/min)
+2021-12-26 16:25:49 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/exok"}
+2021-12-26 16:26:12 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:12 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:12 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211658
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:12 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/exok> (referer: None)
+2021-12-26 16:26:12 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC2e4Ukj5Pfr7cb3KpJAFBdQ>
+{'artist': '에이티즈',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 12, 769972, tzinfo=<UTC>),
+ 'subscribers': 2570000,
+ 'uploads': 412,
+ 'url': 'https://socialblade.com/youtube/channel/UC2e4Ukj5Pfr7cb3KpJAFBdQ',
+ 'user_created': 'Jun 27th, 2018',
+ 'views': 289553586}
+2021-12-26 16:26:12 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCUyr5000laFgF79tWJB3rXQ"}
+2021-12-26 16:26:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 198957
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:18 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCUyr5000laFgF79tWJB3rXQ> (referer: None)
+2021-12-26 16:26:18 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCArLZtok93cO5R9RI4_Y5Jw>
+{'artist': '엔하이픈',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 18, 825295, tzinfo=<UTC>),
+ 'subscribers': 4900000,
+ 'uploads': 449,
+ 'url': 'https://socialblade.com/youtube/channel/UCArLZtok93cO5R9RI4_Y5Jw',
+ 'user_created': 'Aug 10th, 2020',
+ 'views': 367260243}
+2021-12-26 16:26:18 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/officialikon"}
+2021-12-26 16:26:24 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:24 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:24 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 214861
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:24 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/officialikon> (referer: None)
+2021-12-26 16:26:24 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/exok>
+{'artist': 'EXO',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 24, 582105, tzinfo=<UTC>),
+ 'subscribers': 8580000,
+ 'uploads': 238,
+ 'url': 'https://socialblade.com/youtube/user/exok',
+ 'user_created': 'Dec 10th, 2006',
+ 'views': 543359423}
+2021-12-26 16:26:24 [scrapy.extensions.logstats] INFO: Crawled 28 pages (at 3 pages/min), scraped 25 items (at 3 items/min)
+2021-12-26 16:26:24 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCDhM2k2Cua-JdobAh5moMFg"}
+2021-12-26 16:26:32 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:32 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:32 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 205991
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:32 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCDhM2k2Cua-JdobAh5moMFg> (referer: None)
+2021-12-26 16:26:32 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCUyr5000laFgF79tWJB3rXQ>
+{'artist': '엑소 백현',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 32, 592900, tzinfo=<UTC>),
+ 'subscribers': 3690000,
+ 'uploads': 16,
+ 'url': 'https://socialblade.com/youtube/channel/UCUyr5000laFgF79tWJB3rXQ',
+ 'user_created': 'May 10th, 2019',
+ 'views': 46439332}
+2021-12-26 16:26:32 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCwgtORdDtUKhpjE1VBv6XfA"}
+2021-12-26 16:26:33 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:33 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:33 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:34 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:34 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:34 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:34 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 202053
+2021-12-26 16:26:34 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:34 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCwgtORdDtUKhpjE1VBv6XfA> (referer: None)
+2021-12-26 16:26:34 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/officialikon>
+{'artist': 'iKON',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 34, 163513, tzinfo=<UTC>),
+ 'subscribers': 8440000,
+ 'uploads': 474,
+ 'url': 'https://socialblade.com/youtube/user/officialikon',
+ 'user_created': 'Sep 3rd, 2014',
+ 'views': 2172296961}
+2021-12-26 16:26:34 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCk2E0dbAyEJWnrN2bbQOcbg"}
+2021-12-26 16:26:41 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:41 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:41 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:41 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:41 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:41 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:42 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211529
+2021-12-26 16:26:42 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:42 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCk2E0dbAyEJWnrN2bbQOcbg> (referer: None)
+2021-12-26 16:26:42 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCDhM2k2Cua-JdobAh5moMFg>
+{'artist': 'ITZY',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 42, 299024, tzinfo=<UTC>),
+ 'subscribers': 6460000,
+ 'uploads': 510,
+ 'url': 'https://socialblade.com/youtube/channel/UCDhM2k2Cua-JdobAh5moMFg',
+ 'user_created': 'Jan 14th, 2019',
+ 'views': 1230190789}
+2021-12-26 16:26:42 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCXURHJRGr4-EB3l87kcbElw"}
+2021-12-26 16:26:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:47 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:47 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:48 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 312989
+2021-12-26 16:26:48 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:48 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCXURHJRGr4-EB3l87kcbElw> (referer: None)
+2021-12-26 16:26:48 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCwgtORdDtUKhpjE1VBv6XfA>
+{'artist': 'NCT',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 48, 374228, tzinfo=<UTC>),
+ 'subscribers': 4710000,
+ 'uploads': 280,
+ 'url': 'https://socialblade.com/youtube/channel/UCwgtORdDtUKhpjE1VBv6XfA',
+ 'user_created': 'Mar 14th, 2016',
+ 'views': 359748855}
+2021-12-26 16:26:48 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCkJ1rbOrsyPfBuHNfnLPm-Q"}
+2021-12-26 16:26:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209126
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:52 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCkJ1rbOrsyPfBuHNfnLPm-Q> (referer: None)
+2021-12-26 16:26:52 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCk2E0dbAyEJWnrN2bbQOcbg>
+{'artist': 'NCT 127',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 52, 289073, tzinfo=<UTC>),
+ 'subscribers': 4320000,
+ 'uploads': 295,
+ 'url': 'https://socialblade.com/youtube/channel/UCk2E0dbAyEJWnrN2bbQOcbg',
+ 'user_created': 'Jun 7th, 2017',
+ 'views': 500042816}
+2021-12-26 16:26:52 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCx9hXYOCvUYwrprEqe4ZQHA"}
+2021-12-26 16:26:57 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:26:57 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:57 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:26:57 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:26:57 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:57 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:26:58 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 1150272
+2021-12-26 16:26:58 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:26:58 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCx9hXYOCvUYwrprEqe4ZQHA> (referer: None)
+2021-12-26 16:26:58 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCXURHJRGr4-EB3l87kcbElw>
+{'artist': 'NCT DREAM',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 26, 58, 421049, tzinfo=<UTC>),
+ 'subscribers': 4290000,
+ 'uploads': 244,
+ 'url': 'https://socialblade.com/youtube/channel/UCXURHJRGr4-EB3l87kcbElw',
+ 'user_created': 'Jun 7th, 2017',
+ 'views': 492908243}
+2021-12-26 16:26:58 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCtiObj3CsEAdNU6ZPWDsddQ"}
+2021-12-26 16:27:02 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:02 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:02 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209563
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:02 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCtiObj3CsEAdNU6ZPWDsddQ> (referer: None)
+2021-12-26 16:27:02 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCkJ1rbOrsyPfBuHNfnLPm-Q>
+{'artist': '더보이즈',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 2, 760019, tzinfo=<UTC>),
+ 'subscribers': 1720000,
+ 'uploads': 542,
+ 'url': 'https://socialblade.com/youtube/channel/UCkJ1rbOrsyPfBuHNfnLPm-Q',
+ 'user_created': 'Feb 24th, 2017',
+ 'views': 339392237}
+2021-12-26 16:27:02 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC-ZHt5Zgadfx-B1CM63Lqew"}
+2021-12-26 16:27:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:05 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 208773
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:05 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC-ZHt5Zgadfx-B1CM63Lqew> (referer: None)
+2021-12-26 16:27:05 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCx9hXYOCvUYwrprEqe4ZQHA>
+{'artist': 'TREASURE',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 5, 450109, tzinfo=<UTC>),
+ 'subscribers': 4830000,
+ 'uploads': 308,
+ 'url': 'https://socialblade.com/youtube/channel/UCx9hXYOCvUYwrprEqe4ZQHA',
+ 'user_created': 'Feb 8th, 2019',
+ 'views': 963985753}
+2021-12-26 16:27:05 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCsVpgRB8YHLWA0ZrkhtHvTA"}
+2021-12-26 16:27:08 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:08 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:08 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:09 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:09 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:09 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:09 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 204041
+2021-12-26 16:27:09 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:09 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCsVpgRB8YHLWA0ZrkhtHvTA> (referer: None)
+2021-12-26 16:27:09 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCtiObj3CsEAdNU6ZPWDsddQ>
+{'artist': 'TXT',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 9, 139869, tzinfo=<UTC>),
+ 'subscribers': 8420000,
+ 'uploads': 927,
+ 'url': 'https://socialblade.com/youtube/channel/UCtiObj3CsEAdNU6ZPWDsddQ',
+ 'user_created': 'Dec 21st, 2018',
+ 'views': 609196064}
+2021-12-26 16:27:09 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/officialakmu"}
+2021-12-26 16:27:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:11 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 208290
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:11 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/officialakmu> (referer: None)
+2021-12-26 16:27:11 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC-ZHt5Zgadfx-B1CM63Lqew>
+{'artist': 'WayV',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 11, 856808, tzinfo=<UTC>),
+ 'subscribers': 3260000,
+ 'uploads': 287,
+ 'url': 'https://socialblade.com/youtube/channel/UC-ZHt5Zgadfx-B1CM63Lqew',
+ 'user_created': 'Nov 27th, 2018',
+ 'views': 280663329}
+2021-12-26 16:27:11 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCOiM8FuCUFJkuUjCmB14rgg"}
+2021-12-26 16:27:13 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:13 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:13 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:14 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:14 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:14 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:14 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 203553
+2021-12-26 16:27:14 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:14 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCOiM8FuCUFJkuUjCmB14rgg> (referer: None)
+2021-12-26 16:27:14 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCsVpgRB8YHLWA0ZrkhtHvTA>
+{'artist': '선미',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 14, 401932, tzinfo=<UTC>),
+ 'subscribers': 1330000,
+ 'uploads': 161,
+ 'url': 'https://socialblade.com/youtube/channel/UCsVpgRB8YHLWA0ZrkhtHvTA',
+ 'user_created': 'Aug 25th, 2018',
+ 'views': 280880458}
+2021-12-26 16:27:14 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC3SyT4_WLHzN7JmHQwKQZww"}
+2021-12-26 16:27:17 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:17 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:17 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 207080
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:17 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC3SyT4_WLHzN7JmHQwKQZww> (referer: None)
+2021-12-26 16:27:17 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/officialakmu>
+{'artist': 'AKMU',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 17, 574695, tzinfo=<UTC>),
+ 'subscribers': 2650000,
+ 'uploads': 148,
+ 'url': 'https://socialblade.com/youtube/user/officialakmu',
+ 'user_created': 'Mar 13th, 2014',
+ 'views': 719028542}
+2021-12-26 16:27:17 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg"}
+2021-12-26 16:27:18 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:18 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:18 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:19 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:19 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:19 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:19 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 203879
+2021-12-26 16:27:19 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:19 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg> (referer: None)
+2021-12-26 16:27:19 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCOiM8FuCUFJkuUjCmB14rgg>
+{'artist': 'AKMU 이수현',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 19, 106392, tzinfo=<UTC>),
+ 'subscribers': 1590000,
+ 'uploads': 101,
+ 'url': 'https://socialblade.com/youtube/channel/UCOiM8FuCUFJkuUjCmB14rgg',
+ 'user_created': 'May 25th, 2017',
+ 'views': 73843174}
+2021-12-26 16:27:19 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC3SyT4_WLHzN7JmHQwKQZww>
+{'artist': '아이유',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 19, 187913, tzinfo=<UTC>),
+ 'subscribers': 7220000,
+ 'uploads': 137,
+ 'url': 'https://socialblade.com/youtube/channel/UC3SyT4_WLHzN7JmHQwKQZww',
+ 'user_created': 'Feb 13th, 2017',
+ 'views': 1197782283}
+2021-12-26 16:27:19 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg"}
+2021-12-26 16:27:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:23 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 203116
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:23 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg> (referer: None)
+2021-12-26 16:27:23 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg>
+{'artist': '헤이즈',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 23, 891358, tzinfo=<UTC>),
+ 'subscribers': 283000,
+ 'uploads': 93,
+ 'url': 'https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg',
+ 'user_created': 'Feb 6th, 2018',
+ 'views': 206104249}
+2021-12-26 16:27:23 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCHTZl9wrDAV45L8IPS7ZYzg"}
+2021-12-26 16:27:26 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:26 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:26 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:26 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:26 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:26 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:27 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 200753
+2021-12-26 16:27:27 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:27 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCHTZl9wrDAV45L8IPS7ZYzg> (referer: None)
+2021-12-26 16:27:27 [scrapy.extensions.logstats] INFO: Crawled 43 pages (at 15 pages/min), scraped 40 items (at 15 items/min)
+2021-12-26 16:27:27 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCcADqTjMyMol8B8mWm9n6rA"}
+2021-12-26 16:27:29 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:29 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:29 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 207627
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:29 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCcADqTjMyMol8B8mWm9n6rA> (referer: None)
+2021-12-26 16:27:29 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg>
+{'artist': '소녀시대 태연',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 29, 967845, tzinfo=<UTC>),
+ 'subscribers': 1280000,
+ 'uploads': 27,
+ 'url': 'https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg',
+ 'user_created': 'Jan 4th, 2014',
+ 'views': 46851691}
+2021-12-26 16:27:29 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UCYoNPLKd1kXh4v3bvIx1pTA"}
+2021-12-26 16:27:34 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:34 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:34 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 202940
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:34 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UCYoNPLKd1kXh4v3bvIx1pTA> (referer: None)
+2021-12-26 16:27:34 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCHTZl9wrDAV45L8IPS7ZYzg>
+{'artist': '정은지',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 34, 516396, tzinfo=<UTC>),
+ 'subscribers': 431000,
+ 'uploads': 67,
+ 'url': 'https://socialblade.com/youtube/channel/UCHTZl9wrDAV45L8IPS7ZYzg',
+ 'user_created': 'May 26th, 2019',
+ 'views': 23800647}
+2021-12-26 16:27:34 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC0uTcuuOtUFwtn9aKUVGjXg"}
+2021-12-26 16:27:38 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:38 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:38 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 203534
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:38 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC0uTcuuOtUFwtn9aKUVGjXg> (referer: None)
+2021-12-26 16:27:38 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCcADqTjMyMol8B8mWm9n6rA>
+{'artist': '젝스키스',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 38, 879057, tzinfo=<UTC>),
+ 'subscribers': 483000,
+ 'uploads': 184,
+ 'url': 'https://socialblade.com/youtube/channel/UCcADqTjMyMol8B8mWm9n6rA',
+ 'user_created': 'Aug 12th, 2016',
+ 'views': 82055566}
+2021-12-26 16:27:38 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/officialbtob"}
+2021-12-26 16:27:41 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:41 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:41 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209971
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:41 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/officialbtob> (referer: None)
+2021-12-26 16:27:41 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UCYoNPLKd1kXh4v3bvIx1pTA>
+{'artist': '백예린',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 41, 631097, tzinfo=<UTC>),
+ 'subscribers': 306000,
+ 'uploads': 63,
+ 'url': 'https://socialblade.com/youtube/channel/UCYoNPLKd1kXh4v3bvIx1pTA',
+ 'user_created': 'Oct 30th, 2019',
+ 'views': 206974102}
+2021-12-26 16:27:41 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC8HNshpReWjQv1WpwzhPHjA"}
+2021-12-26 16:27:44 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:44 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:44 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 208281
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:44 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC8HNshpReWjQv1WpwzhPHjA> (referer: None)
+2021-12-26 16:27:44 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC0uTcuuOtUFwtn9aKUVGjXg>
+{'artist': '현아',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 44, 908770, tzinfo=<UTC>),
+ 'subscribers': 2890000,
+ 'uploads': 71,
+ 'url': 'https://socialblade.com/youtube/channel/UC0uTcuuOtUFwtn9aKUVGjXg',
+ 'user_created': 'Sep 3rd, 2019',
+ 'views': 407930575}
+2021-12-26 16:27:44 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/channel/UC-qYkzKFdekoEniRu_FS3zg"}
+2021-12-26 16:27:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:47 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:47 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:47 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:47 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 204350
+2021-12-26 16:27:48 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:48 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/channel/UC-qYkzKFdekoEniRu_FS3zg> (referer: None)
+2021-12-26 16:27:48 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/officialbtob>
+{'artist': '비투비',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 48, 48606, tzinfo=<UTC>),
+ 'subscribers': 1790000,
+ 'uploads': 633,
+ 'url': 'https://socialblade.com/youtube/user/officialbtob',
+ 'user_created': 'Mar 15th, 2012',
+ 'views': 453339767}
+2021-12-26 16:27:48 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/c/weeekly"}
+2021-12-26 16:27:50 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:50 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:50 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 182420
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:50 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/c/weeekly> (referer: None)
+2021-12-26 16:27:50 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC8HNshpReWjQv1WpwzhPHjA>
+{'artist': 'SF9',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 50, 200694, tzinfo=<UTC>),
+ 'subscribers': 923000,
+ 'uploads': 303,
+ 'url': 'https://socialblade.com/youtube/channel/UC8HNshpReWjQv1WpwzhPHjA',
+ 'user_created': 'Sep 12th, 2016',
+ 'views': 74819488}
+2021-12-26 16:27:50 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/c/hybelabels"}
+2021-12-26 16:27:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:52 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209636
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:52 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/c/hybelabels> (referer: None)
+2021-12-26 16:27:52 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/channel/UC-qYkzKFdekoEniRu_FS3zg>
+{'artist': '오마이걸',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 52, 432387, tzinfo=<UTC>),
+ 'subscribers': 277000,
+ 'uploads': 298,
+ 'url': 'https://socialblade.com/youtube/channel/UC-qYkzKFdekoEniRu_FS3zg',
+ 'user_created': 'Mar 25th, 2015',
+ 'views': 353958322}
+2021-12-26 16:27:52 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/smtown"}
+2021-12-26 16:27:54 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:54 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:54 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 209586
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:54 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/smtown> (referer: None)
+2021-12-26 16:27:54 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/c/weeekly>
+{'artist': '위클리',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 54, 561507, tzinfo=<UTC>),
+ 'subscribers': 276000,
+ 'uploads': 236,
+ 'url': 'https://socialblade.com/youtube/c/weeekly',
+ 'user_created': 'Nov 18th, 2019',
+ 'views': 18972940}
+2021-12-26 16:27:54 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/url {"url": "https://socialblade.com/youtube/user/jypentertainment"}
+2021-12-26 16:27:56 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/url HTTP/1.1" 200 14
+2021-12-26 16:27:56 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:56 [selenium.webdriver.remote.remote_connection] DEBUG: POST http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/element {"using": "xpath", "value": "//*[@id=\"YouTubeUserTopInfoBlockTop\"]"}
+2021-12-26 16:27:56 [urllib3.connectionpool] DEBUG: http://localhost:51917 "POST /session/4256e8249c2a19f7527f607e1ea4448c/element HTTP/1.1" 200 88
+2021-12-26 16:27:56 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:56 [selenium.webdriver.remote.remote_connection] DEBUG: GET http://localhost:51917/session/4256e8249c2a19f7527f607e1ea4448c/source {}
+2021-12-26 16:27:56 [urllib3.connectionpool] DEBUG: http://localhost:51917 "GET /session/4256e8249c2a19f7527f607e1ea4448c/source HTTP/1.1" 200 211490
+2021-12-26 16:27:56 [selenium.webdriver.remote.remote_connection] DEBUG: Finished Request
+2021-12-26 16:27:56 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://socialblade.com/youtube/user/jypentertainment> (referer: None)
+2021-12-26 16:27:56 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/c/hybelabels>
+{'artist': 'HYBE LABELS',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 56, 501149, tzinfo=<UTC>),
+ 'subscribers': 63300000,
+ 'uploads': 737,
+ 'url': 'https://socialblade.com/youtube/c/hybelabels',
+ 'user_created': 'Jun 4th, 2008',
+ 'views': 20757191648}
+2021-12-26 16:27:56 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/smtown>
+{'artist': 'SM ENTERTAINMENT',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 56, 541365, tzinfo=<UTC>),
+ 'subscribers': 29500000,
+ 'uploads': 3802,
+ 'url': 'https://socialblade.com/youtube/user/smtown',
+ 'user_created': 'Mar 18th, 2006',
+ 'views': 23265689778}
+2021-12-26 16:27:56 [scrapy.core.scraper] DEBUG: Scraped from <200 https://socialblade.com/youtube/user/jypentertainment>
+{'artist': 'JYP ENTERTAINMENT',
+ 'platform': 'youtube',
+ 'recorded_date': datetime.datetime(2021, 12, 26, 7, 27, 56, 597582, tzinfo=<UTC>),
+ 'subscribers': 23300000,
+ 'uploads': 1434,
+ 'url': 'https://socialblade.com/youtube/user/jypentertainment',
+ 'user_created': 'Jan 25th, 2008',
+ 'views': 15201454186}
+2021-12-26 16:27:56 [scrapy.core.engine] INFO: Closing spider (finished)
+2021-12-26 16:27:56 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/response_bytes': 10560705,
+ 'downloader/response_count': 53,
+ 'downloader/response_status_count/200': 53,
+ 'dupefilter/filtered': 3,
+ 'elapsed_time_seconds': 272.646556,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2021, 12, 26, 7, 27, 56, 611765),
+ 'item_scraped_count': 52,
+ 'log_count/DEBUG': 591,
+ 'log_count/INFO': 20,
+ 'memusage/max': 134017024,
+ 'memusage/startup': 108638208,
+ 'response_received_count': 53,
+ 'robotstxt/request_count': 1,
+ 'robotstxt/response_count': 1,
+ 'robotstxt/response_status_count/200': 1,
+ 'scheduler/dequeued': 52,
+ 'scheduler/dequeued/memory': 52,
+ 'scheduler/enqueued': 52,
+ 'scheduler/enqueued/memory': 52,
+ 'start_time': datetime.datetime(2021, 12, 26, 7, 23, 23, 965209)}
+2021-12-26 16:27:56 [scrapy.core.engine] INFO: Spider closed (finished)

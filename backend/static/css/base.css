@@ -23,6 +23,10 @@ tr{
     border: 1px solid lightslategray;
 }
 
+td{
+    border: 1px solid lightslategray;
+}
+
 .header{
     display: flex;
     height: 5rem;
@@ -105,11 +109,24 @@ tr{
     padding: 0 10px;
     transition: transform 250ms ease-in;
     box-shadow: 3px 3px 3px 3px gray;
-    margin: 20px;
+    margin: 10px 20px;
+}
+
+.sidebar-description{
+    text-align: center;
+    justify-content: center;
+    color: darkgray;
+    font-size: small;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .sidebar-item:hover{
-    transform: scaleX(1.1);
+    cursor: pointer;
+    color: black;
+}
+
+.sidebar-description:hover{
     cursor: pointer;
     color: black;
 }
@@ -121,8 +138,11 @@ tr{
     margin-top: 20px;
     font-size: 1.2rem;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
+}
+
+.select-days{
+    margin-left: 18px;
 }
 
 .select-days-day{
@@ -130,8 +150,41 @@ tr{
     margin-top: 10px;
 }
 
+.contents{
+    margin-top: 20px ;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+}
 
+.contents-platforms{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+}
 
+.platform-name{
+    margin: 10px;
+    flex-basis: 18%;
+    background-color: white;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.platform-name:hover{
+    background-color: lightgray;
+}
+
+.background{
+    background-color: lightgray;
+}
+
+/*no use from*/
 .select-other{
     display: flex;
     flex-direction: row;
@@ -143,6 +196,7 @@ tr{
     display: flex;
     flex-direction: column;
 }
+/* to */
 
 .add-form{
     position: absolute;
@@ -175,4 +229,55 @@ tr{
     position: absolute;
     right: 520px;
     top: 2px;
+}
+
+.select-target{
+    position: absolute;
+    width: 25%;
+    height: 40px;
+    line-height: 40px;
+    left : 300px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.artist-name{
+    padding-right: 10px;
+    text-align: center;
+    width: 30%;
+    background-color: black;
+    color: white;
+}
+
+.artist-name-h4{
+    vertical-align: middle;
+    line-height: 40px;
+}
+
+.artist-name-select{
+    line-height: 40px;
+    padding-left: 10px;
+}
+
+#result-table{
+    justify-content: center;
+    text-align: center;
+    height: 550px;
+    overflow-y: scroll;
+}
+
+#table{
+   width: 50%;
+   margin: auto;
+}
+
+.result-header{
+    color: black;
+    background-color: white;
+    border: 1px solid lightslategray;
+    text-align: center;
 }

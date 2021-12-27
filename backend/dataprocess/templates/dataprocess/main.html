@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
-    {% include 'dataprocess/head.html' %}
+   {% extends "main.html" %}
 
-    {% include 'dataprocess/header.html' %}
-
-    {% include 'dataprocess/sidebar.html' %}
-
+   {% block content %}
+        {% include 'dataprocess/sidebar_data_report.html' %} 
+   {% endblock content %}
 </html>

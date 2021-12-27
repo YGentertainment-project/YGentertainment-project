@@ -8,6 +8,9 @@ from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 def base(request):
     return render(request, 'dataprocess/main.html')
 
+def daily(request):
+    return render(request, 'dataprocess/daily.html')
+
 from django.shortcuts import get_object_or_404, render
 
 from rest_framework import viewsets
@@ -156,6 +159,25 @@ def Artist_all(request):
     #     count = CollectData.objects.all().delete()
     #     return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
+class ArtistView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'dataprocess/add_artist.html'
+
+    def get(self, request):
+        Artists = Artist.objects.all()
+        
+        serializer = ArtistSerializer(Artists, many=True)
+        return Response({'serializer': serializer, 'artists': Artists})
+
+    def post(self, request):
+        Artists =Artist.objects.all()
+        serializer = ArtistSerializer(Artists, data=request.data)
+        if not serializer.is_valid():
+            return Response({'serializer': serializer, 'artists':Artists})
+        serializer.save()
+        return redirect('dataprocess:base')
+
+
 @api_view(['GET', 'POST'])
 @renderer_classes((HTMLFormRenderer,))
 def ArtistProfile_all(request):
@@ -188,8 +210,8 @@ class ArtistProfileView(APIView):
         return Response({'serializer': serializer, 'artists': profile})
 
     def post(self, request):
-        profile =ArtistProfile.objects.all()
-        serializer = ArtistProfileSerializer(profile, data=request.data)
+        profile = ArtistProfile.objects.all()
+        serializer = ArtistProfileSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({'serializer': serializer, 'artists': profile})
         serializer.save()
