@@ -40,3 +40,53 @@ class SocialbladeTwitter2(models.Model):
     user_created = models.TextField()
     recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
     url = models.TextField(null=True)
+
+
+class Weverse(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    weverses = models.IntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    url = models.TextField(null=True)
+
+
+class CrowdtangleInstagram(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    followers = models.BigIntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    url = models.TextField(null=True)
+
+
+class CrowdtangleFacebook(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    followers = models.BigIntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    url = models.TextField(null=True)
+
+
+class Vlive(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    members = models.IntegerField()
+    videos = models.IntegerField()
+    likes = models.BigIntegerField()
+    plays = models.BigIntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    url = models.TextField(null=True)
+
+
+class Melon(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    listeners = models.BigIntegerField()
+    streams = models.BigIntegerField()
+    fans = models.IntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    url1 = models.TextField(null=True)
+    url2 = models.TextField(null=True)
+
+
+class Spotify(models.Model):
+    artist = models.CharField(max_length=100, unique=True, primary_key=True)  # 아티스트 이름
+    monthly_listens = models.BigIntegerField()
+    followers = models.BigIntegerField()
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    url1 = models.TextField(null=True)
+    url2 = models.TextField(null=True)

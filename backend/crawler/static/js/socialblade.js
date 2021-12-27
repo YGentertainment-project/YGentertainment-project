@@ -25,6 +25,7 @@ headerList = {
     "tiktok": ['artist', 'uploads', 'followers', 'likes', 'Recorded Date', 'URL'],
     "twitter": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
     "twitter2": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "weverse": ['artist', 'weverses', 'Recorded Date', 'URL'],
 }
 
 

@@ -8,7 +8,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from scrapyd_api import ScrapydAPI
-from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2
+from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
+    Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
 import json, os
 
 # connect scrapyd service
@@ -59,6 +60,12 @@ def show_data(request):
         "tiktok": SocialbladeTiktok,
         "twitter": SocialbladeTwitter,
         "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
     }
     if DataModels[platform].objects.exists():
         platform_queryset_values = DataModels[platform].objects.values()

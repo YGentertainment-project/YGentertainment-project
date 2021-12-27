@@ -5,7 +5,8 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from django.utils import timezone
-from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2
+from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
+    Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
 
 
 class SocialbladeYoutubePipeline(object):
@@ -64,6 +65,20 @@ class SocialbladeTwitter2Pipeline(object):
             existingItem = SocialbladeTwitter2.objects.get(artist=item.get('artist'))
             existingItem.followers = item.get('followers')
             existingItem.twits = item.get('twits')
+            existingItem.recorded_date = timezone.now()
+            existingItem.save()
+        else:
+            item.save()
+        return item
+
+
+class WeversePipeline(object):
+    def process_item(self, item, spider):
+        item["recorded_date"] = timezone.now()
+
+        if Weverse.objects.filter(artist=item.get('artist')).exists():
+            existingItem = Weverse.objects.get(artist=item.get('artist'))
+            existingItem.weverses = item.get('weverses')
             existingItem.recorded_date = timezone.now()
             existingItem.save()
         else:

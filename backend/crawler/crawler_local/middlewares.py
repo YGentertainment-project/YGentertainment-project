@@ -55,7 +55,7 @@ class SocialbladeDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')
+        # options.add_argument('headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument('log-level=3')
         options.add_argument('disable-gpu')
