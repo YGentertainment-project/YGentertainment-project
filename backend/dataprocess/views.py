@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
@@ -11,8 +12,6 @@ def base(request):
 def daily(request):
     return render(request, 'dataprocess/daily.html')
 
-from django.shortcuts import get_object_or_404, render
-
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from .serializers import *
@@ -22,49 +21,8 @@ from rest_framework.decorators import api_view, renderer_classes
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 
-# class CollectDataListAPIView(APIView):
-#     # GET list of collect datas
-#     def get(self, request):
-#         CollectDatas = CollectData.objects.all()
-        
-#         CollectData_serializer = CollectDataSerializer(CollectDatas, many=True)
-#         return JsonResponse(CollectData_serializer.data, safe=False)
-
-#     # POST a new collect data
-#     def post(self, request):
-#         CollectData_data = JSONParser().parse(request)
-#         CollectData_serializer = CollectDataSerializer(data=CollectData_data)
-#         if CollectData_serializer.is_valid():
-#             CollectData_serializer.save()
-#             return JsonResponse(CollectData_serializer.data, status=status.HTTP_201_CREATED) 
-#         return JsonResponse(CollectData_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class CollectDataDetailAPIView(APIView):
-#     def get_object(self, pk):
-#         return get_object_or_404(CollectData, pk=pk)
-
-#     # Update a single collect data with the specified id:
-#     def put(self, request, pk):
-#         try:
-#             collectData = self.get_object(pk=pk)
-#             CollectData_data = JSONParser().parse(request)
-#             CollectData_serializer = CollectDataSerializer(collectData, data=CollectData_data) 
-#             if CollectData_serializer.is_valid():
-#                 CollectData_serializer.save()
-#                 return JsonResponse(CollectData_serializer.data) 
-#             return JsonResponse(CollectData_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-#         except CollectData.DoesNotExist:
-#             return JsonResponse({'message': 'The CollectData does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    
-#      # Delete a single collect data with the specified id:
-#     def delete(self, request, pk):
-#         try:
-#             collectData = CollectData.objects.get(pk=pk)
-#             collectData.delete()
-#             return JsonResponse({'message': 'CollectData was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-#         except CollectData.DoesNotExist:
-#             return JsonResponse({'message': 'The CollectData does not exist'}, status=status.HTTP_404_NOT_FOUND)
 @api_view(['GET', 'POST'])
 def Platform_all(request):
     # GET list of collect datas

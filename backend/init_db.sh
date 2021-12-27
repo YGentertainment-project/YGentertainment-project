@@ -13,7 +13,7 @@ docker run -it -d \
     -e MYSQL_DATABASE=ygenter \
     -e MYSQL_USER=ygenter \
     -e MYSQL_PASSWORD=ygenter \
-    -p 127.0.0.1:3306:3306 \
+    -p 127.0.0.1:1398:3306 \
     --restart=always \
     --name yg-mariadb-dev \
     -v /yg/conf.d:/etc/mysql/conf.d \
