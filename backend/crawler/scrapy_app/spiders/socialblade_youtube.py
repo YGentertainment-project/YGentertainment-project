@@ -1,7 +1,6 @@
-import time
 import scrapy
 from urllib.parse import urlparse
-from ..items import SocialbladeItem
+from ..items import SocialbladeYoutubeItem
 
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
@@ -14,8 +13,8 @@ class YoutubeSpider(scrapy.Spider):
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
         },
-        'ITEM_PIPELINES' : {
-            'crawler.scrapy_app.pipelines.SocialbladePipeline': 300,
+        'ITEM_PIPELINES': {
+            'crawler.scrapy_app.pipelines.SocialbladeYoutubePipeline': 100,
         },
     }
 
@@ -111,72 +110,54 @@ class YoutubeSpider(scrapy.Spider):
 
     # '1,334,635,139' 형태의 숫자를 정수형 변수로 반환
     def parse_comma_text(self, view_text):
-        num_list = view_text.split(',')
-        result = ''
-        for num in num_list:
-            result = result + num
+        result = view_text.replace(',', '')
         return int(result)
 
     def parse(self, response):
         domain = urlparse(response.url).netloc
         artist = uploads = subscribers = views = user_created = None
-        if domain == SOCIALBLADE_DOMAIN :
+        if domain == SOCIALBLADE_DOMAIN:
             if response.request.url == SOCIALBLADE_ROBOT:
                 pass
-            artist = response.request.meta['artist']
-            # artist = response.xpath(
-            #     '//*[@id="YouTubeUserTopInfoBlockTop"]/div[1]/h1/text()').get()
+            else:
+                artist = response.request.meta['artist']
 
-            uploads = response.xpath(
-                '//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
-            uploads = self.parse_comma_text(uploads)
+                uploads = response.xpath(
+                    '//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
+                uploads = self.parse_comma_text(uploads)
 
-            subscribers = response.xpath(
-                '//*[@id="YouTubeUserTopInfoBlock"]/div[3]/span[2]/text()').get()
-            subscribers = self.parse_subscribers(subscribers)
+                subscribers = response.xpath(
+                    '//*[@id="YouTubeUserTopInfoBlock"]/div[3]/span[2]/text()').get()
+                subscribers = self.parse_subscribers(subscribers)
 
-            view_text = response.xpath(
-                '//*[@id="YouTubeUserTopInfoBlock"]/div[4]/span[2]/text()').get()
-            views = self.parse_comma_text(view_text)
+                view_text = response.xpath(
+                    '//*[@id="YouTubeUserTopInfoBlock"]/div[4]/span[2]/text()').get()
+                views = self.parse_comma_text(view_text)
 
-            user_created = response.xpath(
-                '//*[@id="YouTubeUserTopInfoBlock"]/div[7]/span[2]/text()').get()
+                user_created = response.xpath(
+                    '//*[@id="YouTubeUserTopInfoBlock"]/div[7]/span[2]/text()').get()
 
-        elif domain == YOUTUBE_DOMAIN:
-            # artist = response.xpath('//*[@id="text"]/text()').get()
-            artist = response.request.meta['artist']
-            uploads = -1
-            subscribers = -1
-            view_text = response.xpath(
-                '//*[@id="right-column"]/yt-formatted-string[3]/text()').get()
-            # '조회수 168,048,278회' 형태의 문자열에서 조회수에 해당하는 숫자만 추출
-            view_text = view_text[3:-1].strip()
-            views = self.parse_comma_text(view_text)
-            user_created = response.xpath(
-                '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
-
-
-        # scraped_info = {
-        #     'artist': artist,
-        #     'uploads': uploads,
-        #     'subscribers': subscribers,
-        #     'views': views,
-        #     'user_created': user_created,
-        #     'platform': self.name,
-        #     'url': response.url,
-        # }
-
-        item = SocialbladeItem()
-        item["artist"] = artist
-        item["uploads"] = uploads
-        item["subscribers"] = subscribers
-        item["views"] = views
-        item["user_created"] = user_created
-        item["platform"] = self.name
-        item["url"] = response.url
-
-
+        # elif domain == YOUTUBE_DOMAIN:
+        #     # artist = response.xpath('//*[@id="text"]/text()').get()
+        #     artist = response.request.meta['artist']
+        #     uploads = -1
+        #     subscribers = -1
+        #     view_text = response.xpath(
+        #         '//*[@id="right-column"]/yt-formatted-string[3]/text()').get()
+        #     # '조회수 168,048,278회' 형태의 문자열에서 조회수에 해당하는 숫자만 추출
+        #     view_text = view_text[3:-1].strip()
+        #     views = self.parse_comma_text(view_text)
+        #     user_created = response.xpath(
+        #         '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
+            item = SocialbladeYoutubeItem()
+            item["artist"] = artist
+            item["uploads"] = uploads
+            item["subscribers"] = subscribers
+            item["views"] = views
+            item["user_created"] = user_created
+            # item["platform"] = self.name
+            item["url"] = response.url
             yield item

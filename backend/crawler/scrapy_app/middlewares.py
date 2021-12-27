@@ -26,7 +26,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import ActionChains
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
-YOUTUBE_DOMAIN = 'www.youtube.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 
 class ScrapyAppSpiderMiddleware:
@@ -143,37 +142,11 @@ class SocialbladeDownloaderMiddleware:
 
         if(domain == SOCIALBLADE_DOMAIN):
             if(request.url != SOCIALBLADE_ROBOT):
-                WebDriverWait(self.driver, 1).until(
+                WebDriverWait(self.driver, 5).until(
                     EC.presence_of_element_located(
                         (By.XPATH, '//*[@id="YouTubeUserTopInfoBlockTop"]')
                     )
                 )
-        elif(domain == YOUTUBE_DOMAIN):
-            WebDriverWait(self.driver, 20).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, '//*[@id="right-column"]')
-                )
-            )
-
-            WebDriverWait(self.driver, 20).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, '//*[@id="text"]')
-                )
-            )
-            # KEYWORD = request.meta['keyword']
-            # WebDriverWait(self.driver, 40).until(
-            #     EC.presence_of_element_located(
-            #         (By.XPATH, '//*[@id="SearchInput"]')
-            #     )
-            # )
-            # search_bar = self.driver.find_element(
-            #     By.XPATH, '//*[@id="SearchInput"]'
-            # )
-
-            # search_bar.send_keys(searchKeyword)
-            # time.sleep(2)
-            # search_bar.send_keys(Keys.ENTER)
-            # time.sleep(1)
         else:
             print('domain : {} Neither of the domain filterling!!!!'.format(domain))
         body = to_bytes(text=self.driver.page_source)

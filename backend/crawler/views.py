@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from scrapyd_api import ScrapydAPI
-from crawler.models import Socialblade
+from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2
 import json, os
 
 # connect scrapyd service
@@ -27,8 +27,10 @@ def crawl(request):
         unique_id = str(uuid4())  # create a unique ID.
         body = json.loads(request.body.decode('utf-8'))  # body값 추출
         platform = body.get("platform")
-        start_crawl(platform, unique_id)
-        return JsonResponse({'task_id': unique_id, 'status': 'started'})
+        task = scrapyd.schedule('default', spider=platform)
+        # start_crawl(platform, unique_id)
+        return JsonResponse({'task_id': task, 'status': 'started'})
+        # return JsonResponse({'task_id': unique_id, 'status': 'started'})
 
     # Get requests are for getting result of a specific crawling task
     elif request.method == 'GET':
@@ -52,8 +54,14 @@ def crawl(request):
 def show_data(request):
     platform = request.GET.get('platform', None)
 
-    if Socialblade.objects.filter(platform=platform).exists():
-        platform_queryset_values = Socialblade.objects.filter(platform=platform).values()
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+    }
+    if DataModels[platform].objects.exists():
+        platform_queryset_values = DataModels[platform].objects.values()
         platform_datas = []
         for queryset_value in platform_queryset_values:
             platform_datas.append(queryset_value)
