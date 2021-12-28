@@ -174,6 +174,7 @@ def CollectTarget_all(request):
             return JsonResponse(CollectTarget_Serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(CollectTarget_Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+#======platform=======
 #platform read
 @csrf_exempt
 @require_http_methods(['GET'])  # only get
@@ -212,9 +213,7 @@ def platform_update(request):
     try:
         platform_list = JSONParser().parse(request)
         for platform_object in platform_list:
-            print(platform_object)
             platform_data = Platform.objects.get(pk=platform_object["id"])
-            print(platform_data)
             platform_serializer = PlatformSerializer(platform_data, data=platform_object)
             if platform_serializer.is_valid():
                 platform_serializer.save()
@@ -224,3 +223,53 @@ def platform_update(request):
     except:
         return JsonResponse(data={'success': False}, status=400)
 
+#======artist=======
+#artist read
+@csrf_exempt
+@require_http_methods(['GET'])  # only put
+def artist_read(request):
+    try:
+        artist_objects = Artist.objects.all()
+        if artist_objects.exists():
+            artist_objects_values = artist_objects.values()
+            artist_datas = []
+            for artist_value in artist_objects_values:
+                artist_datas.append(artist_value)
+            return JsonResponse(data={'success': True, 'data': artist_datas})
+        else:
+            return JsonResponse(data={'success': True, 'data': []})
+    except:
+        return JsonResponse(status=400, data={'success': False})
+
+#artist create
+@csrf_exempt
+@require_http_methods(['POST'])  # only post
+def artist_create(request):
+    try:
+        artist_object = JSONParser().parse(request)
+        print(artist_object)
+        artist_serializer = ArtistSerializer(data=artist_object)
+        print(artist_serializer)
+        if artist_serializer.is_valid():
+            artist_serializer.save()
+            return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
+        return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
+    except:
+        return JsonResponse(data={'success': False}, status=400)
+
+#artist update
+@csrf_exempt
+@require_http_methods(['PUT'])  # only post
+def artist_update(request):
+    try:
+        artist_list = JSONParser().parse(request)
+        for artist_object in artist_list:
+            artist_data = Artist.objects.get(pk=artist_object["id"])
+            artist_serializer = ArtistSerializer(artist_data, data=artist_object)
+            if artist_serializer.is_valid():
+                artist_serializer.save()
+            else:
+                return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
+        return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+    except:
+        return JsonResponse(data={'success': False}, status=400)

@@ -18,4 +18,7 @@ urlpatterns = [
     path('platform/platformread/', views.platform_read, name='platform_read'),
     path('platform/platformcreate', views.platform_create, name='platform_create'),
     path('platform/platformupdate', views.platform_update, name='platform_update'),
+    path('artist/artistread/', views.artist_read, name='artist_read'),
+    path('artist/artistcreate', views.artist_create, name='artist_create'),
+    path('artist/artistupdate', views.artist_update, name='artist_update'),
 ]
