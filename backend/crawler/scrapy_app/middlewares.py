@@ -27,6 +27,7 @@ from selenium.webdriver import ActionChains
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
+WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 
 class ScrapyAppSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -82,7 +83,8 @@ def driver_setting():
     chrome_options.add_argument("--no-sandbox")  # ???
     chrome_options.add_argument("--disable-gpu")  # 그래픽 카드 작동해제 => 성능 향상
     # user-agent 값 삽입 -> 봇 감지 방지
-    user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
+    # user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
+    user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
     chrome_options.add_argument(f'user-agent={user_agent}')
     WINDOW_SIZE = "1920,1080"
     chrome_options.add_argument(f"--window-size={WINDOW_SIZE}")  # 사이즈 변경
@@ -171,12 +173,12 @@ class WeverseDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        # options.add_argument('--headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument('log-level=3')
         options.add_argument('disable-gpu')
-        #user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
-        user_agent = "Chrome/96.0.4664"
+        user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
+        # user_agent = "Chrome/96.0.4664"
         options.add_argument('user-agent={}'.format(user_agent))
         options.add_argument('start-maximized')
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -202,13 +204,14 @@ class WeverseDownloaderMiddleware:
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(
-                   (By.CSS_SELECTOR, '#root > div > section > aside > div > a > div > p'))
-        )
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/section/aside/div/div[1]')) 
-        )
+        if request.url != WEVERSE_ROBOT:
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located(
+                       (By.CSS_SELECTOR, '#root > div > section > aside > div > a > div > p'))
+            )
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/section/aside/div/div[1]'))
+            )
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
