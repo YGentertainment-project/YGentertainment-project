@@ -1,16 +1,16 @@
 import scrapy
-from ..items import WeverseItem, CrowdtangleInstagramItem
+from ..items import CrowdtangleInstagramItem
 
 
-class InstagramSpider(scrapy.Spider):
+class CrowdtangleInstagram(scrapy.Spider):
     name = 'instagram'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
         },
         'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.CrowdtangleInstagramPipeline': 100,
-        }
+            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
+        },
     }
 
     def start_requests(self):
@@ -84,6 +84,7 @@ class InstagramSpider(scrapy.Spider):
             "SM ENTERTAINMENT": "",
             "JYP ENTERTAINMENT": "",
         }
+
         for artist, url in artist_url.items():
             print("artist : {}, url : {}, url_len: {}".format(
                 artist, url, len(url)))
@@ -93,11 +94,11 @@ class InstagramSpider(scrapy.Spider):
                 continue
 
     def parse(self, response):
+        # artist = response.xpath('//span[@class="omni-select-value-label"]/text()').extract()[0]
         artist = response.meta['artist']
-        follower_num = response.xpath('//span[@class="ct-tooltip right arrow-middle"]/text()').get()
-
+        follower_num = response.xpath('//span[@class="ct-tooltip right arrow-middle"]/text()').extract()[0]
         item = CrowdtangleInstagramItem()
         item['artist'] = artist
-        item['followers'] = int(follower_num.replace(',', ''))
+        item['followers'] = follower_num.replace(',', '')
         item['url'] = response.url
         yield item

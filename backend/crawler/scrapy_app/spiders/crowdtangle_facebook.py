@@ -1,19 +1,20 @@
 import scrapy
-from ..items import WeverseItem, CrowdtangleFacebookItem
+from ..items import CrowdtangleFacebookItem
 
 
-class FacebookSpider(scrapy.Spider):
+class CrowdtangleFacebook(scrapy.Spider):
     name = 'facebook'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
         },
         'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.CrowdtangleFacebookPipeline': 100,
-        }
+            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
+        },
     }
 
     def start_requests(self):
+
         artist_url = {
             "(여자)아이들": "https://apps.crowdtangle.com/ygentertainmentfacebook/reporting/intelligence?accountType=facebook_page&accounts=3308154&brandedContentType=none&comparisonType=none&followersBreakdownType=followerCount&followersShowByType=total&graphType=subscriber_count&interval=day&platform=facebook&reportTimeframe=3months",
             "강다니엘": "",
@@ -83,7 +84,9 @@ class FacebookSpider(scrapy.Spider):
             "HYBE LABELS": "",
             "SM ENTERTAINMENT": "",
             "JYP ENTERTAINMENT": "",
+
         }
+
         for artist, url in artist_url.items():
             print("artist : {}, url : {}, url_len: {}".format(
                 artist, url, len(url)))
@@ -93,11 +96,11 @@ class FacebookSpider(scrapy.Spider):
                 continue
 
     def parse(self, response):
+        # artist = response.xpath('//span[@class="omni-select-value-label"]/text()').extract()[0]
         artist = response.meta['artist']
-        follower_num = response.xpath('//span[@class="ct-tooltip right arrow-middle"]/text()').get()
-
+        follower_num = response.xpath('//span[@class="ct-tooltip right arrow-middle"]/text()').extract()[0]
         item = CrowdtangleFacebookItem()
         item['artist'] = artist
-        item['followers'] = int(follower_num.replace(',', ''))
+        item['followers'] = follower_num.replace(',', '')
         item['url'] = response.url
         yield item

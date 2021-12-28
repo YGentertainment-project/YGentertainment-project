@@ -28,7 +28,7 @@ from selenium.webdriver import ActionChains
 SOCIALBLADE_DOMAIN = 'socialblade.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
-
+CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
 class ScrapyAppSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -173,7 +173,7 @@ class WeverseDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        # options.add_argument('--headless')
+        options.add_argument('headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument('log-level=3')
         options.add_argument('disable-gpu')
@@ -232,7 +232,7 @@ class CrowdtangleDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        options.add_argument('headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument('log-level=3')
         options.add_argument('disable-gpu')
@@ -261,12 +261,13 @@ class CrowdtangleDownloaderMiddleware:
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div[1]/span[2]'))
-        )
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[3]/div[2]/div[1]/div/div[3]/div[2]/div/div[2]/div[1]/div/div[2]/div/span[1]'))
-        )
+        if request.url != CROWDTANGLE_ROBOT:
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div[1]/span[2]'))
+            )
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[3]/div[2]/div[1]/div/div[3]/div[2]/div/div[2]/div[1]/div/div[2]/div/span[1]'))
+            )
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
