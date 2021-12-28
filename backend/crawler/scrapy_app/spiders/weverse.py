@@ -13,7 +13,6 @@ class WeverseSpider(scrapy.Spider):
     }
     def start_requests(self):
         artist_url = {
-        "https://www.weverse.io/nuest/feed"
         "(여자)아이들": "",
         "강다니엘": "",
         "뉴이스트": "https://www.weverse.io/nuest/feed",
