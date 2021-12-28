@@ -11,6 +11,7 @@ from scrapyd_api import ScrapydAPI
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
 import json, os
+import datetime
 
 # connect scrapyd service
 scrapyd = ScrapydAPI('http://localhost:6800')
@@ -75,3 +76,62 @@ def show_data(request):
         return JsonResponse(data={'success': True, 'data': platform_datas})
     else:
         return JsonResponse(status=400, data={'success': False})
+
+
+
+#daily read API
+#main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
+@csrf_exempt
+@require_http_methods(['GET'])  # only get and post
+def daily_read(request):
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+    }
+    platform = request.GET.get('platform', None)
+    type = request.GET.get('type', None)
+    start_date = request.GET.get('start_date', None)
+    end_date = request.GET.get('end_date', None)
+
+    if type=="누적":
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+        filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        if filter_objects.exists():
+            filter_objects_values = filter_objects.values()
+            filter_datas = []
+            for filter_value in filter_objects_values:
+                filter_datas.append(filter_value)
+            return JsonResponse(data={'success': True, 'data': filter_datas})
+        else:
+            return JsonResponse(status=400, data={'success': True, 'data': []})
+    elif type=="기간별":
+        # 전날 값을 구함
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
+        end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
+        filter_objects_start = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        filter_objects_end = DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
+             recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
+        filter_datas_start = []
+        filter_datas_end = []
+        if filter_objects_start.exists():
+            filter_objects_start_values = filter_objects_start.values()
+            for filter_value in filter_objects_start_values:
+                filter_datas_start.append(filter_value)
+        if filter_objects_end.exists():
+            filter_objects_end_values = filter_objects_end.values()
+            filter_datas_end = []
+            for filter_value in filter_objects_end_values:
+                filter_datas_end.append(filter_value)
+        return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
+    else:
+        return JsonResponse(status=400, data={'success': False}) 
