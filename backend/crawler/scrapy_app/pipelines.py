@@ -84,3 +84,29 @@ class WeversePipeline(object):
         else:
             item.save()
         return item
+
+class CrowdtangleFacebookPipeline(object):
+    def process_item(self, item, spider):
+        item["recorded_date"] = timezone.now()
+
+        if CrowdtangleFacebook.objects.filter(artist=item.get('artist')).exists():
+            existingItem = CrowdtangleFacebook.objects.get(artist=item.get('artist'))
+            existingItem.followers = item.get('followers')
+            existingItem.recorded_date = timezone.now()
+            existingItem.save()
+        else:
+            item.save()
+        return item
+
+class CrowdtangleInstagramPipeline(object):
+    def process_item(self, item, spider):
+        item["recorded_date"] = timezone.now()
+
+        if CrowdtangleInstagram.objects.filter(artist=item.get('artist')).exists():
+            existingItem = CrowdtangleInstagram.objects.get(artist=item.get('artist'))
+            existingItem.followers = item.get('followers')
+            existingItem.recorded_date = timezone.now()
+            existingItem.save()
+        else:
+            item.save()
+        return item
