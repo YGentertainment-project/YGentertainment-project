@@ -19,6 +19,16 @@ function getTimeString(dateText){
     return timeString
 }
 
+
+headerList = {
+    "youtube": ['artist', 'uploads', 'subscribers', 'views', 'User Created', 'Recorded Date', 'URL'],
+    "tiktok": ['artist', 'uploads', 'followers', 'likes', 'Recorded Date', 'URL'],
+    "twitter": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "twitter2": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "weverse": ['artist', 'weverses', 'Recorded Date', 'URL'],
+}
+
+
 $(document).ready(function () {
     const api_domain = 'http://localhost:8000/crawler/api/'
 
@@ -28,6 +38,16 @@ $(document).ready(function () {
     $('#site-select').change((e) => {
         category = e.target.value
         $('#board').html('')
+        $('#table-header tr').html('')
+        const headerRows = headerList[category].map((header) =>
+            $('<th></th>', {
+                scope: "slope",
+                text: header,
+            })
+        )
+        headerRows.forEach((headerRow) => {
+            $('#table-header tr').append(headerRow)
+        })
     })
 
     const showCrawlSuccess = (data) => {
@@ -89,6 +109,7 @@ $(document).ready(function () {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
                 // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
                 statusInterval = setInterval(() => checkCrawlStatus(task_id), 3000)
+                // console.log('success to receive response')
             },
             error: e => {
                 alert('Failed to send request for scraping')
