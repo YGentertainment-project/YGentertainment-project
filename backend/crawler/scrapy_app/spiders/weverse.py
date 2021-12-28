@@ -8,7 +8,7 @@ class WeverseSpider(scrapy.Spider):
             'crawler.scrapy_app.middlewares.WeverseDownloaderMiddleware': 100
         },
         'ITEM_PIPELINES':{
-            'crawler.scrapy_app.pipelines.WeversePipeline': 100,
+            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
         }
     }
 

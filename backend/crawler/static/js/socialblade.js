@@ -123,7 +123,7 @@ $(document).ready(function () {
         // 해당 row에 대한 column 데이터들 넣기
         for(key in data){
             let dataCol;
-            if(key === 'platform'){
+            if(key === 'id'){
                 continue;
             }
             if (key === 'url') {
