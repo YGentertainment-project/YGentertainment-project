@@ -10,7 +10,11 @@ def base(request):
     return render(request, 'dataprocess/main.html')
 
 def daily(request):
-    return render(request, 'dataprocess/daily.html')
+    values = {
+      'first_depth' : '데이터 리포트',
+      'second_depth': '시간별 리포트'
+    }
+    return render(request, 'dataprocess/daily.html',values)
 
 from rest_framework import viewsets
 from rest_framework.views import APIView

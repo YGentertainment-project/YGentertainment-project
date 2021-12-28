@@ -10,6 +10,44 @@ $('#target-select').select2(
     }
 );
 
+//sidebar toggle 
+$(".data-report").click(function(){
+    $(".in-data-report").slideToggle();
+});
+
+$(".platforms-m").click(function(){
+    $(".in-platforms").slideToggle();
+});
+
+$(".artists-m").click(function(){
+    $(".in-artists").slideToggle();
+});
+
+$(function(){
+    var duration = 300;
+
+    var $side = $('.sidebar');
+    var $sidebt = $('.sidebar-btn').on('click', function(){
+        $side.toggleClass('open');
+
+        if($side.hasClass('open')) {
+            $side.stop(true).animate({left:'0px'}, duration);
+            $sidebt.find('span').html('<i class="fas fa-chevron-left"></i>');
+        }else{
+            $side.stop(true).animate({left:'-250px'}, duration);
+            $sidebt.find('span').html('<i class="fas fa-chevron-right"></i>');
+        };
+    });
+});
+
+function change_header(depth1,depth2){
+   $('span .second-depth').text(depth1);
+   $('span .third-depth').text(depth2);
+   $('span .middle-1').html('<i class="fas fa-chevron-right"></i>')
+   $('span .middle-2').html('<i class="fas fa-chevron-right"></i>')
+} 
+    
+
 //플랫폼별로 크롤링 된 데이터 보여주기
 
 //youtube
