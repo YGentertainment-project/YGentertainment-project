@@ -9,6 +9,7 @@ class Platform(models.Model):
     name = models.TextField(unique=True)
     url = models.TextField(unique=True)
     description = models.TextField(null=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "platform"

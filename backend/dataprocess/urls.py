@@ -15,4 +15,7 @@ urlpatterns = [
     url(r'^artists$', views.Artist_all),
     url(r'^artistprofiles$', views.ArtistProfileView.as_view(),name='artist_profile'),
     url(r'^collecttargets$', views.CollectTarget_all),
+    path('platform/platformread/', views.platform_read, name='platform_read'),
+    path('platform/platformcreate', views.platform_create, name='platform_create'),
+    path('platform/platformupdate', views.platform_update, name='platform_update'),
 ]

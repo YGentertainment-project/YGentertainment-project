@@ -19,6 +19,9 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
 from rest_framework.generics import ListAPIView
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
 
 @api_view(['GET', 'POST'])
 def Platform_all(request):
@@ -170,3 +173,54 @@ def CollectTarget_all(request):
             CollectTarget_Serializer.save()
             return JsonResponse(CollectTarget_Serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(CollectTarget_Serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#platform read
+@csrf_exempt
+@require_http_methods(['GET'])  # only get
+def platform_read(request):
+    try:
+        platform_objects = Platform.objects.all()
+        if platform_objects.exists():
+            platform_objects_values = platform_objects.values()
+            platform_datas = []
+            for platform_value in platform_objects_values:
+                platform_datas.append(platform_value)
+            return JsonResponse(data={'success': True, 'data': platform_datas})
+        else:
+            return JsonResponse(data={'success': True, 'data': []})
+    except:
+        return JsonResponse(status=400, data={'success': False})
+
+#platform create
+@csrf_exempt
+@require_http_methods(['POST'])  # only post
+def platform_create(request):
+    try:
+        platform_object = JSONParser().parse(request)
+        platform_serializer = PlatformSerializer(data=platform_object)
+        if platform_serializer.is_valid():
+            platform_serializer.save()
+            return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
+        return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
+    except:
+        return JsonResponse(data={'success': False}, status=400)
+
+#platform update
+@csrf_exempt
+@require_http_methods(['PUT'])  # only put
+def platform_update(request):
+    try:
+        platform_list = JSONParser().parse(request)
+        for platform_object in platform_list:
+            print(platform_object)
+            platform_data = Platform.objects.get(pk=platform_object["id"])
+            print(platform_data)
+            platform_serializer = PlatformSerializer(platform_data, data=platform_object)
+            if platform_serializer.is_valid():
+                platform_serializer.save()
+            else:
+                return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
+        return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+    except:
+        return JsonResponse(data={'success': False}, status=400)
+
