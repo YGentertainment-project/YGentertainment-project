@@ -171,12 +171,12 @@ class WeverseDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
+        options.add_argument('--headless')
         options.add_argument('window-size=1920x1080')
         options.add_argument('log-level=3')
         options.add_argument('disable-gpu')
-
-        user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
+        #user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
+        user_agent = "Chrome/96.0.4664"
         options.add_argument('user-agent={}'.format(user_agent))
         options.add_argument('start-maximized')
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -185,6 +185,7 @@ class WeverseDownloaderMiddleware:
 
     def login_process(self):
         self.driver.get('https://www.weverse.io/')
+        self.driver.implicitly_wait(time_to_wait=5)
         self.driver.find_element(By.XPATH, '//*[@id="root"]/div/header/div/div[2]/div/button[2]').click()
         self.driver.switch_to.window(self.driver.window_handles[1])
         ID_BOX = self.driver.find_element(By.XPATH, '//*[@id="root"]/div/div/form/div[1]/input')
@@ -193,19 +194,20 @@ class WeverseDownloaderMiddleware:
         PW_BOX.send_keys('!eogksalsrnr123')
         self.driver.find_element(By.XPATH, '//*[@id="root"]/div/div/form/div[3]/button').click()
         self.driver.switch_to.window(self.driver.window_handles[0])
-        self.driver.implicitly_wait(time_to_wait=5)
-
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/header/div/div[2]/a/img'))
+        )
     def spider_closed(self, spider):
         self.driver.close()
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '#root > div > section > aside > div > a > div > p'))
+                   (By.CSS_SELECTOR, '#root > div > section > aside > div > a > div > p'))
         )
-        WebDriverWait(self.driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section/aside/div/div[1]'))
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/section/aside/div/div[1]')) 
         )
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)

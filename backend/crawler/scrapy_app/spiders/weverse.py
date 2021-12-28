@@ -11,7 +11,6 @@ class WeverseSpider(scrapy.Spider):
             'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
         }
     }
-
     def start_requests(self):
         artist_url = {
         "(여자)아이들": "",
@@ -92,13 +91,14 @@ class WeverseSpider(scrapy.Spider):
                 continue
 
     def parse(self, response):
-        # artist = response.css('#root > div > section > aside > div > a > div > p::text').extract()[0]
         artist = response.meta['artist']
-        sub = response.xpath('//*[@id="root"]/div/section/aside/div/div[1]/text()').extract()
+        sub = response.xpath('/html/body/div[1]/div/section/aside/div/div[1]/text()').extract()
+        # WINNER의 경우, 페이지는 있으나 구독자 수가 공개되어 있지 않으므로 0으로 처리했습니다.
         if not sub:
-            sub = ""
+            sub = 0
         else:
-            sub = sub[0]
+            sub = int(sub[0][:-6].replace(',', ''))
+        
         item = WeverseItem()
         item['artist'] = artist
         item['weverses'] = sub
