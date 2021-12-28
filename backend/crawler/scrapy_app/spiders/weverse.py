@@ -9,7 +9,7 @@ class WeverseSpider(scrapy.Spider):
         },
         'ITEM_PIPELINES':{
             'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
-        }
+        },
     }
     def start_requests(self):
         artist_url = {
@@ -48,7 +48,7 @@ class WeverseSpider(scrapy.Spider):
         "엔하이픈": "https://www.weverse.io/enhypen/feed",
         "EXO": "",
         "엑소 백현": "",
-        "iKON": " https://www.weverse.io/ikon/feed",
+        "iKON": "https://www.weverse.io/ikon/feed",
         "ITZY": "",
         "NCT": "",
         "NCT 127": "",

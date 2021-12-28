@@ -167,7 +167,7 @@ $(document).ready(function () {
             datatype:'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                let table_html = ''
+                $('#board').html('')
                 const data_list = res.data
                 showCrawledData(data_list) // Data들을 화면상에 표시
             },
