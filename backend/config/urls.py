@@ -8,6 +8,5 @@ from config.views import *
 app_name = 'config'
 
 urlpatterns = [
-    path('', base ,name='base'),
-    path('daily/',daily,name='daily')
+   
 ]
