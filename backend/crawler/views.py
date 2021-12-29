@@ -103,22 +103,21 @@ def daily_read(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
 
-    print(start_date)
-
     if type == "누적":
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-        filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-        print(filter_objects)
-        if filter_objects.exists():
-            filter_objects_values=filter_objects.values()
-            filter_datas=[]
-            print(filter_objects_values)
-            for filter_value in filter_objects_values:
-                filter_datas.append(filter_value)
-            return JsonResponse(data={'success': True, 'data': filter_datas})
-        else:
-            return JsonResponse(status=400, data={'success': True, 'data': []})
+        try:
+            start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            if filter_objects.exists():
+                filter_objects_values=filter_objects.values()
+                filter_datas=[]
+                for filter_value in filter_objects_values:
+                    filter_datas.append(filter_value)
+                return JsonResponse(data={'success': True, 'data': filter_datas})
+            else:
+                return JsonResponse(status=400, data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
     # elif type=="기간별"://기간별에 속하는 모든 data 전송
     #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
     #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
