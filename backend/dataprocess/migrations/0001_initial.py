@@ -16,9 +16,7 @@ class Migration(migrations.Migration):
             name='Artist',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('name', models.TextField(unique=True)),
+                ('name', models.TextField(unique=True, max_length=100)),
                 ('agency', models.TextField(null=True)),
                 ('image', models.ImageField(null=True, upload_to='')),
                 ('debut_date', models.DateField(null=True)),

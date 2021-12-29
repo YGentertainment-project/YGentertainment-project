@@ -103,13 +103,17 @@ def daily_read(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
 
+    print(start_date)
+
     if type == "누적":
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        print(filter_objects)
         if filter_objects.exists():
             filter_objects_values=filter_objects.values()
             filter_datas=[]
+            print(filter_objects_values)
             for filter_value in filter_objects_values:
                 filter_datas.append(filter_value)
             return JsonResponse(data={'success': True, 'data': filter_datas})
@@ -131,8 +135,8 @@ def daily_read(request):
     #         return JsonResponse(status=400, data={'success': True, 'data': []})
     elif type == "기간별":
         # 전날 값을 구함
-        start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
-        end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
+        start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
+        end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
         filter_objects_start=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
         filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,

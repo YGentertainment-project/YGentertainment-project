@@ -101,6 +101,8 @@ $('option[name=youtube]').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
+    console.log("data_list");
+    console.log(platform);
     $('option[name=youtube]').addClass('platform-selected');
     $('option[name=vlive]').removeClass('platform-selected');
     $('option[name=melon]').removeClass('platform-selected');
@@ -128,7 +130,8 @@ $('option[name=youtube]').click(function(){
             showYoutubeCrawledData(data_list) // Data들을 화면상에 표시
         },
         error: e => {
-            alert('error!');
+            console.log(e);
+            alert(e.responseText);
         },
     })
 });
