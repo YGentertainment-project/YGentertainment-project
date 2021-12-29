@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.TextField(unique=True)),
                 ('url', models.TextField(unique=True)),
-                ('description', models.TextField(blank=True, default='', null=True)),
+                ('description', models.TextField(null=True, blank=True, default="")),
                 ('active', models.BooleanField(default=True)),
             ],
             options={
