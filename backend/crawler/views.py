@@ -150,11 +150,4 @@ def daily_read(request):
                 filter_datas_end.append(filter_value)
         return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
-        if DataModels[platform].objects.exists():
-            platform_queryset_values = DataModels[platform].objects.values()
-            platform_datas = []
-            for queryset_value in platform_queryset_values:
-                platform_datas.append(queryset_value)
-            return JsonResponse(data={'success': True, 'data': platform_datas})
-        else:
-            return JsonResponse(status=400, data={'success': False})
+        return JsonResponse(status=400, data={'success': False})

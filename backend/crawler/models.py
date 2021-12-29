@@ -97,7 +97,7 @@ class CrowdtangleInstagram(models.Model):
 
 
 class CrowdtangleFacebook(models.Model):
-    artist = models.CharField(max_length=100,null=True)  # 아티스트 이름
+    artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
     url = models.TextField(null=True)
