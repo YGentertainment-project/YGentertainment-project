@@ -1,10 +1,20 @@
-from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.models import Permission
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 
-from .models import *
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser 
-from rest_framework import status
 
 # Create your views here.
+
+def base(request):
+    values = {
+      'first_depth' : '데이터 리포트',
+    }
+    return render(request, 'config/main.html',values)
+
+def daily(request):
+    values = {
+      'first_depth' : '데이터 리포트',
+      'second_depth': '시간별 리포트'
+    }
+    return render(request, 'config/daily.html',values)
