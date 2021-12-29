@@ -4,5 +4,81 @@
     
     {% block content %}
 
+    <div class="forms">
+        <div class="button_layout">
+            <button id="openform_button">신규</button>
+            <button id="update_button">저장</button>
+        </div>
+        <div class="contents">
+            <div id="result-table">
+                <table id="platform-table">
+                    <thead id="platform-header">
+                        <tr>
+                            <td class="hidden">id</td>
+                            <td>플랫폼 이름</td>
+                            <td>Main URL</td>
+                            <td>비고</td>
+                            <td>사용</td>
+                        </tr>
+                    </thead>
+                    <tbody id="platform-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="create_form" id="create_form">
+        <div class="button_layout">
+            <button id="close_button">취소</button>
+            <button id="create_button">저장</button>
+        </div>
+        
+        <div class="table_layout">
+            <table>
+                <thead>
+                    <tr>
+                        <td>항목</td>
+                        <td>내용</td>
+                    </tr>
+                </thead>
+                <tbody id="platform_attribute">
+                    <tr>
+                        <td>플랫폼명</td>
+                        <td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>Main URL</td>
+                        <td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>비고</td>
+                        <td><input type="text"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <td>조사항목</td>
+                        <td>내용</td>
+                    </tr>
+                </thead>
+                <tbody id="crawling_attribute">
+                    <tr>
+                        <td>항목1</td>
+                        <td><input type="text"></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="attr_button_layout">
+                <button id="attr_add_button"> + </button>
+                <button id="attr_delete_button"> - </button>
+            </div>
+        </div>
+    </div>
+
     {% endblock content %}
 </html>

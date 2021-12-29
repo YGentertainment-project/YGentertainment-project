@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
                 ('name', models.TextField(unique=True)),
                 ('url', models.TextField(unique=True)),
                 ('description', models.TextField(null=True)),
+                ('active', models.BooleanField(default=True)),
             ],
             options={
                 'db_table': 'platform',
@@ -58,7 +59,6 @@ class Migration(migrations.Migration):
             name='CollectTarget',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('target_url', models.TextField(default='')),
                 ('channel', models.TextField(null=True)),
                 ('channel_name', models.TextField(null=True)),
                 ('sibling', models.BooleanField(default=False)),
