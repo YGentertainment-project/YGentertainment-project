@@ -17,6 +17,7 @@ th{
     background-color: lightgray;
     border: 1px solid lightslategray;
     text-align: center;
+    font-family: 'Nanum Gothic', sans-serif;
 }
 
 tr{
@@ -25,6 +26,9 @@ tr{
 
 td{
     border: 1px solid lightslategray;
+    text-align: end;
+    padding-right: 5px;
+    font-family: 'Nanum Gothic', sans-serif;
 }
 
 li{
@@ -185,7 +189,7 @@ li{
 .contents{
     margin-top: 20px ;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
     height: 100%;
     text-align: center;
@@ -194,10 +198,13 @@ li{
 
 .contents-platforms{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     text-align: center;
-    flex-wrap: wrap;
+    width: 15%;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding : 20px;
 }
 
 .platform-name{
@@ -209,6 +216,10 @@ li{
 }
 
 .platform-name:hover{
+    background-color: lightgray;
+}
+
+.platform-selected{
     background-color: lightgray;
 }
 
@@ -298,12 +309,16 @@ li{
 #result-table{
     justify-content: center;
     text-align: center;
-    height: 550px;
+    height: 585px;
     overflow-y: scroll;
+    width: 85%;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding: 20px;
+    margin-left: 10px;
 }
 
 #table{
-   width: 50%;
    margin: auto;
 }
 

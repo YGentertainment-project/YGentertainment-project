@@ -1,0 +1,135 @@
+/* platform */
+.hidden{
+    display: none;
+}
+
+input[type='checkbox']{
+    width: 15px !important;
+    height: 15px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    outline: 1px solid black;
+    box-shadow: none;
+    font-size: 15px;
+    text-align: center;
+    background: white;
+}
+   
+input[type='checkbox']:checked:after {
+    content: '✔';
+    height: 15px !important;
+    color: black;
+}
+
+
+#platform-table{
+    width: 90%;
+}
+
+#platform-table td{
+    border: 2px solid grey !important;
+    padding: 5px 10px 5px 10px;
+}
+
+#platform-header{
+    color: white;
+    background-color: black !important;
+    text-align: center;
+}
+
+.button_layout{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.button_layout > button{
+    width: 100px;
+    border: 1px solid black !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.button_layout > button:hover{
+    top: -2px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px grey;
+}
+
+/* popup form */
+.create_form{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: none;
+    position: absolute;
+    top: 150px;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    background-color: white;
+    border: 3px solid LightSlateGrey;
+    z-index: 10;
+}
+
+.table_layout{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.table_layout table{
+    margin-top: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 50%;
+    text-align: center;
+}
+
+.table_layout td{
+    border: 1px solid grey !important;
+    padding: 2px 5px 2px 5px;
+}
+
+.table_layout input{
+    width: 100%;
+}
+
+.table_layout table>tbody td:nth-child(1){
+    background-color: lightgrey;
+}
+
+.table_layout table>thead{
+    color: black;
+    background-color: LightSteelBlue !important;
+}
+
+.attr_button_layout{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+#attr_add_button, #attr_delete_button{
+    text-align: center;
+    border: 1px solid LightSlateGrey;
+    border-radius: 50px;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    align-items: flex-end;
+    justify-self: flex-end;
+}

@@ -26,6 +26,11 @@ headerList = {
     "twitter": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
     "twitter2": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
     "weverse": ['artist', 'weverses', 'Recorded Date', 'URL'],
+    "facebook": ['artist', 'followers', 'Recorded Date', 'URL'],
+    "instagram": ['artist', 'followers', 'Recorded Date', 'URL'],
+    "vlive": ['artist', 'members', 'videos', 'likes', 'plays', 'Recorded Date', 'URL'],
+    // "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
+    // "spotify": ['artist', 'mon']
 }
 
 
@@ -123,7 +128,7 @@ $(document).ready(function () {
         // 해당 row에 대한 column 데이터들 넣기
         for(key in data){
             let dataCol;
-            if(key === 'platform'){
+            if(key === 'id'){
                 continue;
             }
             if (key === 'url') {
@@ -167,7 +172,7 @@ $(document).ready(function () {
             datatype:'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                let table_html = ''
+                $('#board').html('')
                 const data_list = res.data
                 showCrawledData(data_list) // Data들을 화면상에 표시
             },

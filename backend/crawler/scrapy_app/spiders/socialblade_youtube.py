@@ -14,7 +14,7 @@ class YoutubeSpider(scrapy.Spider):
             'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
         },
         'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.SocialbladeYoutubePipeline': 100,
+            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
         },
     }
 
