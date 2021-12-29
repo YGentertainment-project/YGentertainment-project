@@ -79,16 +79,6 @@ def show_data(request):
     else:
         return JsonResponse(status=400, data={'success': False})
 
-
-<< << << < HEAD
-# daily read API
-@csrf_exempt
-@require_http_methods(['GET'])  # only get and post
-def daily_read(request):
-
-
-== == == =
-
 # daily read API
 # main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
 
@@ -108,9 +98,6 @@ def daily_read(request):
         "melon": Melon,
         "spotify": Spotify,
     }
-
-
->>>>>> > crawler
     platform = request.GET.get('platform', None)
     type = request.GET.get('type', None)
     start_date = request.GET.get('start_date', None)
@@ -118,11 +105,7 @@ def daily_read(request):
 
     if type == "누적":
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
-<< << << < HEAD
-        filter_objects = Socialblade.objects.filter(platform=platform, recorded_date__year=start_date_dateobject.year,
-== == == =
-        filter_objects=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
->>>>>> > crawler
+        filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
         if filter_objects.exists():
             filter_objects_values=filter_objects.values()
@@ -132,7 +115,6 @@ def daily_read(request):
             return JsonResponse(data={'success': True, 'data': filter_datas})
         else:
             return JsonResponse(status=400, data={'success': True, 'data': []})
-<< << << < HEAD
     # elif type=="기간별"://기간별에 속하는 모든 data 전송
     #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
     #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
@@ -147,21 +129,13 @@ def daily_read(request):
     #         return JsonResponse(data={'success': True, 'data': filter_datas})
     #     else:
     #         return JsonResponse(status=400, data={'success': True, 'data': []})
-== == == =
->>>>>> > crawler
     elif type == "기간별":
         # 전날 값을 구함
         start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
         end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
-<< << << < HEAD
-        filter_objects_start=Socialblade.objects.filter(platform=platform, recorded_date__year=start_date_dateobject.year,
-             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-        filter_objects_end=Socialblade.objects.filter(platform=platform, recorded_date__year=end_date_dateobject.year,
-== == == =
         filter_objects_start=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
         filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
->>>>>> > crawler
              recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
         filter_datas_start=[]
         filter_datas_end=[]
@@ -174,12 +148,6 @@ def daily_read(request):
             filter_datas_end=[]
             for filter_value in filter_objects_end_values:
                 filter_datas_end.append(filter_value)
-<< << << < HEAD
         return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
         return JsonResponse(status=400, data={'success': False})
-== == == =
-        return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
-    else:
-        return JsonResponse(status=400, data={'success': False})
->> >>>> > crawler
