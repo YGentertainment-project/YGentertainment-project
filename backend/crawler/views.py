@@ -5,38 +5,36 @@ from django.core.exceptions import ValidationError
 from django.core import serializers
 from django.views.decorators.http import require_POST, require_http_methods
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from scrapyd_api import ScrapydAPI
-from scrapy.crawler import CrawlerProcess
-from scrapy.utils.project import get_project_settings
-from crawler.models import Socialblade
-import json
-import datetime
 
-# process = CrawlerProcess(get_project_settings())
+from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
+    Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
+import json
+import os
+import datetime
 
 # connect scrapyd service
 scrapyd = ScrapydAPI('http://localhost:6800')
+
+
+def start_crawl(platform, id):
+    os.system('python manage.py {} {}'.format(platform, id))
+
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])  # only get and post
 def crawl(request):
     # Post requests are for new crawling tasks
     if request.method == 'POST':
-        # unique_id = str(uuid4())  # create a unique ID.
+        unique_id = str(uuid4())  # create a unique ID.
         body = json.loads(request.body.decode('utf-8'))  # body값 추출
         platform = body.get("platform")
-        settings = {
-            # 'unique_id': unique_id,  # unique ID for each record for DB
-            'platform': platform,
-        }
-        # POST 요청에서 보내는 platform 인자 값에 따라 동적으로 spider를 실행
-        task = scrapyd.schedule('default', platform, settings=settings)
-        # process.crawl(platform)
-        # process.start()
-        # return JsonResponse({'status': 'started'})
+        task = scrapyd.schedule('default', spider=platform)
+        # start_crawl(platform, unique_id)
         return JsonResponse({'task_id': task, 'status': 'started'})
+        # return JsonResponse({'task_id': unique_id, 'status': 'started'})
 
     # Get requests are for getting result of a specific crawling task
     elif request.method == 'GET':
@@ -60,8 +58,20 @@ def crawl(request):
 def show_data(request):
     platform = request.GET.get('platform', None)
 
-    if Socialblade.objects.filter(platform=platform).exists():
-        platform_queryset_values = Socialblade.objects.filter(platform=platform).values()
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+    }
+    if DataModels[platform].objects.exists():
+        platform_queryset_values = DataModels[platform].objects.values()
         platform_datas = []
         for queryset_value in platform_queryset_values:
             platform_datas.append(queryset_value)
@@ -70,27 +80,59 @@ def show_data(request):
         return JsonResponse(status=400, data={'success': False})
 
 
-#daily read API
+<< << << < HEAD
+# daily read API
 @csrf_exempt
 @require_http_methods(['GET'])  # only get and post
 def daily_read(request):
+
+
+== == == =
+
+# daily read API
+# main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
+
+
+@csrf_exempt
+@require_http_methods(['GET'])  # only get and post
+def daily_read(request):
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+    }
+
+
+>>>>>> > crawler
     platform = request.GET.get('platform', None)
     type = request.GET.get('type', None)
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
 
-    if type=="누적":
+    if type == "누적":
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+<< << << < HEAD
         filter_objects = Socialblade.objects.filter(platform=platform, recorded_date__year=start_date_dateobject.year,
+== == == =
+        filter_objects=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+>>>>>> > crawler
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
         if filter_objects.exists():
-            filter_objects_values = filter_objects.values()
-            filter_datas = []
+            filter_objects_values=filter_objects.values()
+            filter_datas=[]
             for filter_value in filter_objects_values:
                 filter_datas.append(filter_value)
             return JsonResponse(data={'success': True, 'data': filter_datas})
         else:
             return JsonResponse(status=400, data={'success': True, 'data': []})
+<< << << < HEAD
     # elif type=="기간별"://기간별에 속하는 모든 data 전송
     #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
     #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
@@ -105,25 +147,39 @@ def daily_read(request):
     #         return JsonResponse(data={'success': True, 'data': filter_datas})
     #     else:
     #         return JsonResponse(status=400, data={'success': True, 'data': []})
-    elif type=="기간별":
+== == == =
+>>>>>> > crawler
+    elif type == "기간별":
         # 전날 값을 구함
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
-        end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
-        filter_objects_start = Socialblade.objects.filter(platform=platform, recorded_date__year=start_date_dateobject.year,
+        start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
+        end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
+<< << << < HEAD
+        filter_objects_start=Socialblade.objects.filter(platform=platform, recorded_date__year=start_date_dateobject.year,
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-        filter_objects_end = Socialblade.objects.filter(platform=platform, recorded_date__year=end_date_dateobject.year,
+        filter_objects_end=Socialblade.objects.filter(platform=platform, recorded_date__year=end_date_dateobject.year,
+== == == =
+        filter_objects_start=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
+>>>>>> > crawler
              recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
-        filter_datas_start = []
-        filter_datas_end = []
+        filter_datas_start=[]
+        filter_datas_end=[]
         if filter_objects_start.exists():
-            filter_objects_start_values = filter_objects_start.values()
+            filter_objects_start_values=filter_objects_start.values()
             for filter_value in filter_objects_start_values:
                 filter_datas_start.append(filter_value)
         if filter_objects_end.exists():
-            filter_objects_end_values = filter_objects_end.values()
-            filter_datas_end = []
+            filter_objects_end_values=filter_objects_end.values()
+            filter_datas_end=[]
             for filter_value in filter_objects_end_values:
                 filter_datas_end.append(filter_value)
-        return JsonResponse(data={'success': True, 'data': {'start':filter_datas_start, 'end':filter_datas_end}})
+<< << << < HEAD
+        return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
         return JsonResponse(status=400, data={'success': False})
+== == == =
+        return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
+    else:
+        return JsonResponse(status=400, data={'success': False})
+>> >>>> > crawler

@@ -19,6 +19,21 @@ function getTimeString(dateText){
     return timeString
 }
 
+
+headerList = {
+    "youtube": ['artist', 'uploads', 'subscribers', 'views', 'User Created', 'Recorded Date', 'URL'],
+    "tiktok": ['artist', 'uploads', 'followers', 'likes', 'Recorded Date', 'URL'],
+    "twitter": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "twitter2": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "weverse": ['artist', 'weverses', 'Recorded Date', 'URL'],
+    "facebook": ['artist', 'followers', 'Recorded Date', 'URL'],
+    "instagram": ['artist', 'followers', 'Recorded Date', 'URL'],
+    "vlive": ['artist', 'members', 'videos', 'likes', 'plays', 'Recorded Date', 'URL'],
+    // "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
+    // "spotify": ['artist', 'mon']
+}
+
+
 $(document).ready(function () {
     const api_domain = 'http://localhost:8000/crawler/api/'
 
@@ -28,6 +43,16 @@ $(document).ready(function () {
     $('#site-select').change((e) => {
         category = e.target.value
         $('#board').html('')
+        $('#table-header tr').html('')
+        const headerRows = headerList[category].map((header) =>
+            $('<th></th>', {
+                scope: "slope",
+                text: header,
+            })
+        )
+        headerRows.forEach((headerRow) => {
+            $('#table-header tr').append(headerRow)
+        })
     })
 
     const showCrawlSuccess = (data) => {
@@ -89,6 +114,7 @@ $(document).ready(function () {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
                 // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
                 statusInterval = setInterval(() => checkCrawlStatus(task_id), 3000)
+                // console.log('success to receive response')
             },
             error: e => {
                 alert('Failed to send request for scraping')
@@ -102,7 +128,7 @@ $(document).ready(function () {
         // 해당 row에 대한 column 데이터들 넣기
         for(key in data){
             let dataCol;
-            if(key === 'platform'){
+            if(key === 'id'){
                 continue;
             }
             if (key === 'url') {
@@ -146,7 +172,7 @@ $(document).ready(function () {
             datatype:'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                let table_html = ''
+                $('#board').html('')
                 const data_list = res.data
                 showCrawledData(data_list) // Data들을 화면상에 표시
             },
