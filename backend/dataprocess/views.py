@@ -19,6 +19,13 @@ def daily(request):
     }
     return render(request, 'dataprocess/daily.html',values)
 
+def platform(request):
+    values = {
+      'first_depth' : '플랫폼 관리',
+      'second_depth': '플랫폼 관리'
+    }
+    return render(request, 'dataprocess/platform.html',values)
+
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from .serializers import *
