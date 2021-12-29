@@ -8,7 +8,9 @@ from dataprocess import views
 app_name = 'dataprocess'
 
 urlpatterns = [
-    path('base/', base ,name='base'),
+    path('', base ,name='base'),
+    path('daily/',daily,name='daily'),
+    path('platform/',platform,name='platform'),
     url(r'^platforms$', views.Platform_all),
     url(r'^collectdatas$', views.CollectData_all),
     url(r'^collectdatas/(?P<pk>[0-9]+)$', views.CollectData_single),

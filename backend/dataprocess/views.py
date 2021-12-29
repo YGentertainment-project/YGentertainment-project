@@ -7,7 +7,24 @@ from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 # Create your views here.
 
 def base(request):
-    return render(request, 'dataprocess/main.html')
+    values = {
+      'first_depth' : '데이터 리포트',
+    }
+    return render(request, 'dataprocess/main.html',values)
+
+def daily(request):
+    values = {
+      'first_depth' : '데이터 리포트',
+      'second_depth': '시간별 리포트'
+    }
+    return render(request, 'dataprocess/daily.html',values)
+
+def platform(request):
+    values = {
+      'first_depth' : '플랫폼 관리',
+      'second_depth': '플랫폼 관리'
+    }
+    return render(request, 'dataprocess/platform.html',values)
 
 from rest_framework import viewsets
 from rest_framework.views import APIView

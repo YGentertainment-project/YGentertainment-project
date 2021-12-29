@@ -13,38 +13,50 @@ button{
 }
 
 th{
-    width:200px;
+    width: 200px;
     background-color: lightgray;
     border: 1px solid lightslategray;
     text-align: center;
+    font-family: 'Nanum Gothic', sans-serif;
 }
 
 tr{
     border: 1px solid lightslategray;
 }
 
+td{
+    border: 1px solid lightslategray;
+    text-align: end;
+    padding-right: 5px;
+    font-family: 'Nanum Gothic', sans-serif;
+}
+
+li{
+    list-style: none;
+}
+
+/* header */
 .header{
+    position: absolute;
+    left:250px;
+    width: 85%;
     display: flex;
-    height: 5rem;
-    padding: 1em 1em;
-    background-color: black;
-    color: white;
+    height: 2.5rem;
+    padding: 5px 5px;
+    margin: 10px;
+    background-color: lightgray;
+    color: black;
     justify-content: space-between;
 }
 
 .header-element{
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 30%;
+    justify-content: space-evenly;
+    width: 20%;
     margin-right: 1em;
 }
 
-.logo-img{
-    padding-right: 0.5em;
-    width: 80px;
-    height: 80px;
-}
 
 .menu{
     display: flex;
@@ -69,47 +81,88 @@ tr{
 .logout-btn{
     background-color: lightgray;
     color: black;
-    font-size: 1rem;
+    font-size: 0.8rem;
     border: 1px solid black;
     border-radius: 4px;
     cursor: pointer;
-    padding: 0 10px;
+    padding: 10px 10px;
+    line-height: 0.3rem;
+    text-align: center;
 }
 
-
+/* sidebar */
 .sidebar{
     position: fixed;
     left:0;
-    top: 5rem;
+    top: 0;
     bottom:0;
-    background:lightgray;
+    background:whitesmoke;
     width:250px;
     height: 100%;
+}
+
+.logo-img{
+    width: 250px;
+    height: auto;
+    justify-content: center;
+    margin: auto;
+}
+
+.sidebar-btn{
+    position: absolute;
+    left: 250px;
+    top:30%;
+    padding: 15px 5px;
+    background-color: lightgray;
 }
 
 .sidebar-items{
     display: flex;
     flex-direction: column;
     padding-top: 50px;
+    padding-right: 15px;
+    height: 100%;
+    border: 1px solid darkgray;
 }
 
 .sidebar-item{
-    background-color: lightgray;
     color: black;
     text-decoration: none;
     text-align: center;
     justify-content: center;
     font-size: 1.2rem;
-    border: 1px solid black;
     cursor: pointer;
-    padding: 0 10px;
     transition: transform 250ms ease-in;
-    box-shadow: 3px 3px 3px 3px gray;
-    margin: 20px;
+    margin: 10px 20px;
+}
+
+.sidebar-item-in{
+   display: flex;
+   flex-direction: column;
+   flex-wrap: wrap;
+   justify-content: center;
+   text-align: center;
+}
+
+.in-data-report, .in-platforms, .in-artists{
+    display:none;
+}
+
+.sidebar-description{
+    text-align: center;
+    justify-content: center;
+    color: darkgray;
+    font-size: 0.8rem;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .sidebar-item:hover{
-    transform: scaleX(1.1);
+    cursor: pointer;
+    color: black;
+}
+
+.sidebar-description:hover{
     cursor: pointer;
     color: black;
 }
@@ -118,11 +171,14 @@ tr{
     position: absolute;
     width: 70%;
     left : 300px;
-    margin-top: 20px;
+    margin-top: 60px;
     font-size: 1.2rem;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
+}
+
+.select-days{
+    margin-left: 18px;
 }
 
 .select-days-day{
@@ -130,8 +186,48 @@ tr{
     margin-top: 10px;
 }
 
+.contents{
+    margin-top: 20px ;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    justify-content: center;
+}
 
+.contents-platforms{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 15%;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding : 20px;
+}
 
+.platform-name{
+    margin: 10px;
+    flex-basis: 18%;
+    background-color: white;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.platform-name:hover{
+    background-color: lightgray;
+}
+
+.platform-selected{
+    background-color: lightgray;
+}
+
+.background{
+    background-color: lightgray;
+}
+
+/*no use from*/
 .select-other{
     display: flex;
     flex-direction: row;
@@ -143,6 +239,7 @@ tr{
     display: flex;
     flex-direction: column;
 }
+/* to */
 
 .add-form{
     position: absolute;
@@ -175,4 +272,59 @@ tr{
     position: absolute;
     right: 520px;
     top: 2px;
+}
+
+.select-target{
+    position: absolute;
+    width: 25%;
+    height: 40px;
+    line-height: 40px;
+    left : 300px;
+    margin-top: 20px;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.artist-name{
+    padding-right: 10px;
+    text-align: center;
+    width: 30%;
+    background-color: black;
+    color: white;
+}
+
+.artist-name-h4{
+    vertical-align: middle;
+    line-height: 40px;
+}
+
+.artist-name-select{
+    line-height: 40px;
+    padding-left: 10px;
+}
+
+#result-table{
+    justify-content: center;
+    text-align: center;
+    height: 585px;
+    overflow-y: scroll;
+    width: 85%;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    padding: 20px;
+    margin-left: 10px;
+}
+
+#table{
+   margin: auto;
+}
+
+.result-header{
+    color: black;
+    background-color: white;
+    border: 1px solid lightslategray;
+    text-align: center;
 }

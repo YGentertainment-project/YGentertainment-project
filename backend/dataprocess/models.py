@@ -8,7 +8,7 @@ from django.db.utils import DEFAULT_DB_ALIAS
 class Platform(models.Model):
     name = models.TextField(unique=True)
     url = models.TextField(unique=True)
-    description = models.TextField(null=True)
+    description = models.TextField(null=True, blank=True, default="")
     active = models.BooleanField(default=True)
 
     class Meta:
