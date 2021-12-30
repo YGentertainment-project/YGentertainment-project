@@ -1,9 +1,4 @@
 /* platform */
-*{
-    font-family: 'Do Hyeon', sans-serif !important;
-    box-sizing: border-box;
-}
-
 .hidden{
     display: none;
 }
@@ -34,7 +29,6 @@ input[type='checkbox']:checked:after {
 }
 
 #platform-table td{
-    text-align: center;
     border: 2px solid grey !important;
     padding: 5px 10px 5px 10px;
 }

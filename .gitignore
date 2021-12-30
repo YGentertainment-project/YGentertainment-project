@@ -29,10 +29,6 @@ venv
 ### Docker mount ###
 /data
 db/data
-db/data/aria_log.00000001
-db/data/aria_control
-db/data/ib_logfile101
-db/data/ibdata1
 
 ### Django ###
 *.log
@@ -57,4 +53,8 @@ backend/data/public/avatar/*
 !backend/data/public/avatar/default.png
 backend/data/public/upload/*
 backend/data/public/website/*
+<<<<<<< HEAD
 !backend/data/public/website/favicon.ico
+=======
+!backend/data/public/website/favicon.ico
+>>>>>>> frontend2

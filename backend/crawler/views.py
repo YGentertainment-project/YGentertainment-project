@@ -80,6 +80,9 @@ def show_data(request):
         return JsonResponse(status=400, data={'success': False})
 
 # daily read API
+# main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
+
+
 @csrf_exempt
 @require_http_methods(['GET'])  # only get and post
 def daily_read(request):
@@ -100,21 +103,20 @@ def daily_read(request):
     start_date = request.GET.get('start_date', None)
     end_date = request.GET.get('end_date', None)
 
+    
+
     if type == "누적":
-        try:
-            start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-            filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-            if filter_objects.exists():
-                filter_objects_values=filter_objects.values()
-                filter_datas=[]
-                for filter_value in filter_objects_values:
-                    filter_datas.append(filter_value)
-                return JsonResponse(data={'success': True, 'data': filter_datas})
-            else:
-                return JsonResponse(status=400, data={'success': True, 'data': []})
-        except:
-            return JsonResponse(status=400, data={'success': False})
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        if filter_objects.exists():
+            filter_objects_values=filter_objects.values()
+            filter_datas=[]
+            for filter_value in filter_objects_values:
+                filter_datas.append(filter_value)
+            return JsonResponse(data={'success': True, 'data': filter_datas})
+        else:
+            return JsonResponse(status=400, data={'success': True, 'data': []})
     # elif type=="기간별"://기간별에 속하는 모든 data 전송
     #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
     #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
@@ -175,19 +177,63 @@ def daily_read(request):
                         data_json[field_name] = filter_objects_start_values[i][field_name]
                 filter_datas_total.append(data_json)
             return JsonResponse(data={'success': True, 'data': filter_datas_total})
-        else:
-            return JsonResponse(data={'success': True, 'data': filter_datas_total})
-
-        
-        # if filter_objects_start.exists():
-        #     filter_objects_start_values=filter_objects_start.values()
-        #     for filter_value in filter_objects_start_values:
-        #         filter_datas_start.append(filter_value)
-        # if filter_objects_end.exists():
-        #     filter_objects_end_values=filter_objects_end.values()
-        #     filter_datas_end=[]
-        #     for filter_value in filter_objects_end_values:
-        #         filter_datas_end.append(filter_value)
-        # return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
-        return JsonResponse(status=400, data={'success': False})
+        if DataModels[platform].objects.exists():
+            platform_queryset_values = DataModels[platform].objects.values()
+            platform_datas = []
+            for queryset_value in platform_queryset_values:
+                platform_datas.append(queryset_value)
+            return JsonResponse(data={'success': True, 'data': platform_datas})
+        else:
+            return JsonResponse(status=400, data={'success': False})
+
+
+@csrf_exempt
+@require_http_methods(['POST'])  # only get and post
+def daily_update(request):
+    platform = request.POST.get('platform_name', None)
+    artists = request.POST.getlist('artists[]')
+    uploads = request.POST.getlist('uploads[]')
+    subscribers = request.POST.getlist('subscribers[]')
+    views = request.POST.getlist('views[]')
+    members = request.POST.getlist('members[]')
+    videos = request.POST.getlist('videos[]')
+    likes = request.POST.getlist('likes[]')
+    plays = request.POST.getlist('plays[]')
+    followers = request.POST.getlist('followers[]')
+    twits = request.POST.getlist('twits[]')
+    weverses = request.POST.getlist('weverses[]')
+
+
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+    }
+
+    for index,artist in enumerate(artists):
+        obj = DataModels[platform].objects.filter(artist=artist)
+        if platform == 'youtube':
+            obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index])
+        elif platform == 'vlive':
+            obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+        elif platform == 'instagram' or platform=='facebook':
+            obj.update(followers = followers[index])
+        elif platform == 'twitter' or platform=='twitter2':
+            obj.update(followers = followers[index],twits=twits[index])
+        elif platform == 'tiktok':
+            obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+        elif platform == 'weverse':
+            obj.update(weverses= weverses[index])
+    platform_queryset_values = DataModels[platform].objects.values()
+    platform_datas = []
+    for queryset_value in platform_queryset_values:
+        platform_datas.append(queryset_value)
+    return JsonResponse(data={'success': True, 'data': platform_datas})
