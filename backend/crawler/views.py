@@ -140,17 +140,38 @@ def daily_read(request):
              recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
         filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
              recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
-        filter_datas_start=[]
-        filter_datas_end=[]
-        if filter_objects_start.exists():
+        filter_datas_total=[]
+        if filter_objects_start.exists() and filter_objects_end.exists():
             filter_objects_start_values=filter_objects_start.values()
-            for filter_value in filter_objects_start_values:
-                filter_datas_start.append(filter_value)
-        if filter_objects_end.exists():
             filter_objects_end_values=filter_objects_end.values()
-            filter_datas_end=[]
-            for filter_value in filter_objects_end_values:
-                filter_datas_end.append(filter_value)
-        return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
+            model_fields = DataModels[platform]._meta.fields
+            model_fields_name = []
+            for model_field in model_fields:
+                model_fields_name.append(model_field.name)
+            values_len = len(filter_objects_start_values)
+            for i in range(values_len):
+                # id랑 artist, date 빼고 보내주기
+                data_json = {}
+                for field_name in model_fields_name:
+                    if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+                        data_json[field_name] = filter_objects_end_values[i][field_name] - filter_objects_start_values[i][field_name]
+                    else:
+                        data_json[field_name] = filter_objects_start_values[i][field_name]
+                filter_datas_total.append(data_json)
+            return JsonResponse(data={'success': True, 'data': filter_datas_total})
+        else:
+            return JsonResponse(data={'success': True, 'data': filter_datas_total})
+
+        
+        # if filter_objects_start.exists():
+        #     filter_objects_start_values=filter_objects_start.values()
+        #     for filter_value in filter_objects_start_values:
+        #         filter_datas_start.append(filter_value)
+        # if filter_objects_end.exists():
+        #     filter_objects_end_values=filter_objects_end.values()
+        #     filter_datas_end=[]
+        #     for filter_value in filter_objects_end_values:
+        #         filter_datas_end.append(filter_value)
+        # return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
         return JsonResponse(status=400, data={'success': False})
