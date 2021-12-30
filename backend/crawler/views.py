@@ -142,15 +142,11 @@ def daily_read(request):
         filter_datas_total=[]
         if filter_objects_start.exists() and filter_objects_end.exists():
             filter_objects_start_values=filter_objects_start.values()
-            filter_objects_end_values=filter_objects_end.values()
 
-
-            print("filter_datas")
-            print(filter_objects_start_values)
-            # print(filter_objects_end_values)
             model_fields = DataModels[platform]._meta.fields
             model_fields_name = []
             artist_datas = set()
+            
             for model_field in model_fields:
                 model_fields_name.append(model_field.name)
             values_len = len(filter_objects_start_values)
