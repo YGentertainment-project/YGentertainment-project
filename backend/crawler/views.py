@@ -143,17 +143,36 @@ def daily_read(request):
         if filter_objects_start.exists() and filter_objects_end.exists():
             filter_objects_start_values=filter_objects_start.values()
             filter_objects_end_values=filter_objects_end.values()
+
+
+            print("filter_datas")
+            print(filter_objects_start_values)
+            # print(filter_objects_end_values)
             model_fields = DataModels[platform]._meta.fields
             model_fields_name = []
+            artist_datas = set()
             for model_field in model_fields:
                 model_fields_name.append(model_field.name)
             values_len = len(filter_objects_start_values)
+
             for i in range(values_len):
+                # 이미 넣은 데이터면 pass
+                if filter_objects_start_values[i]["artist"] in artist_datas:
+                    continue
+                artist_datas.add(filter_objects_start_values[i]["artist"])
                 # id랑 artist, date 빼고 보내주기
                 data_json = {}
+                # 현재 보고 있는 거랑 맞는 끝 날짜를 가져오기
+                filter_artist_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
+                    recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day,
+                    artist = filter_objects_start_values[i]["artist"])
+                filter_artist_end = filter_artist_end.values()
+                if not filter_artist_end.exists():
+                    continue
+                filter_artist_end = filter_artist_end[0]
                 for field_name in model_fields_name:
                     if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
-                        data_json[field_name] = filter_objects_end_values[i][field_name] - filter_objects_start_values[i][field_name]
+                        data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
                     else:
                         data_json[field_name] = filter_objects_start_values[i][field_name]
                 filter_datas_total.append(data_json)
