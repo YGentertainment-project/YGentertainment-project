@@ -17,3 +17,4 @@ Twisted==21.7.0
 webdriver-manager==3.5.2
 python-scrapyd-api==2.1.2
 django-cors-headers==3.10.1
+beautifulsoup4==4.10.0

@@ -1,3 +1,6 @@
+# pycharm
+.idea/
+
 # Environments
 .env
 .venv
@@ -14,6 +17,15 @@ backend/yg/__pycache__/
 **/__pycache__/
 
 db/
+secret.key
+venv
+.idea
+
+# scrapy
+/backend/crawler/scrapy_app/logs
+/backend/crawler/dbs/
+
+
 ### Docker mount ###
 /data
 db/data
