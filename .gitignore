@@ -17,6 +17,10 @@ db/
 ### Docker mount ###
 /data
 db/data
+db/data/aria_log.00000001
+db/data/aria_control
+db/data/ib_logfile101
+db/data/ibdata1
 
 ### Django ###
 *.log
