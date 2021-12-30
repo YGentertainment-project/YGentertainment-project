@@ -1,0 +1,56 @@
+# pycharm
+.idea/
+
+# Environments
+.env
+.venv
+env/
+venv/
+myvenv/
+ENV/
+env.bak/
+venv.bak/
+venve/
+
+
+backend/yg/__pycache__/
+**/__pycache__/
+
+db/
+secret.key
+venv
+.idea
+
+# scrapy
+/backend/crawler/scrapy_app/logs
+/backend/crawler/dbs/
+
+
+### Docker mount ###
+/data
+db/data
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+db.db
+media
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+backend/*/migrations/
+backend/data/config/*
+backend/data/log/*
+backend/data/public/avatar/*
+!backend/data/public/avatar/default.png
+backend/data/public/upload/*
+backend/data/public/website/*
+!backend/data/public/website/favicon.ico
