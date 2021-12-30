@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+   {% extends 'main.html' %}
+
+   {% block content %}
+   <form method="get" class="forms">
+    <div class="select-days">
+        <div class="select-days-day">
+            <label>조회 일자</label>
+            <input type="radio" name="view_days" value="누적" /> <label>누적</label>
+            <input type="radio" name="view_days" value="기간별" /> <label>기간별</label>
+        </div>
+        <div class="select-days-date">
+            <input type="date" name="start_date" /> ~ <input type="date" name="end_date" />
+        </div>
+    </div>
+    <div class="contents">
+        <div class="contents-platforms">
+            <label>플랫폼</label>
+            <option class="platform-name" name="youtube" value="youtube">You Tube</option>
+            <option class="platform-name" name="vlive" value="vlive">V Live</option>
+            <option class="platform-name" name="melon" value="melon">Melon</option>
+            <option class="platform-name" name="spotify" value="spotify">Spotify</option>
+            <option class="platform-name" name="instagram" value="instagram">인스타그램</option>
+            <option class="platform-name" name="facebook" value="facebook">페이스북</option>
+            <option class="platform-name" name="twitter" value="twitter">트위터 1</option>
+            <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
+            <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
+            <option class="platform-name" name="weverse" value="weverse">Weverse</option>
+        </div>
+        <hr>
+        <div id="result-table">
+            <label style="margin-bottom: 5px;">리포트</label>
+            <label id="update-data" style="cursor: pointer; float:right;">저장</label>
+            <table id="table">
+                <tbody id="board"></tbody>
+            </table>
+        </div>
+    </div>
+    </form>
+   {% endblock content %}
+
+</html>
+
+

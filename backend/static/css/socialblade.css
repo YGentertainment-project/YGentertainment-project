@@ -1,0 +1,11 @@
+.header{
+    margin-bottom:1.5rem;
+}
+
+#progress{
+    margin-bottom:1.5rem;
+}
+
+.crawler-loading{
+    display: none;
+}

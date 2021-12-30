@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import AbstractBaseUser
 from django.conf import settings
 from django.db import models
@@ -6,7 +5,14 @@ from django.db.models import JSONField
 from django.db.models.fields import NullBooleanField
 from django.db.utils import DEFAULT_DB_ALIAS
 
-from config.models import Platform
+class Platform(models.Model):
+    name = models.TextField(unique=True)
+    url = models.TextField(unique=True)
+    description = models.TextField(null=True, blank=True, default="")
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = "platform"
 
 
 class ArtistProfile(models.Model):
@@ -15,15 +21,18 @@ class ArtistProfile(models.Model):
     height = models.TextField(null=True)
     weight = models.TextField(null=True)
 
+    class Meta:
+        db_table = "artist_profile"
 
-class Artist(AbstractBaseUser):
-    name = models.TextField(unique=True)
+class Artist(models.Model):
+    name = models.TextField(unique=True, max_length=100)
     agency = models.TextField(null=True)
     image = models.ImageField(null=True)
-    profile = models.OneToOneField(ArtistProfile, on_delete=models.CASCADE)
+    profile = models.OneToOneField(ArtistProfile, on_delete=models.CASCADE, null=True)
     debut_date = models.DateField(null=True)
     create_dt = models.DateTimeField(auto_now_add=True)
     update_dt = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         db_table = "artist"
@@ -32,7 +41,6 @@ class Artist(AbstractBaseUser):
 class CollectTarget(models.Model):
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE) # if Artist is deleted, all of his/her data is removed
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
-    target_url = models.TextField(default=platform.url)
     channel = models.TextField(null=True)
     channel_name = models.TextField(null=True)
     sibling = models.BooleanField(default=False)
@@ -48,4 +56,4 @@ class CollectData(models.Model):
     collect_item = models.JSONField(default=dict)
 
     class Meta:
-        db_tabe = "collect_data"
+        db_table = "collect_data"

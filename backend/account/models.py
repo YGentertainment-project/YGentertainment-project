@@ -10,9 +10,9 @@ class AdminType(object):
 
 
 class User(AbstractBaseUser):
-    username = models.TextField(unique=True)
+    username = models.TextField(unique=True, max_length=100)
     yg_email = models.TextField(unique=True)
-    create_time = models.TextField(auto_now_add=True, null=True)
+    create_time = models.DateTimeField(auto_now_add=True, null=True)
     is_disabled = models.BooleanField(default=False)
     has_email_auth = models.BooleanField(default=True)
     email_auth_token = models.TextField(null=True)

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<!--{% load static %}-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<!--    <link rel="stylesheet" href="{% static 'css/socialblade.css' %}">-->
+    <link rel="stylesheet" href="../static/css/socialblade.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Socialblade Crawler</title>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <h1>Socialblade Crawler</h1>
+        <div class="header">
+            <select id="site-select">
+                <option value="youtube">Youtube</option>
+                <option value="twitter">Twitter</option>
+                <option value="twitter2">Twitter2</option>
+                <option value="tiktok">Tiktok</option>
+                <option value="weverse">Weverse</option>
+                <option value="facebook">Facebook</option>
+                <option value="instagram">Instagram</option>
+                <option value="vlive">Vlive</option>
+            </select>
+            <button id="start-crawl" class="btn btn-primary">크롤링 시작</button>
+            <button id="show-data" class="btn btn-info">크롤링 데이터 보기</button>
+        </div>
+        <div id="progress">
+            <div class="spinner-border text-primary crawler-loading" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="crawler-finish">
+                Finish
+            </div>
+        </div>
+        <table class="table">
+            <thead id="table-header" class="thead-dark">
+                <tr>
+                    <th scope="col">artist</th>
+                    <th scope="col">uploads</th>
+                    <th scope="col">subscribers</th>
+                    <th scope="col">views</th>
+                    <th scope="col">User Created</th>
+                    <th scope="col">Recorded Date</th>
+                    <th scope="col">URL</th>
+                </tr>
+            </thead>
+            <tbody id="board"></tbody>
+        </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--    <script src="{% static 'js/socialblade.js' %}"></script>-->
+    <script src="../static/js/socialblade.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<header class="header">
+   {% if first_depth and second_depth %}
+   <div class="header-element">
+        <span class="first-depth">홈</span>
+        <span class="middle-1"><i class="fas fa-chevron-right"></i></span></span>
+        <span class="second-depth">{{ first_depth }}</span>
+        <span class="middle-2"><i class="fas fa-chevron-right"></i></span></span>
+        <span class="third-depth">{{ second_depth }}</span>
+    </div>
+   {% elif first_depth and not second_depth %}
+    <div class="header-element">
+        <span class="first-depth">홈</span>
+        <span class="middle-1"><i class="fas fa-chevron-right"></i></span></span>
+        <span class="second-depth">{{ first_depth }}</span>
+        <span class="middle-2"></span></span>
+        <span class="third-depth"></span>
+    </div>
+   {% else %}
+   <div class="header-element">
+        <span class="first-depth">홈</span>
+        <span class="middle-1"></span>
+        <span class="second-depth"></span>
+        <span class="middle-2"></span>
+        <span class="third-depth"></span>
+    </div>
+   {% endif %}
+   
+    <button class="logout-btn">로그아웃</button>
+</header>
