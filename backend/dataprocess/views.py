@@ -1,8 +1,9 @@
 from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.urls.base import set_script_prefix
 from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
-
+from config.serializers import CollectTargetItemSerializer
 
 # Create your views here.
 
@@ -294,8 +295,8 @@ def platforms_of_artist_read(request):
             for collecttarget_value in collecttarget_objects_values:
                 platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                 platform_datas.append({
-                    'platform_name': platform_object.name,
-                    'platform_url': platform_object.url,
+                    'id': collecttarget_value['id'],
+                    'name': platform_object.name,
                     'target_url':collecttarget_value['target_url']
                 })
             return JsonResponse(data={'success': True, 'data': platform_datas})
@@ -303,6 +304,21 @@ def platforms_of_artist_read(request):
             return JsonResponse(data={'success': True, 'data': []})
     except:
         return JsonResponse(status=400, data={'success': False})
+
+
+#artist-platform update
+@csrf_exempt
+@require_http_methods(['PUT'])  # only put
+def platforms_of_artist_update(request):
+    try:
+        collecttarget_list = JSONParser().parse(request)
+        for collecttarget_object in collecttarget_list:
+            print(collecttarget_object['target_url'])
+            CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
+            print("ss")
+        return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+    except:
+        return JsonResponse(data={'success': False}, status=400)
 
 #artist-platform-collecttargetitem read
 @csrf_exempt
@@ -330,6 +346,23 @@ def collecttargetitems_read(request):
             return JsonResponse(data={'success': True, 'data': []})
     except:
         return JsonResponse(status=400, data={'success': False})
+
+#artist-platform-collecttargetitem update
+@csrf_exempt
+@require_http_methods(['PUT'])  # only put
+def collecttargetitems_update(request):
+    try:
+        collecttargetitem_list = JSONParser().parse(request)
+        for collecttargetitem_object in collecttargetitem_list:
+            collecttargetitem_data = CollectTargetItem.objects.get(pk=collecttargetitem_object["id"])
+            collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
+            if collecttargetitem_serializer.is_valid():
+                collecttargetitem_serializer.save()
+            else:
+                return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+        return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+    except:
+        return JsonResponse(data={'success': False}, status=400)
 
 #artist create
 @csrf_exempt
