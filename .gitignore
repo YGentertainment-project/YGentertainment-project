@@ -53,8 +53,4 @@ backend/data/public/avatar/*
 !backend/data/public/avatar/default.png
 backend/data/public/upload/*
 backend/data/public/website/*
-<<<<<<< HEAD
 !backend/data/public/website/favicon.ico
-=======
-!backend/data/public/website/favicon.ico
->>>>>>> frontend2
