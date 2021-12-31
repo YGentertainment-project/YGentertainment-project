@@ -43,6 +43,12 @@ function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+//uncomma string number
+function uncomma(str) {
+    str = String(str);
+    return str.replace(/[^\d]+/g, '');
+}
+
 //youtube
 //table creation
 const createYoutubeTableHeader = () => {
@@ -78,9 +84,7 @@ const createYoutubeTableRow = (data) => {
                 text:data[key],
             })
         }else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -101,8 +105,6 @@ $('option[name=youtube]').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
-    console.log("data_list");
-    console.log(platform);
     $('option[name=youtube]').addClass('platform-selected');
     $('option[name=vlive]').removeClass('platform-selected');
     $('option[name=melon]').removeClass('platform-selected');
@@ -125,7 +127,9 @@ $('option[name=youtube]').click(function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             let table_html = ''
-            const data_list = res.data
+            let data_list = [];
+            data_list = res.data
+            //console.log(data_list);
             $('tbody').eq(0).empty();
             showYoutubeCrawledData(data_list) // Data들을 화면상에 표시
         },
@@ -175,9 +179,7 @@ const createVliveTableRow = (data) => {
                 text:data[key],
             })
         }else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -259,9 +261,7 @@ const createWeverseTableRow = (data) => {
                 text:data[key],
             })
         }else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -348,9 +348,7 @@ const createTwitter1TableRow = (data) => {
             })
         }
         else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -470,9 +468,7 @@ const createCrowdtangleTableRow = (data) => {
             })
         }
         else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol =  $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -600,9 +596,7 @@ const createTiktokTableRow = (data) => {
             })
         }
         else{
-            dataCol = $('<td></td>', {
-                text:numToString(data[key]),
-            })
+            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
         }
         tableRow.append(dataCol)
     }
@@ -654,3 +648,234 @@ $('option[name=tiktok]').click(function(){
         },
     })
 });
+
+//update crawled data
+$('#update-data').click(function(){
+    var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    var th = $('#board').find('th');
+    var trs_value = $('input[type=text]');    
+
+    //youtube
+    if(platform_name === 'youtube'){
+        var artists = [];
+        var uploads = [];
+        var subscribers = [];
+        var views = [];
+        for(var i = 4; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=3){
+            uploads.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=3){
+            subscribers.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 2 ; i < trs_value.length ; i+=3){
+            views.push(uncomma(trs_value[i].value))
+        }
+
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'uploads[]' : uploads, 
+            'subscribers[]': subscribers, 
+            'views[]': views, 
+            },
+            url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showYoutubeCrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+    //vlive
+    if(platform_name === 'vlive'){
+        var artists = [];
+        var members = [];
+        var videos = [];
+        var likes = [];
+        var plays = [];
+        for(var i = 5; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=4){
+            members.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=4){
+            videos.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 2 ; i < trs_value.length ; i+=4){
+            likes.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 3 ; i < trs_value.length ; i+=4){
+            plays.push(uncomma(trs_value[i].value))
+        }
+
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'members[]' : members, 
+            'videos[]': videos, 
+            'likes[]': likes,
+            'plays[]':plays, 
+            },
+            url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showVliveCrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+    //instagram & facebook
+    if(platform_name === 'instagram' || platform_name==='facebook'){
+        var artists = [];
+        var followers = [];
+        for(var i = 2; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=1){
+            followers.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'followers[]' : followers,  
+            },
+            url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showCrowdtangleCrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+     //tiktok
+     if(platform_name === 'tiktok'){
+        var artists = [];
+        var uploads = [];
+        var followers = [];
+        var likes = [];
+        for(var i = 4; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=3){
+            uploads.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=3){
+            followers.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 2 ; i < trs_value.length ; i+=3){
+            likes.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'uploads[]':uploads,
+            'followers[]' : followers,  
+            'likes[]' : likes,  
+            },
+            url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showTiktokCrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+     //twitter 1, 2
+     if(platform_name === 'twitter' || platform_name==='twitter2'){
+        var artists = [];
+        var followers = [];
+        var twits = [];
+        for(var i = 3; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=2){
+            followers.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=2){
+            twits.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'followers[]' : followers,  
+            'twits[]' : twits,  
+            },
+           url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showTwitter1CrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+
+    //weverse
+    if(platform_name === 'weverse'){
+        var artists = [];
+        var weverses = [];
+        for(var i = 2; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=1){
+            weverses.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'weverses[]' : weverses,  
+            },
+            url: '/crawler/daily/dailyupdate/',
+            success: res => {
+                console.log('success');
+                let table_html = ''
+                const data_list = res.data
+                $('tbody').eq(0).empty();
+                showWeverseCrawledData(data_list) // Data들을 화면상에 표시
+            },
+            error : function (){
+            }
+          });
+    }
+
+})

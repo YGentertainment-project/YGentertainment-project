@@ -31,6 +31,6 @@ class CollectTargetSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-        self.fields['artist'] = ArtistSerializer(read_only=True)
+        self.fields['artist'] = ArtistSerializer(read_only=True, null=True)
         self.fields['platform'] =  PlatformSerializer(read_only=True)
         return super(CollectTargetSerializer, self).to_representation(instance)

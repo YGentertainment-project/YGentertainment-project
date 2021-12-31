@@ -1,9 +1,4 @@
 /* platform */
-*{
-    font-family: 'Do Hyeon', sans-serif !important;
-    box-sizing: border-box;
-}
-
 .hidden{
     display: none;
 }
@@ -30,11 +25,11 @@ input[type='checkbox']:checked:after {
 
 
 #platform-table{
+    text-align: center;
     width: 90%;
 }
 
 #platform-table td{
-    text-align: center;
     border: 2px solid grey !important;
     padding: 5px 10px 5px 10px;
 }
@@ -42,6 +37,16 @@ input[type='checkbox']:checked:after {
 #platform-header{
     color: white;
     background-color: black !important;
+}
+
+#platform-header td{
+    color: white;
+    background-color: black !important;
+    text-align: center;
+    font-weight: bold;
+}
+
+#platform-body td{
     text-align: center;
 }
 
@@ -105,6 +110,7 @@ input[type='checkbox']:checked:after {
 }
 
 .table_layout td{
+    font-weight: bold;
     text-align: center;
     border: 1px solid grey !important;
     padding: 2px 5px 2px 5px;
