@@ -71,14 +71,18 @@ function platform_update_function(){
 
 function platform_create_function(){
     var created_platform_tr = document.getElementById("platform_attribute").getElementsByTagName("tr");
-    console.log(created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value);
-    console.log(created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value);
-    console.log(created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value);
-    console.log(created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value=="");
+    var created_attribute_tr = document.getElementById("crawling_attribute").getElementsByTagName("tr");
+    var collect_items_list = [];
+    for(var i=0;i<created_attribute_tr.length;i++){
+        var collect_item = created_attribute_tr[i].getElementsByTagName("td")[1].firstElementChild.value;
+        if(collect_item!="")
+            collect_items_list.push(collect_item);
+    }
     var data = {
         "name":created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value,
         "url":created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value,
         "description":created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value,
+        "collect_items": collect_items_list
     };
     console.log(JSON.stringify(data));
 

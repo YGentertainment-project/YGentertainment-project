@@ -80,9 +80,6 @@ def show_data(request):
         return JsonResponse(status=400, data={'success': False})
 
 # daily read API
-# main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
-
-
 @csrf_exempt
 @require_http_methods(['GET'])  # only get and post
 def daily_read(request):
@@ -104,7 +101,6 @@ def daily_read(request):
     end_date = request.GET.get('end_date', None)
 
     
-
     if type == "누적":
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
@@ -117,20 +113,6 @@ def daily_read(request):
             return JsonResponse(data={'success': True, 'data': filter_datas})
         else:
             return JsonResponse(status=400, data={'success': True, 'data': []})
-    # elif type=="기간별"://기간별에 속하는 모든 data 전송
-    #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
-    #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
-    #     db_start_date = datetime.datetime.combine(start_date_dateobject, datetime.time.min)
-    #     db_end_date = datetime.datetime.combine(end_date_dateobject, datetime.time.max) #change to 23:59:59
-    #     filter_objects = Socialblade.objects.filter(platform=platform, recorded_date__range=(db_start_date,db_end_date))
-    #     if filter_objects.exists():
-    #         filter_objects_values = filter_objects.values()
-    #         filter_datas = []
-    #         for filter_value in filter_objects_values:
-    #             filter_datas.append(filter_value)
-    #         return JsonResponse(data={'success': True, 'data': filter_datas})
-    #     else:
-    #         return JsonResponse(status=400, data={'success': True, 'data': []})
     elif type == "기간별":
         # 전날 값을 구함
         start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
@@ -185,7 +167,7 @@ def daily_read(request):
 
 
 @csrf_exempt
-@require_http_methods(['POST'])  # only get and post
+@require_http_methods(['POST'])  # only post
 def daily_update(request):
     platform = request.POST.get('platform_name', None)
     artists = request.POST.getlist('artists[]')
