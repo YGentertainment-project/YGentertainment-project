@@ -13,6 +13,7 @@ $(".artists-m").click(function(){
     $(".in-artists").slideToggle();
 });
 
+
 $(function(){
     var duration = 300;
 
