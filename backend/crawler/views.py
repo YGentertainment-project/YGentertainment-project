@@ -1,13 +1,9 @@
 from uuid import uuid4
 from urllib.parse import urlparse
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-from django.core import serializers
-from django.views.decorators.http import require_POST, require_http_methods
-from django.shortcuts import render
+from rest_framework.decorators import api_view
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from scrapyd_api import ScrapydAPI
 
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
@@ -15,42 +11,35 @@ import json
 import os
 import datetime
 
-# connect scrapyd service
-scrapyd = ScrapydAPI('http://localhost:6800')
 
-
-def start_crawl(platform, id):
-    os.system('python manage.py {} {}'.format(platform, id))
-
+# celery
+from .tasks import crawling
+from .celery import app
+from celery.result import AsyncResult
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])  # only get and post
 def crawl(request):
-    # Post requests are for new crawling tasks
+    # 새로운 Task를 생성하는 POST 요청
     if request.method == 'POST':
         unique_id = str(uuid4())  # create a unique ID.
         body = json.loads(request.body.decode('utf-8'))  # body값 추출
         platform = body.get("platform")
-        task = scrapyd.schedule('default', spider=platform)
-        # start_crawl(platform, unique_id)
-        return JsonResponse({'task_id': task, 'status': 'started'})
-        # return JsonResponse({'task_id': unique_id, 'status': 'started'})
 
-    # Get requests are for getting result of a specific crawling task
+        task = crawling.apply_async(args=[platform])
+        return JsonResponse({'task_id': task.id, 'status': 'started'})
+
+    # Task 상태를 체크하는 GET 요청
     elif request.method == 'GET':
         task_id = request.GET.get('task_id', None)
-        # unique_id = request.GET.get('unique_id', None)
-        # if not task_id or not unique_id:
         if not task_id:
             return JsonResponse(status=400, data={'error': 'Missing args'})
-        status = scrapyd.job_status('default', task_id)
-        if status == 'finished':
-            try:
-                return JsonResponse({'status': 'finish'})
-            except Exception as e:
-                return JsonResponse(status=400, data={'error': str(e)})
-        else:
-            return JsonResponse({'status': 'onprogress'})
+        result = AsyncResult(id=task_id, app=app)
+        status = result.state
+        try:
+            return JsonResponse({'status': status})
+        except Exception as e:
+            return JsonResponse(status=400, data={'error': str(e)})
 
 
 @csrf_exempt

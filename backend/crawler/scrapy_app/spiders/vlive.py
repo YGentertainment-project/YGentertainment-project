@@ -6,11 +6,8 @@ from ..items import VliveItem
 
 class VliveSpider(scrapy.Spider):
     name = 'vlive'
-    custom_settings = {
-        'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
-        },
-    }
+    # custom_settings = {
+    # }
 
     def start_requests(self):
         artist_url = {

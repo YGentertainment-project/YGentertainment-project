@@ -7,9 +7,6 @@ class WeverseSpider(scrapy.Spider):
         'DOWNLOADER_MIDDLEWARES':{
             'crawler.scrapy_app.middlewares.WeverseDownloaderMiddleware': 100
         },
-        'ITEM_PIPELINES':{
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
-        },
     }
     def start_requests(self):
         artist_url = {

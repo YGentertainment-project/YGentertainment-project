@@ -20,9 +20,11 @@ db/
 secret.key
 venv
 .idea
+default.db
 
 # scrapy
 /backend/crawler/scrapy_app/logs
+/backend/crawler/scrapy_app/logs/tasks
 /backend/crawler/dbs/
 
 

@@ -2,14 +2,11 @@ import scrapy
 from ..items import CrowdtangleFacebookItem
 
 
-class CrowdtangleFacebook(scrapy.Spider):
+class FacebookSpider(scrapy.Spider):
     name = 'facebook'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
-        },
-        'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
         },
     }
 
