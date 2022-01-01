@@ -43,6 +43,7 @@ VENDOR_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
 ]
 
 LOCAL_APPS = [
@@ -153,10 +154,8 @@ CORS_ORIGIN_WHITELIST = (
 
 # CELERY 관련 설정
 # CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
-CELERY_TIMEZONE = 'Asia/Seoul'
-CELERY_ENABLE_URL = False
-
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['json']
-
-CELERY_TASK_TRACK_STARTED = True
+# CELERY_TIMEZONE = 'Asia/Seoul'
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_ACCEPT_CONTENT = ['json']
+#
+# CELERY_TASK_TRACK_STARTED = True

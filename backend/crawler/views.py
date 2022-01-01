@@ -1,3 +1,6 @@
+import json, datetime, os
+
+# api utilities
 from uuid import uuid4
 from urllib.parse import urlparse
 from rest_framework.decorators import api_view
@@ -5,11 +8,12 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 
+# crawler models
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
-import json
-import os
-import datetime
+
+# django_celery_beat models
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 
 # celery
@@ -17,13 +21,15 @@ from .tasks import crawling
 from .celery import app
 from celery.result import AsyncResult
 
+
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])  # only get and post
 def crawl(request):
     # 새로운 Task를 생성하는 POST 요청
     if request.method == 'POST':
         unique_id = str(uuid4())  # create a unique ID.
-        body = json.loads(request.body.decode('utf-8'))  # body값 추출
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
 
         task = crawling.apply_async(args=[platform])
@@ -68,10 +74,9 @@ def show_data(request):
     else:
         return JsonResponse(status=400, data={'success': False})
 
+
 # daily read API
 # main이랑 merge할 때 conflict나면 main 버리고 이거를 살리기
-
-
 @csrf_exempt
 @require_http_methods(['GET'])  # only get and post
 def daily_read(request):
@@ -95,10 +100,11 @@ def daily_read(request):
     if type == "누적":
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
         filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+                                                             recorded_date__month=start_date_dateobject.month,
+                                                             recorded_date__day=start_date_dateobject.day)
         if filter_objects.exists():
-            filter_objects_values=filter_objects.values()
-            filter_datas=[]
+            filter_objects_values = filter_objects.values()
+            filter_datas = []
             for filter_value in filter_objects_values:
                 filter_datas.append(filter_value)
             return JsonResponse(data={'success': True, 'data': filter_datas})
@@ -120,23 +126,57 @@ def daily_read(request):
     #         return JsonResponse(status=400, data={'success': True, 'data': []})
     elif type == "기간별":
         # 전날 값을 구함
-        start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(1)
-        end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
-        filter_objects_start=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-             recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-        filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
-             recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
-        filter_datas_start=[]
-        filter_datas_end=[]
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(
+            1)
+        end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
+        filter_objects_start = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+                                                                   recorded_date__month=start_date_dateobject.month,
+                                                                   recorded_date__day=start_date_dateobject.day)
+        filter_objects_end = DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
+                                                                 recorded_date__month=end_date_dateobject.month,
+                                                                 recorded_date__day=end_date_dateobject.day)
+        filter_datas_start = []
+        filter_datas_end = []
         if filter_objects_start.exists():
-            filter_objects_start_values=filter_objects_start.values()
+            filter_objects_start_values = filter_objects_start.values()
             for filter_value in filter_objects_start_values:
                 filter_datas_start.append(filter_value)
         if filter_objects_end.exists():
-            filter_objects_end_values=filter_objects_end.values()
-            filter_datas_end=[]
+            filter_objects_end_values = filter_objects_end.values()
+            filter_datas_end = []
             for filter_value in filter_objects_end_values:
                 filter_datas_end.append(filter_value)
         return JsonResponse(data={'success': True, 'data': {'start': filter_datas_start, 'end': filter_datas_end}})
     else:
         return JsonResponse(status=400, data={'success': False})
+
+
+# task 생성 API
+# 해당하는 플랫폼의 스파이더로 interval(분)마다 크롤링을 진행하는 Task 생성
+@csrf_exempt
+@require_http_methods(['POST', 'GET'])
+def create_task(request):
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')  # body값 추출
+        body = json.loads(body_unicode)
+        platform = body.get("platform")
+        interval = body.get("interval") # TODO 숫자로 바뀌는지 확인
+        try:
+            schedule, created = IntervalSchedule.objects.get_or_create(every=interval,
+                                                                       period=IntervalSchedule.MINUTES, )
+            # 존재하는 task는 상태 및 interval만 업데이트
+            if PeriodicTask.objects.filter(name='{}_task'.format(platform)).exists():
+                task = PeriodicTask.objects.get(name='{}_task'.format(platform))
+                task.enabled=True
+                task.interval=schedule
+                task.save()
+            else:
+                PeriodicTask.objects.create(
+                    interval=schedule,
+                    name='{}_task'.format(platform),
+                    task='crawling',
+                    args=[platform,],
+                )
+            return JsonResponse(data={'success': True})
+        except Exception as e:
+            return JsonResponse(status=400,  data={'error': str(e)})
