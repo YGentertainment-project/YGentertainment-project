@@ -6,7 +6,7 @@ class InstagramSpider(scrapy.Spider):
     name = 'instagram'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
+            'crawler.scrapy_app.middlewares.LoginDownloaderMiddleware': 100
         },
     }
 

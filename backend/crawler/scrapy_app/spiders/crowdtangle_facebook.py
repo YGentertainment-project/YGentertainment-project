@@ -6,12 +6,11 @@ class FacebookSpider(scrapy.Spider):
     name = 'facebook'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
+            'crawler.scrapy_app.middlewares.LoginDownloaderMiddleware': 100
         },
     }
 
     def start_requests(self):
-
         artist_url = {
             "(여자)아이들": "https://apps.crowdtangle.com/ygentertainmentfacebook/reporting/intelligence?accountType=facebook_page&accounts=3308154&brandedContentType=none&comparisonType=none&followersBreakdownType=followerCount&followersShowByType=total&graphType=subscriber_count&interval=day&platform=facebook&reportTimeframe=3months",
             "강다니엘": "",
@@ -81,7 +80,6 @@ class FacebookSpider(scrapy.Spider):
             "HYBE LABELS": "",
             "SM ENTERTAINMENT": "",
             "JYP ENTERTAINMENT": "",
-
         }
 
         for artist, url in artist_url.items():
