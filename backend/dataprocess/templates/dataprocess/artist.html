@@ -7,6 +7,10 @@
    <div class="forms">
     <div class="contents">
         <div id="first-table">
+           <div class="button_layout">
+            <a href="{% url 'dataprocess:artist_add' %}">추가</a> 
+            <button id="save-artists">저장</button>
+           </div>
             <table id="artist-table">
                 <thead id="artist-header">
                     <tr>
@@ -21,10 +25,30 @@
                         <td>사용</td>
                     </tr>
                 </thead>
-                <tbody id="artist-body"></tbody>
+                <tbody id="artist-body">
+                    {% if artists %}
+                    {% for artist in artists %}
+                    <tr>
+                        <td class="hidden"><input type="text" value={{artist.id}} style="width:100%"></input></td>
+                        <td><input type="button" name="artist-name" value={{artist.name}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.level}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.gender}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.member_num}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.member_nationality}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.agency}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.debut_date|date:"Y-m-d"}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.active}} style="width:100%"></input></td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    {% endif %}
+                </tbody>
             </table>
         </div>
         <div id="second-table">
+            <div class="button_layout">
+                <button id="save-artists-platform">저장</button>
+            </div>
             <table id="artist-table">
                 <thead id="artist-header">
                     <tr>
@@ -34,7 +58,7 @@
                         <td>URL 2</td>
                     </tr>
                 </thead>
-                <tbody id="artist-body"></tbody>
+                <tbody id="artist-body-platform"></tbody>
             </table>
         </div>
         <div id="second-table">
@@ -48,7 +72,7 @@
                         <td>스케쥴</td>
                     </tr>
                 </thead>
-                <tbody id="artist-body"></tbody>
+                <tbody id="artist-body-list"></tbody>
             </table>
         </div>
     </div>

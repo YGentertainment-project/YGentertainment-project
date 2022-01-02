@@ -28,11 +28,22 @@ def platform(request):
     return render(request, 'dataprocess/platform.html',values)
 
 def artist(request):
+    artists = Artist.objects.all()
     values = {
       'first_depth' : '아티스트 관리',
-      'second_depth': '데이터 URL 관리'
+      'second_depth': '데이터 URL 관리',
+      'artists':artists,
     }
     return render(request, 'dataprocess/artist.html',values)
+
+def artist_add(request):
+    platforms = Platform.objects.all()
+    values = {
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'platforms' : platforms
+    }
+    return render(request, 'dataprocess/artist_add.html',values)
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -384,11 +395,8 @@ def artist_create(request):
             # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
             platform_objects = Platform.objects.all()
             platform_objects_values = platform_objects.values()
-            for platform_objects_value in platform_objects_values:
-                if artist_object['target_urls'].get(platform_objects_value['name']):
-                    platform_target_url = artist_object['target_urls'][platform_objects_value['name']]
-                else:
-                    platform_target_url = ""
+            for index,platform_objects_value in enumerate(platform_objects_values):
+                platform_target_url = artist_object['urls'][index]
                 collecttarget = CollectTarget(
                     platform_id = platform_objects_value['id'],
                     artist_id = artist_serializer.data['id'],
@@ -396,7 +404,7 @@ def artist_create(request):
                 )
                 collecttarget.save()
             return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
-        return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
+        return JsonResponse(data={'success': False,'data': artist_serializer.errors }, status=400)
     except:
         return JsonResponse(data={'success': False}, status=400)
 
