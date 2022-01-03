@@ -114,7 +114,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = False  # 데이터베이스 저장 시에도 현재시간(Asia/Seoul)대로 저장되도록 설정
+USE_TZ = True  # 데이터베이스 저장 시에도 현재시간(Asia/Seoul)대로 저장되도록 설정
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

@@ -22,7 +22,7 @@ app.conf.update(
 )
 
 app.conf.beat_schedule = {
-    # 'crawl-vlive-every-5minutes' : {
+    # 'crawl-vlive-every-3minutes' : {
     #     'task': 'crawling',
     #     'schedule': crontab(minute='*/3'),
     #     'args': ['vlive'],

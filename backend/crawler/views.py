@@ -13,7 +13,7 @@ from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwi
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
 
 # django_celery_beat models
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
 
 # celery
@@ -155,28 +155,52 @@ def daily_read(request):
 # 해당하는 플랫폼의 스파이더로 interval(분)마다 크롤링을 진행하는 Task 생성
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])
-def create_task(request):
+def schedules(request):
+    # 스케줄 생성 요청
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')  # body값 추출
         body = json.loads(body_unicode)
         platform = body.get("platform")
-        interval = body.get("interval") # TODO 숫자로 바뀌는지 확인
+        minutes = body.get("minutes")
         try:
-            schedule, created = IntervalSchedule.objects.get_or_create(every=interval,
-                                                                       period=IntervalSchedule.MINUTES, )
+            schedule, created = CrontabSchedule.objects.get_or_create(
+                minute='{}'.format(minutes),
+                timezone='Asia/Seoul',
+            )
             # 존재하는 task는 상태 및 interval만 업데이트
             if PeriodicTask.objects.filter(name='{}_task'.format(platform)).exists():
                 task = PeriodicTask.objects.get(name='{}_task'.format(platform))
                 task.enabled=True
-                task.interval=schedule
+                task.crontab=schedule
                 task.save()
+                print('Save is done')
             else:
                 PeriodicTask.objects.create(
-                    interval=schedule,
+                    crontab=schedule,
                     name='{}_task'.format(platform),
                     task='crawling',
-                    args=[platform,],
+                    args=json.dumps((platform,)),
                 )
             return JsonResponse(data={'success': True})
         except Exception as e:
             return JsonResponse(status=400,  data={'error': str(e)})
+
+    # 스케줄 리스트 업
+    else:
+        try:
+            if PeriodicTask.objects.filter(task='crawling').exists():
+                schedule_list = []
+                task_list = PeriodicTask.objects.filter(task='crawling').values()
+                for task in task_list:
+                    crontab_id = task['crontab_id']
+                    crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+                    minute = crontab_info[0]['minute']
+                    schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'], enabled=task['enabled'])
+                    schedule_list.append(schedule_dict)
+
+                return JsonResponse(data={'schedules': schedule_list})
+            else:
+                return JsonResponse(data={'schedules': []})
+        except Exception as e:
+            print(e)
+            return JsonResponse(status=400, data={'error': str(e)})

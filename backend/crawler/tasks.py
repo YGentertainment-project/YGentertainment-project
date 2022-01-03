@@ -49,3 +49,13 @@ def crawling(self, platform):
     except:
         crawling.retry()
         print(f'Error with Crawling task')
+
+@shared_task(name="simplecrawl")
+def simplecrawl():
+    try:
+        proc = Process(target=crawling_start, args=['vlive', '123456'])
+        proc.start()
+        proc.join()
+    except:
+        crawling.retry()
+        print('Error with Crawling task')

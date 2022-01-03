@@ -140,7 +140,7 @@ $(document).ready(function () {
                 dataCol = $('<td></td>');
                 dataCol.append(dataColUrl);
             }
-            else if(key === 'recorded_date'){
+            else if(key === 'recorded_date' || key === 'last_run'){
                 dateString = getDateString(data[key]) + ' ' + getTimeString(data[key])
                 dataCol = $('<td></td>', {
                     text: dateString,
@@ -183,34 +183,47 @@ $(document).ready(function () {
         })
     })
 
-    $('#create-task').click(() => {
-        // $.ajax({
-        //     url: api_domain + 'crawl/',
-        //     type:'POST',
-        //     data: JSON.stringify({"platform": category}),
-        //     datatype:'json',
-        //     contentType: 'application/json; charset=utf-8',
-        //     success: res => {
-        //         task_id = res['task_id'] // api 요청으로부터 task_id 받기
-        //         // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
-        //         checkCrawlStatus(task_id)
-        //         statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
-        //     },
-        //     error: e => {
-        //         alert('Failed to send request for scraping')
-        //     },
-        // })
+    // 스케줄 생성 AJAX 요청
+    $('#create-schedule').click(() => {
+        const scheduleSpider = $('#spiderSelect').val();
+        const scheduleMinutes = Number($('#minutesControlInput').val());
+        $('#minutesControlInput').val('');
+        if(scheduleMinutes >= 0 && scheduleMinutes <= 60){
+            // Schedule 생성 API request 보내기
+            $.ajax({
+                url: api_domain + 'schedules/',
+                type: 'POST',
+                data: JSON.stringify({"platform": scheduleSpider, "minutes": scheduleMinutes}),
+                datatype: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: res => {
+                    $('#close-schedulemodal').click()
+                },
+                error: e => {
+                  alert('Failed to create task')
+                },
+            })
+        }
+        else{
+            alert('0부터 60까지만 입력하세요');
+        }
+    })
+
+    $('#listup-schedule').click(() => {
         $.ajax({
-            url: api_domain + 'createtask/',
-            type: 'POST',
-            data: JSON.stringify({"platform": 'vlive', "interval": 2}),
-            datatype: 'json',
+            url: api_domain + 'schedules/',
+            type:'GET',
+            datatype:'json',
             contentType: 'application/json; charset=utf-8',
-            success: res => {
-                console.log(res.data)
+            success:res=>{
+                $('#schedule-board').html('');
+                const schedules = res.schedules;
+                schedules.forEach(schedule => {
+                    $('#schedule-board').append(createTableRow(schedule));
+                })
             },
-            error: e => {
-              alert('Failed to create task')
+            error: e=> {
+                alert('Failed to listup schedules')
             },
         })
     })
