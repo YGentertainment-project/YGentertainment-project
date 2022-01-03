@@ -151,10 +151,22 @@ def daily_read(request):
         return JsonResponse(status=400, data={'success': False})
 
 
-# task 생성 API
-# 해당하는 플랫폼의 스파이더로 interval(분)마다 크롤링을 진행하는 Task 생성
+def get_schedules():
+    schedule_list = []
+    task_list = PeriodicTask.objects.filter(task='crawling').values()
+    for task in task_list:
+        crontab_id = task['crontab_id']
+        crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+        minute = crontab_info[0]['minute']
+        schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
+                                 enabled=task['enabled'])
+        schedule_list.append(schedule_dict)
+    return schedule_list
+
+
+# Schedule 생성, 조회, 삭제 API
 @csrf_exempt
-@require_http_methods(['POST', 'GET'])
+@require_http_methods(['POST', 'GET', 'DELETE'])
 def schedules(request):
     # 스케줄 생성 요청
     if request.method == 'POST':
@@ -186,18 +198,33 @@ def schedules(request):
             return JsonResponse(status=400,  data={'error': str(e)})
 
     # 스케줄 리스트 업
-    else:
+    elif request.method == 'GET':
         try:
             if PeriodicTask.objects.filter(task='crawling').exists():
-                schedule_list = []
-                task_list = PeriodicTask.objects.filter(task='crawling').values()
-                for task in task_list:
-                    crontab_id = task['crontab_id']
-                    crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
-                    minute = crontab_info[0]['minute']
-                    schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'], enabled=task['enabled'])
-                    schedule_list.append(schedule_dict)
+                schedule_list = get_schedules()
+                return JsonResponse(data={'schedules': schedule_list})
+            else:
+                return JsonResponse(data={'schedules': []})
+        except Exception as e:
+            print(e)
+            return JsonResponse(status=400, data={'error': str(e)})
+    else:
+        print('This is DELETE METHOD')
+        body_unicode = request.body.decode('utf-8')  # body값 추출
+        body = json.loads(body_unicode)
+        scheduleId = body.get("id")
+        schedule = PeriodicTask.objects.filter(id=scheduleId)
+        crontab_id = schedule.values()[0]['crontab_id']
 
+        # 해당 schedule 및 crontab 삭제
+        schedule.delete()
+        crontab = CrontabSchedule.objects.filter(id=crontab_id)
+        crontab.delete()
+
+        # schedule list 불러오기
+        try:
+            if PeriodicTask.objects.filter(task='crawling').exists():
+                schedule_list = get_schedules()
                 return JsonResponse(data={'schedules': schedule_list})
             else:
                 return JsonResponse(data={'schedules': []})

@@ -124,12 +124,13 @@ $(document).ready(function () {
     })
 
     // Row를 만드는 함수
-    const createTableRow = (data) => {
+    const createTableRow = (data, type='data') => {
         const tableRow = $('<tr></tr>')
         // 해당 row에 대한 column 데이터들 넣기
         for(key in data){
             let dataCol;
             if(key === 'id'){
+                tableRow.attr("id", data[key])
                 continue;
             }
             if (key === 'url') {
@@ -152,6 +153,17 @@ $(document).ready(function () {
                 })
             }
             tableRow.append(dataCol)
+        }
+        if(type === 'schedule'){
+            const deleteBtn = $('<button></button>', {
+                type: 'button',
+                class: 'btn btn-danger',
+                text: '삭제'
+            })
+            deleteBtn.click(deleteSchedule)
+            const dataCol = $('<td></td>')
+            dataCol.append(deleteBtn);
+            tableRow.append(dataCol);
         }
         return tableRow
     }
@@ -209,6 +221,32 @@ $(document).ready(function () {
         }
     })
 
+    const deleteSchedule = (e) => {
+        const parentCol = e.target.parentNode;
+        const parentRow = parentCol.parentNode;
+        console.log(parentRow)
+        const scheduleId = parentRow.id;
+        $.ajax({
+            url: api_domain + 'schedules/',
+            type: 'DELETE',
+            data: JSON.stringify({"id": scheduleId}),
+            datatype: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: res => {
+                const schedules = res.schedules;
+                $('#schedule-board').html('')
+                schedules.forEach(schedule => {
+                    $('#schedule-board').append(createTableRow(schedule, 'schedule'));
+                })
+            },
+            error: e => {
+                alert('Failed to delete schedule')
+            },
+        })
+    }
+
+
+    // schedule 들의 리스트들을 불러옴
     $('#listup-schedule').click(() => {
         $.ajax({
             url: api_domain + 'schedules/',
@@ -219,7 +257,7 @@ $(document).ready(function () {
                 $('#schedule-board').html('');
                 const schedules = res.schedules;
                 schedules.forEach(schedule => {
-                    $('#schedule-board').append(createTableRow(schedule));
+                    $('#schedule-board').append(createTableRow(schedule, 'schedule'));
                 })
             },
             error: e=> {

@@ -13,6 +13,7 @@ from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
 from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
 from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
+from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from celery import shared_task
 
 settings = Settings()
@@ -26,6 +27,7 @@ spiders = {
     'twitter': TwitterSpider,
     'twitter2': Twitter2Spider,
     'tiktok': TiktokSpider,
+    'weverse': WeverseSpider,
     'facebook': FacebookSpider,
     'instagram': InstagramSpider,
     'vlive': VliveSpider,
@@ -49,13 +51,3 @@ def crawling(self, platform):
     except:
         crawling.retry()
         print(f'Error with Crawling task')
-
-@shared_task(name="simplecrawl")
-def simplecrawl():
-    try:
-        proc = Process(target=crawling_start, args=['vlive', '123456'])
-        proc.start()
-        proc.join()
-    except:
-        crawling.retry()
-        print('Error with Crawling task')
