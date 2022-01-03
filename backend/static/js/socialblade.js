@@ -57,7 +57,8 @@ $(document).ready(function () {
 
     const showCrawlSuccess = (data) => {
         const {status} = data;
-        if(status === 'onprogress'){
+        // PENDING, FINISHED, or something.
+        if(status === 'PENDING'){
             $('.crawler-loading').show()
             $('.crawler_finish').hide()
         }else{
@@ -113,8 +114,8 @@ $(document).ready(function () {
             success: res => {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
                 // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
-                statusInterval = setInterval(() => checkCrawlStatus(task_id), 3000)
-                // console.log('success to receive response')
+                checkCrawlStatus(task_id)
+                statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
             },
             error: e => {
                 alert('Failed to send request for scraping')
@@ -178,6 +179,38 @@ $(document).ready(function () {
             },
             error: e => {
                 alert('Failed to load data. Any crawled data is not saved.')
+            },
+        })
+    })
+
+    $('#create-task').click(() => {
+        // $.ajax({
+        //     url: api_domain + 'crawl/',
+        //     type:'POST',
+        //     data: JSON.stringify({"platform": category}),
+        //     datatype:'json',
+        //     contentType: 'application/json; charset=utf-8',
+        //     success: res => {
+        //         task_id = res['task_id'] // api 요청으로부터 task_id 받기
+        //         // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
+        //         checkCrawlStatus(task_id)
+        //         statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
+        //     },
+        //     error: e => {
+        //         alert('Failed to send request for scraping')
+        //     },
+        // })
+        $.ajax({
+            url: api_domain + 'createtask/',
+            type: 'POST',
+            data: JSON.stringify({"platform": 'vlive', "interval": 2}),
+            datatype: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: res => {
+                console.log(res.data)
+            },
+            error: e => {
+              alert('Failed to create task')
             },
         })
     })

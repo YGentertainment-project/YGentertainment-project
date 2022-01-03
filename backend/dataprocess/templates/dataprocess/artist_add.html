@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+    {% extends 'main.html' %}
+    
+    {% block content %}
+    <div class="forms">
+        <form method="POST" class="add-form">
+           <div><button class="add-submit">저장</button></div>
+            <table class="artist-add-table" border="1">
+                <tr>
+                    <th class="title-th">항목</th>
+                    <th class="title-th">내용</th>
+                </tr>
+                <tr>
+                    <th>아티스트명</th>
+                    <td><input class="add-target-input"  type="text" placeholder="아티스트명" /></td>
+                </tr>
+                <tr>
+                    <th>구분</th>
+                    <td><input class="add-target-input"  type="text" placeholder="구분" /></td>
+                </tr> <tr>
+                    <th>성별</th>
+                    <td><input class="add-target-input"  type="text" placeholder="성별" /></td>
+                </tr> <tr>
+                    <th>맴버</th>
+                    <td><input class="add-target-input"  type="text" placeholder="맴버" /></td>
+                </tr> <tr>
+                    <th>국적</th>
+                    <td><input class="add-target-input"  type="text" placeholder="국적" /></td>
+                </tr> 
+                <tr>
+                    <th>기획사</th>
+                    <td><input class="add-target-input"  type="text" placeholder="기획사" /></td>
+                </tr>
+                <tr>
+                    <th>데뷔일</th>
+                    <td><input class="add-target-input"  type="text" placeholder="데뷔일" /></td>
+                </tr>
+            </table>
+           <table class="add-table" border="1">
+               <tr>
+                   <th class="title-th">플랫폼</th>
+                   <th class="title-th">데이터 수집 URL</th>
+               </tr>
+              {% if platforms %}
+               {% for platform in platforms %}
+               <tr>
+                    <th>{{platform.name}}</th>
+                    <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
+                </tr>
+               {% endfor %}
+              {% else %}
+              {% endif %}
+                
+           </table>
+
+
+        </form>
+    </div>
+    {% endblock content %}
+</html>

@@ -73,6 +73,12 @@ input[type='checkbox']:checked:after {
     box-shadow: 0px 0px 10px grey;
 }
 
+.button_layout > a:hover{
+    top: -2px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px grey;
+}
+
 /* popup form */
 .create_form{
     padding-top: 20px;

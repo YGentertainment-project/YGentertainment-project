@@ -1,9 +1,17 @@
 from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.urls.base import set_script_prefix
-from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 from config.serializers import CollectTargetItemSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from tablib import Dataset
+import openpyxl
+from .resources import *
+from .models import *
 
 # Create your views here.
 def base(request):
@@ -20,13 +28,103 @@ def daily(request):
     return render(request, 'dataprocess/daily.html',values)
 
 def platform(request):
-    values = {
-      'first_depth' : '플랫폼 관리',
-      'second_depth': '플랫폼 관리'
-    }
-    return render(request, 'dataprocess/platform.html',values)
+    if request.method == 'GET':
+        '''
+        general page
+        '''
+        values = {
+        'first_depth' : '플랫폼 관리',
+        'second_depth': '플랫폼 관리'
+        }
+        return render(request, 'dataprocess/platform.html',values)
+    
+    else:
+        type = request.POST['type']
+        if type == 'import':
+            if request.method == 'POST':
+                platform_resource = PlatformResource()
+                dataset = Dataset()
+                import_file = request.FILES['importData']
+                wb = openpyxl.load_workbook(import_file)
+                sheets = wb.sheetnames
+                worksheet = wb[sheets[0]]
+                excel_data = list()
+                # iterating over the rows and
+                # getting value from each cell in row
+                row_num = 0
+                columns = []
+                for row in worksheet.iter_rows():
+                    if row_num == 0:
+                        for cell in row:
+                            columns.append(str(cell.value))
+                        row_num += 1
+                        continue
+                    row_data = {}
+                    for i, cell in enumerate(row):
+                        row_data[columns[i]] = str(cell.value)
+                    excel_data.append(row_data)
+                # imported_data = dataset.load(import_file.read().decode('ISO-8859-1'), format='xls')
+                # file 확장명 보고 file_format 유추
+                # file_format = request.POST['file-format']
+                # file_format = import_file.name.split(".")
+                # file_format = file_format[-1]
+                # result = platform_resource.import_data(dataset, dry_run=True)
+                # 어차피 excel로만 받아올거라 밑에 주석처리함 -> 나중에 나눌거면 주석해제
+                # if file_format == 'csv':
+                #     result = platform_resource.import_data(dataset, dry_run=True)                                                                 
+                # elif file_format == 'json':
+                #     result = platform_resource.import_data(dataset, dry_run=True) 
+                # elif file_format == 'xlsx':
+                #     result = platform_resource.import_data(dataset, dry_run=True)
+                # if not result.has_errors():
+                #     platform_resource.import_data(dataset, dry_run=False)
+                values = {
+                    'first_depth' : '플랫폼 관리',
+                    'second_depth': '플랫폼 관리',
+                    'excel_data': excel_data
+                }
+                return render(request, 'dataprocess/platform.html',values)
+        elif type == 'export':
+            platform_resource = PlatformResource()
+            dataset = platform_resource.export()
+            response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="platform_data.xlsx"'
+            return response
+            # 어차피 excel(xlsx)로만 저장할거라 밑에 주석처리함 -> 나중에 나눌거면 주석해제
+            # file_format = request.POST['file-format']
+            # if file_format == 'CSV':
+            #     response = HttpResponse(dataset.csv, content_type='text/csv')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.csv"'
+            #     return response        
+            # elif file_format == 'JSON':
+            #     response = HttpResponse(dataset.json, content_type='application/json')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.json"'
+            #     return response
+            # elif file_format == 'XLSX (Excel)':
+            #     response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.xlsx"'
+            #     return response
 
-from rest_framework.views import APIView
+def artist(request):
+    artists = Artist.objects.all()
+    values = {
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'artists':artists,
+    }
+    return render(request, 'dataprocess/artist.html',values)
+
+@csrf_exempt
+def artist_add(request):
+    platforms = Platform.objects.all()
+    values = {
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'platforms' : platforms
+    }
+    return render(request, 'dataprocess/artist_add.html',values)
+
+#from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from django.http.response import JsonResponse
@@ -34,10 +132,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from config.models import CollectTargetItem
-from utils.decorators import login_required
+#from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 
 #======platform=======
+
 class PlatformAPI(APIView):
     # @login_required
     def get(self, request):
@@ -63,7 +162,6 @@ class PlatformAPI(APIView):
         Platform create api
         """
         try:
-            print("ss")
             platform_object = JSONParser().parse(request)
             platform_serializer = PlatformSerializer(data=platform_object)
             if platform_serializer.is_valid():
@@ -98,12 +196,18 @@ class PlatformAPI(APIView):
         try:
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
-                platform_data = Platform.objects.get(pk=platform_object["id"])
-                platform_serializer = PlatformSerializer(platform_data, data=platform_object)
-                if platform_serializer.is_valid():
-                    platform_serializer.save()
+                platform_data = Platform.objects.filter(pk=platform_object["id"]).first()
+                if platform_data is None:
+                    platform = Platform(
+                        name = platform_object["name"],
+                        url = platform_object["url"],
+                        description = platform_object["description"],
+                        active = platform_object["active"])
+                    platform.save()
                 else:
-                    return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
+                    platform_serializer = PlatformSerializer(platform_data, data=platform_object)
+                    if platform_serializer.is_valid():
+                        platform_serializer.save()
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
@@ -141,11 +245,8 @@ class ArtistAPI(APIView):
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
                 platform_objects_values = platform_objects.values()
-                for platform_objects_value in platform_objects_values:
-                    if artist_object['target_urls'].get(platform_objects_value['name']):
-                        platform_target_url = artist_object['target_urls'][platform_objects_value['name']]
-                    else:
-                        platform_target_url = ""
+                for i,platform_objects_value in enumerate(platform_objects_values):
+                    platform_target_url = artist_object['urls'][i]
                     collecttarget = CollectTarget(
                         platform_id = platform_objects_value['id'],
                         artist_id = artist_serializer.data['id'],
@@ -195,6 +296,7 @@ class PlatformOfArtistAPI(APIView):
                 for collecttarget_value in collecttarget_objects_values:
                     platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                     platform_datas.append({
+                        'artist_id':artist_object['id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
                         'target_url':collecttarget_value['target_url']
@@ -231,7 +333,7 @@ class CollectTargetItemAPI(APIView):
             artist = request.GET.get('artist', None)
             platform = request.GET.get('platform', None)
             # 해당 artist,platform 찾기
-            artist_object = Artist.objects.filter(name = artist)
+            artist_object = Artist.objects.filter(id = artist)
             artist_object = artist_object.values()[0]
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]

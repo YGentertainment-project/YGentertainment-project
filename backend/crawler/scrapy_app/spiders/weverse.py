@@ -5,10 +5,7 @@ class WeverseSpider(scrapy.Spider):
     name = 'weverse'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES':{
-            'crawler.scrapy_app.middlewares.WeverseDownloaderMiddleware': 100
-        },
-        'ITEM_PIPELINES':{
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
+            'crawler.scrapy_app.middlewares.LoginDownloaderMiddleware': 100
         },
     }
     def start_requests(self):
