@@ -145,7 +145,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': LOG_PATH,
-            'formatter': 'standard',z``
+            'formatter': 'standard',
         },
         'console': {
             'level': 'DEBUG',
