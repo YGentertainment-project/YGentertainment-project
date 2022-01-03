@@ -191,8 +191,8 @@ class LoginDownloaderMiddleware:
                 )
         else:
             if request.url != CROWDTANGLE_ROBOT:
-                WebDriverWait(self.driver, 10).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'ct-tooltip-container'))
+                WebDriverWait(self.driver, 30).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, 'report-top-level-metrics'))
                 )
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)

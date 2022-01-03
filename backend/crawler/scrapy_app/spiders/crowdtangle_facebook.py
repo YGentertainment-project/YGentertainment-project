@@ -91,11 +91,11 @@ class FacebookSpider(scrapy.Spider):
                 continue
 
     def parse(self, response):
-        # artist = response.xpath('//span[@class="omni-select-value-label"]/text()').extract()[0]
         artist = response.meta['artist']
-        follower_num = response.xpath('//span[@class="ct-tooltip right arrow-middle"]/text()').extract()[0]
+        follower_num = response.xpath(
+            '/html/body/div[3]/div/div/div/div/div[3]/div[2]/div[1]/div/div[3]/div[2]/div/div[2]/div[1]/div/div[2]/div/span[1]/text()').extract()[0]
         item = CrowdtangleFacebookItem()
         item['artist'] = artist
-        item['followers'] = follower_num.replace(',', '')
+        item['followers'] = int(follower_num.replace(',', ''))
         item['url'] = response.url
         yield item
