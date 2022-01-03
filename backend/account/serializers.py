@@ -36,6 +36,13 @@ class UserChangeEmailSerializer(serializers.Serializer):
     new_email = serializers.EmailField(max_length=64)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "major", "admin_type", "problem_permission",
+                  "create_time", "last_login", "is_disabled"]
+
+
 class EditUserSerializer(serializers.Serializer):
     #for super admin and admin
     id = serializers.IntegerField()
