@@ -107,12 +107,18 @@
 }
 
 .add-submit{
-   background-color: lightgray;
-   border: 1px soild black;
-   padding: 0 10px;
-   cursor: pointer;
-   font-size: large;
-   float: left;
+    width: 100px;
+    border: 1px solid black !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.add-submit:hover{
+    top: -2px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px grey;
 }
 
 .select-target{

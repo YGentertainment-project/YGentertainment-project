@@ -313,6 +313,7 @@ def platforms_of_artist_read(request):
             for collecttarget_value in collecttarget_objects_values:
                 platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                 platform_datas.append({
+                    'artist_id':artist_object['id'],
                     'id': collecttarget_value['id'],
                     'name': platform_object.name,
                     'target_url':collecttarget_value['target_url']
@@ -346,7 +347,7 @@ def collecttargetitems_read(request):
         artist = request.GET.get('artist', None)
         platform = request.GET.get('platform', None)
         # 해당 artist,platform 찾기
-        artist_object = Artist.objects.filter(name = artist)
+        artist_object = Artist.objects.filter(id = artist)
         artist_object = artist_object.values()[0]
         platform_object = Platform.objects.filter(name = platform)
         platform_object = platform_object.values()[0]
