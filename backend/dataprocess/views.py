@@ -130,7 +130,6 @@ class PlatformAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
-
 class ArtistAPI(APIView):
     # @login_required
     def get(self, request):

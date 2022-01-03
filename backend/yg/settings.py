@@ -52,6 +52,7 @@ LOCAL_APPS = [
     'crawler',
     'dataprocess',
     'corsheaders',
+    'utils',
 ]
 
 INSTALLED_APPS = VENDOR_APPS + LOCAL_APPS
@@ -131,6 +132,40 @@ STATICFILES_DIRS = [
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
 LOGGING_HANDLERS = ['console']
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        '': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'WARNING',
+            'propagate': True,
+        }
+    },
+}
 
 LOGGING = {
     'version': 1,
