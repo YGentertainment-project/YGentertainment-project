@@ -1,6 +1,6 @@
 function platform_read_function(){
     $.ajax({
-        url: '/dataprocess/platform/platformread/',
+        url: '/dataprocess/api/platform/',
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
@@ -54,7 +54,7 @@ function platform_update_function(){
         });
     }
     $.ajax({
-        url: '/dataprocess/platform/platformupdate',
+        url: '/dataprocess/api/platform/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -87,7 +87,7 @@ function platform_create_function(){
     console.log(JSON.stringify(data));
 
     $.ajax({
-        url: '/dataprocess/platform/platformcreate',
+        url: '/dataprocess/api/platform/',
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),

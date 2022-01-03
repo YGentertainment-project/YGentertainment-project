@@ -2,14 +2,11 @@ import scrapy
 from ..items import CrowdtangleInstagramItem
 
 
-class CrowdtangleInstagram(scrapy.Spider):
+class InstagramSpider(scrapy.Spider):
     name = 'instagram'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.CrowdtangleDownloaderMiddleware': 100
-        },
-        'ITEM_PIPELINES': {
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
+            'crawler.scrapy_app.middlewares.LoginDownloaderMiddleware': 100
         },
     }
 

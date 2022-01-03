@@ -43,6 +43,7 @@ VENDOR_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
 ]
 
 LOCAL_APPS = [
@@ -130,6 +131,41 @@ STATICFILES_DIRS = [
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
 LOGGING_HANDLERS = ['console']
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        '': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'WARNING',
+            'propagate': True,
+        }
+    },
+}
 
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
