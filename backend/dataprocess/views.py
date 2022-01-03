@@ -26,6 +26,25 @@ def platform(request):
     }
     return render(request, 'dataprocess/platform.html',values)
 
+def artist(request):
+    artists = Artist.objects.all()
+    values = {
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'artists':artists,
+    }
+    return render(request, 'dataprocess/artist.html',values)
+def artist_add(request):
+    platforms = Platform.objects.all()
+    values = {
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'platforms' : platforms
+    }
+    return render(request, 'dataprocess/artist_add.html',values)
+
+
+
 from rest_framework.views import APIView
 from .serializers import *
 from .models import *
