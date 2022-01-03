@@ -187,6 +187,7 @@ def platforms_of_artist_update(request):
     except:
         return JsonResponse(data={'success': False}, status=400)
 
+
 #artist-platform-collecttargetitem read
 @csrf_exempt
 @require_http_methods(['GET'])  # only get

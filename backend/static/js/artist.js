@@ -120,12 +120,10 @@ $('input[name=artist-name]').click(function(){
                             <span class="platform-names" style="width:100%; cursor:pointer;">${data[key]}</span>
                         </td>
                         `;
-                    } else if(key==='id'){
-                        continue;
-                    }
+                    } 
                     else{
                         dataCol = document.createElement('td');
-                        if(key === 'artist_id')
+                        if(key === 'artist_id' || key==='id')
                             dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
                         <td>
@@ -154,11 +152,13 @@ $('#save-artists-platform').click(function(){
         var cells = artist_tr[r].getElementsByTagName("td");
 
         datas.push({
-            "id": cells[0].firstElementChild.value,
-            "platform": cells[1].firstElementChild.value,
-            "target_url": cells[2].firstElementChild.value,
+            "id": cells[1].firstElementChild.value,
+            "platform": cells[2].firstElementChild.innerHTML,
+            "target_url": cells[3].firstElementChild.value,
         });
     }
+
+    console.log(datas);
 
     $.ajax({
         url: '/dataprocess/artist/platformupdate',
@@ -174,6 +174,7 @@ $('#save-artists-platform').click(function(){
             alert(e.responseText);
         },
     })
+    
 })
 
 //show collect target of platform
