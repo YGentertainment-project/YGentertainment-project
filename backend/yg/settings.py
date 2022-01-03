@@ -141,12 +141,6 @@ LOGGING = {
         }
     },
     'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': LOG_PATH,
-            'formatter': 'standard',
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
