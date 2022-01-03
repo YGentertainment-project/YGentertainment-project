@@ -36,6 +36,29 @@ class UserChangeEmailSerializer(serializers.Serializer):
     new_email = serializers.EmailField(max_length=64)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "major", "admin_type", "problem_permission",
+                  "create_time", "last_login", "is_disabled"]
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    real_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        self.show_real_name = kwargs.pop("show_real_name", False)
+        super(UserProfileSerializer, self).__init__(*args, **kwargs)
+
+    def get_real_name(self, obj):
+        return obj.real_name if self.show_real_name else None
+
+
 class EditUserSerializer(serializers.Serializer):
     #for super admin and admin
     id = serializers.IntegerField()
