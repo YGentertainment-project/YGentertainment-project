@@ -8,40 +8,8 @@ from drf_yasg.utils import swagger_auto_schema
 from utils.api import APIView, validate_serializer
 from utils.shortcuts import rand_str
 from utils.decorators import login_required
-from models import User, UserProfile
-from serializers import *
-
-
-class UserProfileAPI(APIView):
-    @method_decorator(ensure_csrf_cookie)
-    def get(self, request, **kwargs):
-        """
-        Determine whether to log in, and return user information if logged in
-        """
-        user = request.user
-        if not user.is_authenticated:
-            return self.success()
-        show_real_name = False
-        username = request.GET.get("username")
-        try:
-            if username:
-                user = User.objects.get(username=username, is_disabled=False)
-            else:
-                user = request.user
-                # The api returns your own information, you can return real_name
-                show_real_name = True
-        except User.DoesNotExist:
-            return self.error("User does not exist")
-        return self.success(UserProfileSerializer(user.userprofile, show_real_name=show_real_name).data)
-
-    @login_required
-    def put(self, request):
-        data = request.data
-        user_profile = request.user.userprofile
-        for k, v in data.items():
-            setattr(user_profile, k, v)
-        user_profile.save()
-        return self.success(UserProfileSerializer(user_profile, show_real_name=True).data)
+from .models import User
+from .serializers import *
 
 
 class UserLoginAPI(APIView):
@@ -92,8 +60,6 @@ class UserRegisterAPI(APIView):
         user.has_email_auth = False
         user.email_auth_token = rand_str()
         user.save()
-
-        UserProfile.objects.create(user=user)
 
         render_data = {
             "username": user.username,

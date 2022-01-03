@@ -7,5 +7,4 @@ urlpatterns = [
     path("logout/", UserLogoutAPI.as_view(), name="user_logout_api"),
     path("register/", UserRegisterAPI.as_view(), name="user_register_api"),
     path("change_password/", UserChangePasswordAPI.as_view(), name="user_change_password_api"),
-    path("profile/", UserProfileAPI.as_view(), name="user_profile_api"),
 ]
