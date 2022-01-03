@@ -2,6 +2,8 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from config.serializers import CollectTargetItemSerializer
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -111,6 +113,8 @@ def artist(request):
       'artists':artists,
     }
     return render(request, 'dataprocess/artist.html',values)
+
+@csrf_exempt
 def artist_add(request):
     platforms = Platform.objects.all()
     values = {
@@ -120,9 +124,7 @@ def artist_add(request):
     }
     return render(request, 'dataprocess/artist_add.html',values)
 
-
-
-from rest_framework.views import APIView
+#from rest_framework.views import APIView
 from .serializers import *
 from .models import *
 from django.http.response import JsonResponse
@@ -130,10 +132,11 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from config.models import CollectTargetItem
-from utils.decorators import login_required
+#from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 
 #======platform=======
+
 class PlatformAPI(APIView):
     # @login_required
     def get(self, request):
@@ -242,11 +245,8 @@ class ArtistAPI(APIView):
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
                 platform_objects_values = platform_objects.values()
-                for platform_objects_value in platform_objects_values:
-                    if artist_object['target_urls'].get(platform_objects_value['name']):
-                        platform_target_url = artist_object['target_urls'][platform_objects_value['name']]
-                    else:
-                        platform_target_url = ""
+                for i,platform_objects_value in enumerate(platform_objects_values):
+                    platform_target_url = artist_object['urls'][i]
                     collecttarget = CollectTarget(
                         platform_id = platform_objects_value['id'],
                         artist_id = artist_serializer.data['id'],
@@ -296,6 +296,7 @@ class PlatformOfArtistAPI(APIView):
                 for collecttarget_value in collecttarget_objects_values:
                     platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                     platform_datas.append({
+                        'artist_id':artist_object['id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
                         'target_url':collecttarget_value['target_url']
@@ -332,7 +333,7 @@ class CollectTargetItemAPI(APIView):
             artist = request.GET.get('artist', None)
             platform = request.GET.get('platform', None)
             # 해당 artist,platform 찾기
-            artist_object = Artist.objects.filter(name = artist)
+            artist_object = Artist.objects.filter(id = artist)
             artist_object = artist_object.values()[0]
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]

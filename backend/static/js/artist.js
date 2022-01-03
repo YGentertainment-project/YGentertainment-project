@@ -33,13 +33,14 @@ $('.add-submit').click(function(){
 
     console.log(JSON.stringify(data));
     $.ajax({
-        url: '/dataprocess/artist/artistcreate',
+        url: "/dataprocess/api/artist/",
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
-            location.href = "/dataprocess/artist";
+            console.log('success');
+            location.href = "/dataprocess/artist/";
         },
         error: e => {
             console.log(e);
@@ -72,7 +73,7 @@ $('#save-artists').click(function(){
     }
 
     $.ajax({
-        url: '/dataprocess/artist/artistupdate',
+        url: '/dataprocess/api/artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -94,7 +95,7 @@ $('input[name=artist-name]').click(function(){
     //console.log(artist);
 
     $.ajax({
-        url: '/dataprocess/artist/platformread/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist},
@@ -161,7 +162,7 @@ $('#save-artists-platform').click(function(){
     console.log(datas);
 
     $.ajax({
-        url: '/dataprocess/artist/platformupdate',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -188,14 +189,14 @@ $(document).on('click','.platform-names',function(){
     console.log(platform);
 
     $.ajax({
-        url: '/dataprocess/artist/collectitemread/',
+        url: '/dataprocess/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist, 'platform':platform},
         contentType: 'application/json; charset=utf-8',
         success: res => {
             const data_list = res.data;
-            //console.log(data_list);
+            console.log(data_list);
             $('#artist-body-list').empty();
             const tableRow = $('<tr></tr>')
             let dataHTML = [];
