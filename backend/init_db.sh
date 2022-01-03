@@ -17,6 +17,7 @@ docker run -it -d \
     --restart=always \
     --name yg-mariadb-dev \
     -v /yg/conf.d:/etc/mysql/conf.d \
+    -v /data/db/mysql:/var/lib/mysql \
     mariadb:10.7.1
 
 if [ "$1" = "--migrate" ]; then
