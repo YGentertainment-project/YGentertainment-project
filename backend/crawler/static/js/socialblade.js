@@ -124,12 +124,13 @@ $(document).ready(function () {
     })
 
     // Row를 만드는 함수
-    const createTableRow = (data) => {
+    const createTableRow = (data, type='data') => {
         const tableRow = $('<tr></tr>')
         // 해당 row에 대한 column 데이터들 넣기
         for(key in data){
             let dataCol;
             if(key === 'id'){
+                tableRow.attr("id", data[key])
                 continue;
             }
             if (key === 'url') {
@@ -140,7 +141,7 @@ $(document).ready(function () {
                 dataCol = $('<td></td>');
                 dataCol.append(dataColUrl);
             }
-            else if(key === 'recorded_date'){
+            else if(key === 'recorded_date' || key === 'last_run'){
                 dateString = getDateString(data[key]) + ' ' + getTimeString(data[key])
                 dataCol = $('<td></td>', {
                     text: dateString,
@@ -152,6 +153,17 @@ $(document).ready(function () {
                 })
             }
             tableRow.append(dataCol)
+        }
+        if(type === 'schedule'){
+            const deleteBtn = $('<button></button>', {
+                type: 'button',
+                class: 'btn btn-danger',
+                text: '삭제'
+            })
+            deleteBtn.click(deleteSchedule)
+            const dataCol = $('<td></td>')
+            dataCol.append(deleteBtn);
+            tableRow.append(dataCol);
         }
         return tableRow
     }
@@ -183,34 +195,73 @@ $(document).ready(function () {
         })
     })
 
-    $('#create-task').click(() => {
-        // $.ajax({
-        //     url: api_domain + 'crawl/',
-        //     type:'POST',
-        //     data: JSON.stringify({"platform": category}),
-        //     datatype:'json',
-        //     contentType: 'application/json; charset=utf-8',
-        //     success: res => {
-        //         task_id = res['task_id'] // api 요청으로부터 task_id 받기
-        //         // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
-        //         checkCrawlStatus(task_id)
-        //         statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
-        //     },
-        //     error: e => {
-        //         alert('Failed to send request for scraping')
-        //     },
-        // })
+    // 스케줄 생성 AJAX 요청
+    $('#create-schedule').click(() => {
+        const scheduleSpider = $('#spiderSelect').val();
+        const scheduleMinutes = Number($('#minutesControlInput').val());
+        $('#minutesControlInput').val('');
+        if(scheduleMinutes >= 0 && scheduleMinutes <= 60){
+            // Schedule 생성 API request 보내기
+            $.ajax({
+                url: api_domain + 'schedules/',
+                type: 'POST',
+                data: JSON.stringify({"platform": scheduleSpider, "minutes": scheduleMinutes}),
+                datatype: 'json',
+                contentType: 'application/json; charset=utf-8',
+                success: res => {
+                    $('#close-schedulemodal').click()
+                },
+                error: e => {
+                  alert('Failed to create task')
+                },
+            })
+        }
+        else{
+            alert('0부터 60까지만 입력하세요');
+        }
+    })
+
+    const deleteSchedule = (e) => {
+        const parentCol = e.target.parentNode;
+        const parentRow = parentCol.parentNode;
+        console.log(parentRow)
+        const scheduleId = parentRow.id;
         $.ajax({
-            url: api_domain + 'createtask/',
-            type: 'POST',
-            data: JSON.stringify({"platform": 'vlive', "interval": 2}),
+            url: api_domain + 'schedules/',
+            type: 'DELETE',
+            data: JSON.stringify({"id": scheduleId}),
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                console.log(res.data)
+                const schedules = res.schedules;
+                $('#schedule-board').html('')
+                schedules.forEach(schedule => {
+                    $('#schedule-board').append(createTableRow(schedule, 'schedule'));
+                })
             },
             error: e => {
-              alert('Failed to create task')
+                alert('Failed to delete schedule')
+            },
+        })
+    }
+
+
+    // schedule 들의 리스트들을 불러옴
+    $('#listup-schedule').click(() => {
+        $.ajax({
+            url: api_domain + 'schedules/',
+            type:'GET',
+            datatype:'json',
+            contentType: 'application/json; charset=utf-8',
+            success:res=>{
+                $('#schedule-board').html('');
+                const schedules = res.schedules;
+                schedules.forEach(schedule => {
+                    $('#schedule-board').append(createTableRow(schedule, 'schedule'));
+                })
+            },
+            error: e=> {
+                alert('Failed to listup schedules')
             },
         })
     })

@@ -7,12 +7,12 @@
 <!--    <link rel="stylesheet" href="{% static 'css/socialblade.css' %}">-->
     <link rel="stylesheet" href="../static/css/socialblade.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Socialblade Crawler</title>
+    <title>Crawler Test Page</title>
 </head>
 <body>
 
     <div class="container-fluid">
-        <h1>Socialblade Crawler</h1>
+        <h1>Crawler Test Page</h1>
         <div class="header">
             <select id="site-select">
                 <option value="youtube">Youtube</option>
@@ -24,9 +24,14 @@
                 <option value="instagram">Instagram</option>
                 <option value="vlive">Vlive</option>
             </select>
-            <button id="start-crawl" class="btn btn-primary">크롤링 시작</button>
+            <button id="start-crawl" class="btn btn-primary">크롤링 즉시 실행</button>
             <button id="show-data" class="btn btn-info">크롤링 데이터 보기</button>
-            <button id="create-task" class="btn btn-primary">Task 생성</button>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#scheduleCreateModal">
+                스케줄 생성
+            </button>
+            <button id="listup-schedule" type="button" class="btn btn-dark" data-toggle="modal" data-target="#scheduleListModal">
+                스케줄 목록
+            </button>
         </div>
         <div id="progress">
             <div class="spinner-border text-primary crawler-loading" role="status">
@@ -51,7 +56,73 @@
             <tbody id="board"></tbody>
         </table>
     </div>
-
+    <div class="modal fade" id="scheduleCreateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Schedule 생성하기(시간별 크롤링)</h5>
+            <button id="close-schedulemodal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form class="">
+              <div class="form-group">
+                <label for="spiderSelect">Spider</label>
+                 <select class="form-control" id="spiderSelect">
+                        <option value="youtube">Youtube</option>
+                        <option value="twitter">Twitter</option>
+                        <option value="twitter2">Twitter2</option>
+                        <option value="tiktok">Tiktok</option>
+                        <option value="weverse">Weverse</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="vlive">Vlive</option>
+                </select>
+              </div>
+              <div class="form-group">
+                  <label for="minutesControlInput">시간별로 몇 분에 진행?</label>
+                  <input type="number" class="form-control" id="minutesControlInput" placeholder="0 ~ 59; Default: 0">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            <button id="create-schedule" type="button" class="btn btn-primary">스케줄 생성</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="scheduleListModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">스케줄 목록</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+             <table class="table">
+            <thead>
+                <tr>
+<!--                    <th scope="col">ID</th>-->
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Minute</th>
+                    <th scope="col">Last Run</th>
+                    <th scope="col">Enabled</th>
+                    <th scope="col">삭제</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-board"></tbody>
+        </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <!--    <script src="{% static 'js/socialblade.js' %}"></script>-->
     <script src="../static/js/socialblade.js"></script>
