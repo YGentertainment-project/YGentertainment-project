@@ -1,9 +1,15 @@
 from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.urls.base import set_script_prefix
-from rest_framework.renderers import HTMLFormRenderer, TemplateHTMLRenderer
 from config.serializers import CollectTargetItemSerializer
+
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from tablib import Dataset
+import openpyxl
+from .resources import *
+from .models import *
 
 # Create your views here.
 def base(request):
@@ -20,11 +26,82 @@ def daily(request):
     return render(request, 'dataprocess/daily.html',values)
 
 def platform(request):
-    values = {
-      'first_depth' : '플랫폼 관리',
-      'second_depth': '플랫폼 관리'
-    }
-    return render(request, 'dataprocess/platform.html',values)
+    if request.method == 'GET':
+        '''
+        general page
+        '''
+        values = {
+        'first_depth' : '플랫폼 관리',
+        'second_depth': '플랫폼 관리'
+        }
+        return render(request, 'dataprocess/platform.html',values)
+    
+    else:
+        type = request.POST['type']
+        if type == 'import':
+            if request.method == 'POST':
+                platform_resource = PlatformResource()
+                dataset = Dataset()
+                import_file = request.FILES['importData']
+                wb = openpyxl.load_workbook(import_file)
+                sheets = wb.sheetnames
+                worksheet = wb[sheets[0]]
+                excel_data = list()
+                # iterating over the rows and
+                # getting value from each cell in row
+                row_num = 0
+                columns = []
+                for row in worksheet.iter_rows():
+                    if row_num == 0:
+                        for cell in row:
+                            columns.append(str(cell.value))
+                        row_num += 1
+                        continue
+                    row_data = {}
+                    for i, cell in enumerate(row):
+                        row_data[columns[i]] = str(cell.value)
+                    excel_data.append(row_data)
+                # imported_data = dataset.load(import_file.read().decode('ISO-8859-1'), format='xls')
+                # file 확장명 보고 file_format 유추
+                # file_format = request.POST['file-format']
+                # file_format = import_file.name.split(".")
+                # file_format = file_format[-1]
+                # result = platform_resource.import_data(dataset, dry_run=True)
+                # 어차피 excel로만 받아올거라 밑에 주석처리함 -> 나중에 나눌거면 주석해제
+                # if file_format == 'csv':
+                #     result = platform_resource.import_data(dataset, dry_run=True)                                                                 
+                # elif file_format == 'json':
+                #     result = platform_resource.import_data(dataset, dry_run=True) 
+                # elif file_format == 'xlsx':
+                #     result = platform_resource.import_data(dataset, dry_run=True)
+                # if not result.has_errors():
+                #     platform_resource.import_data(dataset, dry_run=False)
+                values = {
+                    'first_depth' : '플랫폼 관리',
+                    'second_depth': '플랫폼 관리',
+                    'excel_data': excel_data
+                }
+                return render(request, 'dataprocess/platform.html',values)
+        elif type == 'export':
+            platform_resource = PlatformResource()
+            dataset = platform_resource.export()
+            response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="platform_data.xlsx"'
+            return response
+            # 어차피 excel(xlsx)로만 저장할거라 밑에 주석처리함 -> 나중에 나눌거면 주석해제
+            # file_format = request.POST['file-format']
+            # if file_format == 'CSV':
+            #     response = HttpResponse(dataset.csv, content_type='text/csv')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.csv"'
+            #     return response        
+            # elif file_format == 'JSON':
+            #     response = HttpResponse(dataset.json, content_type='application/json')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.json"'
+            #     return response
+            # elif file_format == 'XLSX (Excel)':
+            #     response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
+            #     response['Content-Disposition'] = 'attachment; filename="platform_data.xlsx"'
+            #     return response
 
 def artist(request):
     artists = Artist.objects.all()
@@ -82,7 +159,6 @@ class PlatformAPI(APIView):
         Platform create api
         """
         try:
-            print("ss")
             platform_object = JSONParser().parse(request)
             platform_serializer = PlatformSerializer(data=platform_object)
             if platform_serializer.is_valid():
@@ -117,12 +193,18 @@ class PlatformAPI(APIView):
         try:
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
-                platform_data = Platform.objects.get(pk=platform_object["id"])
-                platform_serializer = PlatformSerializer(platform_data, data=platform_object)
-                if platform_serializer.is_valid():
-                    platform_serializer.save()
+                platform_data = Platform.objects.filter(pk=platform_object["id"]).first()
+                if platform_data is None:
+                    platform = Platform(
+                        name = platform_object["name"],
+                        url = platform_object["url"],
+                        description = platform_object["description"],
+                        active = platform_object["active"])
+                    platform.save()
                 else:
-                    return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
+                    platform_serializer = PlatformSerializer(platform_data, data=platform_object)
+                    if platform_serializer.is_valid():
+                        platform_serializer.save()
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)

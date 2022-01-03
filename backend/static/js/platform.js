@@ -1,3 +1,29 @@
+function render_platform_table(data){//parsing한 데이터 화면에 render
+    const tableRow = $('<tr></tr>')
+    // 해당 row에 대한 column 데이터들 넣기
+    for(key in data){
+        let dataCol;
+        if(key==='active'){
+            if(data[key]==true){
+                dataCol = $('<td><input checked type="checkbox"></input></td>'); 
+            }else{
+                dataCol = $('<td><input type="checkbox"></input></td>'); 
+            }
+        }else{
+            dataCol = document.createElement('td');
+            if(key==='id')
+                dataCol.setAttribute('class', 'hidden');
+            dataCol.innerHTML = `
+            <td>
+                <input type="text" value="${data[key]}" style="width:100%"></input>
+            </td>
+            `;
+        }
+        tableRow.append(dataCol);
+    }
+    $('#platform-body').append(tableRow);
+}
+
 function platform_read_function(){
     $.ajax({
         url: '/dataprocess/api/platform/',
@@ -8,29 +34,7 @@ function platform_read_function(){
             const data_list = res.data;
             $('#platform-body').empty();
             data_list.forEach(data => {//data를 화면에 표시
-                const tableRow = $('<tr></tr>')
-                // 해당 row에 대한 column 데이터들 넣기
-                for(key in data){
-                    let dataCol;
-                    if(key==='active'){
-                        if(data[key]==true){
-                            dataCol = $('<td><input checked type="checkbox"></input></td>'); 
-                        }else{
-                            dataCol = $('<td><input type="checkbox"></input></td>'); 
-                        }
-                    }else{
-                        dataCol = document.createElement('td');
-                        if(key==='id')
-                            dataCol.setAttribute('class', 'hidden');
-                        dataCol.innerHTML = `
-                        <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
-                        </td>
-                        `;
-                    }
-                    tableRow.append(dataCol);
-                }
-                $('#platform-body').append(tableRow);
+                render_platform_table(data);
             });
         },
         error: e => {
@@ -84,7 +88,6 @@ function platform_create_function(){
         "description":created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value,
         "collect_items": collect_items_list
     };
-    console.log(JSON.stringify(data));
 
     $.ajax({
         url: '/dataprocess/api/platform/',
@@ -106,7 +109,7 @@ function platform_create_function(){
 };
 
 //popup form opan, close
-function open_form_function() {
+function open_form_function(e) {
     document.getElementById("create_form").style.display = "flex";
 }
   
@@ -132,7 +135,19 @@ function delete_attribute_function(){
 }
 
 //first read platforms
-platform_read_function();
+//excel로부터 데이터 받은 게 있다면 그걸 보여주기
+if(document.getElementById('import_data')){
+    $('#platform-body').empty();
+    var excel_objects = document.getElementById('import_data').innerHTML;
+    excel_objects = eval('(' + excel_objects + ')');
+    excel_objects.forEach(data => {//data를 화면에 표시
+        render_platform_table(data);
+    });
+}
+//excel로부터 받은 data를 보여주는 게 아니라면 DB 데이터 보여주기
+else{
+    platform_read_function();
+}
 document.getElementById('update_button').onclick = platform_update_function;
 document.getElementById('openform_button').onclick = open_form_function;
 document.getElementById('close_button').onclick = close_form_function;

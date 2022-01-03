@@ -44,6 +44,7 @@ VENDOR_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_celery_beat',
+    'import_export',
 ]
 
 LOCAL_APPS = [
@@ -220,3 +221,5 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 )
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
