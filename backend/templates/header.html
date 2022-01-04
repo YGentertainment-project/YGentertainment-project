@@ -24,6 +24,14 @@
         <span class="third-depth"></span>
     </div>
    {% endif %}
-   
-    <button class="logout-btn">로그아웃</button>
+
+   {% if user.is_authenticated %}
+   <button class="logout-btn" id="logout-btn">
+       <a href="{% url 'account:user_logout_api'%}">로그아웃</a>
+    </button>
+    {% else %}
+    <button class="login-btn" id="login-btn">
+        <a href="{% url 'account:user_simple_login_api'%}">로그인</a>
+    </button>
+    {% endif %}
 </header>

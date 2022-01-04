@@ -1,10 +1,8 @@
 import re
 
-# Create your views here.
-
-import re
-
 from django.contrib import auth
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from drf_yasg.utils import swagger_auto_schema
@@ -36,10 +34,50 @@ class UserLoginAPI(APIView):
         return self.success("Succeeded")
 
 
+# default 정보를 이용한 간단한 login 구현
+class UserSimpleLoginAPI(APIView):
+    def get(self, request):
+        """
+        User simple login api
+        """
+        # default id and pw
+        username = "yg"
+        password = "ygenter1234"
+        yg_email = "ygenter@mail.com"
+        if User.objects.filter(username=username).exists():
+            # 이미 존재하는 username -> 로그인
+            user = User.objects.filter(username=username).first()
+            auth.login(request, user)
+        elif User.objects.filter(yg_email=yg_email).exists():
+            # 이미 존재하는 email -> 로그인
+            user = User.objects.filter(yg_email=yg_email).first()
+            auth.login(request, user)
+        else:
+            # 새롭게 register
+            user = User.objects.create(username=username, yg_email=yg_email, password=password)
+            user.has_email_auth = False
+            user.email_auth_token = rand_str()
+            user.save()
+            # register 후 login
+            auth.login(request, user)
+        
+        values = {
+            'first_depth' : '데이터 리포트',
+        }
+        response = render(request, 'dataprocess/main.html',values)
+        response.set_cookie('username', username)
+        return response
+
+
 class UserLogoutAPI(APIView):
     def get(self, request):
         auth.logout(request)
-        return self.success()
+        values = {
+            'first_depth' : '로그인'
+        }
+        response = render(request, 'dataprocess/login.html', values)
+        response.delete_cookie('username')
+        return response
 
 
 class UserRegisterAPI(APIView):
@@ -48,7 +86,6 @@ class UserRegisterAPI(APIView):
         """
         User register api
         """
-
         data = request.data
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
@@ -56,11 +93,11 @@ class UserRegisterAPI(APIView):
             return self.error("Username already exists")
         if not re.match(r"^20[0-9]{8}$", data["username"]):
             return self.error("Not student ID")
-        if User.objects.filter(email=data["email"]).exists():
+        if User.objects.filter(yg_email=data["email"]).exists():
             return self.error("Email already exists")
         if data["email"].split("@")[1] not in ("g.skku.edu", "skku.edu"):
             return self.error("Invalid domain (Use skku.edu or g.skku.edu)")
-        user = User.objects.create(username=data["username"], email=data["email"], major=data["major"])
+        user = User.objects.create(username=data["username"], yg_email=data["email"])
         user.set_password(data["password"])
         user.has_email_auth = False
         user.email_auth_token = rand_str()
