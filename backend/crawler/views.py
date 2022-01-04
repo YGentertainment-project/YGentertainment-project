@@ -209,19 +209,12 @@ def schedules(request):
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
     else:
-        print('This is DELETE METHOD')
         body_unicode = request.body.decode('utf-8')  # body값 추출
         body = json.loads(body_unicode)
         scheduleId = body.get("id")
-        schedule = PeriodicTask.objects.filter(id=scheduleId)
-        crontab_id = schedule.values()[0]['crontab_id']
-
-        # 해당 schedule 및 crontab 삭제
+        schedule = PeriodicTask.objects.get(id=scheduleId)
         schedule.delete()
-        crontab = CrontabSchedule.objects.filter(id=crontab_id)
-        crontab.delete()
 
-        # schedule list 불러오기
         try:
             if PeriodicTask.objects.filter(task='crawling').exists():
                 schedule_list = get_schedules()
