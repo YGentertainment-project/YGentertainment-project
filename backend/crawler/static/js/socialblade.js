@@ -142,7 +142,13 @@ $(document).ready(function () {
                 dataCol.append(dataColUrl);
             }
             else if(key === 'recorded_date' || key === 'last_run'){
-                dateString = getDateString(data[key]) + ' ' + getTimeString(data[key])
+                let dateString = '';
+                if(!data[key]){
+                    dateString = '없음'
+                }
+                else{
+                    dateString = getDateString(data[key]) + ' ' + getTimeString(data[key])
+                }
                 dataCol = $('<td></td>', {
                     text: dateString,
                 })
@@ -257,6 +263,7 @@ $(document).ready(function () {
                 $('#schedule-board').html('');
                 const schedules = res.schedules;
                 schedules.forEach(schedule => {
+                    console.log(schedule.last_run)
                     $('#schedule-board').append(createTableRow(schedule, 'schedule'));
                 })
             },
