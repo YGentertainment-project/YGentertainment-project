@@ -10,7 +10,7 @@ services:
       - ./db/data:/var/lib/mysql
       - ./db/initdb.d:/docker-entrypoint-initdb.d
     environment:
-      - MYSQL_HOST=ygenter
+      - MYSQL_HOST=yg-mariadb
       - MYSQL_PORT=3306
       - MYSQL_ROOT_PASSWORD=ygenter
       - MYSQL_DATABASE=ygenter
@@ -29,5 +29,4 @@ services:
       - MYSQL_USER=ygenter
       - MYSQL_PASSWORD=ygenter
     ports:
-      - "0.0.0.0:80:8000"
-      - "0.0.0.0:443:1443"
+      - "0.0.0.0:8081:8000"
