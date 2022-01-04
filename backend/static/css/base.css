@@ -78,7 +78,7 @@ li{
     cursor: pointer;
 }
 
-.logout-btn{
+.logout-btn, .login-btn{
     background-color: lightgray;
     color: black;
     font-size: 0.8rem;

@@ -14,6 +14,7 @@ urlpatterns = [
     path('platform/',platform,name='platform'),
     path('artist/',artist,name='artist'),
     path('artist/add/',artist_add,name='artist_add'),
+    path('login/',login,name='login'),
 
     path('api/platform/', csrf_exempt(views.PlatformAPI.as_view()), name='platform_api'),
     path('api/artist/', csrf_exempt(views.ArtistAPI.as_view()), name='artist_api'),

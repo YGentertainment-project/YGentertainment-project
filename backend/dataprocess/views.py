@@ -1,6 +1,8 @@
+from django.contrib import auth
 from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from account.models import User
 from config.serializers import CollectTargetItemSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -36,6 +38,14 @@ def platform(request):
         'first_depth' : '플랫폼 관리',
         'second_depth': '플랫폼 관리'
         }
+
+        # 로그인 정보를 받기 위해 cookie사용
+        username = request.COOKIES.get('username')
+        if username is not None:
+            print(username)
+            user = User.objects.filter(username=username).first()
+            auth.login(request, user)
+
         return render(request, 'dataprocess/platform.html',values)
     
     else:
@@ -110,7 +120,7 @@ def artist(request):
     values = {
       'first_depth' : '아티스트 관리',
       'second_depth': '데이터 URL 관리',
-      'artists':artists,
+      'artists': artists
     }
     return render(request, 'dataprocess/artist.html',values)
 
@@ -124,6 +134,12 @@ def artist_add(request):
     }
     return render(request, 'dataprocess/artist_add.html',values)
 
+def login(request):
+    values = {
+      'first_depth' : '로그인'
+    }
+    return render(request, 'dataprocess/login.html',values)
+
 #from rest_framework.views import APIView
 from .serializers import *
 from .models import *
@@ -132,7 +148,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from config.models import CollectTargetItem
-#from utils.decorators import login_required
+from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 
 #======platform=======
