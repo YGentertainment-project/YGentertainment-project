@@ -1,4 +1,3 @@
-from utils.shortcuts import get_env
 
 DATABASES = {
     'default':{

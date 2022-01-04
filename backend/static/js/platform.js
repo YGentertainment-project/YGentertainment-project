@@ -26,7 +26,7 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
 
 function platform_read_function(){
     $.ajax({
-        url: '/dataprocess/api/platform/',
+        url: '/api/platform/',
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
@@ -58,7 +58,7 @@ function platform_update_function(){
         });
     }
     $.ajax({
-        url: '/dataprocess/api/platform/',
+        url: '/api/platform/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -90,7 +90,7 @@ function platform_create_function(){
     };
 
     $.ajax({
-        url: '/dataprocess/api/platform/',
+        url: '/api/platform/',
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
