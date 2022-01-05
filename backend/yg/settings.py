@@ -29,7 +29,7 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
