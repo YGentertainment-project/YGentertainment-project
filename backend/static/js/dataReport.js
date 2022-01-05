@@ -397,7 +397,7 @@ $(document).on('click','.platform-name',function(){
     console.log($(this).attr("name"));
 
     $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
+        url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -492,7 +492,7 @@ $('#update-data').click(function(){
             'subscribers[]': subscribers, 
             'views[]': views, 
             },
-            url: '/crawler/daily/dailyupdate/',
+            url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
@@ -538,7 +538,7 @@ $('#update-data').click(function(){
             'likes[]': likes,
             'plays[]':plays, 
             },
-            url: '/crawler/daily/dailyupdate/',
+            url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
@@ -568,7 +568,7 @@ $('#update-data').click(function(){
             'artists[]':artists,
             'followers[]' : followers,  
             },
-            url: '/crawler/daily/dailyupdate/',
+            url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
@@ -608,7 +608,7 @@ $('#update-data').click(function(){
             'followers[]' : followers,  
             'likes[]' : likes,  
             },
-            url: '/crawler/daily/dailyupdate/',
+            url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
@@ -643,7 +643,7 @@ $('#update-data').click(function(){
             'followers[]' : followers,  
             'twits[]' : twits,  
             },
-           url: '/crawler/daily/dailyupdate/',
+           url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
@@ -674,7 +674,7 @@ $('#update-data').click(function(){
             'artists[]':artists,
             'weverses[]' : weverses,  
             },
-            url: '/crawler/daily/dailyupdate/',
+            url: '/dataprocess/api/daily/',
             success: res => {
                 console.log('success');
                 let table_html = ''
