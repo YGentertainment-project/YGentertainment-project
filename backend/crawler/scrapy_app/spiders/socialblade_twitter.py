@@ -11,9 +11,6 @@ class TwitterSpider(scrapy.Spider):
         'DOWNLOADER_MIDDLEWARES':{
             'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
         },
-        'ITEM_PIPELINES':{
-            'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
-        },
     }
 
     def start_requests(self):

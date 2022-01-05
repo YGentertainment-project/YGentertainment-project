@@ -40,6 +40,8 @@ def process_itemsave(name, item):
             return update_twitter2(item)
         elif name == "weverse":
             return update_weverse(item)
+        elif name == 'vlive':
+            return update_vlive(item)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
         item.save()
@@ -110,6 +112,19 @@ def update_weverse(item):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
+def update_vlive(item):
+    nowdate = item['recorded_date']
+    existingItem = Vlive.objects.get(artist=item.get('artist'),
+                                     recorded_date__year=nowdate.year,
+                                     recorded_date__month=nowdate.month,
+                                     recorded_date__day=nowdate.day
+                                     )
+    existingItem.members = item.get('members')
+    existingItem.videos = item.get('videos')
+    existingItem.likes = item.get('likes')
+    existingItem.plays = item.get('plays')
+    existingItem.recorded_date = nowdate
+    existingItem.save()
 
 class CrawlerPipeline(object):
     def process_item(self, item, spider):

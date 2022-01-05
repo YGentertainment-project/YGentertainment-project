@@ -41,6 +41,8 @@ VENDOR_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_celery_beat',
+    'import_export',
 ]
 
 LOCAL_APPS = [
@@ -171,6 +173,41 @@ LOGGING = {
     },
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        '': {
+            'handlers': LOGGING_HANDLERS,
+            'level': 'WARNING',
+            'propagate': True,
+        }
+    },
+}
+
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'DEFAULT_RENDERER_CLASSES': (
@@ -189,3 +226,5 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 )
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True

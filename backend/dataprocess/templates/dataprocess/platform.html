@@ -25,7 +25,27 @@
                 </table>
             </div>
         </div>
+
+        <h3>Export Data</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" name="type" value="export" style="display:none;">
+            <button class="btn btn-primary" type="submit">Export</button>
+        </form>
+
+        <h3>Import Data</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="importData">
+            <input type="text" name="type" value="import" style="display:none;">
+            <button class="btn btn-primary" type="submit">Import</button>
+        </form>
     </div>
+
+    {% if excel_data %}
+    <!-- javascript에 전달하기 위해 숨겨진 span 사용 -->
+    <span id="import_data" style="display: none;">{{ excel_data }}</span>
+    {% endif %}
 
 
     <div class="create_form" id="create_form">

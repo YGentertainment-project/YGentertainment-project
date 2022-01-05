@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+    {% extends 'main.html' %}
+    
+    {% block content %}
+   <div class="forms">
+    <div class="contents">
+        <div id="first-table">
+           <div class="button_layout">
+            <a href="{% url 'dataprocess:artist_add' %}">추가</a> 
+            <button id="save-artists">저장</button>
+           </div>
+            <table id="artist-table">
+                <thead id="artist-header">
+                    <tr>
+                        <td class="hidden">id</td>
+                        <td>아티스트 이름</td>
+                        <td>구분</td>
+                        <td>성별</td>
+                        <td>맴버 수</td>
+                        <td>국적</td>
+                        <td>기획사</td>
+                        <td>데뷔</td>
+                        <td>사용</td>
+                    </tr>
+                </thead>
+                <tbody id="artist-body">
+                    {% if artists %}
+                    {% for artist in artists %}
+                    <tr>
+                        <td class="hidden"><input type="text" value={{artist.id}} style="width:100%"></input></td>
+                        <td><input type="button" name="artist-name" value={{artist.name}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.level}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.gender}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.member_num}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.member_nationality}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.agency}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.debut_date|date:"Y-m-d"}} style="width:100%"></input></td>
+                        <td><input type="text" value={{artist.active}} style="width:100%"></input></td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div id="second-table">
+            <div class="button_layout">
+                <button id="save-artists-platform">저장</button>
+            </div>
+            <table id="artist-table">
+                <thead id="artist-header">
+                    <tr>
+                        <td class="hidden">artist_id</td>
+                        <td class="hidden">id</td>
+                        <td>플랫폼</td>
+                        <td>URL 1</td>
+                        <td>URL 2</td>
+                    </tr>
+                </thead>
+                <tbody id="artist-body-platform"></tbody>
+            </table>
+        </div>
+        <div id="second-table">
+            <div class="button_layout">
+                <button id="save-list">저장</button>
+            </div>
+            <table id="artist-table">
+                <thead id="artist-header">
+                    <tr>
+                        <td>항목 1</td>
+                        <td>항목 2</td>
+                        <td>항목 3</td>
+                        <td>스케쥴</td>
+                    </tr>
+                </thead>
+                <tbody id="artist-body-list"></tbody>
+            </table>
+        </div>
+    </div>
+   </div>
+    
+
+    {% endblock content %}
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
