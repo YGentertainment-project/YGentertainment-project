@@ -1,4 +1,19 @@
-from celery.utils.log import get_task_logger
+import logging
+import os
+from billiard.context import Process
+
+from .celery import app
+
+import scrapy
+from scrapy.crawler import CrawlerProcess
+from scrapy.settings import Settings
+from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
+from crawler.scrapy_app.spiders.socialblade_twitter import TwitterSpider
+from crawler.scrapy_app.spiders.socialblade_twitter2 import Twitter2Spider
+from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
+from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
+from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
+from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from celery import shared_task
 from crawler.scrapy_app.spiders.vlive import VliveSpider
@@ -44,7 +59,6 @@ def crawling_start(platform, task_id):
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5)
 def crawling(self, platform):
-
     try:
         proc = Process(target=crawling_start, args=[platform, self.request.id])
         proc.start()

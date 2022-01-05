@@ -178,3 +178,4 @@ class FacebookSpider(scrapy.Spider):
             item['followers'] = int(follower_num.replace(',', ''))
             item['url'] = response.url
             yield item
+

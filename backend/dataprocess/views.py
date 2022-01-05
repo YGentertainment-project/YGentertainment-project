@@ -38,15 +38,19 @@ def base(request):
     return render(request, 'dataprocess/main.html',values)
 
 def daily(request):
-    '''
-    general page
-    '''
-    values = {
+    if request.method == 'GET':
+        '''
+        general page
+        '''
+        platforms = Platform.objects.all() #get all platform info from db
+        values = {
         'first_depth' : '데이터 리포트',
-        'second_depth': '일별 리포트'
-    }
-    request = logincheck(request)
-    return render(request, 'dataprocess/daily.html',values)
+        'second_depth': '일별 리포트',
+        'platforms': platforms
+        }
+        request = logincheck(request)
+        return render(request, 'dataprocess/daily.html',values)
+    
 
 def platform(request):
     if request.method == 'GET':
@@ -408,10 +412,15 @@ class DataReportAPI(APIView):
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
             if filter_objects.exists():
                 filter_objects_values=filter_objects.values()
+                artist_objects = Artist.objects.all()
+                artist_objects_values = artist_objects.values()
                 filter_datas=[]
+                artist_datas = []
                 for filter_value in filter_objects_values:
                     filter_datas.append(filter_value)
-                return JsonResponse(data={'success': True, 'data': filter_datas})
+                for artist in artist_objects_values:
+                    artist_datas.append(artist)
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_datas})
             else:
                 return JsonResponse(status=400, data={'success': True, 'data': []})
         elif type == "기간별":

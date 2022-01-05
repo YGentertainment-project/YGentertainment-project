@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from dataprocess.models import Artist
 
 # crawler models
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
