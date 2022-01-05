@@ -28,7 +28,7 @@ class ArtistProfile(models.Model):
 class Artist(models.Model):
     name = models.TextField(unique=True, max_length=100)
     level = models.TextField(max_length=10, default="A")
-    gender = models.BooleanField(default=True)
+    gender = models.TextField(max_length=10, default="M")
     member_num = models.IntegerField(default=1)
     member_nationality = models.TextField(max_length=100, default="")
     agency = models.TextField(null=True)
