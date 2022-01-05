@@ -1,4 +1,6 @@
-import json, datetime, os
+import json
+import datetime
+import os
 
 # api utilities
 from uuid import uuid4
@@ -159,7 +161,7 @@ def get_schedules():
         crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
         minute = crontab_info[0]['minute']
         schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
-                                 enabled=task['enabled'])
+                             enabled=task['enabled'])
         schedule_list.append(schedule_dict)
     return schedule_list
 
@@ -182,8 +184,8 @@ def schedules(request):
             # 존재하는 task는 상태 및 interval만 업데이트
             if PeriodicTask.objects.filter(name='{}_task'.format(platform)).exists():
                 task = PeriodicTask.objects.get(name='{}_task'.format(platform))
-                task.enabled=True
-                task.crontab=schedule
+                task.enabled = True
+                task.crontab = schedule
                 task.save()
                 print('Save is done')
             else:
@@ -196,7 +198,6 @@ def schedules(request):
             return JsonResponse(data={'success': True})
         except Exception as e:
             return JsonResponse(status=400,  data={'error': str(e)})
-
     # 스케줄 리스트 업
     elif request.method == 'GET':
         try:
@@ -224,3 +225,70 @@ def schedules(request):
         except Exception as e:
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
+
+    # 스케줄 리스트 업
+    elif request.method == 'GET':
+        try:
+            if PeriodicTask.objects.filter(task='crawling').exists():
+                schedule_list = get_schedules()
+                return JsonResponse(data={'schedules': schedule_list})
+            else:
+                return JsonResponse(data={'schedules': []})
+        except Exception as e:
+            print(e)
+            return JsonResponse(status=400, data={'error': str(e)})
+    else:
+        body_unicode = request.body.decode('utf-8')  # body값 추출
+        body = json.loads(body_unicode)
+        scheduleId = body.get("id")
+        schedule = PeriodicTask.objects.get(id=scheduleId)
+        schedule.delete()
+
+@csrf_exempt
+@require_http_methods(['POST'])  # only post
+def daily_update(request):
+    platform = request.POST.get('platform_name', None)
+    artists = request.POST.getlist('artists[]')
+    uploads = request.POST.getlist('uploads[]')
+    subscribers = request.POST.getlist('subscribers[]')
+    views = request.POST.getlist('views[]')
+    members = request.POST.getlist('members[]')
+    videos = request.POST.getlist('videos[]')
+    likes = request.POST.getlist('likes[]')
+    plays = request.POST.getlist('plays[]')
+    followers = request.POST.getlist('followers[]')
+    twits = request.POST.getlist('twits[]')
+    weverses = request.POST.getlist('weverses[]')
+
+    DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+    }
+
+    for index, artist in enumerate(artists):
+        obj = DataModels[platform].objects.filter(artist=artist)
+        if platform == 'youtube':
+            obj.update(uploads=uploads[index], subscribers=subscribers[index], views=views[index])
+        elif platform == 'vlive':
+            obj.update(members=members[index], videos=videos[index], likes=likes[index], plays=plays[index])
+        elif platform == 'instagram' or platform == 'facebook':
+            obj.update(followers=followers[index])
+        elif platform == 'twitter' or platform == 'twitter2':
+            obj.update(followers=followers[index], twits=twits[index])
+        elif platform == 'tiktok':
+            obj.update(followers=followers[index], uploads=uploads[index], likes=likes[index])
+        elif platform == 'weverse':
+            obj.update(weverses=weverses[index])
+    platform_queryset_values = DataModels[platform].objects.values()
+    platform_datas = []
+    for queryset_value in platform_queryset_values:
+        platform_datas.append(queryset_value)
+    return JsonResponse(data={'success': True, 'data': platform_datas})

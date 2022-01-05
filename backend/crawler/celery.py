@@ -1,4 +1,5 @@
-import os, django
+import os
+import django
 from celery import Celery
 from celery.schedules import crontab
 

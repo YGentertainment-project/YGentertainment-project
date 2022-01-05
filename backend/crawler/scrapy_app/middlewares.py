@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 from itemadapter import is_item, ItemAdapter
 
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -29,6 +30,8 @@ SOCIALBLADE_DOMAIN = 'socialblade.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
+
+
 class ScrapyAppSpiderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -52,6 +55,7 @@ class ScrapyAppSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
 
 def driver_setting():
     s = Service(ChromeDriverManager().install())
@@ -100,6 +104,8 @@ def driver_setting():
     return driver
 
 # youtube downloader middleware
+
+
 class SocialbladeDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -111,20 +117,23 @@ class SocialbladeDownloaderMiddleware:
     def process_request(self, request, spider):
         self.driver.get(request.url)
         domain = urlparse(request.url).netloc
-
         print('crawling url : {}'.format(request.url))
 
         if(domain == SOCIALBLADE_DOMAIN):
             if(request.url != SOCIALBLADE_ROBOT):
-                WebDriverWait(self.driver, 5).until(
+                WebDriverWait(self.driver, 30).until(
                     EC.presence_of_element_located(
                         (By.ID, 'YouTubeUserTopInfoWrap')
                     )
                 )
         else:
+            WebDriverWait(self.driver, 30).until(
+                EC.presence_of_element_located(
+                    (By.ID, 'right-column')
+                )
+            )
             print('domain : {} Neither of the domain filterling!!!!'.format(domain))
         body = to_bytes(text=self.driver.page_source)
-
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
     def process_response(self, request, response, spider):
@@ -135,6 +144,7 @@ class SocialbladeDownloaderMiddleware:
 
     def spider_opened(self, spider):
         self.driver = driver_setting()
+
 
 class LoginDownloaderMiddleware:
     @classmethod
