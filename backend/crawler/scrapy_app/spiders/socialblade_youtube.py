@@ -2,10 +2,10 @@ import scrapy
 from urllib.parse import urlparse
 from ..items import SocialbladeYoutubeItem
 
-
 SOCIALBLADE_DOMAIN = "socialblade.com"
-YOUTUBE_DOMAIN = "www.youtube.com"
+YOUTUBE_DOMAIN = "youtube.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
+YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
 
 class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
@@ -62,24 +62,24 @@ class YoutubeSpider(scrapy.Spider):
             "TREASURE": "https://socialblade.com/youtube/channel/UCx9hXYOCvUYwrprEqe4ZQHA",
             "TXT": "https://socialblade.com/youtube/channel/UCtiObj3CsEAdNU6ZPWDsddQ",
             "WayV": "https://socialblade.com/youtube/channel/UC-ZHt5Zgadfx-B1CM63Lqew",
-            # "청하": "https://www.youtube.com/c/CHUNGHA_OFFICIAL/about",
+            "청하": "https://www.youtube.com/c/CHUNGHA_OFFICIAL/about",
             "선미": "https://socialblade.com/youtube/channel/UCsVpgRB8YHLWA0ZrkhtHvTA",
             "전소미": "",
             "AKMU": "https://socialblade.com/youtube/user/officialakmu",
             "AKMU 이수현": "https://socialblade.com/youtube/channel/UCOiM8FuCUFJkuUjCmB14rgg",
             "아이유": "https://socialblade.com/youtube/channel/UC3SyT4_WLHzN7JmHQwKQZww",
             "헤이즈": "https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg",
-            "소녀시대": "https://socialblade.com/youtube/channel/UCsXigGjbC_l4ttk-oahTfVg",
+            "소녀시대": "https://socialblade.com/youtube/user/girlsgeneration",
             "소녀시대 태연": "https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg",
-            "이하이": "https://socialblade.com/youtube/channel/UC5z2fxN6rs69cSyXur6X6Mg",
+            "이하이": "https://socialblade.com/youtube/user/officialleehi",
             "정은지": "https://socialblade.com/youtube/channel/UCHTZl9wrDAV45L8IPS7ZYzg",
             "젝스키스": "https://socialblade.com/youtube/channel/UCcADqTjMyMol8B8mWm9n6rA",
             "백예린": "https://socialblade.com/youtube/channel/UCYoNPLKd1kXh4v3bvIx1pTA",
-            # "볼빨간사춘기": "https://www.youtube.com/c/BOL4OFFICIAL/about",
+            "볼빨간사춘기": "https://www.youtube.com/c/BOL4OFFICIAL/about",
             "현아": "https://socialblade.com/youtube/channel/UC0uTcuuOtUFwtn9aKUVGjXg",
             "비투비": "https://socialblade.com/youtube/user/officialbtob",
             "SF9": "https://socialblade.com/youtube/channel/UC8HNshpReWjQv1WpwzhPHjA",
-            # "스테이씨": "https://www.youtube.com/c/STAYC/about",
+            "스테이씨": "https://www.youtube.com/c/STAYC/about",
             "오마이걸": "https://socialblade.com/youtube/channel/UC-qYkzKFdekoEniRu_FS3zg",
             "위클리": "https://socialblade.com/youtube/c/weeekly",
             "HYBE LABELS": "https://socialblade.com/youtube/c/hybelabels",
@@ -90,7 +90,10 @@ class YoutubeSpider(scrapy.Spider):
             print("artist : {}, url : {}, url_len: {}".format(
                 artist, url, len(url)))
             if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding='utf-8', meta={'artist': artist})
+                if urlparse(url).netloc == SOCIALBLADE_DOMAIN:
+                    yield scrapy.Request(url=url, callback=self.parse_social, encoding='utf-8', meta={'artist': artist})
+                else:
+                    yield scrapy.Request(url=url, callback=self.parse_youtube, encoding='utf-8', meta={'artist': artist})
             else:
                 continue
 
@@ -110,45 +113,46 @@ class YoutubeSpider(scrapy.Spider):
         result = view_text.replace(',', '')
         return int(result)
 
-    def parse(self, response):
-        domain = urlparse(response.url).netloc
-        artist = uploads = subscribers = views = user_created = None
-        if domain == SOCIALBLADE_DOMAIN:
-            if response.request.url == SOCIALBLADE_ROBOT:
-                pass
-            else:
-                artist = response.request.meta['artist']
-
-                uploads = response.xpath(
-                    '//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
-                uploads = self.parse_comma_text(uploads)
-
-                subscribers = response.xpath(
-                    '//*[@id="YouTubeUserTopInfoBlock"]/div[3]/span[2]/text()').get()
-                subscribers = self.parse_subscribers(subscribers)
-
-                view_text = response.xpath(
-                    '//*[@id="YouTubeUserTopInfoBlock"]/div[4]/span[2]/text()').get()
-                views = self.parse_comma_text(view_text)
-
-                user_created = response.xpath(
-                    '//*[@id="YouTubeUserTopInfoBlock"]/div[7]/span[2]/text()').get()
-
-        # elif domain == YOUTUBE_DOMAIN:
-        #     # artist = response.xpath('//*[@id="text"]/text()').get()
-        #     artist = response.request.meta['artist']
-        #     uploads = -1
-        #     subscribers = -1
-        #     view_text = response.xpath(
-        #         '//*[@id="right-column"]/yt-formatted-string[3]/text()').get()
-        #     # '조회수 168,048,278회' 형태의 문자열에서 조회수에 해당하는 숫자만 추출
-        #     view_text = view_text[3:-1].strip()
-        #     views = self.parse_comma_text(view_text)
-        #     user_created = response.xpath(
-        #         '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
+    def parse_social(self, response):
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
+            artist = response.request.meta['artist']
+            uploads = response.xpath(
+                '//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
+            uploads = self.parse_comma_text(uploads)
+            subscribers = response.xpath(
+                '//*[@id="YouTubeUserTopInfoBlock"]/div[3]/span[2]/text()').get()
+            subscribers = self.parse_subscribers(subscribers)
+            view_text = response.xpath(
+                '//*[@id="YouTubeUserTopInfoBlock"]/div[4]/span[2]/text()').get()
+            views = self.parse_comma_text(view_text)
+            user_created = response.xpath(
+                '//*[@id="YouTubeUserTopInfoBlock"]/div[7]/span[2]/text()').get()
+            item = SocialbladeYoutubeItem()
+            item["artist"] = artist
+            item["uploads"] = uploads
+            item["subscribers"] = subscribers
+            item["views"] = views
+            item["user_created"] = user_created
+            # item["platform"] = self.name
+            item["url"] = response.url
+            yield item
+
+    def parse_youtube(self, response):
+        if response.request.url == YOUTUBE_ROBOT:
+            pass
+        else:
+            artist = response.request.meta['artist']
+            uploads = -1
+            subscribers = -1
+            view_text = response.xpath(
+                '//*[@id="right-column"]/yt-formatted-string[3]/text()').get()
+            # '조회수 168,048,278회' 형태의 문자열에서 조회수에 해당하는 숫자만 추출
+            view_text = view_text[:-5].strip()
+            views = self.parse_comma_text(view_text)
+            user_created = response.xpath(
+                '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
             item["uploads"] = uploads

@@ -10,17 +10,18 @@ from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwi
 from datetime import datetime
 
 DataModels = {
-        "youtube": SocialbladeYoutube,
-        "tiktok": SocialbladeTiktok,
-        "twitter": SocialbladeTwitter,
-        "twitter2": SocialbladeTwitter2,
-        "weverse": Weverse,
-        "instagram": CrowdtangleInstagram,
-        "facebook": CrowdtangleFacebook,
-        "vlive": Vlive,
-        "melon": Melon,
-        "spotify": Spotify,
+    "youtube": SocialbladeYoutube,
+    "tiktok": SocialbladeTiktok,
+    "twitter": SocialbladeTwitter,
+    "twitter2": SocialbladeTwitter2,
+    "weverse": Weverse,
+    "instagram": CrowdtangleInstagram,
+    "facebook": CrowdtangleFacebook,
+    "vlive": Vlive,
+    "melon": Melon,
+    "spotify": Spotify,
 }
+
 
 def process_itemsave(name, item):
     nowdate = item['recorded_date']
@@ -34,14 +35,14 @@ def process_itemsave(name, item):
             return update_youtube(item)
         elif name == "tiktok":
             return update_tiktok(item)
-        elif name == "twitter":
-            return update_twitter(item)
-        elif name == "twitter2":
-            return update_twitter2(item)
+        elif name == "twitter" or name == "twitter2":
+            return update_twitter(item, name)
         elif name == "weverse":
             return update_weverse(item)
         elif name == 'vlive':
             return update_vlive(item)
+        elif name == "facebook" or name == "instagram":
+            return update_crowdtangle(item, name)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
         item.save()
@@ -51,9 +52,9 @@ def process_itemsave(name, item):
 def update_youtube(item):
     nowdate = item['recorded_date']
     existingItem = SocialbladeYoutube.objects.get(artist=item['artist'],
-                                                     recorded_date__year=nowdate.year,
-                                                     recorded_date__month=nowdate.month,
-                                                     recorded_date__day=nowdate.day)
+                                                  recorded_date__year=nowdate.year,
+                                                  recorded_date__month=nowdate.month,
+                                                  recorded_date__day=nowdate.day)
     existingItem.uploads = item.get('uploads')
     existingItem.subscribers = item.get('subscribers')
     existingItem.views = item.get('views')
@@ -74,27 +75,12 @@ def update_tiktok(item):
     existingItem.save()
 
 
-
-
-def update_twitter(item):
+def update_twitter(item, name):
     nowdate = item['recorded_date']
-    existingItem = SocialbladeTwitter.objects.get(artist=item.get('artist'),
-                                                  recorded_date__year=nowdate.year,
-                                                  recorded_date__month=nowdate.month,
-                                                  recorded_date__day=nowdate.day)
-    existingItem.followers = item.get('followers')
-    existingItem.twits = item.get('twits')
-    existingItem.recorded_date = nowdate
-    existingItem.save()
-
-
-def update_twitter2(item):
-    nowdate = item['recorded_date']
-    existingItem = SocialbladeTwitter2.objects.get(artist=item.get('artist'),
-                                                   recorded_date__year=nowdate.year,
-                                                   recorded_date__month=nowdate.month,
-                                                   recorded_date__day=nowdate.day
-                                                   )
+    existingItem = DataModels[name].objects.get(artist=item.get('artist'),
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day)
     existingItem.followers = item.get('followers')
     existingItem.twits = item.get('twits')
     existingItem.recorded_date = nowdate
@@ -104,13 +90,14 @@ def update_twitter2(item):
 def update_weverse(item):
     nowdate = item['recorded_date']
     existingItem = Weverse.objects.get(artist=item.get('artist'),
-                                                   recorded_date__year=nowdate.year,
-                                                   recorded_date__month=nowdate.month,
-                                                   recorded_date__day=nowdate.day
-                                                   )
+                                       recorded_date__year=nowdate.year,
+                                       recorded_date__month=nowdate.month,
+                                       recorded_date__day=nowdate.day
+                                       )
     existingItem.weverses = item.get('weverses')
     existingItem.recorded_date = nowdate
     existingItem.save()
+
 
 def update_vlive(item):
     nowdate = item['recorded_date']
@@ -126,87 +113,21 @@ def update_vlive(item):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
+
+def update_crowdtangle(item, name):
+    nowdate = item['recorded_date']
+    existingItem = DataModels[name].objects.get(artist=item.get('artist'),
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day
+                                                )
+    existingItem.followers = item.get('followers')
+    existingItem.recorded_date = nowdate
+    existingItem.save()
+
+
 class CrawlerPipeline(object):
     def process_item(self, item, spider):
-        spider_name = spider.name # spider의 이름을 추출 => 동적으로 spider에 따라 다른 pipeline 적용
-        item["recorded_date"] = timezone.now() # 업데이트 시간 기록
+        spider_name = spider.name  # spider의 이름을 추출 => 동적으로 spider에 따라 다른 pipeline 적용
+        item["recorded_date"] = timezone.now()  # 업데이트 시간 기록
         process_itemsave(spider_name, item)
-
-
-# class SocialbladeYoutubePipeline(object):
-#     def process_item(self, item, spider):
-#         item["recorded_date"] = timezone.now()
-#
-#         # 일별로 누적
-#         current_date = timezone.localdate()
-#         # 이미 존재하는 아이템에 대해서는 업데이트만 진행
-#         if SocialbladeYoutube.objects.filter(artist=item.get('artist')).exists():
-#             existingItem = SocialbladeYoutube.objects.get(artist=item.get('artist'))
-#             existingItem.uploads = item.get('uploads')
-#             existingItem.subscribers = item.get('subscribers')
-#             existingItem.views = item.get('views')
-#             existingItem.recorded_date = timezone.now()
-#             existingItem.save()
-#         else:
-#             item.save()
-#         return item
-#
-#
-# class SocialbladeTiktokPipeline(object):
-#     def process_item(self, item, spider):
-#         item["recorded_date"] = timezone.now()
-#
-#         if SocialbladeTiktok.objects.filter(artist=item.get('artist')).exists():
-#             existingItem = SocialbladeTiktok.objects.get(artist=item.get('artist'))
-#             existingItem.followers = item.get('followers')
-#             existingItem.uploads = item.get('uploads')
-#             existingItem.likes = item.get('likes')
-#             existingItem.recorded_date = timezone.now()
-#             existingItem.save()
-#         else:
-#             item.save()
-#         return item
-#
-#
-# class SocialbladeTwitterPipeline(object):
-#     def process_item(self, item, spider):
-#         item["recorded_date"] = timezone.now()
-#
-#         if SocialbladeTwitter.objects.filter(artist=item.get('artist')).exists():
-#             existingItem = SocialbladeTwitter.objects.get(artist=item.get('artist'))
-#             existingItem.followers = item.get('followers')
-#             existingItem.twits = item.get('twits')
-#             existingItem.recorded_date = timezone.now()
-#             existingItem.save()
-#         else:
-#             item.save()
-#         return item
-#
-#
-# class SocialbladeTwitter2Pipeline(object):
-#     def process_item(self, item, spider):
-#         item["recorded_date"] = timezone.now()
-#
-#         if SocialbladeTwitter2.objects.filter(artist=item.get('artist')).exists():
-#             existingItem = SocialbladeTwitter2.objects.get(artist=item.get('artist'))
-#             existingItem.followers = item.get('followers')
-#             existingItem.twits = item.get('twits')
-#             existingItem.recorded_date = timezone.now()
-#             existingItem.save()
-#         else:
-#             item.save()
-#         return item
-#
-#
-# class WeversePipeline(object):
-#     def process_item(self, item, spider):
-#         item["recorded_date"] = timezone.now()
-#
-#         if Weverse.objects.filter(artist=item.get('artist')).exists():
-#             existingItem = Weverse.objects.get(artist=item.get('artist'))
-#             existingItem.weverses = item.get('weverses')
-#             existingItem.recorded_date = timezone.now()
-#             existingItem.save()
-#         else:
-#             item.save()
-#         return item
