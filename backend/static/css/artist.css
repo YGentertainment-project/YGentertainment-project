@@ -96,8 +96,8 @@
 }
 
 .add-target-input{
-    width: 70%;
-    float: left;
+    width: 100% !important;
+    /* float: left; */
 }
 
 .url-description{

@@ -87,7 +87,7 @@ function platform_create_function(){
     var data = {
         "name":created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value,
         "url":created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value,
-        "description":created_platform_tr[3].getElementsByTagName("td")[1].firstElementChild.value,
+        "description":created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value,
         "collect_items": collect_items_list
     };
 
