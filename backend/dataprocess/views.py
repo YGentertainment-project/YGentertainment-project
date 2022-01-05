@@ -20,7 +20,8 @@ def logincheck(request):
     # 로그인 정보를 받기 위해 cookie사용
     username = request.COOKIES.get('username')
     if username is not None:
-            print(username)
+        if User.objects.filter(username=username).exists():
+            # 이미 존재하는 username일때만 로그인
             user = User.objects.filter(username=username).first()
             auth.login(request, user)
     return request
