@@ -19,7 +19,8 @@ from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('config/', include("config.urls")),
-    path('', include("dataprocess.urls")),
+    path('dataprocess/', include("dataprocess.urls")),
+    # path('api/', include("crawler.urls")),
     path('api/', include("account.urls")),
     path('crawler/', include("crawler.urls")),
 ]
