@@ -47,6 +47,7 @@ class CollectTarget(models.Model):
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE) # if Artist is deleted, all of his/her data is removed
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     target_url = models.TextField(default="")
+    target_url_2 = models.TextField(default="")
     channel = models.TextField(null=True)
     channel_name = models.TextField(null=True)
     sibling = models.BooleanField(default=False)

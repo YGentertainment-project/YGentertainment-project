@@ -1,3 +1,13 @@
+var isEmpty = 
+    function(value){ 
+        if( value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length ) ){ 
+            return true 
+        }else{ 
+                return false 
+        } 
+    };
+
+
 //artist create function
 $('.add-submit').click(function(){
     var th = $('.add-table').find('th'); //platform names
@@ -11,9 +21,11 @@ $('.add-submit').click(function(){
     var urls = [];
     for(var i=7;i<trs_value.length;i++){
         var collect_item = trs_value[i].value;
-        if(collect_item!="")
-           urls.push(collect_item)
+        urls.push(collect_item)
+           
     }
+
+    console.log(urls);
 
     var target_urls = {};
     for( var i = 0; i<platform_names.length; i++){
@@ -32,22 +44,22 @@ $('.add-submit').click(function(){
     };
 
     console.log(JSON.stringify(data));
+
     $.ajax({
-        url: "/api/artist/",
+        url: "/dataprocess/api/artist/",
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
             console.log('success');
-            location.href = "/artist/";
+            location.href = "/dataprocess/artist/";
         },
         error: e => {
             console.log(e);
             alert(e.responseText);
         },
     });
-
     
 })
 
@@ -73,7 +85,7 @@ $('#save-artists').click(function(){
     }
 
     $.ajax({
-        url: '/api/artist/',
+        url: '/dataprocess/api/artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -95,7 +107,7 @@ $('input[name=artist-name]').click(function(){
     //console.log(artist);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist},
@@ -152,17 +164,20 @@ $('#save-artists-platform').click(function(){
     for(var r=0;r<artist_tr.length;r++){
         var cells = artist_tr[r].getElementsByTagName("td");
 
+       
         datas.push({
             "id": cells[1].firstElementChild.value,
             "platform": cells[2].firstElementChild.innerHTML,
             "target_url": cells[3].firstElementChild.value,
+            "target_url_2" : cells[4].firstElementChild.value,
         });
+
     }
 
     console.log(datas);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -189,7 +204,7 @@ $(document).on('click','.platform-names',function(){
     console.log(platform);
 
     $.ajax({
-        url: '/api/collect_target_item/',
+        url: '/dataprocess/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist, 'platform':platform},

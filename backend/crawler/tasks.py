@@ -41,10 +41,10 @@ def crawling_start(platform, task_id):
     process.crawl(spiders[platform])
     process.start()
 
-
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5)
 def crawling(self, platform):
+
     try:
         proc = Process(target=crawling_start, args=[platform, self.request.id])
         proc.start()

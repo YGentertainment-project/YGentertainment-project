@@ -100,7 +100,7 @@ def daily_read(request):
     end_date = request.GET.get('end_date', None)
 
     if type == "누적":
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
         filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
                                                              recorded_date__month=start_date_dateobject.month,
                                                              recorded_date__day=start_date_dateobject.day)
@@ -226,6 +226,23 @@ def schedules(request):
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
 
+    # 스케줄 리스트 업
+    elif request.method == 'GET':
+        try:
+            if PeriodicTask.objects.filter(task='crawling').exists():
+                schedule_list = get_schedules()
+                return JsonResponse(data={'schedules': schedule_list})
+            else:
+                return JsonResponse(data={'schedules': []})
+        except Exception as e:
+            print(e)
+            return JsonResponse(status=400, data={'error': str(e)})
+    else:
+        body_unicode = request.body.decode('utf-8')  # body값 추출
+        body = json.loads(body_unicode)
+        scheduleId = body.get("id")
+        schedule = PeriodicTask.objects.get(id=scheduleId)
+        schedule.delete()
 
 @csrf_exempt
 @require_http_methods(['POST'])  # only post

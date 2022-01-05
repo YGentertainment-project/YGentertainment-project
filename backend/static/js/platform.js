@@ -9,7 +9,8 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
             }else{
                 dataCol = $('<td><input type="checkbox"></input></td>'); 
             }
-        }else{
+        }
+        else{
             dataCol = document.createElement('td');
             if(key==='id')
                 dataCol.setAttribute('class', 'hidden');
@@ -19,6 +20,7 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
             </td>
             `;
         }
+       
         tableRow.append(dataCol);
     }
     $('#platform-body').append(tableRow);
@@ -26,7 +28,7 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
 
 function platform_read_function(){
     $.ajax({
-        url: '/api/platform/',
+        url: '/dataprocess/api/platform/',
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
@@ -58,7 +60,7 @@ function platform_update_function(){
         });
     }
     $.ajax({
-        url: '/api/platform/',
+        url: '/dataprocess/api/platform/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -85,12 +87,12 @@ function platform_create_function(){
     var data = {
         "name":created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value,
         "url":created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value,
-        "description":created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value,
+        "description":created_platform_tr[3].getElementsByTagName("td")[1].firstElementChild.value,
         "collect_items": collect_items_list
     };
 
     $.ajax({
-        url: '/api/platform/',
+        url: '/dataprocess/api/platform/',
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),

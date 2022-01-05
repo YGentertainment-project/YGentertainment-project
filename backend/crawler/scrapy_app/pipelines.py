@@ -78,15 +78,15 @@ def update_tiktok(item):
 def update_twitter(item, name):
     nowdate = item['recorded_date']
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
-                                                recorded_date__year=nowdate.year,
-                                                recorded_date__month=nowdate.month,
-                                                recorded_date__day=nowdate.day)
+                                                  recorded_date__year=nowdate.year,
+                                                  recorded_date__month=nowdate.month,
+                                                  recorded_date__day=nowdate.day)
     existingItem.followers = item.get('followers')
     existingItem.twits = item.get('twits')
     existingItem.recorded_date = nowdate
     existingItem.save()
 
-
+    
 def update_weverse(item):
     nowdate = item['recorded_date']
     existingItem = Weverse.objects.get(artist=item.get('artist'),
@@ -113,7 +113,6 @@ def update_vlive(item):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
-
 def update_crowdtangle(item, name):
     nowdate = item['recorded_date']
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
@@ -124,7 +123,6 @@ def update_crowdtangle(item, name):
     existingItem.followers = item.get('followers')
     existingItem.recorded_date = nowdate
     existingItem.save()
-
 
 class CrawlerPipeline(object):
     def process_item(self, item, spider):

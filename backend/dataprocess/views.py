@@ -15,11 +15,22 @@ import openpyxl
 from .resources import *
 from .models import *
 
+# login check using cookie
+def logincheck(request):
+    # 로그인 정보를 받기 위해 cookie사용
+    username = request.COOKIES.get('username')
+    if username is not None:
+            print(username)
+            user = User.objects.filter(username=username).first()
+            auth.login(request, user)
+    return request
+
 # Create your views here.
 def base(request):
     values = {
       'first_depth' : '데이터 리포트',
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/main.html',values)
 
 def daily(request):
@@ -27,6 +38,7 @@ def daily(request):
       'first_depth' : '데이터 리포트',
       'second_depth': '시간별 리포트'
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/daily.html',values)
 
 def platform(request):
@@ -38,14 +50,7 @@ def platform(request):
         'first_depth' : '플랫폼 관리',
         'second_depth': '플랫폼 관리'
         }
-
-        # 로그인 정보를 받기 위해 cookie사용
-        username = request.COOKIES.get('username')
-        if username is not None:
-            print(username)
-            user = User.objects.filter(username=username).first()
-            auth.login(request, user)
-
+        request = logincheck(request)
         return render(request, 'dataprocess/platform.html',values)
     
     else:
@@ -93,6 +98,7 @@ def platform(request):
                     'second_depth': '플랫폼 관리',
                     'excel_data': excel_data
                 }
+                request = logincheck(request)
                 return render(request, 'dataprocess/platform.html',values)
         elif type == 'export':
             platform_resource = PlatformResource()
@@ -122,6 +128,7 @@ def artist(request):
       'second_depth': '데이터 URL 관리',
       'artists': artists
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/artist.html',values)
 
 @csrf_exempt
@@ -132,12 +139,14 @@ def artist_add(request):
       'second_depth': '데이터 URL 관리',
       'platforms' : platforms
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/artist_add.html',values)
 
 def login(request):
     values = {
       'first_depth' : '로그인'
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
 #from rest_framework.views import APIView
@@ -214,12 +223,10 @@ class PlatformAPI(APIView):
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object["id"]).first()
                 if platform_data is None:
-                    platform = Platform(
-                        name = platform_object["name"],
-                        url = platform_object["url"],
-                        description = platform_object["description"],
-                        active = platform_object["active"])
-                    platform.save()
+                    # 원래 없는 건 새로 저장
+                    platform_serializer = PlatformSerializer(data=platform_object)
+                    if platform_serializer.is_valid():
+                        platform_serializer.save()
                 else:
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
@@ -261,14 +268,21 @@ class ArtistAPI(APIView):
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
                 platform_objects_values = platform_objects.values()
-                for i,platform_objects_value in enumerate(platform_objects_values):
-                    platform_target_url = artist_object['urls'][i]
+                
+                url_index = 0
+
+                for platform_index,platform_objects_value in enumerate(platform_objects_values):
+                    platform_target_url = artist_object['urls'][url_index]
+                    platform_target_url_2 = artist_object['urls'][url_index+1]
+                    url_index += 2
                     collecttarget = CollectTarget(
                         platform_id = platform_objects_value['id'],
                         artist_id = artist_serializer.data['id'],
-                        target_url = platform_target_url
+                        target_url = platform_target_url,
+                        target_url_2 = platform_target_url_2
                     )
                     collecttarget.save()
+    
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:
@@ -315,7 +329,8 @@ class PlatformOfArtistAPI(APIView):
                         'artist_id':artist_object['id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
-                        'target_url':collecttarget_value['target_url']
+                        'target_url':collecttarget_value['target_url'],
+                        'target_url_2': collecttarget_value['target_url_2']
                     })
                 return JsonResponse(data={'success': True, 'data': platform_datas})
             else:
@@ -333,6 +348,8 @@ class PlatformOfArtistAPI(APIView):
             for collecttarget_object in collecttarget_list:
                 print(collecttarget_object['target_url'])
                 CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
+                if collecttarget_object['target_url_2']:
+                     CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
                 print("ss")
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
