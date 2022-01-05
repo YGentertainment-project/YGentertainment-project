@@ -46,14 +46,14 @@ $('.add-submit').click(function(){
     console.log(JSON.stringify(data));
 
     $.ajax({
-        url: "/api/artist/",
+        url: "/dataprocess/api/artist/",
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
             console.log('success');
-            location.href = "/artist/";
+            location.href = "/dataprocess/artist/";
         },
         error: e => {
             console.log(e);
@@ -85,7 +85,7 @@ $('#save-artists').click(function(){
     }
 
     $.ajax({
-        url: '/api/artist/',
+        url: '/dataprocess/api/artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -107,7 +107,7 @@ $('input[name=artist-name]').click(function(){
     //console.log(artist);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist},
@@ -177,7 +177,7 @@ $('#save-artists-platform').click(function(){
     console.log(datas);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -204,7 +204,7 @@ $(document).on('click','.platform-names',function(){
     console.log(platform);
 
     $.ajax({
-        url: '/api/collect_target_item/',
+        url: '/dataprocess/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist, 'platform':platform},

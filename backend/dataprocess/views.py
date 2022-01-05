@@ -214,13 +214,10 @@ class PlatformAPI(APIView):
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object["id"]).first()
                 if platform_data is None:
-                    platform = Platform(
-                        name = platform_object["name"],
-                        url = platform_object["url"],
-                        url_2 = platform_object["url_2"],
-                        description = platform_object["description"],
-                        active = platform_object["active"])
-                    platform.save()
+                    # 원래 없는 건 새로 저장
+                    platform_serializer = PlatformSerializer(data=platform_object)
+                    if platform_serializer.is_valid():
+                        platform_serializer.save()
                 else:
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
