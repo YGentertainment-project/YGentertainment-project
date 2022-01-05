@@ -115,7 +115,7 @@ $(document).ready(function () {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
                 // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
                 checkCrawlStatus(task_id)
-                statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
+                //statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
             },
             error: e => {
                 alert('Failed to send request for scraping')

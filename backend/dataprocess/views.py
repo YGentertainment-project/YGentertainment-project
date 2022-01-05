@@ -34,9 +34,13 @@ def base(request):
     return render(request, 'dataprocess/main.html',values)
 
 def daily(request):
+    artists = Artist.objects.all() #get all artist info from db 
+    platforms = Platform.objects.all() #get all platform info from db
     values = {
       'first_depth' : '데이터 리포트',
-      'second_depth': '시간별 리포트'
+      'second_depth': '시간별 리포트',
+      'artists' : artists,
+      'platforms':platforms
     }
     request = logincheck(request)
     return render(request, 'dataprocess/daily.html',values)

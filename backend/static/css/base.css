@@ -232,6 +232,21 @@ li{
     background-color: lightgray;
 }
 
+.button_layout > label{
+    width: 100px;
+    border: 1px solid black !important;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.button_layout > label:hover{
+    top: -2px;
+    border: 2px solid black;
+    box-shadow: 0px 0px 10px grey;
+}
+
 /*no use from*/
 .select-other{
     display: flex;
