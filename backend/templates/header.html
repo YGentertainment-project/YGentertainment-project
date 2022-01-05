@@ -25,13 +25,22 @@
     </div>
    {% endif %}
 
+   <script>
+        function go_to_logout(){
+            location.href = "{% url 'account:user_logout_api' %}";
+        }
+        function go_to_login(){
+            location.href = "{% url 'account:user_logout_api' %}";
+        }
+   </script>
+
    {% if user.is_authenticated %}
-   <button class="logout-btn" id="logout-btn">
-       <a href="{% url 'account:user_logout_api'%}">로그아웃</a>
+   <button class="logout-btn" id="logout-btn" onclick=go_to_logout()>
+        로그아웃
     </button>
     {% else %}
-    <button class="login-btn" id="login-btn">
-        <a href="{% url 'account:user_simple_login_api'%}">로그인</a>
+    <button class="login-btn" id="login-btn" onclick=go_to_login()>
+        로그인
     </button>
     {% endif %}
 </header>
