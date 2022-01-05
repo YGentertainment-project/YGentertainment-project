@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
+from dataprocess.models import Artist
 
 # crawler models
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
@@ -106,10 +107,15 @@ def daily_read(request):
                                                              recorded_date__day=start_date_dateobject.day)
         if filter_objects.exists():
             filter_objects_values = filter_objects.values()
+            artist_objects = Artist.objects.all()
+            artist_objects_values = artist_objects.values()
             filter_datas = []
+            artist_datas = []
             for filter_value in filter_objects_values:
                 filter_datas.append(filter_value)
-            return JsonResponse(data={'success': True, 'data': filter_datas})
+            for artist in artist_objects_values:
+                artist_datas.append(artist)
+            return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_datas})
         else:
             return JsonResponse(status=400, data={'success': True, 'data': []})
     # elif type=="기간별"://기간별에 속하는 모든 data 전송

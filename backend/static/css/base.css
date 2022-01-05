@@ -1,5 +1,5 @@
 *{
-    font-family: 'Do Hyeon', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif;
     box-sizing: border-box;
 }
 
@@ -18,6 +18,8 @@ th{
     border: 1px solid lightslategray;
     text-align: center;
     font-family: 'Nanum Gothic', sans-serif;
+    font-size: 1.2rem;
+    font-weight: normal;
 }
 
 tr{
@@ -37,6 +39,16 @@ li{
 
 .a_in_btn{
     color: white;
+}
+
+label{
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+input{
+    font-size: 1.2rem;
+    font-weight: normal;
 }
 
 /* header */
@@ -94,6 +106,12 @@ li{
     text-align: center;
 }
 
+.first-depth, .second-depth, .third-depth{
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+
 /* sidebar */
 .sidebar{
     position: fixed;
@@ -138,6 +156,7 @@ li{
     cursor: pointer;
     transition: transform 250ms ease-in;
     margin: 10px 20px;
+    font-weight: bold;
 }
 
 .sidebar-item-in{
@@ -159,6 +178,7 @@ li{
     font-size: 0.8rem;
     text-decoration: none;
     cursor: pointer;
+    font-weight: normal;
 }
 
 .sidebar-item:hover{
@@ -218,6 +238,7 @@ li{
     background-color: white;
     border: 1px solid black;
     cursor: pointer;
+    font-size: 1rem;
 }
 
 .platform-name:hover{
@@ -239,6 +260,8 @@ li{
     margin-right: 10px;
     text-align: center;
     position: relative;
+    font-size: 1rem;
+    font-weight: normal;
 }
 
 .button_layout > label:hover{

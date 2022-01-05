@@ -44,6 +44,50 @@ $(document).on('click','input[name=month]',function(){
     $('input[name=end_date]').val(year+'-'+month+'-'+day);  
  })
 
+//not crawled artist
+const createNotCrawledTableRow = (data) => {
+    const tableRow = $('<tr></tr>');
+    let col1 = $('<th></th>', {
+        text:data
+    })
+    //조사 항목 개수만큼 넣기
+    let col2 = `
+    <td>
+        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+    </td>
+    `
+    let col3 = `
+    <td>
+        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+    </td>
+    `
+    let col4 =  `
+    <td>
+        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+    </td>
+    `
+    let col5 =  `
+    <td>
+        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+    </td>
+    `
+    tableRow.append(col1)
+    tableRow.append(col2)
+    tableRow.append(col3)
+    tableRow.append(col4)
+    tableRow.append(col5)
+    return tableRow;
+}
+
+const showNotCrawledData = (datas) => {
+    datas.forEach(data => {
+        $('#board').append(createNotCrawledTableRow(data))
+    })
+}
+
+
+
+
 //youtube
 //table creation
 const createYoutubeTableHeader = () => {
@@ -132,7 +176,11 @@ const createVliveTableRow = (data) => {
                 text:data[key],
             })
         }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
+            if(isEmpty(data[key])){
+                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%; background-color:lightgray;"></input></td>')    
+            } else{
+                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
+            }
         }
         tableRow.append(dataCol)
     }
@@ -361,13 +409,37 @@ $(document).on('click','.platform-name',function(){
         success: res => {
             let table_html = ''
             let data_list = [];
+            let artist_list = [];
             data_list = res.data
-            //console.log(data_list);
+            artist_list = res.artists
+            console.log(data_list[0]['artist']);
+
+            let data_artist_list = []; //크롤링 된 데이터에 있는 아티스트 리스트
+            for(let i = 0; i<data_list.length; i++){
+                data_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]['name']);
+            }
+
+            let not_crawled_artists=[];
+            for(let i = 0; i<db_artist_list.length; i++){
+                if(db_artist_list[i] in data_artist_list){
+                    continue;
+                } else{
+                    not_crawled_artists.push(db_artist_list[i]);
+                }
+            }
+            
+
             $('tbody').eq(0).empty();
             if(platform === 'youtube'){
                 showYoutubeCrawledData(data_list)
             } else if(platform === 'vlive'){
                 showVliveCrawledData(data_list)
+                showNotCrawledData(not_crawled_artists)
             } else if(platform === 'instagram' || platform === 'facebook'){
                 showCrowdtangleCrawledData(data_list)
             } else if(platform === 'twitter' || platform === 'twitter2'){
