@@ -23,7 +23,7 @@ services:
     environment:
       - RABBITMQ_USER=ygenter
       - RABBITMQ_PASSWORD=ygenter
-    port:
+    ports:
       - "5672:5672"
       - "15672:15672"
 
