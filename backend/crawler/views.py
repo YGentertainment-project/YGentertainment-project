@@ -226,24 +226,6 @@ def schedules(request):
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
 
-    # 스케줄 리스트 업
-    elif request.method == 'GET':
-        try:
-            if PeriodicTask.objects.filter(task='crawling').exists():
-                schedule_list = get_schedules()
-                return JsonResponse(data={'schedules': schedule_list})
-            else:
-                return JsonResponse(data={'schedules': []})
-        except Exception as e:
-            print(e)
-            return JsonResponse(status=400, data={'error': str(e)})
-    else:
-        body_unicode = request.body.decode('utf-8')  # body값 추출
-        body = json.loads(body_unicode)
-        scheduleId = body.get("id")
-        schedule = PeriodicTask.objects.get(id=scheduleId)
-        schedule.delete()
-
 @csrf_exempt
 @require_http_methods(['POST'])  # only post
 def daily_update(request):

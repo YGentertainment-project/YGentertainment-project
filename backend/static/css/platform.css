@@ -11,6 +11,11 @@
     align-items: center;
 }
 
+.flexstart_layout{
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
 .column_layout{
     display: flex;
     flex-direction: column;
