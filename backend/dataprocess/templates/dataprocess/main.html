@@ -3,5 +3,25 @@
    {% extends "main.html" %}
 
    {% block content %}
+
+   <script>
+      function go_to_login(){
+          location.href = "{% url 'account:user_simple_login_api' %}";
+      }
+   </script>
+
+   <!-- 로그인 -->
+   {% if user.is_authenticated %}
+   <div class="forms">
+      로그인된 상태입니다
+   </div>
+    {% else %}
+    <div class="forms">
+      <button class="excel-btn" id="login-btn" onclick=go_to_login()>
+         로그인
+      </button>
+   </div>
+    {% endif %}
+
    {% endblock content %}
 </html>

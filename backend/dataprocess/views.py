@@ -15,11 +15,22 @@ import openpyxl
 from .resources import *
 from .models import *
 
+# login check using cookie
+def logincheck(request):
+    # 로그인 정보를 받기 위해 cookie사용
+    username = request.COOKIES.get('username')
+    if username is not None:
+            print(username)
+            user = User.objects.filter(username=username).first()
+            auth.login(request, user)
+    return request
+
 # Create your views here.
 def base(request):
     values = {
       'first_depth' : '데이터 리포트',
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/main.html',values)
 
 def daily(request):
@@ -27,6 +38,7 @@ def daily(request):
       'first_depth' : '데이터 리포트',
       'second_depth': '시간별 리포트'
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/daily.html',values)
 
 def platform(request):
@@ -38,14 +50,7 @@ def platform(request):
         'first_depth' : '플랫폼 관리',
         'second_depth': '플랫폼 관리'
         }
-
-        # 로그인 정보를 받기 위해 cookie사용
-        username = request.COOKIES.get('username')
-        if username is not None:
-            print(username)
-            user = User.objects.filter(username=username).first()
-            auth.login(request, user)
-
+        request = logincheck(request)
         return render(request, 'dataprocess/platform.html',values)
     
     else:
@@ -93,6 +98,7 @@ def platform(request):
                     'second_depth': '플랫폼 관리',
                     'excel_data': excel_data
                 }
+                request = logincheck(request)
                 return render(request, 'dataprocess/platform.html',values)
         elif type == 'export':
             platform_resource = PlatformResource()
@@ -122,6 +128,7 @@ def artist(request):
       'second_depth': '데이터 URL 관리',
       'artists': artists
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/artist.html',values)
 
 @csrf_exempt
@@ -132,12 +139,14 @@ def artist_add(request):
       'second_depth': '데이터 URL 관리',
       'platforms' : platforms
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/artist_add.html',values)
 
 def login(request):
     values = {
       'first_depth' : '로그인'
     }
+    request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
 #from rest_framework.views import APIView

@@ -14,7 +14,7 @@ from utils.decorators import login_required
 from .models import User
 from .serializers import *
 
-# "/"로 접속시 시작화면
+# "/"로 접속시 사이트 시작화면
 def base(request):
     return render(request, 'account/main.html')
 
@@ -68,7 +68,7 @@ class UserSimpleLoginAPI(APIView):
         values = {
             'first_depth' : '데이터 리포트',
         }
-        response = render(request, 'dataprocess/main.html',values)
+        response = redirect('dataprocess:base')
         response.set_cookie('username', username)
         return response
 
@@ -79,7 +79,7 @@ class UserLogoutAPI(APIView):
         values = {
             'first_depth' : '로그인'
         }
-        response = render(request, 'dataprocess/login.html', values)
+        response = redirect('dataprocess:base')
         response.delete_cookie('username')
         return response
 
@@ -106,10 +106,6 @@ class UserRegisterAPI(APIView):
         user.has_email_auth = False
         user.email_auth_token = rand_str()
         user.save()
-
-        render_data = {
-            "username": user.username,
-        }
 
         return self.success("Succeeded")
 
