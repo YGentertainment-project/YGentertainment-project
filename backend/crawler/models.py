@@ -5,10 +5,10 @@ from django.utils import timezone
 
 class SocialbladeYoutube(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    uploads = models.IntegerField()  # 업로드 개수
-    subscribers = models.IntegerField()  # 구독자수
-    views = models.BigIntegerField()  # 조회수
-    user_created = models.TextField()  # 계정 생성일
+    uploads = models.IntegerField(null=True)  # 업로드 개수
+    subscribers = models.IntegerField(null=True)  # 구독자수
+    views = models.BigIntegerField(null=True)  # 조회수
+    user_created = models.TextField(null=True)  # 계정 생성일
     recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
     url = models.TextField(null=True)
     class Meta:
