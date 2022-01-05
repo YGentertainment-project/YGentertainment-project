@@ -217,6 +217,7 @@ class PlatformAPI(APIView):
                     platform = Platform(
                         name = platform_object["name"],
                         url = platform_object["url"],
+                        url_2 = platform_object["url_2"],
                         description = platform_object["description"],
                         active = platform_object["active"])
                     platform.save()
@@ -261,14 +262,21 @@ class ArtistAPI(APIView):
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
                 platform_objects_values = platform_objects.values()
-                for i,platform_objects_value in enumerate(platform_objects_values):
-                    platform_target_url = artist_object['urls'][i]
+                
+                url_index = 0
+
+                for platform_index,platform_objects_value in enumerate(platform_objects_values):
+                    platform_target_url = artist_object['urls'][url_index]
+                    platform_target_url_2 = artist_object['urls'][url_index+1]
+                    url_index += 2
                     collecttarget = CollectTarget(
                         platform_id = platform_objects_value['id'],
                         artist_id = artist_serializer.data['id'],
-                        target_url = platform_target_url
+                        target_url = platform_target_url,
+                        target_url_2 = platform_target_url_2
                     )
                     collecttarget.save()
+    
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:
@@ -315,7 +323,8 @@ class PlatformOfArtistAPI(APIView):
                         'artist_id':artist_object['id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
-                        'target_url':collecttarget_value['target_url']
+                        'target_url':collecttarget_value['target_url'],
+                        'target_url_2': collecttarget_value['target_url_2']
                     })
                 return JsonResponse(data={'success': True, 'data': platform_datas})
             else:
@@ -333,6 +342,8 @@ class PlatformOfArtistAPI(APIView):
             for collecttarget_object in collecttarget_list:
                 print(collecttarget_object['target_url'])
                 CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
+                if collecttarget_object['target_url_2']:
+                     CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
                 print("ss")
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:

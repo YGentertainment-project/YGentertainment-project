@@ -41,12 +41,14 @@
                <tr>
                    <th class="title-th">플랫폼</th>
                    <th class="title-th">데이터 수집 URL</th>
+                   <th class="title-th">데이터 수집 URL 2</th>
                </tr>
               {% if platforms %}
                {% for platform in platforms %}
                <tr>
                     <th>{{platform.name}}</th>
                     <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="URL 2" /></td>
                 </tr>
                {% endfor %}
               {% else %}
