@@ -14,6 +14,10 @@ from utils.decorators import login_required
 from .models import User
 from .serializers import *
 
+# "/"로 접속시 시작화면
+def base(request):
+    return render(request, 'account/main.html')
+
 
 class UserLoginAPI(APIView):
     @validate_serializer(UserLoginSerializer)

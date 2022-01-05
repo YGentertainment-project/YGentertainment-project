@@ -6,6 +6,8 @@ from django.views.generic import TemplateView
 
 from crawler import views
 
+app_name = 'crawler'
+
 urlpatterns = [
     re_path(r'^$', TemplateView.as_view(template_name='socialblade.html'), name='home'),
     re_path(r'^api/crawl/', views.crawl, name='crawl'),
