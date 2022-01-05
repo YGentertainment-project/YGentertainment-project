@@ -19,7 +19,6 @@ else:
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -31,7 +30,6 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -107,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -117,11 +114,14 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = False # 데이터베이스 저장 시에도 현재시간(Asia/Seoul)대로 저장되도록 설정
-
+USE_TZ = True  # 데이터베이스 저장 시에도 현재시간(Asia/Seoul)대로 저장되도록 설정
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
+
+# STATIC_URL = '/public/'
+# STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+# STATICFILES_DIRS = [BASE_DIR/"public",]
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -129,6 +129,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+# Rabbitmq env_values
+RABBITMQ_HOSTS = (os.environ.get('RABBITMQ_HOST'), )
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'ygenter')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'ygenter')
+RABBITMQ_QUEUE_EXPIRES = 300.0  # seconds
+RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
@@ -223,3 +230,10 @@ CORS_ORIGIN_WHITELIST = (
 )
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
+# CELERY 관련 설정
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+# CELERY_TIMEZONE = 'Asia/Seoul'
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_ACCEPT_CONTENT = ['json']
+#
+# CELERY_TASK_TRACK_STARTED = True

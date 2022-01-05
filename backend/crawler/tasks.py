@@ -16,7 +16,20 @@ from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from celery import shared_task
-from celery.utils.log import get_task_logger
+from crawler.scrapy_app.spiders.vlive import VliveSpider
+from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
+from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
+from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
+from crawler.scrapy_app.spiders.socialblade_twitter2 import Twitter2Spider
+from crawler.scrapy_app.spiders.socialblade_twitter import TwitterSpider
+from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
+from scrapy.settings import Settings
+from scrapy.crawler import CrawlerProcess
+import scrapy
+from .celery import app
+from billiard.context import Process
+import os
+import logging
 
 settings = Settings()
 os.environ['SCRAPY_SETTINGS_MODULE'] = 'crawler.scrapy_app.settings'
@@ -42,7 +55,6 @@ def crawling_start(platform, task_id):
     settings.set('LOG_FILE', log_path)
     process.crawl(spiders[platform])
     process.start()
-
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5)

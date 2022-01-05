@@ -30,6 +30,8 @@ SOCIALBLADE_DOMAIN = 'socialblade.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
+
+
 class ScrapyAppSpiderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -53,6 +55,7 @@ class ScrapyAppSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
 
 def driver_setting():
     s = Service(ChromeDriverManager().install())
@@ -101,6 +104,8 @@ def driver_setting():
     return driver
 
 # youtube downloader middleware
+
+
 class SocialbladeDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -139,6 +144,7 @@ class SocialbladeDownloaderMiddleware:
 
     def spider_opened(self, spider):
         self.driver = driver_setting()
+
 
 class LoginDownloaderMiddleware:
     @classmethod
