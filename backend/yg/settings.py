@@ -30,8 +30,6 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -127,6 +125,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+# Rabbitmq env_values
+RABBITMQ_HOSTS = (os.environ.get('RABBITMQ_HOST'), )
+RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'ygenter')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'ygenter')
+RABBITMQ_QUEUE_EXPIRES = 300.0 # seconds
+RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
