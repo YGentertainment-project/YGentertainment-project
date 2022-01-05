@@ -391,6 +391,7 @@ $('#update-data').click(function(){
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
 
+    console.log('start');
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];

@@ -14,6 +14,7 @@ urlpatterns = [
     re_path(r'^api/schedules/', views.schedules, name='schedules'),
     path('api/showdata/', views.show_data, name='show_data'),
     path('daily/dailyread/', views.daily_read, name='daily_read'),
+    path('daily/dailyupdate/', views.daily_update, name='daily_update'),
 ]
 
 if settings.DEBUG:
