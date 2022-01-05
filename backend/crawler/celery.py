@@ -1,7 +1,6 @@
 import os, django
 from celery import Celery
 from celery.schedules import crontab
-from yg import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yg.settings')
 app = Celery('crawler', backend='rpc://', broker='amqp://guest:guest@localhost:5672/')
@@ -22,7 +21,7 @@ app.conf.update(
 )
 
 app.conf.beat_schedule = {
-    # 'crawl-vlive-every-5minutes' : {
+    # 'crawl-vlive-every-3minutes' : {
     #     'task': 'crawling',
     #     'schedule': crontab(minute='*/3'),
     #     'args': ['vlive'],
