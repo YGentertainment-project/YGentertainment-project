@@ -1,5 +1,3 @@
-//플랫폼별로 크롤링 된 데이터 보여주기
-
 //number format
 function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -10,6 +8,41 @@ function uncomma(str) {
     str = String(str);
     return str.replace(/[^\d]+/g, '');
 }
+
+//date setting
+
+function addDays(date, days) { 
+    const clone = new Date(date); 
+    clone.setDate(date.getDate() + days) 
+    return clone; 
+}
+
+$(document).on('click','input[name=day]',function(){
+   const today = new Date();
+   const next_day = addDays(today,1);
+   var year = next_day.getFullYear();
+   var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+   var day = ("0" + next_day.getDate()).slice(-2);
+   $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+})
+
+$(document).on('click','input[name=week]',function(){
+    const today = new Date();
+    const next_day = addDays(today,7);
+    var year = next_day.getFullYear();
+    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+    var day = ("0" + next_day.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+ })
+
+$(document).on('click','input[name=month]',function(){
+    const today = new Date();
+    const next_day = addDays(today,30);
+    var year = next_day.getFullYear();
+    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+    var day = ("0" + next_day.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+ })
 
 //youtube
 //table creation
@@ -61,49 +94,7 @@ const showYoutubeCrawledData = (datas) => {
     })
 }
 
-
-$('option[name=youtube]').click(function(){
-    var platform = $('option[name=youtube]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').addClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            let data_list = [];
-            data_list = res.data
-            //console.log(data_list);
-            $('tbody').eq(0).empty();
-            showYoutubeCrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            console.log(e);
-            alert(e.responseText);
-        },
-    })
-});
-
 //vlive
-//table creation
 const createVliveTableHeader = () => {
     const tableHeader = $('<tr></tr>');
     let col1 = $('<th></th>', {
@@ -157,45 +148,6 @@ const showVliveCrawledData = (datas) => {
 }
 
 
-$('option[name=vlive]').click(function(){
-    var platform = $('option[name=vlive]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').addClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showVliveCrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
-
-
 //weverse
 //table creation
 const createWeverseTableHeader = () => {
@@ -237,46 +189,6 @@ const showWeverseCrawledData = (datas) => {
         $('#board').append(createWeverseTableRow(data))
     })
 }
-
-
-$('option[name=weverse]').click(function(){
-    var platform = $('option[name=weverse]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').addClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showWeverseCrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
-
 
 //twitter 1
 //table creation
@@ -325,83 +237,6 @@ const showTwitter1CrawledData = (datas) => {
     })
 }
 
-
-$('option[name=twitter]').click(function(){
-    var platform = $('option[name=twitter]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').addClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showTwitter1CrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
-//twitter 2
-$('option[name=twitter2]').click(function(){
-    var platform = $('option[name=twitter2]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').addClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showTwitter1CrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
-
 //facebook & insta
 //table creation
 const createCrowdtangleTableHeader = () => {
@@ -444,83 +279,6 @@ const showCrowdtangleCrawledData = (datas) => {
         $('#board').append(createCrowdtangleTableRow(data))
     })
 }
-
-
-$('option[name=facebook]').click(function(){
-    var platform = $('option[name=facebook]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').addClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showCrowdtangleCrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
-
-$('option[name=instagram]').click(function(){
-    var platform = $('option[name=instagram]').val();
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').addClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').removeClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
-    $.ajax({
-        url: '/crawler/daily/dailyread/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let table_html = ''
-            const data_list = res.data
-            $('tbody').eq(0).empty();
-            showCrowdtangleCrawledData(data_list) // Data들을 화면상에 표시
-        },
-        error: e => {
-            alert('error!');
-        },
-    })
-});
-
 
 //tik tok
 //table creation
@@ -573,22 +331,23 @@ const showTiktokCrawledData = (datas) => {
     })
 }
 
+$('option').click(function(){
+    if($(this).hasClass("platform-selected")){
+      $(this).removeClass("platform-selected");
+    }else{
+      $(this).addClass("platform-selected");  
+      $('option').not($(this)).removeClass("platform-selected");  
+    }
+});
 
-$('option[name=tiktok]').click(function(){
-    var platform = $('option[name=tiktok]').val();
+$(document).on('click','.platform-name',function(){
+    var platform = $(this).val();
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
-    $('option[name=youtube]').removeClass('platform-selected');
-    $('option[name=vlive]').removeClass('platform-selected');
-    $('option[name=melon]').removeClass('platform-selected');
-    $('option[name=spotify]').removeClass('platform-selected');
-    $('option[name=instagram]').removeClass('platform-selected');
-    $('option[name=facebook]').removeClass('platform-selected');
-    $('option[name=twitter]').removeClass('platform-selected');
-    $('option[name=twitter2]').removeClass('platform-selected');
-    $('option[name=tiktok]').addClass('platform-selected');
-    $('option[name=weverse]').removeClass('platform-selected');
+
+    console.log($(this).attr("name"));
+
     $.ajax({
         url: '/crawler/daily/dailyread/?' + $.param({
             platform: platform,
@@ -601,15 +360,30 @@ $('option[name=tiktok]').click(function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             let table_html = ''
-            const data_list = res.data
+            let data_list = [];
+            data_list = res.data
+            //console.log(data_list);
             $('tbody').eq(0).empty();
-            showTiktokCrawledData(data_list) // Data들을 화면상에 표시
+            if(platform === 'youtube'){
+                showYoutubeCrawledData(data_list)
+            } else if(platform === 'vlive'){
+                showVliveCrawledData(data_list)
+            } else if(platform === 'instagram' || platform === 'facebook'){
+                showCrowdtangleCrawledData(data_list)
+            } else if(platform === 'twitter' || platform === 'twitter2'){
+                showTwitter1CrawledData(data_list)
+            } else if(platform === 'tiktok'){
+                showTiktokCrawledData(data_list)
+            } else if(platform === 'weverse'){
+                showWeverseCrawledData(data_list)
+            }
         },
         error: e => {
-            alert('error!');
+            console.log(e);
+            alert(e.responseText);
         },
     })
-});
+})
 
 //update crawled data
 $('#update-data').click(function(){

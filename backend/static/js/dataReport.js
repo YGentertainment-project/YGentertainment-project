@@ -9,6 +9,41 @@ function uncomma(str) {
     return str.replace(/[^\d]+/g, '');
 }
 
+//date setting
+
+function addDays(date, days) { 
+    const clone = new Date(date); 
+    clone.setDate(date.getDate() + days) 
+    return clone; 
+}
+
+$(document).on('click','input[name=day]',function(){
+   const today = new Date();
+   const next_day = addDays(today,1);
+   var year = next_day.getFullYear();
+   var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+   var day = ("0" + next_day.getDate()).slice(-2);
+   $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+})
+
+$(document).on('click','input[name=week]',function(){
+    const today = new Date();
+    const next_day = addDays(today,7);
+    var year = next_day.getFullYear();
+    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+    var day = ("0" + next_day.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+ })
+
+$(document).on('click','input[name=month]',function(){
+    const today = new Date();
+    const next_day = addDays(today,30);
+    var year = next_day.getFullYear();
+    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+    var day = ("0" + next_day.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+ })
+
 //youtube
 //table creation
 const createYoutubeTableHeader = () => {
@@ -301,6 +336,7 @@ $('option').click(function(){
       $(this).removeClass("platform-selected");
     }else{
       $(this).addClass("platform-selected");  
+      $('option').not($(this)).removeClass("platform-selected");  
     }
 });
 
