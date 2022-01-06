@@ -29,7 +29,7 @@ headerList = {
     "facebook": ['artist', 'followers', 'Recorded Date', 'URL'],
     "instagram": ['artist', 'followers', 'Recorded Date', 'URL'],
     "vlive": ['artist', 'members', 'videos', 'likes', 'plays', 'Recorded Date', 'URL'],
-    // "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
+    "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
     // "spotify": ['artist', 'mon']
 }
 

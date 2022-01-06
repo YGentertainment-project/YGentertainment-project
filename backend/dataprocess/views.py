@@ -40,6 +40,7 @@ def base(request):
     request = logincheck(request)
     return render(request, 'dataprocess/main.html',values)
 
+@csrf_exempt
 def daily(request):
     if request.method == 'GET':
         '''
