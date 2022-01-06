@@ -3,7 +3,10 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from account.models import User
+from dataprocess.functions import export_datareport, import_datareport
 from crawler.models import *
+from config.models import PlatformTargetItem
+from config.serializers import PlatformTargetItemSerializer
 from config.serializers import CollectTargetItemSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -17,6 +20,19 @@ import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
 from .models import *
+
+DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+}
 
 # login check using cookie
 def logincheck(request):
@@ -50,7 +66,33 @@ def daily(request):
         }
         request = logincheck(request)
         return render(request, 'dataprocess/daily.html',values)
-    
+    else:
+        type = request.POST['type']
+        if type == 'import':
+            '''
+            import from excel
+            '''
+            import_file = request.FILES['importData']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            import_datareport(worksheet)
+            values = {
+                'first_depth' : '플랫폼 관리',
+                'second_depth': '플랫폼 관리'
+            }
+            request = logincheck(request)
+            return render(request, 'dataprocess/daily.html',values)
+        elif type == 'export':
+            '''
+            export to excel
+            '''
+            book = export_datareport()
+            today_date = datetime.datetime.today()
+            filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
+            response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename='+filename
+            return response
 
 def platform(request):
     if request.method == 'GET':
@@ -67,33 +109,32 @@ def platform(request):
     else:
         type = request.POST['type']
         if type == 'import':
-            if request.method == 'POST':
-                platform_resource = PlatformResource()
-                dataset = Dataset()
-                import_file = request.FILES['importData']
-                wb = openpyxl.load_workbook(import_file)
-                sheets = wb.sheetnames
-                worksheet = wb[sheets[0]]
-                excel_data = list()
-                row_num = 0
-                columns = []
-                for row in worksheet.iter_rows():
-                    if row_num == 0:
-                        for cell in row:
-                            columns.append(str(cell.value))
-                        row_num += 1
-                        continue
-                    row_data = {}
-                    for i, cell in enumerate(row):
-                        row_data[columns[i]] = str(cell.value)
-                    excel_data.append(row_data)
-                values = {
-                    'first_depth' : '플랫폼 관리',
-                    'second_depth': '플랫폼 관리',
-                    'excel_data': excel_data
-                }
-                request = logincheck(request)
-                return render(request, 'dataprocess/platform.html',values)
+            platform_resource = PlatformResource()
+            dataset = Dataset()
+            import_file = request.FILES['importData']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            excel_data = list()
+            row_num = 0
+            columns = []
+            for row in worksheet.iter_rows():
+                if row_num == 0:
+                    for cell in row:
+                        columns.append(str(cell.value))
+                    row_num += 1
+                    continue
+                row_data = {}
+                for i, cell in enumerate(row):
+                    row_data[columns[i]] = str(cell.value)
+                excel_data.append(row_data)
+            values = {
+                'first_depth' : '플랫폼 관리',
+                'second_depth': '플랫폼 관리',
+                'excel_data': excel_data
+            }
+            request = logincheck(request)
+            return render(request, 'dataprocess/platform.html',values)
         elif type == 'export':
             platform_resource = PlatformResource()
             dataset = platform_resource.export()
@@ -171,6 +212,8 @@ class PlatformAPI(APIView):
             if platform_serializer.is_valid():
                 # 1. platform 생성
                 platform_serializer.save()
+
+                #특정 아티스트 전용 collect_target 생성 시 사용할 코드
                 # 2. 현재 존재하는 모든 artist에 대해 collect_target 생성 -> platform과 연결
                 artist_objects = Artist.objects.all()
                 artist_objects_values = artist_objects.values()
@@ -181,12 +224,21 @@ class PlatformAPI(APIView):
                         )
                     collecttarget.save()
                     # 3. collect_target_item들 생성 -> collect_target과 연결
-                    for collect_item in platform_object['collect_items']:
-                        collect_item = CollectTargetItem(
-                            collect_target_id=collecttarget.id,
-                            target_name=collect_item
-                        )
-                        collect_item.save()
+                #    for collect_item in platform_object['collect_items']:
+                #        collect_item = CollectTargetItem(
+                #            collect_target_id=collecttarget.id,
+                #            target_name=collect_item
+                #        )
+                #        collect_item.save()
+                
+                #platform target 생성
+                for collect_item in platform_object['collect_items']:
+                    collect_item = PlatformTargetItem(
+                        platform_id = platform_serializer.data['id'],
+                        target_name = collect_item
+                    )
+                    collect_item.save()
+
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
         except:
@@ -306,6 +358,7 @@ class PlatformOfArtistAPI(APIView):
                     platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                     platform_datas.append({
                         'artist_id':artist_object['id'],
+                        'platform_id' : collecttarget_value['platform_id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
                         'target_url':collecttarget_value['target_url'],
@@ -381,24 +434,57 @@ class CollectTargetItemAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
+#platform collect target API 
+class PlatformTargetItemAPI(APIView):
+    # @login_required
+    def get(self, request):
+        """
+        PlatformTargetItem read api
+        """
+        try:
+            platform = request.GET.get('platform', None)
+            # 해당 platform 찾기
+            platform_object = Platform.objects.filter(name = platform)
+            platform_object = platform_object.values()[0]
+            # 해당 platform을 가지는 collect_target 가져오기
+            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object['id'])
+            if collecttarget_objects.exists():
+                collecttargetitems_datas = []
+                collecttarget_objects_value = collecttarget_objects.values()[0]
+                collecttargetitmes_objects = PlatformTargetItem.objects.filter(platform_id=collecttarget_objects_value['platform_id'])
+                collecttargetitmes_values = collecttargetitmes_objects.values()
+                for collecttargetitmes_value in collecttargetitmes_values:
+                    collecttargetitems_datas.append(collecttargetitmes_value)
+                return JsonResponse(data={'success': True, 'data': collecttargetitems_datas,'platform_id':collecttarget_objects_value['platform_id']})
+            else:
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+
+    # @login_required
+    def put(self, request):
+        """
+        PlatformTargetItem update api
+        """
+        try:
+            collecttargetitem_list = JSONParser().parse(request)
+            for i,collecttargetitem_object in enumerate(collecttargetitem_list):
+                collecttargetitem_data = PlatformTargetItem.objects.filter(platform_id=collecttargetitem_object["platform"])[i]
+                collecttargetitem_serializer = PlatformTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
+                if collecttargetitem_serializer.is_valid():
+                    collecttargetitem_serializer.save()
+                else:
+                    return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
+
 
 class DataReportAPI(APIView):
     def get(self, request):
         """
-        Data-Report read api
+        Data-Reponrt read api
         """
-        DataModels = {
-            "youtube": SocialbladeYoutube,
-            "tiktok": SocialbladeTiktok,
-            "twitter": SocialbladeTwitter,
-            "twitter2": SocialbladeTwitter2,
-            "weverse": Weverse,
-            "instagram": CrowdtangleInstagram,
-            "facebook": CrowdtangleFacebook,
-            "vlive": Vlive,
-            "melon": Melon,
-            "spotify": Spotify,
-        }
         platform = request.GET.get('platform', None)
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
@@ -476,18 +562,6 @@ class DataReportAPI(APIView):
         """
         Data-Report update api
         """
-        DataModels = {
-            "youtube": SocialbladeYoutube,
-            "tiktok": SocialbladeTiktok,
-            "twitter": SocialbladeTwitter,
-            "twitter2": SocialbladeTwitter2,
-            "weverse": Weverse,
-            "instagram": CrowdtangleInstagram,
-            "facebook": CrowdtangleFacebook,
-            "vlive": Vlive,
-            "melon": Melon,
-            "spotify": Spotify,
-        }
 
         platform = request.POST.get('platform_name', None)
         artists = request.POST.getlist('artists[]')
