@@ -15,6 +15,7 @@ from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
 from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
+from crawler.scrapy_app.spiders.melon import MelonSpider
 from celery import shared_task
 from celery.utils.log import get_task_logger
 
@@ -33,6 +34,7 @@ spiders = {
     'facebook': FacebookSpider,
     'instagram': InstagramSpider,
     'vlive': VliveSpider,
+    'melon': MelonSpider,
 }
 
 

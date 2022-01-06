@@ -27,9 +27,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import ActionChains
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
+YOUTUBE_DOMAIN = 'youtube.com'
+MELON_DOMAIN = 'xn--o39an51b2re.com'
+YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
+MELON_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
+
 class ScrapyAppSpiderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -100,8 +105,7 @@ def driver_setting():
     driver = webdriver.Chrome(service=s, options=chrome_options)
     return driver
 
-# youtube downloader middleware
-class SocialbladeDownloaderMiddleware:
+class NoLoginDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -114,6 +118,7 @@ class SocialbladeDownloaderMiddleware:
         domain = urlparse(request.url).netloc
         print('crawling url : {}'.format(request.url))
 
+        #Socialblade Case
         if(domain == SOCIALBLADE_DOMAIN):
             if(request.url != SOCIALBLADE_ROBOT):
                 WebDriverWait(self.driver, 30).until(
@@ -121,13 +126,23 @@ class SocialbladeDownloaderMiddleware:
                         (By.ID, 'YouTubeUserTopInfoWrap')
                     )
                 )
-        else:
-            WebDriverWait(self.driver, 30).until(
-                EC.presence_of_element_located(
-                    (By.ID, 'right-column')
+        #Youtube Channel Case
+        elif(domain == YOUTUBE_DOMAIN):
+            if( request.url != YOUTUBE_ROBOT ):
+                WebDriverWait(self.driver, 30).until(
+                    EC.presence_of_element_located(
+                        (By.ID, 'right-column')
+                    )
                 )
-            )
-            print('domain : {} Neither of the domain filterling!!!!'.format(domain))
+        #Melon Channel Case
+        elif(domain == MELON_DOMAIN):
+            if( request.url != MELON_ROBOT ):
+                WebDriverWait(self.driver, 30).until(
+                    EC.presence_of_element_located(
+                        (By.CLASS_NAME, 'list-style-none')
+                    )
+                )
+
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
