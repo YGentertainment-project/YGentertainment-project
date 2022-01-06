@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from account.models import User
-from dataprocess.functions import export_datareport
+from dataprocess.functions import export_datareport, import_datareport
 from crawler.models import *
 from config.models import PlatformTargetItem
 from config.serializers import PlatformTargetItemSerializer
@@ -20,6 +20,19 @@ import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
 from .models import *
+
+DataModels = {
+        "youtube": SocialbladeYoutube,
+        "tiktok": SocialbladeTiktok,
+        "twitter": SocialbladeTwitter,
+        "twitter2": SocialbladeTwitter2,
+        "weverse": Weverse,
+        "instagram": CrowdtangleInstagram,
+        "facebook": CrowdtangleFacebook,
+        "vlive": Vlive,
+        "melon": Melon,
+        "spotify": Spotify,
+}
 
 # login check using cookie
 def logincheck(request):
@@ -54,15 +67,32 @@ def daily(request):
         request = logincheck(request)
         return render(request, 'dataprocess/daily.html',values)
     else:
-        '''
-        export to excel
-        '''
-        book = export_datareport()
-        today_date = datetime.datetime.today()
-        filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
-        response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename='+filename
-        return response
+        type = request.POST['type']
+        if type == 'import':
+            '''
+            import from excel
+            '''
+            import_file = request.FILES['importData']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            import_datareport(worksheet)
+            values = {
+                'first_depth' : '플랫폼 관리',
+                'second_depth': '플랫폼 관리'
+            }
+            request = logincheck(request)
+            return render(request, 'dataprocess/daily.html',values)
+        elif type == 'export':
+            '''
+            export to excel
+            '''
+            book = export_datareport()
+            today_date = datetime.datetime.today()
+            filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
+            response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename='+filename
+            return response
 
 def platform(request):
     if request.method == 'GET':
@@ -79,33 +109,32 @@ def platform(request):
     else:
         type = request.POST['type']
         if type == 'import':
-            if request.method == 'POST':
-                platform_resource = PlatformResource()
-                dataset = Dataset()
-                import_file = request.FILES['importData']
-                wb = openpyxl.load_workbook(import_file)
-                sheets = wb.sheetnames
-                worksheet = wb[sheets[0]]
-                excel_data = list()
-                row_num = 0
-                columns = []
-                for row in worksheet.iter_rows():
-                    if row_num == 0:
-                        for cell in row:
-                            columns.append(str(cell.value))
-                        row_num += 1
-                        continue
-                    row_data = {}
-                    for i, cell in enumerate(row):
-                        row_data[columns[i]] = str(cell.value)
-                    excel_data.append(row_data)
-                values = {
-                    'first_depth' : '플랫폼 관리',
-                    'second_depth': '플랫폼 관리',
-                    'excel_data': excel_data
-                }
-                request = logincheck(request)
-                return render(request, 'dataprocess/platform.html',values)
+            platform_resource = PlatformResource()
+            dataset = Dataset()
+            import_file = request.FILES['importData']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            excel_data = list()
+            row_num = 0
+            columns = []
+            for row in worksheet.iter_rows():
+                if row_num == 0:
+                    for cell in row:
+                        columns.append(str(cell.value))
+                    row_num += 1
+                    continue
+                row_data = {}
+                for i, cell in enumerate(row):
+                    row_data[columns[i]] = str(cell.value)
+                excel_data.append(row_data)
+            values = {
+                'first_depth' : '플랫폼 관리',
+                'second_depth': '플랫폼 관리',
+                'excel_data': excel_data
+            }
+            request = logincheck(request)
+            return render(request, 'dataprocess/platform.html',values)
         elif type == 'export':
             platform_resource = PlatformResource()
             dataset = platform_resource.export()
@@ -456,18 +485,6 @@ class DataReportAPI(APIView):
         """
         Data-Reponrt read api
         """
-        DataModels = {
-            "youtube": SocialbladeYoutube,
-            "tiktok": SocialbladeTiktok,
-            "twitter": SocialbladeTwitter,
-            "twitter2": SocialbladeTwitter2,
-            "weverse": Weverse,
-            "instagram": CrowdtangleInstagram,
-            "facebook": CrowdtangleFacebook,
-            "vlive": Vlive,
-            "melon": Melon,
-            "spotify": Spotify,
-        }
         platform = request.GET.get('platform', None)
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
@@ -545,18 +562,6 @@ class DataReportAPI(APIView):
         """
         Data-Report update api
         """
-        DataModels = {
-            "youtube": SocialbladeYoutube,
-            "tiktok": SocialbladeTiktok,
-            "twitter": SocialbladeTwitter,
-            "twitter2": SocialbladeTwitter2,
-            "weverse": Weverse,
-            "instagram": CrowdtangleInstagram,
-            "facebook": CrowdtangleFacebook,
-            "vlive": Vlive,
-            "melon": Melon,
-            "spotify": Spotify,
-        }
 
         platform = request.POST.get('platform_name', None)
         artists = request.POST.getlist('artists[]')
