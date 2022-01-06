@@ -56,9 +56,10 @@ def daily(request):
         export to excel
         '''
         book = export_datareport()
-
+        today_date = datetime.datetime.today()
+        filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
         response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="datareport.xlsx"'
+        response['Content-Disposition'] = 'attachment; filename='+filename
         return response
 
 def platform(request):
