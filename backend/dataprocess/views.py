@@ -4,6 +4,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from account.models import User
 from crawler.models import *
+from config.models import PlatformTargetItem
+from config.serializers import PlatformTargetItemSerializer
 from config.serializers import CollectTargetItemSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -171,6 +173,8 @@ class PlatformAPI(APIView):
             if platform_serializer.is_valid():
                 # 1. platform 생성
                 platform_serializer.save()
+
+                #특정 아티스트 전용 collect_target 생성 시 사용할 코드
                 # 2. 현재 존재하는 모든 artist에 대해 collect_target 생성 -> platform과 연결
                 artist_objects = Artist.objects.all()
                 artist_objects_values = artist_objects.values()
@@ -181,12 +185,21 @@ class PlatformAPI(APIView):
                         )
                     collecttarget.save()
                     # 3. collect_target_item들 생성 -> collect_target과 연결
-                    for collect_item in platform_object['collect_items']:
-                        collect_item = CollectTargetItem(
-                            collect_target_id=collecttarget.id,
-                            target_name=collect_item
-                        )
-                        collect_item.save()
+                #    for collect_item in platform_object['collect_items']:
+                #        collect_item = CollectTargetItem(
+                #            collect_target_id=collecttarget.id,
+                #            target_name=collect_item
+                #        )
+                #        collect_item.save()
+                
+                #platform target 생성
+                for collect_item in platform_object['collect_items']:
+                    collect_item = PlatformTargetItem(
+                        platform_id = platform_serializer.data['id'],
+                        target_name = collect_item
+                    )
+                    collect_item.save()
+
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
         except:
@@ -306,6 +319,7 @@ class PlatformOfArtistAPI(APIView):
                     platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
                     platform_datas.append({
                         'artist_id':artist_object['id'],
+                        'platform_id' : collecttarget_value['platform_id'],
                         'id': collecttarget_value['id'],
                         'name': platform_object.name,
                         'target_url':collecttarget_value['target_url'],
@@ -381,11 +395,56 @@ class CollectTargetItemAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
+#platform collect target API 
+class PlatformTargetItemAPI(APIView):
+    # @login_required
+    def get(self, request):
+        """
+        PlatformTargetItem read api
+        """
+        try:
+            platform = request.GET.get('platform', None)
+            # 해당 platform 찾기
+            platform_object = Platform.objects.filter(name = platform)
+            platform_object = platform_object.values()[0]
+            # 해당 platform을 가지는 collect_target 가져오기
+            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object['id'])
+            if collecttarget_objects.exists():
+                collecttargetitems_datas = []
+                collecttarget_objects_value = collecttarget_objects.values()[0]
+                collecttargetitmes_objects = PlatformTargetItem.objects.filter(platform_id=collecttarget_objects_value['platform_id'])
+                collecttargetitmes_values = collecttargetitmes_objects.values()
+                for collecttargetitmes_value in collecttargetitmes_values:
+                    collecttargetitems_datas.append(collecttargetitmes_value)
+                return JsonResponse(data={'success': True, 'data': collecttargetitems_datas,'platform_id':collecttarget_objects_value['platform_id']})
+            else:
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+
+    # @login_required
+    def put(self, request):
+        """
+        PlatformTargetItem update api
+        """
+        try:
+            collecttargetitem_list = JSONParser().parse(request)
+            for i,collecttargetitem_object in enumerate(collecttargetitem_list):
+                collecttargetitem_data = PlatformTargetItem.objects.filter(platform_id=collecttargetitem_object["platform"])[i]
+                collecttargetitem_serializer = PlatformTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
+                if collecttargetitem_serializer.is_valid():
+                    collecttargetitem_serializer.save()
+                else:
+                    return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
+
 
 class DataReportAPI(APIView):
     def get(self, request):
         """
-        Data-Report read api
+        Data-Reponrt read api
         """
         DataModels = {
             "youtube": SocialbladeYoutube,
