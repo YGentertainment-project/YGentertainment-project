@@ -16,6 +16,7 @@ from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from crawler.scrapy_app.spiders.melon import MelonSpider
+from crawler.scrapy_app.spiders.spotify import SpotifySpider
 from celery import shared_task
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
@@ -48,6 +49,7 @@ spiders = {
     'instagram': InstagramSpider,
     'vlive': VliveSpider,
     'melon': MelonSpider,
+    'spotify': SpotifySpider,
 }
 
 
