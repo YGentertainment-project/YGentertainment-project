@@ -44,6 +44,22 @@
         </div>
     </div>
     </form>
+
+    <!-- data export&import button -->
+    <div class="column_layout flexend_layout button_forms">
+        <div class="row_layout">
+            <h3>Export Data</h3>
+            <div style="width:15px;"></div>
+            <span>to excel</span>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button class="excel-btn" type="submit">Export</button>
+        </form>
+    </div>
+    <br>
+    
+
    {% endblock content %}
 
 </html>

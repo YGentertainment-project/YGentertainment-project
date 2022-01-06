@@ -16,6 +16,11 @@
     justify-content: flex-start !important;
 }
 
+.flexend_layout{
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+}
+
 .column_layout{
     display: flex;
     flex-direction: column;

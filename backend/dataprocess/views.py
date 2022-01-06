@@ -3,6 +3,7 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from account.models import User
+from dataprocess.functions import export_datareport
 from crawler.models import *
 from config.serializers import CollectTargetItemSerializer
 from django.views.decorators.csrf import csrf_exempt
@@ -50,7 +51,15 @@ def daily(request):
         }
         request = logincheck(request)
         return render(request, 'dataprocess/daily.html',values)
-    
+    else:
+        '''
+        export to excel
+        '''
+        book = export_datareport()
+
+        response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="datareport.xlsx"'
+        return response
 
 def platform(request):
     if request.method == 'GET':
