@@ -16,6 +16,6 @@ DATABASES = {
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['*']
 
 DATA_DIR = f"{BASE_DIR}/data"
