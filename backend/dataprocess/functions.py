@@ -2,7 +2,8 @@ import datetime
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
-from openpyxl.worksheet.cell_range import CellRange
+from config.models import PlatformTargetItem
+from dataprocess.models import Platform, Artist
 from crawler.serializers import *
 
 from crawler.models import *
@@ -33,30 +34,6 @@ DataSerializers = {
             "spotify": SpotifySerializer,
         }
 
-def convert_to_cell_range(start_row, start_column, end_row, end_column):
-    cr = CellRange(range_string=None, min_col=start_column, min_row=start_row,  
-                      max_col=end_column, max_row=end_row)
-    return cr.coord
-
-def set_border(ws, cell_range, start_row, start_col, style='medium'):
-    border_style = Border(left=Side(style=style), 
-                     right=Side(style=style), 
-                     top=Side(style=style), 
-                     bottom=Side(style=style))
-    rows = ws[cell_range]
-    # one cell
-    if len(cell_range) < 5:
-        ws.cell(row=start_row, column=start_col).border = border_style
-        return
-    for row in rows:
-        row[0].border = Border(left=Side(style=style))
-        row[-1].border = Border(right=Side(style=style))
-    for c in rows[0]:
-        c.border = Border(top=Side(style=style))
-    for c in rows[-1]:
-        c.border = Border(bottom=Side(style=style))
-
-
 def get_platform_data(artist, platform):
     model_fields = DataModels[platform]._meta.fields
     model_fields_name = []
@@ -85,97 +62,33 @@ def get_platform_data(artist, platform):
         return filter_datas
 
 def export_datareport():
-    # 모든 아티스트들
-    dummy_artists = [#from facebook.json
-        {"artist": "G I-DLE 여자아이들", "follower_num": "745,238"},
-        {"artist": "뉴이스트 Nu'est", "follower_num": "2,366,033"},
-        {"artist": "레드벨벳 (Red Velvet)", "follower_num": "3,582,560"},
-        {"artist": "마마무 Mamamoo", "follower_num": "2,883,145"},
-        {"artist": "MONSTA X (몬스타엑스)", "follower_num": "2,832,284"},
-        {"artist": "BTS (방탄소년단)", "follower_num": "19,434,509"},
-        {"artist": "BLACKPINK", "follower_num": "17,827,522"},
-        {"artist": "BIGBANG", "follower_num": "11,662,516"},
-        {"artist": "G-DRAGON", "follower_num": "8,914,627"},
-        {"artist": "샤이니(SHINee)", "follower_num": "5,706,536"},
-        {"artist": "SEVENTEEN", "follower_num": "4,269,422"},
-        {"artist": "슈퍼주니어(Super Junior)", "follower_num": "8,448,505"},
-        {"artist": "Stray Kids", "follower_num": "2,674,764"},
-        {"artist": "ASTRO 아스트로", "follower_num": "2,659,268"},
-        {"artist": "aespa", "follower_num": "1,550,987"},
-        {"artist": "WINNER", "follower_num": "2,925,657"},
-        {"artist": "Cravity - 크래비티", "follower_num": "356,192"},
-        {"artist": "TWICE", "follower_num": "7,028,473"},
-        {"artist": "AB6IX", "follower_num": "420,116"},
-        {"artist": "ATEEZ", "follower_num": "1,138,724"},
-        {"artist": "Enhypen", "follower_num": "1,378,647"},
-        {"artist": "EXO", "follower_num": "12,409,323"},
-        {"artist": "iKON", "follower_num": "3,591,603"},
-        {"artist": "ITZY", "follower_num": "2,264,251"},
-        {"artist": "NCT", "follower_num": "3,543,987"},
-        {"artist": "NCT 127", "follower_num": "3,090,418"},
-        {"artist": "NCT DREAM", "follower_num": "1,789,629"},
-        {"artist": "더보이즈(THE BOYZ)", "follower_num": "831,445"},
-        {"artist": "Treasure 트레저", "follower_num": "1,841,739"},
-        {"artist": "TXT (TOMORROW X TOGETHER)", "follower_num": "3,809,914"},
-        {"artist": "WayV", "follower_num": "1,153,750"},
-        {"artist": "청하 (CHUNG HA)", "follower_num": "966,610"},
-        {"artist": "선미 SUNMI", "follower_num": "1,815,662"},
-        {"artist": "JEON SOMI (전소미)", "follower_num": "3,727,103"},
-        {"artist": "AKMU", "follower_num": "1,034,910"},
-        {"artist": "아이유(IU)", "follower_num": "9,550,813"},
-        {"artist": "Heize", "follower_num": "460,788"},
-        {"artist": "소녀시대(Girls' Generation)", "follower_num": "7,541,708"},
-        {"artist": "LEE HI (이하이)", "follower_num": "3,190,599"},
-        {"artist": "SECHSKIES", "follower_num": "109,685"},
-        {"artist": "볼빨간사춘기", "follower_num": "257,231"},
-        {"artist": "HyunA 현아", "follower_num": "3,536,325"},
-        {"artist": "BTOB 비투비", "follower_num": "1,735,204"},
-        {"artist": "SF9", "follower_num": "972,925"},
-        {"artist": "STAYC", "follower_num": "157,485"},
-        {"artist": "오마이걸 OH MY GIRL", "follower_num": "675,919"},
-        {"artist": "Weeekly - 위클리", "follower_num": "78,426"}
-    ]
+    # DB에서 platform과 platform_target_item 가져오기
+    db_platform_datas=[]
+    platforms = Platform.objects.all()
+    if platforms.exists():
+        platform_objects_values = platforms.values()
+        for platform_value in platform_objects_values:
+            collect_item = []
+            platform_target_items = PlatformTargetItem.objects.filter(platform_id = platform_value['id'])
+            platform_target_items = platform_target_items.values()
+            for platform_target_item in platform_target_items:
+                collect_item.append(platform_target_item['target_name'])
+            db_platform_datas.append({
+                "platform" : platform_value['name'],
+                "collect_item": collect_item
+            })
 
-    # dummy로 값 넣어놓기
-    # 서버에서 가져오는 걸로 바꾸자
-    dummy_platform_datas = [
-        {
-            "platform" : "youtube",
-            "collect_item": ["uploads","subscribers","views"],
-        },
-        {
-            "platform" : "vlive",
-            "collect_item": ["members","videos","likes","plays"],
-        },
-        # melon이랑 spotify 넣어두기
-        {
-            "platform" : "instagram",
-            "collect_item": ["followers"],
-        },
-        {
-            "platform" : "facebook",
-            "collect_item": ["followers"],
-        },
-        {
-            "platform" : "twitter",
-            "collect_item": ["followers", "twits"],
-        },
-        {
-            "platform" : "twitter2",
-            "collect_item": ["followers", "twits"],
-        },
-        {
-            "platform" : "tiktok",
-            "collect_item": ["followers", "uploads","likes"],
-        },
-        {
-            "platform" : "weverse",
-            "collect_item": ["weverses"],
-        },
-    ]
+    # DB에서 artist 가져오기
+    db_artists = []
+    artists = Artist.objects.all()
+    if artists.exists():
+        artist_objects_values = artists.values()
+        for artist_value in artist_objects_values:
+            db_artists.append(artist_value['name'])
+
+    # export excel
     book = openpyxl.Workbook()
     sheet = book.active
-    # sheet.merge_cells() # 어디부터 어디까지 셀 병합
 
     row = 1
     col = 1
@@ -205,7 +118,7 @@ def export_datareport():
     sheet.column_dimensions['A'].width = 50
 
     #플랫폼 이름과 수집항목 띄우기
-    for data in dummy_platform_datas:
+    for data in db_platform_datas:
         sheet.cell(row=row, column=col).value = data["platform"]
         sheet.merge_cells(start_row=row, start_column=col,
             end_row=row, end_column=col+len(data["collect_item"])-1)
@@ -222,12 +135,12 @@ def export_datareport():
     #아티스트별로 플랫폼순서대로 가져와서 띄우기
     row = 3
     col = 1
-    for artist in dummy_artists:
-        artist_name = artist["artist"]
+    for artist in db_artists:
+        artist_name = artist
         sheet.cell(row=row, column=col).value = artist_name
         sheet.cell(row=row, column=col).border = Border(right=Side(style="medium"))
         col += 1
-        for platform in dummy_platform_datas:
+        for platform in db_platform_datas:
             #아티스트의 플랫폼마다의 정보 가져오기
             platform_name = platform["platform"]
             platform_data_list = get_platform_data(artist=artist_name, platform=platform_name)
@@ -287,8 +200,6 @@ def import_datareport(worksheet):
                     if current_index >= platform_data_list[platform_index]["item_num"]:
                         platform_index += 1
                         current_index = 0
-            print("platform_data_list")
-            print(platform_data_list)
             row_num += 1
         # 데이터 정보 나열
         else:
