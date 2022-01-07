@@ -12,7 +12,7 @@ from crawler.scrapy_app.spiders.socialblade_twitter import TwitterSpider
 from crawler.scrapy_app.spiders.socialblade_twitter2 import Twitter2Spider
 from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
 from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
-from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
+#from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from crawler.scrapy_app.spiders.melon import MelonSpider
@@ -33,7 +33,7 @@ spiders = {
     'tiktok': TiktokSpider,
     'weverse': WeverseSpider,
     'facebook': FacebookSpider,
-    'instagram': InstagramSpider,
+    #'instagram': InstagramSpider,
     'vlive': VliveSpider,
     'melon': MelonSpider,
     'spotify': SpotifySpider,

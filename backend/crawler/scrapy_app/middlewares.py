@@ -34,6 +34,10 @@ MELON_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
+WEVERSE_ID = "sunrinkingh2160@gmail.com"
+WEVERSE_PW = "!eogksalsrnr123"
+CROWDTANGLE_ID = "jaewon@ygmail.net"
+CROWDTANGLE_PW = "Ygfamily1234@"
 
 class ScrapyAppSpiderMiddleware:
     @classmethod
@@ -175,8 +179,8 @@ class LoginDownloaderMiddleware:
             self.driver.find_element(By.CLASS_NAME, 'sc-AxjAm.dhTrPj').click()
             self.driver.switch_to.window(self.driver.window_handles[1])
             self.driver.implicitly_wait(time_to_wait=5)
-            self.driver.find_element(By.NAME, 'username').send_keys('sunrinkingh2160@gmail.com')
-            self.driver.find_element(By.NAME, 'password').send_keys('!eogksalsrnr123')
+            self.driver.find_element(By.NAME, 'username').send_keys(WEVERSE_ID)
+            self.driver.find_element(By.NAME, 'password').send_keys(WEVERSE_PW)
             self.driver.find_element(By.CLASS_NAME, 'sc-Axmtr.hwYQYk.gtm-login-button').click()
             self.driver.switch_to.window(self.driver.window_handles[0])
             WebDriverWait(self.driver, 10).until(
@@ -188,8 +192,8 @@ class LoginDownloaderMiddleware:
             self.driver.find_element(By.CLASS_NAME, 'facebookLoginButton__authButton--lof0c').click()
             self.driver.switch_to.window(self.driver.window_handles[1])
             self.driver.implicitly_wait(time_to_wait=5)
-            self.driver.find_element(By.ID, 'email').send_keys('jaewon@ygmail.net')
-            self.driver.find_element(By.ID, 'pass').send_keys('Ygfamily1234@')
+            self.driver.find_element(By.ID, 'email').send_keys(CROWDTANGLE_ID)
+            self.driver.find_element(By.ID, 'pass').send_keys(CROWDTANGLE_PW)
             self.driver.find_element(By.ID, 'loginbutton').click()
             self.driver.switch_to.window(self.driver.window_handles[0])
             WebDriverWait(self.driver, 10).until(
