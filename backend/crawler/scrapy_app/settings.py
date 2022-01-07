@@ -22,4 +22,4 @@ ITEM_PIPELINES = {
     'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
 }
 
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 1

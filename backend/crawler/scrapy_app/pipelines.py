@@ -4,6 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from urllib import parse
 from django.utils import timezone
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
@@ -23,27 +24,36 @@ DataModels = {
 }
 
 
-def process_itemsave(name, item):
+def process_itemsave(spider_name, item):
     nowdate = item['recorded_date']
-    dayfilter_obj = DataModels[name].objects.filter(artist=item['artist'],
-                                                    recorded_date__year=nowdate.year,
-                                                    recorded_date__month=nowdate.month,
-                                                    recorded_date__day=nowdate.day)
+    model_name = None
+    if spider_name == "crowdtangle":
+        url = parse.urlparse(item['url'])
+        model_name = parse.parse_qs(url.query)['platform'][0]
+        dayfilter_obj = DataModels[model_name].objects.filter(artist=item['artist'],
+                                                              recorded_date__year=nowdate.year,
+                                                              recorded_date__month=nowdate.month,
+                                                              recorded_date__day=nowdate.day)
+    else:
+        dayfilter_obj = DataModels[spider_name].objects.filter(artist=item['artist'],
+                                                               recorded_date__year=nowdate.year,
+                                                               recorded_date__month=nowdate.month,
+                                                               recorded_date__day=nowdate.day)
     # 오늘일자로 이미 저장된 아티스트 정보가 있는 경우 => 데이터를 최신버전으로 수정
     if dayfilter_obj.exists():
-        if name == "youtube":
+        if spider_name == "youtube":
             return update_youtube(item)
-        elif name == "tiktok":
+        elif spider_name == "tiktok":
             return update_tiktok(item)
-        elif name == "twitter" or name == "twitter2":
-            return update_twitter(item, name)
-        elif name == "weverse":
+        elif spider_name == "twitter" or spider_name == "twitter2":
+            return update_twitter(item, spider_name)
+        elif spider_name == "weverse":
             return update_weverse(item)
-        elif name == 'vlive':
+        elif spider_name == 'vlive':
             return update_vlive(item)
-        elif name == "facebook" or name == "instagram":
-            return update_crowdtangle(item, name)
-        elif name == 'spotify':
+        elif spider_name == "crowdtangle":
+            return update_crowdtangle(item, model_name)
+        elif spider_name == 'spotify':
             return update_spotify(item)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
@@ -80,15 +90,15 @@ def update_tiktok(item):
 def update_twitter(item, name):
     nowdate = item['recorded_date']
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
-                                                  recorded_date__year=nowdate.year,
-                                                  recorded_date__month=nowdate.month,
-                                                  recorded_date__day=nowdate.day)
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day)
     existingItem.followers = item.get('followers')
     existingItem.twits = item.get('twits')
     existingItem.recorded_date = nowdate
     existingItem.save()
 
-    
+
 def update_weverse(item):
     nowdate = item['recorded_date']
     existingItem = Weverse.objects.get(artist=item.get('artist'),
@@ -115,6 +125,7 @@ def update_vlive(item):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
+
 def update_spotify(item):
     nowdate = item['recorded_date']
     existingItem = Spotify.objects.get(artist=item.get('artist'),
@@ -127,6 +138,20 @@ def update_spotify(item):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
+
+def update_spotify(item):
+    nowdate = item['recorded_date']
+    existingItem = Spotify.objects.get(artist=item.get('artist'),
+                                       recorded_date__year=nowdate.year,
+                                       recorded_date__month=nowdate.month,
+                                       recorded_date__day=nowdate.day
+                                       )
+    existingItem.monthly_listens = item.get('monthly_listens')
+    existingItem.followers = item.get('followers')
+    existingItem.recorded_date = nowdate
+    existingItem.save()
+
+
 def update_crowdtangle(item, name):
     nowdate = item['recorded_date']
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
@@ -137,6 +162,7 @@ def update_crowdtangle(item, name):
     existingItem.followers = item.get('followers')
     existingItem.recorded_date = nowdate
     existingItem.save()
+
 
 class CrawlerPipeline(object):
     def process_item(self, item, spider):
