@@ -11,7 +11,7 @@ class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
+            'crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware': 100
         },
     }
 

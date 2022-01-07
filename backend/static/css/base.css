@@ -231,11 +231,13 @@ input{
 }
 
 .contents-platforms{
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     width: 15%;
+    height: 100%;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
@@ -265,6 +267,7 @@ input{
 .button_layout > label{
     width: 100px;
     border: 1px solid black !important;
+    border-radius: 4px;
     margin-left: 10px;
     margin-right: 10px;
     text-align: center;

@@ -53,6 +53,7 @@ def base(request):
     request = logincheck(request)
     return render(request, 'dataprocess/main.html',values)
 
+@csrf_exempt
 def daily(request):
     if request.method == 'GET':
         '''
@@ -170,6 +171,24 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
+def platform_info(request):
+    if request.method == 'GET':
+        platform = request.GET.get('platform', None)
+        try:
+            platform_objects = Platform.objects.get(name = platform)
+            
+            if platform_objects.exists():
+                platform_objects_values = platform_objects.values()
+                platform_collect_items = PlatformTargetItem.objects.filter(platform_id = platform_objects_values['id'])
+                platform_datas = []
+                for platform_item in platform_collect_items:
+                    platform_datas.append(platform_item)
+                return JsonResponse(data={'success': True, 'data': platform_datas})
+            else:
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+
 
 from .serializers import *
 from .models import *
@@ -223,15 +242,8 @@ class PlatformAPI(APIView):
                         artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
-                    # 3. collect_target_item들 생성 -> collect_target과 연결
-                #    for collect_item in platform_object['collect_items']:
-                #        collect_item = CollectTargetItem(
-                #            collect_target_id=collecttarget.id,
-                #            target_name=collect_item
-                #        )
-                #        collect_item.save()
                 
-                #platform target 생성
+                #3. 플랫폼에 대한 platform target 생성
                 for collect_item in platform_object['collect_items']:
                     collect_item = PlatformTargetItem(
                         platform_id = platform_serializer.data['id'],
@@ -302,7 +314,7 @@ class ArtistAPI(APIView):
                 
                 url_index = 0
 
-                for platform_index,platform_objects_value in enumerate(platform_objects_values):
+                for platform_objects_value in platform_objects_values:
                     platform_target_url = artist_object['urls'][url_index]
                     platform_target_url_2 = artist_object['urls'][url_index+1]
                     url_index += 2
@@ -446,7 +458,7 @@ class PlatformTargetItemAPI(APIView):
             # 해당 platform 찾기
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]
-            # 해당 platform을 가지는 collect_target 가져오기
+            # 해당 platform을 가지는 platform_target 가져오기
             collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object['id'])
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
@@ -489,8 +501,6 @@ class DataReportAPI(APIView):
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
-
-        
 
         if type == "누적":
             start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -562,7 +572,6 @@ class DataReportAPI(APIView):
         """
         Data-Report update api
         """
-
         platform = request.POST.get('platform_name', None)
         artists = request.POST.getlist('artists[]')
         uploads = request.POST.getlist('uploads[]')

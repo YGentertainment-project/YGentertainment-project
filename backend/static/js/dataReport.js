@@ -85,6 +85,39 @@ const showNotCrawledData = (datas) => {
     })
 }
 
+//creat header from data in DB
+//플랫폼 이름을 받아옴
+const createTableHeader = (platform) => {
+    //ajax get
+    $.ajax({
+        url: '/dataprocess/api/platform_info/?' + $.param({
+            platform: platform,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            var datas = res.data 
+            const tableHeader = $('<tr></tr>');
+            for(let i = 0; i<datas.length; i++){
+                let col = $('<th></th>', {
+                    text: datas['target_name'][i],
+                })
+                tableHeader.append(col);
+            }
+            return tableHeader;
+        },
+        error: e => {
+            console.log(e);
+            alert(e.responseText);
+        },
+    })
+}
+
+// show table header (general)
+const showTableHeader = (platform) => {
+    $('#board').append(createTableHeader(platform));
+}
 
 
 
@@ -394,7 +427,7 @@ $(document).on('click','.platform-name',function(){
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
 
-    console.log($(this).attr("name"));
+    //console.log($(this).attr("name"));
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({

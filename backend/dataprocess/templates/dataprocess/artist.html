@@ -4,11 +4,18 @@
     {% extends 'main.html' %}
     
     {% block content %}
+
+    <script>
+        function go_to_artist_add(){
+            location.href = "{% url 'dataprocess:artist_add' %}";
+        }
+     </script>
+
    <div class="forms">
     <div class="contents">
         <div id="first-table">
            <div class="button_layout">
-            <a href="{% url 'dataprocess:artist_add' %}">추가</a> 
+            <button onclick=go_to_artist_add()>추가</button>
             <button id="save-artists">저장</button>
            </div>
             <table id="artist-table">
