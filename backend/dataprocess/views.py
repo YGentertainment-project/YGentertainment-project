@@ -171,6 +171,24 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
+def platform_info(request):
+    if request.method == 'GET':
+        platform = request.GET.get('platform', None)
+        try:
+            platform_objects = Platform.objects.get(name = platform)
+            
+            if platform_objects.exists():
+                platform_objects_values = platform_objects.values()
+                platform_collect_items = PlatformTargetItem.objects.filter(platform_id = platform_objects_values['id'])
+                platform_datas = []
+                for platform_item in platform_collect_items:
+                    platform_datas.append(platform_item)
+                return JsonResponse(data={'success': True, 'data': platform_datas})
+            else:
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+
 
 from .serializers import *
 from .models import *

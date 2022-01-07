@@ -32,6 +32,11 @@
             <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
             <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
             <option class="platform-name" name="weverse" value="weverse">Weverse</option>
+            {% if platforms %}
+            {% for platform in platforms %}
+            <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
+            {% endfor %}
+            {% endif %}
         </div>
         <hr>
         <div id="result-table">
@@ -46,20 +51,7 @@
     </div>
     </form>
 
-    <!-- data export&import button -->
-    <div class="column_layout flexend_layout button_forms">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file" name="importData">
-            <input type="text" name="type" value="import" style="display:none;">
-            <button class="excel-btn" type="submit">Import</button>
-        </form>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="text" name="type" value="export" style="display:none;">
-            <button class="excel-btn" type="submit">Export</button>
-        </form>
-    </div>
+    
     <br>
     
 
