@@ -3,8 +3,35 @@ import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
 from openpyxl.worksheet.cell_range import CellRange
+from crawler.serializers import *
 
 from crawler.models import *
+
+DataModels = {
+            "youtube": SocialbladeYoutube,
+            "tiktok": SocialbladeTiktok,
+            "twitter": SocialbladeTwitter,
+            "twitter2": SocialbladeTwitter2,
+            "weverse": Weverse,
+            "instagram": CrowdtangleInstagram,
+            "facebook": CrowdtangleFacebook,
+            "vlive": Vlive,
+            "melon": Melon,
+            "spotify": Spotify,
+        }
+
+DataSerializers = {
+            "youtube": SocialbladeYoutubeSerializer,
+            "tiktok": SocialbladeTiktokSerializer,
+            "twitter": SocialbladeTwitterSerializer,
+            "twitter2": SocialbladeTwitter2Serializer,
+            "weverse": WeverseSerializer,
+            "instagram": CrowdtangleInstagramSerializer,
+            "facebook": CrowdtangleFacebookSerializer,
+            "vlive": VliveSerializer,
+            "melon": MelonSerializer,
+            "spotify": SpotifySerializer,
+        }
 
 def convert_to_cell_range(start_row, start_column, end_row, end_column):
     cr = CellRange(range_string=None, min_col=start_column, min_row=start_row,  
@@ -31,18 +58,6 @@ def set_border(ws, cell_range, start_row, start_col, style='medium'):
 
 
 def get_platform_data(artist, platform):
-    DataModels = {
-        "youtube": SocialbladeYoutube,
-        "tiktok": SocialbladeTiktok,
-        "twitter": SocialbladeTwitter,
-        "twitter2": SocialbladeTwitter2,
-        "weverse": Weverse,
-        "instagram": CrowdtangleInstagram,
-        "facebook": CrowdtangleFacebook,
-        "vlive": Vlive,
-        "melon": Melon,
-        "spotify": Spotify,
-    }
     model_fields = DataModels[platform]._meta.fields
     model_fields_name = []
     for model_field in model_fields:
@@ -126,36 +141,36 @@ def export_datareport():
     dummy_platform_datas = [
         {
             "platform" : "youtube",
-            "collect_item": ["업로드수","구독자수","총조회수"],
+            "collect_item": ["uploads","subscribers","views"],
         },
         {
             "platform" : "vlive",
-            "collect_item": ["멤버수","스타영상수","좋아요수","재생수"],
+            "collect_item": ["members","videos","likes","plays"],
         },
         # melon이랑 spotify 넣어두기
         {
             "platform" : "instagram",
-            "collect_item": ["팔로워 수"],
+            "collect_item": ["followers"],
         },
         {
             "platform" : "facebook",
-            "collect_item": ["팔로워 수"],
+            "collect_item": ["followers"],
         },
         {
             "platform" : "twitter",
-            "collect_item": ["팔로워 수", "트윗 수"],
+            "collect_item": ["followers", "twits"],
         },
         {
             "platform" : "twitter2",
-            "collect_item": ["팔로워 수", "트윗 수"],
+            "collect_item": ["followers", "twits"],
         },
         {
             "platform" : "tiktok",
-            "collect_item": ["팔로워 수", "업로드 수","좋아요 수"],
+            "collect_item": ["followers", "uploads","likes"],
         },
         {
             "platform" : "weverse",
-            "collect_item": ["Wever 수"],
+            "collect_item": ["weverses"],
         },
     ]
     book = openpyxl.Workbook()
@@ -227,3 +242,93 @@ def export_datareport():
         row += 1
         col = 1
     return book
+
+
+def import_datareport(worksheet):
+    platform_data_list=[]
+    row_num = 0
+    for row in worksheet.iter_rows():
+        # 플랫폼 정보 나열
+        if row_num == 0:
+            item_num=0
+            platform_name="platform"
+            data_json = {}
+            for cell in row:
+                platform_value = str(cell.value)
+                if platform_value == '플랫폼':
+                    platform_name = '플랫폼'
+                elif platform_value != 'None':
+                    if platform_name != '플랫폼':
+                        #새로운 게 등장한 거므로 저장
+                        data_json["platform"] = platform_name
+                        data_json["item_num"] = item_num
+                        data_json["item_list"] = []
+                        platform_data_list.append(data_json)
+                        data_json = {}
+                    item_num = 1
+                    platform_name = platform_value
+                else: #None일때
+                    item_num += 1
+            #마지막 저장
+            data_json["platform"] = platform_name
+            data_json["item_num"] = item_num
+            data_json["item_list"] = []
+            platform_data_list.append(data_json)
+            row_num += 1
+        # 아티스트 정보 나열
+        elif row_num == 1:
+            platform_index = 0
+            current_index = 0
+            for cell in row:
+                collect_value = str(cell.value)
+                if collect_value != '아티스트':
+                    platform_data_list[platform_index]["item_list"].append(collect_value)
+                    current_index += 1
+                    if current_index >= platform_data_list[platform_index]["item_num"]:
+                        platform_index += 1
+                        current_index = 0
+            print("platform_data_list")
+            print(platform_data_list)
+            row_num += 1
+        # 데이터 정보 나열
+        else:
+            platform_index = 0
+            current_index = 0
+            artist_name = "artist"
+            data_json = {}
+            for i, cell in enumerate(row):
+                # 아티스트 이름 나열
+                if i==0:
+                    artist_name = str(cell.value)
+                else:
+                    # 아티스트와 플랫폼 이름에 대해 업데이트
+                    platform_name = platform_data_list[platform_index]["platform"]
+                    collect_value = platform_data_list[platform_index]["item_list"][current_index]
+                    value = str(cell.value)
+                    if value != 'None':
+                        value = int(cell.value)
+                        data_json[collect_value] = value
+                    current_index += 1
+                    if current_index >= platform_data_list[platform_index]["item_num"]:
+                        # 데이터 저장
+                        data_json["artist"] = artist_name
+                        save_collect_data_target(data_json, platform_name)
+                        platform_index += 1
+                        current_index = 0
+                        data_json = {}
+
+def save_collect_data_target(data_json, platform):
+    today_date = datetime.datetime.today()
+    obj = DataModels[platform].objects.filter(artist=data_json["artist"],recorded_date__year=today_date.year,
+                recorded_date__month=today_date.month, recorded_date__day=today_date.day).first()
+    if obj is None:
+    # 원래 없는 건 새로 저장
+        platform_serializer = DataSerializers[platform](data=data_json)
+        if platform_serializer.is_valid():
+            platform_serializer.save()
+    # 있는 건 업데이트
+    else:
+        platform_serializer = DataSerializers[platform](obj, data=data_json)
+        if platform_serializer.is_valid():
+            platform_serializer.save()
+    # artist 이외 값이 없으면 저장 안됨
