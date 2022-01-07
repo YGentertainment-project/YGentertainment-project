@@ -19,9 +19,23 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
 
 # celery
-from .tasks import crawling
+from .tasks import crawling_platform
 from .celery import app
 from celery.result import AsyncResult
+
+# data models
+DataModels = {
+    "youtube": SocialbladeYoutube,
+    "tiktok": SocialbladeTiktok,
+    "twitter": SocialbladeTwitter,
+    "twitter2": SocialbladeTwitter2,
+    "weverse": Weverse,
+    "instagram": CrowdtangleInstagram,
+    "facebook": CrowdtangleFacebook,
+    "vlive": Vlive,
+    "melon": Melon,
+    "spotify": Spotify,
+}
 
 
 @csrf_exempt
@@ -34,7 +48,7 @@ def crawl(request):
         body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
 
-        task = crawling.apply_async(args=[platform])
+        task = crawling_platform.apply_async(args=[platform])
         return JsonResponse({'task_id': task.id, 'status': 'started'})
 
     # Task 상태를 체크하는 GET 요청
@@ -54,19 +68,6 @@ def crawl(request):
 @require_http_methods(['GET'])  # only get and post
 def show_data(request):
     platform = request.GET.get('platform', None)
-
-    DataModels = {
-        "youtube": SocialbladeYoutube,
-        "tiktok": SocialbladeTiktok,
-        "twitter": SocialbladeTwitter,
-        "twitter2": SocialbladeTwitter2,
-        "weverse": Weverse,
-        "instagram": CrowdtangleInstagram,
-        "facebook": CrowdtangleFacebook,
-        "vlive": Vlive,
-        "melon": Melon,
-        "spotify": Spotify,
-    }
     if DataModels[platform].objects.exists():
         platform_queryset_values = DataModels[platform].objects.values()
         platform_datas = []
@@ -82,18 +83,6 @@ def show_data(request):
 @csrf_exempt
 @require_http_methods(['GET'])  # only get and post
 def daily_read(request):
-    DataModels = {
-        "youtube": SocialbladeYoutube,
-        "tiktok": SocialbladeTiktok,
-        "twitter": SocialbladeTwitter,
-        "twitter2": SocialbladeTwitter2,
-        "weverse": Weverse,
-        "instagram": CrowdtangleInstagram,
-        "facebook": CrowdtangleFacebook,
-        "vlive": Vlive,
-        "melon": Melon,
-        "spotify": Spotify,
-    }
     platform = request.GET.get('platform', None)
     type = request.GET.get('type', None)
     start_date = request.GET.get('start_date', None)
@@ -112,20 +101,6 @@ def daily_read(request):
             return JsonResponse(data={'success': True, 'data': filter_datas})
         else:
             return JsonResponse(status=400, data={'success': True, 'data': []})
-    # elif type=="기간별"://기간별에 속하는 모든 data 전송
-    #     start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date()
-    #     end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S').date()
-    #     db_start_date = datetime.datetime.combine(start_date_dateobject, datetime.time.min)
-    #     db_end_date = datetime.datetime.combine(end_date_dateobject, datetime.time.max) #change to 23:59:59
-    #     filter_objects = Socialblade.objects.filter(platform=platform, recorded_date__range=(db_start_date,db_end_date))
-    #     if filter_objects.exists():
-    #         filter_objects_values = filter_objects.values()
-    #         filter_datas = []
-    #         for filter_value in filter_objects_values:
-    #             filter_datas.append(filter_value)
-    #         return JsonResponse(data={'success': True, 'data': filter_datas})
-    #     else:
-    #         return JsonResponse(status=400, data={'success': True, 'data': []})
     elif type == "기간별":
         # 전날 값을 구함
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S').date() - datetime.timedelta(
@@ -155,14 +130,15 @@ def daily_read(request):
 
 def get_schedules():
     schedule_list = []
-    task_list = PeriodicTask.objects.filter(task='crawling').values()
+    task_list = PeriodicTask.objects.values()
     for task in task_list:
-        crontab_id = task['crontab_id']
-        crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
-        minute = crontab_info[0]['minute']
-        schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
-                             enabled=task['enabled'])
-        schedule_list.append(schedule_dict)
+        if('crawling' in task['name']):
+            crontab_id = task['crontab_id']
+            crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+            minute = crontab_info[0]['minute']
+            schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
+                                 enabled=task['enabled'])
+            schedule_list.append(schedule_dict)
     return schedule_list
 
 
@@ -182,18 +158,17 @@ def schedules(request):
                 timezone='Asia/Seoul',
             )
             # 존재하는 task는 상태 및 interval만 업데이트
-            if PeriodicTask.objects.filter(name='{}_task'.format(platform)).exists():
-                task = PeriodicTask.objects.get(name='{}_task'.format(platform))
+            if PeriodicTask.objects.filter(name='{}_crawling'.format(platform)).exists():
+                task = PeriodicTask.objects.get(name='{}_crawling'.format(platform))
                 task.enabled = True
                 task.crontab = schedule
                 task.save()
-                print('Save is done')
             else:
                 PeriodicTask.objects.create(
                     crontab=schedule,
-                    name='{}_task'.format(platform),
-                    task='crawling',
-                    args=json.dumps((platform,)),
+                    name='{}_crawling'.format(platform),
+                    task='{}_crawling'.format(platform),
+                    # args=json.dumps((platform,)),
                 )
             return JsonResponse(data={'success': True})
         except Exception as e:
@@ -201,11 +176,8 @@ def schedules(request):
     # 스케줄 리스트 업
     elif request.method == 'GET':
         try:
-            if PeriodicTask.objects.filter(task='crawling').exists():
-                schedule_list = get_schedules()
-                return JsonResponse(data={'schedules': schedule_list})
-            else:
-                return JsonResponse(data={'schedules': []})
+            schedule_list = get_schedules()
+            return JsonResponse(data={'schedules': schedule_list})
         except Exception as e:
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
@@ -217,11 +189,8 @@ def schedules(request):
         schedule.delete()
 
         try:
-            if PeriodicTask.objects.filter(task='crawling').exists():
-                schedule_list = get_schedules()
-                return JsonResponse(data={'schedules': schedule_list})
-            else:
-                return JsonResponse(data={'schedules': []})
+            schedule_list = get_schedules()
+            return JsonResponse(data={'schedules': schedule_list})
         except Exception as e:
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
@@ -242,19 +211,6 @@ def daily_update(request):
     followers = request.POST.getlist('followers[]')
     twits = request.POST.getlist('twits[]')
     weverses = request.POST.getlist('weverses[]')
-
-    DataModels = {
-        "youtube": SocialbladeYoutube,
-        "tiktok": SocialbladeTiktok,
-        "twitter": SocialbladeTwitter,
-        "twitter2": SocialbladeTwitter2,
-        "weverse": Weverse,
-        "instagram": CrowdtangleInstagram,
-        "facebook": CrowdtangleFacebook,
-        "vlive": Vlive,
-        "melon": Melon,
-        "spotify": Spotify,
-    }
 
     for index, artist in enumerate(artists):
         obj = DataModels[platform].objects.filter(artist=artist)

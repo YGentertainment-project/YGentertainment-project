@@ -1,5 +1,6 @@
 let statusInterval;
-let category = 'youtube'
+let crawlCategory = 'youtube'
+let dataCategory = 'youtube'
 
 function getDateString(dateText){
     var date = new Date(dateText)
@@ -40,11 +41,15 @@ $(document).ready(function () {
     $('.crawler-loading').hide()
     $('.crawler-finish').hide()
 
-    $('#site-select').change((e) => {
-        category = e.target.value
+    $('#crawl-select').change((e) => {
+        crawlCategory = e.target.value
+    })
+
+    $('#data-select').change((e) => {
+        dataCategory = e.target.value
         $('#board').html('')
         $('#table-header tr').html('')
-        const headerRows = headerList[category].map((header) =>
+        const headerRows = headerList[dataCategory].map((header) =>
             $('<th></th>', {
                 scope: "slope",
                 text: header,
@@ -54,6 +59,9 @@ $(document).ready(function () {
             $('#table-header tr').append(headerRow)
         })
     })
+
+
+
 
     const showCrawlSuccess = (data) => {
         const {status} = data;
@@ -67,7 +75,7 @@ $(document).ready(function () {
             $('.crawler_finish').show()
             $.ajax({
             url: api_domain + 'showdata/?' + $.param({
-                platform: category
+                platform: crawlCategory
             }),
             type: 'GET',
             datatype:'json',
@@ -108,12 +116,12 @@ $(document).ready(function () {
         $.ajax({
             url: api_domain + 'crawl/',
             type:'POST',
-            data: JSON.stringify({"platform": category}),
+            data: JSON.stringify({"platform": crawlCategory}),
             datatype:'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
-                alert(`${task_id} 에서 실행 중 입니다!`)
+                alert(`Task ${task_id} 에서 크롤링을 진행 하고 입니다!`)
                 console.log(task_id)
             },
             error: e => {
@@ -184,7 +192,7 @@ $(document).ready(function () {
     $('#show-data').click(() => {
         $.ajax({
             url: api_domain + 'showdata/?' + $.param({
-                platform: category
+                platform: dataCategory
             }),
             type: 'GET',
             datatype:'json',

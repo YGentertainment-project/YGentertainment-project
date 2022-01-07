@@ -14,7 +14,19 @@
     <div class="container-fluid">
         <h1>Crawler Test Page</h1>
         <div class="header">
-            <select id="site-select">
+            <select id="crawl-select">
+                <option value="youtube">Youtube</option>
+                <option value="twitter">Twitter</option>
+                <option value="twitter2">Twitter2</option>
+                <option value="tiktok">Tiktok</option>
+                <option value="weverse">Weverse</option>
+                <option value="crowdtangle">Crowdtangle(Facebook, Instagram)</option>
+                <option value="vlive">Vlive</option>
+                <option value="melon">Melon</option>
+                <option value="spotify">Spotify</option>
+            </select>
+            <button id="start-crawl" class="btn btn-primary">크롤링 즉시 실행</button>
+            <select id="data-select">
                 <option value="youtube">Youtube</option>
                 <option value="twitter">Twitter</option>
                 <option value="twitter2">Twitter2</option>
@@ -26,7 +38,6 @@
                 <option value="melon">Melon</option>
                 <option value="spotify">Spotify</option>
             </select>
-            <button id="start-crawl" class="btn btn-primary">크롤링 즉시 실행</button>
             <button id="show-data" class="btn btn-info">크롤링 데이터 보기</button>
             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#scheduleCreateModal">
                 스케줄 생성
@@ -77,8 +88,7 @@
                         <option value="twitter2">Twitter2</option>
                         <option value="tiktok">Tiktok</option>
                         <option value="weverse">Weverse</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="instagram">Instagram</option>
+                        <option value="crowdtangle">Crowdtangle(Facebook, Instagram)</option>
                         <option value="vlive">Vlive</option>
                         <option value="melon">Melon</option>
                         <option value="spotify">Spotify</option>

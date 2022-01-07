@@ -131,7 +131,7 @@ class Melon(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     listeners = models.BigIntegerField()
     streams = models.BigIntegerField()
-    fans = models.IntegerField()
+    fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)

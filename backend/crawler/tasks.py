@@ -12,8 +12,7 @@ from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
 from crawler.scrapy_app.spiders.socialblade_twitter import TwitterSpider
 from crawler.scrapy_app.spiders.socialblade_twitter2 import Twitter2Spider
 from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
-from crawler.scrapy_app.spiders.crowdtangle_facebook import FacebookSpider
-#from crawler.scrapy_app.spiders.crowdtangle_instagram import InstagramSpider
+from crawler.scrapy_app.spiders.crowdtangle import CrowdTangleSpider
 from crawler.scrapy_app.spiders.vlive import VliveSpider
 from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from crawler.scrapy_app.spiders.melon import MelonSpider
@@ -32,8 +31,7 @@ spiders = {
     'twitter2': Twitter2Spider,
     'tiktok': TiktokSpider,
     'weverse': WeverseSpider,
-    'facebook': FacebookSpider,
-    # 'instagram': InstagramSpider,
+    'crowdtangle': CrowdTangleSpider,
     'vlive': VliveSpider,
     'melon': MelonSpider,
     'spotify': SpotifySpider,
@@ -121,32 +119,39 @@ def weverse_crawling(self):
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="facebook_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def facebook_crawling(self):
+@shared_task(name="crowdtangle_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def crowdtangle_crawling(self):
     try:
-        crawling('facebook', self.request.id)
+        crawling('crowdtangle', self.request.id)
     except:
-        facebook_crawling.retry()
+        crowdtangle_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-
-
-@shared_task(name="instagram_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def instagram_crawling(self):
-    try:
-        crawling('instagram', self.request.id)
-    except:
-        instagram_crawling.retry()
-        print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-
-
 @shared_task(name="vlive_crawling", bind=True, default_retry_delay=10, max_retries=5)
 def vlive_crawling(self):
     try:
         crawling('vlive', self.request.id)
     except:
         vlive_crawling.retry()
+        print(f'Error with Crawling task')
+
+
+# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
+@shared_task(name="spotify_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def spotify_crawling(self):
+    try:
+        crawling('spotify', self.request.id)
+    except:
+        spotify_crawling.retry()
+        print(f'Error with Crawling task')
+
+# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
+@shared_task(name="melon_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def melon_crawling(self):
+    try:
+        crawling('melon', self.request.id)
+    except:
+        melon_crawling.retry()
         print(f'Error with Crawling task')

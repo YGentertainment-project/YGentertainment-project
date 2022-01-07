@@ -24,27 +24,36 @@ DataModels = {
 }
 
 
-def process_itemsave(name, item):
+def process_itemsave(spider_name, item):
     nowdate = item['recorded_date']
-    dayfilter_obj = DataModels[name].objects.filter(artist=item['artist'],
-                                                    recorded_date__year=nowdate.year,
-                                                    recorded_date__month=nowdate.month,
-                                                    recorded_date__day=nowdate.day)
+    model_name = None
+    if spider_name == "crowdtangle":
+        url = parse.urlparse(item['url'])
+        model_name = parse.parse_qs(url.query)['platform'][0]
+        dayfilter_obj = DataModels[model_name].objects.filter(artist=item['artist'],
+                                                        recorded_date__year=nowdate.year,
+                                                        recorded_date__month=nowdate.month,
+                                                        recorded_date__day=nowdate.day)
+    else:
+        dayfilter_obj = DataModels[spider_name].objects.filter(artist=item['artist'],
+                                                               recorded_date__year=nowdate.year,
+                                                               recorded_date__month=nowdate.month,
+                                                               recorded_date__day=nowdate.day)
     # 오늘일자로 이미 저장된 아티스트 정보가 있는 경우 => 데이터를 최신버전으로 수정
     if dayfilter_obj.exists():
-        if name == "youtube":
+        if spider_name == "youtube":
             return update_youtube(item)
-        elif name == "tiktok":
+        elif spider_name == "tiktok":
             return update_tiktok(item)
-        elif name == "twitter" or name == "twitter2":
-            return update_twitter(item, name)
-        elif name == "weverse":
+        elif spider_name == "twitter" or spider_name == "twitter2":
+            return update_twitter(item, spider_name)
+        elif spider_name == "weverse":
             return update_weverse(item)
-        elif name == 'vlive':
+        elif spider_name == 'vlive':
             return update_vlive(item)
-        elif name == "crowdtangle":
-            return update_crowdtangle(item, name)
-        elif name == 'spotify':
+        elif spider_name == "crowdtangle":
+            return update_crowdtangle(item, model_name)
+        elif spider_name == 'spotify':
             return update_spotify(item)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
@@ -132,9 +141,6 @@ def update_spotify(item):
 
 def update_crowdtangle(item, name):
     nowdate = item['recorded_date']
-    url = parse.urlparse(item['url'])
-    target = parse.parse_qs(url.query)['accountType'][0]
-
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
                                                 recorded_date__year=nowdate.year,
                                                 recorded_date__month=nowdate.month,

@@ -145,8 +145,6 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             artist = response.request.meta['artist']
-            uploads = -1
-            subscribers = -1
             view_text = response.xpath(
                 '//*[@id="right-column"]/yt-formatted-string[3]/text()').get()
             # '조회수 168,048,278회' 형태의 문자열에서 조회수에 해당하는 숫자만 추출
@@ -156,10 +154,7 @@ class YoutubeSpider(scrapy.Spider):
                 '//*[@id="right-column"]/yt-formatted-string[2]/span[2]/text()').get()
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
-            item["uploads"] = uploads
-            item["subscribers"] = subscribers
             item["views"] = views
             item["user_created"] = user_created
-            # item["platform"] = self.name
             item["url"] = response.url
             yield item
