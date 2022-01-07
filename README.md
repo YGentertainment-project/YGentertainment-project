@@ -10,22 +10,25 @@
 
 ## <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
 #### 김민희(팀장) [@minhee33](https://github.com/minhee33)<br>
-> 데이터 시각화 기법 조사<br>
 > Web framework - Flask 조사<br>
+> Backend 개발<br>
 
 #### 김정규 [@kingh2160](https://github.com/kingh2160)<br>
-> Selenium 조사 및 세미나<br>
+> Crawler 설계 및 개발<br>
 
 #### 양승찬 [@Yangseungchan](https://github.com/Yangseungchan)<br>
-> Scrapy 조사 및 세미나<br>
+> Crawler 설계 및 개발<br>
+> Rabbitmq-celery를 사용한 비동기 프로세스 개발<br>
 
 #### 임수민 [@soomin9106](https://github.com/soomin9106)<br>
-> Twint 조사 및 세미나<br>
 > Web Framework - Django 조사 및 세미나<br>
+> Frontent 개발<br>
 
 #### 최영우 [@cyw320712](https://github.com/cyw320712)<br>
-> 데이터 분석 조사 및 세미나 <br>
 > DBMS 조사 및 DB schema 설계 <br>
+> 시스템 아키텍쳐 설계 및 개발 <br>
+> 서버 및 도커 설계 및 개발, 유지보수 <br>
+> backend 개발 <br>
 > GitHub 관리 <br>
 
 
@@ -43,15 +46,19 @@
 
 ### Tech Stack
  #### Frontend
+ > Django-templete<br>
 
  #### Backend
  > Django<br>
+ > RabbitMQ<br>
+ > Celery<br>
 
  #### Cralwer
  > Selenium<br>
  > Scrapy<br>
 
  #### DB
+> MariaDB <br>
 
 ## <div id = "Contribute">Git Contribute 🔨</div>
 모든 contributer는 해당 지침에 따라 commit해야합니다.<br>

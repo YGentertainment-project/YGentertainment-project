@@ -26,6 +26,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import ActionChains
 
+from utils.shortcuts import get_env
+
+production_env = get_env("YG_ENV", "dev") == "production"
+
 SOCIALBLADE_DOMAIN = 'socialblade.com'
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
@@ -58,7 +62,6 @@ class ScrapyAppSpiderMiddleware:
 
 
 def driver_setting():
-    s = Service(ChromeDriverManager().install())
     chrome_options = Options()
     prefs = {
         'profile.default_content_setting_values': {
@@ -100,8 +103,16 @@ def driver_setting():
     chrome_options.add_experimental_option('prefs', prefs)                              # custom settings, disable = 2
     chrome_options.add_argument('log-level=3')
     chrome_options.add_argument('--disable-dev-shm-usage')                              # overcome limited resource problems
+    
+
+    if production_env == "production":
+        executable_path="/usr/local/bin/chromedriver"
+        s = Service(executable_path=executable_path)
+    else:
+        s = Service(ChromeDriverManager().install())
+    # driver = webdriver.Chrome(executable_path=executable_path, options=chrome_options)
     driver = webdriver.Chrome(service=s, options=chrome_options)
-    return driver
+    return driver   
 
 # youtube downloader middleware
 
