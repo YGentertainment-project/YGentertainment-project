@@ -36,10 +36,10 @@ $('.add-submit').click(function(){
         "name": trs_value[0].value,
         "level": trs_value[1].value,
         "gender": trs_value[2].value,
-        "member_num": trs_value[3].value=="" ? 1:trs_value[3].value,
+        "member_num": trs_value[3].value,
         "member_nationality": trs_value[4].value,
         "agency":trs_value[5].value,
-        "debut_date": trs_value[6].value==""? "2001-1-1":trs_value[6].value,
+        "debut_date": trs_value[6].value,
         "urls": urls,
     };
 
