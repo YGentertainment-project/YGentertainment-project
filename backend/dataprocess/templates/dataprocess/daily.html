@@ -4,50 +4,9 @@
    {% extends 'main.html' %}
 
    {% block content %}
-   <form method="get" class="forms">
-    <div class="select-days">
-        <div class="select-days-day">
-            <label>조회 일자</label>
-            <input type="radio" name="view_days" value="누적" /> <label>누적</label>
-            <input type="radio" name="view_days" value="기간별" /> <label>기간별</label>
-        </div>
-        <div class="select-days-date">
-            <input type="date" name="start_date" /> ~ <input type="date" name="end_date" />
-            <input type="button" name="day" style="border: 1px solid black; margin: 3px;" value="1일"></input>
-            <input type="button" name="week" style="border: 1px solid black; margin: 3px;" value="1주"></input>
-            <input type="button" name="month" style="border: 1px solid black; margin: 3px;" value="1개월"></input>
-        </div>
-    </div>
-    <div class="contents">
-        <div class="contents-platforms">
-            <label>플랫폼</label>
-            <!--DB 데이터로 변경 필요-->
-            <option class="platform-name" name="youtube" value="youtube">You Tube</option>
-            <option class="platform-name" name="vlive" value="vlive">V Live</option>
-            <option class="platform-name" name="melon" value="melon">Melon</option>
-            <option class="platform-name" name="spotify" value="spotify">Spotify</option>
-            <option class="platform-name" name="instagram" value="instagram">인스타그램</option>
-            <option class="platform-name" name="facebook" value="facebook">페이스북</option>
-            <option class="platform-name" name="twitter" value="twitter">트위터 1</option>
-            <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
-            <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
-            <option class="platform-name" name="weverse" value="weverse">Weverse</option>
-        </div>
-        <hr>
-        <div id="result-table">
-            <label style="margin-bottom: 5px;">리포트</label>
-            <div class="button_layout">
-                <label id="update-data" style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label>
-            </div>
-            <table id="table">
-                <tbody id="board"></tbody>
-            </table>
-        </div>
-    </div>
-    </form>
-
-    <!-- data export&import button -->
-    <div class="column_layout flexend_layout button_forms">
+   <div class="forms">
+       <!-- data export&import button -->
+       <div class="column_layout flexend_layout">
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="importData">
@@ -59,8 +18,49 @@
             <input type="text" name="type" value="export" style="display:none;">
             <button class="excel-btn" type="submit">Export</button>
         </form>
-    </div>
-    <br>
+        </div>
+    <form method="get">
+        <div class="select-days">
+            <div class="select-days-day">
+                <label>조회 일자</label>
+                <input type="radio" name="view_days" value="누적" /> <label>누적</label>
+                <input type="radio" name="view_days" value="기간별" /> <label>기간별</label>
+            </div>
+            <div class="select-days-date">
+                <input type="date" name="start_date" /> ~ <input type="date" name="end_date" />
+                <input type="button" name="day" style="border: 1px solid black; margin: 3px;" value="1일"></input>
+                <input type="button" name="week" style="border: 1px solid black; margin: 3px;" value="1주"></input>
+                <input type="button" name="month" style="border: 1px solid black; margin: 3px;" value="1개월"></input>
+            </div>
+        </div>
+        <div class="contents">
+            <div class="contents-platforms">
+                <label>플랫폼</label>
+                <!--DB 데이터로 변경 필요-->
+                <option class="platform-name" name="youtube" value="youtube">You Tube</option>
+                <option class="platform-name" name="vlive" value="vlive">V Live</option>
+                <option class="platform-name" name="melon" value="melon">Melon</option>
+                <option class="platform-name" name="spotify" value="spotify">Spotify</option>
+                <option class="platform-name" name="instagram" value="instagram">인스타그램</option>
+                <option class="platform-name" name="facebook" value="facebook">페이스북</option>
+                <option class="platform-name" name="twitter" value="twitter">트위터 1</option>
+                <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
+                <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
+                <option class="platform-name" name="weverse" value="weverse">Weverse</option>
+            </div>
+            <hr>
+            <div id="result-table">
+                <label style="margin-bottom: 5px;">리포트</label>
+                <div class="button_layout">
+                    <label id="update-data" style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label>
+                </div>
+                <table id="table">
+                    <tbody id="board"></tbody>
+                </table>
+            </div>
+        </div>
+        </form>
+   </div>
     
 
    {% endblock content %}
