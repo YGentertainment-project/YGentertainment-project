@@ -44,6 +44,8 @@ def process_itemsave(name, item):
             return update_vlive(item)
         elif name == "crowdtangle":
             return update_crowdtangle(item, name)
+        elif name == 'spotify':
+            return update_spotify(item)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
         item.save()
@@ -111,6 +113,19 @@ def update_vlive(item):
     existingItem.videos = item.get('videos')
     existingItem.likes = item.get('likes')
     existingItem.plays = item.get('plays')
+    existingItem.recorded_date = nowdate
+    existingItem.save()
+
+
+def update_spotify(item):
+    nowdate = item['recorded_date']
+    existingItem = Spotify.objects.get(artist=item.get('artist'),
+                                       recorded_date__year=nowdate.year,
+                                       recorded_date__month=nowdate.month,
+                                       recorded_date__day=nowdate.day
+                                       )
+    existingItem.monthly_listens = item.get('monthly_listens')
+    existingItem.followers = item.get('followers')
     existingItem.recorded_date = nowdate
     existingItem.save()
 

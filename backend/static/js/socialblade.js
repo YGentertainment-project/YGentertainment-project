@@ -29,8 +29,8 @@ headerList = {
     "facebook": ['artist', 'followers', 'Recorded Date', 'URL'],
     "instagram": ['artist', 'followers', 'Recorded Date', 'URL'],
     "vlive": ['artist', 'members', 'videos', 'likes', 'plays', 'Recorded Date', 'URL'],
-    // "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
-    // "spotify": ['artist', 'mon']
+    "melon": ['artist', 'listeners', 'streams', 'fans', 'Recorded Date', 'URL1', 'URL2'],
+    "spotify": ['artist', 'monthly_listens', 'followers', 'Recorded Date', 'URL']
 }
 
 
@@ -113,9 +113,8 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             success: res => {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
-                // 2. 3초 간격으로 GET 요청을 보내서 상태 표시 갱신
-                checkCrawlStatus(task_id)
-                statusInterval = setInterval(() => checkCrawlStatus(task_id), 2000)
+                alert(`${task_id} 에서 실행 중 입니다!`)
+                console.log(task_id)
             },
             error: e => {
                 alert('Failed to send request for scraping')

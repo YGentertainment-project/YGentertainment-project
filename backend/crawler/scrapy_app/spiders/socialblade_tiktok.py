@@ -5,12 +5,11 @@ from ..items import SocialbladeTiktokItem
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 
-
 class TiktokSpider(scrapy.Spider):
     name = 'tiktok'
     custom_settings = {
         'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
+            'crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware': 100
         },
     }
 

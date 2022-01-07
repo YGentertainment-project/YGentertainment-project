@@ -28,11 +28,18 @@ from selenium.webdriver import ActionChains
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
 YOUTUBE_DOMAIN = 'youtube.com'
+MELON_DOMAIN = 'xn--o39an51b2re.com'
 
+YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
+MELON_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
-YOUTUBE_ROBOT = "https://www.youtube.com/robots.txt"
+
+WEVERSE_ID = "sunrinkingh2160@gmail.com"
+WEVERSE_PW = "!eogksalsrnr123"
+CROWDTANGLE_ID = "jaewon@ygmail.net"
+CROWDTANGLE_PW = "Ygfamily1234@"
 
 
 class ScrapyAppSpiderMiddleware:
@@ -60,7 +67,7 @@ class ScrapyAppSpiderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-def driver_setting(proxy_idx = None):
+def driver_setting(proxy_idx=None):
     s = Service(ChromeDriverManager().install())
     chrome_options = Options()
     prefs = {
@@ -108,10 +115,8 @@ def driver_setting(proxy_idx = None):
     driver = webdriver.Chrome(service=s, options=chrome_options)
     return driver
 
-# youtube downloader middleware
 
-
-class SocialbladeDownloaderMiddleware:
+class NoLoginDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
@@ -124,20 +129,31 @@ class SocialbladeDownloaderMiddleware:
         domain = urlparse(request.url).netloc
         print('crawling url : {}'.format(request.url))
 
-        if domain == SOCIALBLADE_DOMAIN:
-            if request.url != SOCIALBLADE_ROBOT:
-                WebDriverWait(self.driver, 50).until(
+        # Socialblade Case
+        if(domain == SOCIALBLADE_DOMAIN):
+            if(request.url != SOCIALBLADE_ROBOT):
+                WebDriverWait(self.driver, 30).until(
                     EC.presence_of_element_located(
                         (By.ID, 'YouTubeUserTopInfoWrap')
                     )
                 )
-        elif domain == YOUTUBE_DOMAIN:
-            if request.url != YOUTUBE_ROBOT:
-                WebDriverWait(self.driver, 50).until(
+        # Youtube Channel Case
+        elif(domain == YOUTUBE_DOMAIN):
+            if(request.url != YOUTUBE_ROBOT):
+                WebDriverWait(self.driver, 30).until(
                     EC.presence_of_element_located(
                         (By.ID, 'right-column')
                     )
                 )
+        # Melon Channel Case
+        elif(domain == MELON_DOMAIN):
+            if(request.url != MELON_ROBOT):
+                WebDriverWait(self.driver, 30).until(
+                    EC.presence_of_element_located(
+                        (By.CLASS_NAME, 'list-style-none')
+                    )
+                )
+
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
@@ -151,7 +167,7 @@ class SocialbladeDownloaderMiddleware:
         proxy_idx = 0
         if spider.name == "youtube":
             proxy_idx = 0
-        elif spider.name=="twitter":
+        elif spider.name == "twitter":
             proxy_idx = 1
         elif spider.name == "twitter2":
             proxy_idx = 2
@@ -159,6 +175,7 @@ class SocialbladeDownloaderMiddleware:
             spider_idx = 3
         # self.driver = driver_setting(proxy_idx)
         self.driver = driver_setting(None)
+
 
 class LoginDownloaderMiddleware:
     @classmethod
@@ -180,8 +197,8 @@ class LoginDownloaderMiddleware:
             self.driver.find_element(By.CLASS_NAME, 'sc-AxjAm.dhTrPj').click()
             self.driver.switch_to.window(self.driver.window_handles[1])
             self.driver.implicitly_wait(time_to_wait=5)
-            self.driver.find_element(By.NAME, 'username').send_keys('sunrinkingh2160@gmail.com')
-            self.driver.find_element(By.NAME, 'password').send_keys('!eogksalsrnr123')
+            self.driver.find_element(By.NAME, 'username').send_keys(WEVERSE_ID)
+            self.driver.find_element(By.NAME, 'password').send_keys(WEVERSE_PW)
             self.driver.find_element(By.CLASS_NAME, 'sc-Axmtr.hwYQYk.gtm-login-button').click()
             self.driver.switch_to.window(self.driver.window_handles[0])
             WebDriverWait(self.driver, 10).until(
@@ -193,8 +210,8 @@ class LoginDownloaderMiddleware:
             self.driver.find_element(By.CLASS_NAME, 'facebookLoginButton__authButton--lof0c').click()
             self.driver.switch_to.window(self.driver.window_handles[1])
             self.driver.implicitly_wait(time_to_wait=5)
-            self.driver.find_element(By.ID, 'email').send_keys('jaewon@ygmail.net')
-            self.driver.find_element(By.ID, 'pass').send_keys('Ygfamily1234@')
+            self.driver.find_element(By.ID, 'email').send_keys(CROWDTANGLE_ID)
+            self.driver.find_element(By.ID, 'pass').send_keys(CROWDTANGLE_PW)
             self.driver.find_element(By.ID, 'loginbutton').click()
             self.driver.switch_to.window(self.driver.window_handles[0])
             WebDriverWait(self.driver, 10).until(
