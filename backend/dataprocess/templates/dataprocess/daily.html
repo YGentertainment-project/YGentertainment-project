@@ -28,9 +28,9 @@
             </div>
             <div class="select-days-date">
                 <input type="date" name="start_date" /> ~ <input type="date" name="end_date" />
-                <input type="button" name="day" style="border: 1px solid black; margin: 3px;" value="1일"></input>
-                <input type="button" name="week" style="border: 1px solid black; margin: 3px;" value="1주"></input>
-                <input type="button" name="month" style="border: 1px solid black; margin: 3px;" value="1개월"></input>
+                <input type="button" name="day" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1일"></input>
+                <input type="button" name="week" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1주"></input>
+                <input type="button" name="month" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1개월"></input>
             </div>
         </div>
         <div class="contents">
@@ -52,7 +52,11 @@
             <div id="result-table">
                 <label style="margin-bottom: 5px;">리포트</label>
                 <div class="button_layout">
-                    <label id="update-data" style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label>
+                    <button id="update-data">
+                        저장
+                    </button>
+                    <!-- <label id="update-data"
+                    style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label> -->
                 </div>
                 <table id="table">
                     <tbody id="board"></tbody>
