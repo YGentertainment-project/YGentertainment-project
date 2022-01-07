@@ -5,10 +5,11 @@ from ..items import SocialbladeTwitter2Item
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 
+
 class Twitter2Spider(scrapy.Spider):
     name = 'twitter2'
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES':{
+        'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.SocialbladeDownloaderMiddleware': 100
         },
     }

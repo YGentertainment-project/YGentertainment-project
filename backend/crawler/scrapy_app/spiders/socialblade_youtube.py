@@ -7,6 +7,7 @@ YOUTUBE_DOMAIN = "youtube.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
 
+
 class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
     custom_settings = {

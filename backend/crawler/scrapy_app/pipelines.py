@@ -4,6 +4,7 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from urllib import parse
 from django.utils import timezone
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
@@ -41,7 +42,7 @@ def process_itemsave(name, item):
             return update_weverse(item)
         elif name == 'vlive':
             return update_vlive(item)
-        elif name == "facebook" or name == "instagram":
+        elif name == "crowdtangle":
             return update_crowdtangle(item, name)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
@@ -116,6 +117,9 @@ def update_vlive(item):
 
 def update_crowdtangle(item, name):
     nowdate = item['recorded_date']
+    url = parse.urlparse(item['url'])
+    target = parse.parse_qs(url.query)['accountType'][0]
+
     existingItem = DataModels[name].objects.get(artist=item.get('artist'),
                                                 recorded_date__year=nowdate.year,
                                                 recorded_date__month=nowdate.month,

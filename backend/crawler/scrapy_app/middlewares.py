@@ -27,9 +27,12 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver import ActionChains
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
+YOUTUBE_DOMAIN = 'youtube.com'
+
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
+YOUTUBE_ROBOT = "https://www.youtube.com/robots.txt"
 
 
 class ScrapyAppSpiderMiddleware:
@@ -57,7 +60,7 @@ class ScrapyAppSpiderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-def driver_setting():
+def driver_setting(proxy_idx = None):
     s = Service(ChromeDriverManager().install())
     chrome_options = Options()
     prefs = {
@@ -92,6 +95,7 @@ def driver_setting():
     chrome_options.add_argument("--disable-gpu")                                         # 그래픽 카드 작동해제 => 성능 향상
     chrome_options.add_experimental_option("useAutomationExtension", False)              # disabling infobars
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # user_agent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
     user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36"
     chrome_options.add_argument(f'user-agent={user_agent}')                             # user-agent 값 삽입 -> 봇 감지 방지
     chrome_options.add_argument("--start-maximized")                                    # open browser in maximized mode
@@ -100,6 +104,7 @@ def driver_setting():
     chrome_options.add_experimental_option('prefs', prefs)                              # custom settings, disable = 2
     chrome_options.add_argument('log-level=3')
     chrome_options.add_argument('--disable-dev-shm-usage')                              # overcome limited resource problems
+
     driver = webdriver.Chrome(service=s, options=chrome_options)
     return driver
 
@@ -119,20 +124,20 @@ class SocialbladeDownloaderMiddleware:
         domain = urlparse(request.url).netloc
         print('crawling url : {}'.format(request.url))
 
-        if(domain == SOCIALBLADE_DOMAIN):
-            if(request.url != SOCIALBLADE_ROBOT):
-                WebDriverWait(self.driver, 30).until(
+        if domain == SOCIALBLADE_DOMAIN:
+            if request.url != SOCIALBLADE_ROBOT:
+                WebDriverWait(self.driver, 50).until(
                     EC.presence_of_element_located(
                         (By.ID, 'YouTubeUserTopInfoWrap')
                     )
                 )
-        else:
-            WebDriverWait(self.driver, 30).until(
-                EC.presence_of_element_located(
-                    (By.ID, 'right-column')
+        elif domain == YOUTUBE_DOMAIN:
+            if request.url != YOUTUBE_ROBOT:
+                WebDriverWait(self.driver, 50).until(
+                    EC.presence_of_element_located(
+                        (By.ID, 'right-column')
+                    )
                 )
-            )
-            print('domain : {} Neither of the domain filterling!!!!'.format(domain))
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
 
@@ -143,8 +148,17 @@ class SocialbladeDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
-        self.driver = driver_setting()
-
+        proxy_idx = 0
+        if spider.name == "youtube":
+            proxy_idx = 0
+        elif spider.name=="twitter":
+            proxy_idx = 1
+        elif spider.name == "twitter2":
+            proxy_idx = 2
+        else:
+            spider_idx = 3
+        # self.driver = driver_setting(proxy_idx)
+        self.driver = driver_setting(None)
 
 class LoginDownloaderMiddleware:
     @classmethod
