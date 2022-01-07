@@ -231,11 +231,13 @@ input{
 }
 
 .contents-platforms{
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     width: 15%;
+    height: 100%;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
