@@ -67,7 +67,8 @@ input[type='checkbox']:checked:after {
     color: white;
     background-color: black !important;
     text-align: center;
-    font-weight: bold;
+    font-weight: normal;
+    font-size : 1.2rem;
 }
 
 #platform-body td{
@@ -82,11 +83,21 @@ input[type='checkbox']:checked:after {
     justify-content: flex-end;
 }
 
-.button_layout > button, .excel-btn{
+/* 거의 모든 버튼 형태 */
+.button_layout > button, .excel-btn, .add-submit{
+    background-color: rgb(226, 226, 226) !important;
+    font-weight: bold;
+    font-size: 1rem;
+    border: 1px solid black;
+    border-radius: 4px;
     width: 100px;
     border: 1px solid black !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
     margin-left: 10px;
     margin-right: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     text-align: center;
     position: relative;
 }
@@ -152,11 +163,15 @@ input[type='checkbox']:checked:after {
 
 .table_layout table>tbody td:nth-child(1){
     background-color: lightgrey;
+    font-size : 1rem;
+    font-weight: 700;
 }
 
 .table_layout table>thead{
     color: black;
     background-color: LightSteelBlue !important;
+    font-size : 1.2rem;
+    font-weight: normal;
 }
 
 .attr_button_layout{

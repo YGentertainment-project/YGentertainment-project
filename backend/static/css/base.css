@@ -267,6 +267,7 @@ input{
 .button_layout > label{
     width: 100px;
     border: 1px solid black !important;
+    border-radius: 4px;
     margin-left: 10px;
     margin-right: 10px;
     text-align: center;
