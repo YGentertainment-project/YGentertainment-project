@@ -59,7 +59,7 @@ def get_platform_data(artist, platform):
     else:
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
                 filter_datas.append("NULL")
         return filter_datas
 
@@ -221,7 +221,10 @@ def import_datareport(worksheet):
                     collect_value = platform_data_list[platform_index]["item_list"][current_index]
                     value = str(cell.value)
                     if value != 'None':
-                        value = int(cell.value)
+                        if "-" in value:
+                            value = str(cell.value)
+                        else:
+                            value = int(cell.value)
                         data_json[collect_value] = value
                     current_index += 1
                     if current_index >= platform_data_list[platform_index]["item_num"]:

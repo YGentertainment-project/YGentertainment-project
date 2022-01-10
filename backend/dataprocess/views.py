@@ -557,7 +557,7 @@ class DataReportAPI(APIView):
                         platform_datas.append(queryset_value)
                     return JsonResponse(data={'success': True, 'data': platform_datas})
                 else:
-                    return JsonResponse(status=400, data={'success': False})
+                    return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
             return JsonResponse(status=400, data={'success': False})
     
