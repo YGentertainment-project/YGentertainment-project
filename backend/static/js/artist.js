@@ -1,3 +1,13 @@
+const isEmpty = 
+    function(value){ 
+        if( value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length ) ){ 
+            return true 
+        }else{ 
+                return false 
+        } 
+    };
+
+
 //artist create function
 $('.add-submit').click(function(){
     var th = $('.add-table').find('th'); //platform names
@@ -11,9 +21,11 @@ $('.add-submit').click(function(){
     var urls = [];
     for(var i=7;i<trs_value.length;i++){
         var collect_item = trs_value[i].value;
-        if(collect_item!="")
-           urls.push(collect_item)
+        urls.push(collect_item)
+           
     }
+
+    console.log(urls);
 
     var target_urls = {};
     for( var i = 0; i<platform_names.length; i++){
@@ -32,22 +44,22 @@ $('.add-submit').click(function(){
     };
 
     console.log(JSON.stringify(data));
+
     $.ajax({
-        url: "/api/artist/",
+        url: "/dataprocess/api/artist/",
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
             console.log('success');
-            location.href = "/artist/";
+            location.href = "/dataprocess/artist/";
         },
         error: e => {
             console.log(e);
             alert(e.responseText);
         },
     });
-
     
 })
 
@@ -73,7 +85,7 @@ $('#save-artists').click(function(){
     }
 
     $.ajax({
-        url: '/api/artist/',
+        url: '/dataprocess/api/artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -92,10 +104,10 @@ $('#save-artists').click(function(){
 $('input[name=artist-name]').click(function(){
     var artist = $(this).val();
 
-    //console.log(artist);
+    console.log(artist);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist},
@@ -124,7 +136,7 @@ $('input[name=artist-name]').click(function(){
                     } 
                     else{
                         dataCol = document.createElement('td');
-                        if(key === 'artist_id' || key==='id')
+                        if(key === 'artist_id' || key==='id' || key==='platform_id')
                             dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
                         <td>
@@ -152,17 +164,20 @@ $('#save-artists-platform').click(function(){
     for(var r=0;r<artist_tr.length;r++){
         var cells = artist_tr[r].getElementsByTagName("td");
 
+       
         datas.push({
-            "id": cells[1].firstElementChild.value,
-            "platform": cells[2].firstElementChild.innerHTML,
-            "target_url": cells[3].firstElementChild.value,
+            "id": cells[2].firstElementChild.value,
+            "platform": cells[3].firstElementChild.innerHTML,
+            "target_url": cells[4].firstElementChild.value,
+            "target_url_2" : cells[5].firstElementChild.value,
         });
+
     }
 
     console.log(datas);
 
     $.ajax({
-        url: '/api/platform_of_artist/',
+        url: '/dataprocess/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -182,17 +197,17 @@ $('#save-artists-platform').click(function(){
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
-    var artist = $('.hidden').find('input').val();
+    //var artist = $('.hidden').find('input').val();
     var platform = $(this).text();
 
-    console.log(artist);
+    //console.log(artist);
     console.log(platform);
 
     $.ajax({
-        url: '/api/collect_target_item/',
+        url: '/dataprocess/api/platform_target_item/',
         type: 'GET',
         datatype:'json',
-        data : {'artist':artist, 'platform':platform},
+        data : { 'platform':platform},
         contentType: 'application/json; charset=utf-8',
         success: res => {
             const data_list = res.data;
@@ -202,9 +217,9 @@ $(document).on('click','.platform-names',function(){
             let dataHTML = [];
             data_list.forEach(data => {//data를 화면에 표시
                 for(key in data){
-                    if(key !=='target_name'){
+                    if(key !=='target_name' ){
                         continue;
-                    }
+                    } 
                     else{
                         dataHTML.push( `
                         <td>
@@ -214,12 +229,63 @@ $(document).on('click','.platform-names',function(){
                     }
                 }
             });
+           
+
+
+            dataCol = document.createElement('td');
+            dataCol.setAttribute('class', 'hidden');
+            dataCol.innerHTML = `<td>
+            <input type="text" value="${res.platform_id}" style="width:100%"></input>
+        </td>
+        `;
+            tableRow.append(dataCol)
+
             for(let i = 0; i<dataHTML.length; i++){
                 dataCol = document.createElement('td');
                 dataCol.innerHTML = dataHTML[i];
                 tableRow.append(dataCol);
             }
             $('#artist-body-list').append(tableRow);
+
+        },
+        error: e => {
+            alert(e.responseText);
+        },
+    })
+})
+
+//update platform collect target
+$(document).on('click','#save-list',function(){
+    var datas=[];
+    var items = [];
+    var item_tr = $('#artist-body-list').find('tr');
+
+    for(var r=0;r<item_tr.length;r++){
+        var cells = item_tr[r].getElementsByTagName("td");
+        for(var k = 0; k<cells.length; k++){
+            items.push(cells[k].firstElementChild.value)
+        }
+    }
+
+
+    for(var j = 1; j<items.length; j++){
+        datas.push({
+            //"platform":items[0],
+            "platform":items[0],
+            "target_name":items[j],
+        })
+    }
+
+    console.log(datas);
+
+    $.ajax({
+        url: '/dataprocess/api/platform_target_item/',
+        type: 'PUT',
+        datatype:'json',
+        data :JSON.stringify(datas),
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            alert('successfully saved!');
 
         },
         error: e => {

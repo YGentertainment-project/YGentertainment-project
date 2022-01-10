@@ -99,7 +99,6 @@ class MelonSpider(scrapy.Spider):
         listener = response.xpath('//*[@id="main-wrapper"]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()').extract()[2]
         streaming = response.xpath('//*[@id="main-wrapper"]/div/div[2]/div[2]/div/div/div/ul/li[4]/text()').extract()[2]
 
-
         item = MelonItem()
         item['artist'] = artist
         item['listeners'] = listener.replace(',', '')
@@ -108,4 +107,3 @@ class MelonSpider(scrapy.Spider):
         item['url1'] = response.url
         item['url2'] = None
         yield item
-

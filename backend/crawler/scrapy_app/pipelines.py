@@ -31,9 +31,9 @@ def process_itemsave(spider_name, item):
         url = parse.urlparse(item['url'])
         model_name = parse.parse_qs(url.query)['platform'][0]
         dayfilter_obj = DataModels[model_name].objects.filter(artist=item['artist'],
-                                                        recorded_date__year=nowdate.year,
-                                                        recorded_date__month=nowdate.month,
-                                                        recorded_date__day=nowdate.day)
+                                                              recorded_date__year=nowdate.year,
+                                                              recorded_date__month=nowdate.month,
+                                                              recorded_date__day=nowdate.day)
     else:
         dayfilter_obj = DataModels[spider_name].objects.filter(artist=item['artist'],
                                                                recorded_date__year=nowdate.year,
@@ -122,6 +122,19 @@ def update_vlive(item):
     existingItem.videos = item.get('videos')
     existingItem.likes = item.get('likes')
     existingItem.plays = item.get('plays')
+    existingItem.recorded_date = nowdate
+    existingItem.save()
+
+
+def update_spotify(item):
+    nowdate = item['recorded_date']
+    existingItem = Spotify.objects.get(artist=item.get('artist'),
+                                       recorded_date__year=nowdate.year,
+                                       recorded_date__month=nowdate.month,
+                                       recorded_date__day=nowdate.day
+                                       )
+    existingItem.monthly_listens = item.get('monthly_listens')
+    existingItem.followers = item.get('followers')
     existingItem.recorded_date = nowdate
     existingItem.save()
 

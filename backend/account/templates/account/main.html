@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+    {% include 'head.html' %}
+
+    <script>
+        function go_to_crawler(){
+            location.href = "{% url 'crawler:home' %}";
+        }
+        function go_to_dataprocess(){
+            location.href = "{% url 'dataprocess:base' %}";
+        }
+    </script>
+    <div class="column_layout">
+        <img class="logo-img" alt="logo" style="width:50%;"
+        src="https://news.imaeil.com/photos/2019/06/13/2019061316005257069_l.jpg" />
+
+        <div class="row_layout">
+            <button class="btn excel-btn" style="padding:10px; width:150px; margin-right: 50px; font-size: 20px;"
+            onclick= go_to_crawler()>
+                crawler
+            </button>
+    
+            <button class="btn excel-btn" style="padding:10px; width:150px; font-size: 20px;"
+            onclick= go_to_dataprocess()>
+                dataprocess
+            </button>
+        </div>
+    </div>
+
+
+</html>

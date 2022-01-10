@@ -148,6 +148,8 @@ def spotify_crawling(self):
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
+
+
 @shared_task(name="melon_crawling", bind=True, default_retry_delay=10, max_retries=5)
 def melon_crawling(self):
     try:

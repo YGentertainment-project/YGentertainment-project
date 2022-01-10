@@ -34,6 +34,7 @@ $(function(){
     var $side = $('.sidebar');
     var $header = $('.header');
     var $dataform = $('.forms');
+    $side.addClass('open');
     var $sidebt = $('.sidebar-btn').on('click', function(){
         $side.toggleClass('open');
 

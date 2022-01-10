@@ -29,7 +29,7 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -131,7 +131,7 @@ STATICFILES_DIRS = [
 ]
 
 # Rabbitmq env_values
-RABBITMQ_HOSTS = (os.environ.get('RABBITMQ_HOST'), )
+RABBITMQ_HOSTS = os.environ.get('RABBITMQ_HOST', 'localhost')
 RABBITMQ_USER = os.environ.get('RABBITMQ_USER', 'ygenter')
 RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'ygenter')
 RABBITMQ_QUEUE_EXPIRES = 300.0  # seconds
@@ -231,9 +231,9 @@ CORS_ORIGIN_WHITELIST = (
 
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 # CELERY 관련 설정
-# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
-# CELERY_TIMEZONE = 'Asia/Seoul'
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_ACCEPT_CONTENT = ['json']
+#CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+#CELERY_TIMEZONE = 'Asia/Seoul'
+#CELERY_TASK_SERIALIZER = 'json'
+#CELERY_ACCEPT_CONTENT = ['json']
 #
-# CELERY_TASK_TRACK_STARTED = True
+#CELERY_TASK_TRACK_STARTED = True

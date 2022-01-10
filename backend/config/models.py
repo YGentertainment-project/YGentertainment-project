@@ -1,5 +1,16 @@
 from django.db import models
-from dataprocess.models import CollectTarget
+from dataprocess.models import CollectTarget, Platform
+
+class PlatformTargetItem(models.Model):
+    platform = models.ForeignKey(to=Platform, on_delete=models.CASCADE)
+    target_name = models.TextField(default="")
+    target_type = models.TextField(default="int")
+    xpath = models.TextField(default="", blank=True)
+    create_dt = models.DateTimeField(auto_now_add=True)
+    update_dt = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "platform_target_item"
 
 
 class CollectTargetItem(models.Model):

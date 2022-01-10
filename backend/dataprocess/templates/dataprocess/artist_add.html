@@ -13,20 +13,20 @@
                 </tr>
                 <tr>
                     <th>아티스트명</th>
-                    <td><input class="add-target-input"  type="text" placeholder="아티스트명" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="blackpink"/></td>
                 </tr>
                 <tr>
                     <th>구분</th>
-                    <td><input class="add-target-input"  type="text" placeholder="구분" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="S/A/B/.." /></td>
                 </tr> <tr>
                     <th>성별</th>
-                    <td><input class="add-target-input"  type="text" placeholder="성별" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="M/F" /></td>
                 </tr> <tr>
                     <th>맴버</th>
-                    <td><input class="add-target-input"  type="text" placeholder="맴버" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="맴버 수" /></td>
                 </tr> <tr>
                     <th>국적</th>
-                    <td><input class="add-target-input"  type="text" placeholder="국적" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="대한민국 4, 미국 1.." /></td>
                 </tr> 
                 <tr>
                     <th>기획사</th>
@@ -34,19 +34,21 @@
                 </tr>
                 <tr>
                     <th>데뷔일</th>
-                    <td><input class="add-target-input"  type="text" placeholder="데뷔일" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="2001-1-1" /></td>
                 </tr>
             </table>
            <table class="add-table" border="1">
                <tr>
                    <th class="title-th">플랫폼</th>
                    <th class="title-th">데이터 수집 URL</th>
+                   <th class="title-th">데이터 수집 URL 2</th>
                </tr>
               {% if platforms %}
                {% for platform in platforms %}
                <tr>
                     <th>{{platform.name}}</th>
                     <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
+                    <td><input class="add-target-input"  type="text" placeholder="URL 2" /></td>
                 </tr>
                {% endfor %}
               {% else %}

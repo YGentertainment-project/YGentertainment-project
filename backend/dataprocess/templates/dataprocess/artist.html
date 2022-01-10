@@ -4,11 +4,18 @@
     {% extends 'main.html' %}
     
     {% block content %}
+
+    <script>
+        function go_to_artist_add(){
+            location.href = "{% url 'dataprocess:artist_add' %}";
+        }
+     </script>
+
    <div class="forms">
     <div class="contents">
         <div id="first-table">
            <div class="button_layout">
-            <a href="{% url 'dataprocess:artist_add' %}">추가</a> 
+            <button onclick=go_to_artist_add()>추가</button>
             <button id="save-artists">저장</button>
            </div>
             <table id="artist-table">
@@ -53,6 +60,7 @@
                 <thead id="artist-header">
                     <tr>
                         <td class="hidden">artist_id</td>
+                        <td class="hidden">platform_id</td>
                         <td class="hidden">id</td>
                         <td>플랫폼</td>
                         <td>URL 1</td>
@@ -69,6 +77,7 @@
             <table id="artist-table">
                 <thead id="artist-header">
                     <tr>
+                        <td id="platform_id" class="hidden">id</td>
                         <td>항목 1</td>
                         <td>항목 2</td>
                         <td>항목 3</td>

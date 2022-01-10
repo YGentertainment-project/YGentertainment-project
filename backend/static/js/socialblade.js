@@ -2,21 +2,21 @@ let statusInterval;
 let crawlCategory = 'youtube'
 let dataCategory = 'youtube'
 
-function getDateString(dateText){
+function getDateString(dateText) {
     var date = new Date(dateText)
     var year = date.getFullYear();
     var month = ('0' + (date.getMonth() + 1)).slice(-2);
     var day = ('0' + date.getDate()).slice(-2);
-    var dateString = year + '-' + month  + '-' + day;
+    var dateString = year + '-' + month + '-' + day;
     return dateString
 }
 
-function getTimeString(dateText){
+function getTimeString(dateText) {
     var date = new Date(dateText)
     var hours = ('0' + date.getHours()).slice(-2);
     var minutes = ('0' + date.getMinutes()).slice(-2);
     var seconds = ('0' + date.getSeconds()).slice(-2);
-    var timeString = hours + ':' + minutes  + ':' + seconds;
+    var timeString = hours + ':' + minutes + ':' + seconds;
     return timeString
 }
 
@@ -24,8 +24,8 @@ function getTimeString(dateText){
 headerList = {
     "youtube": ['artist', 'uploads', 'subscribers', 'views', 'User Created', 'Recorded Date', 'URL'],
     "tiktok": ['artist', 'uploads', 'followers', 'likes', 'Recorded Date', 'URL'],
-    "twitter": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
-    "twitter2": ['artist',  'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "twitter": ['artist', 'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
+    "twitter2": ['artist', 'followers', 'twits', 'User Created', 'Recorded Date', 'URL'],
     "weverse": ['artist', 'weverses', 'Recorded Date', 'URL'],
     "facebook": ['artist', 'followers', 'Recorded Date', 'URL'],
     "instagram": ['artist', 'followers', 'Recorded Date', 'URL'],
@@ -36,7 +36,7 @@ headerList = {
 
 
 $(document).ready(function () {
-    const api_domain = 'http://localhost:8000/crawler/api/'
+    const api_domain = '/crawler/api/'
 
     $('.crawler-loading').hide()
     $('.crawler-finish').hide()
@@ -64,12 +64,12 @@ $(document).ready(function () {
 
 
     const showCrawlSuccess = (data) => {
-        const {status} = data;
+        const { status } = data;
         // PENDING, FINISHED, or something.
-        if(status === 'PENDING'){
+        if (status === 'PENDING') {
             $('.crawler-loading').show()
             $('.crawler_finish').hide()
-        }else{
+        } else {
             clearInterval(statusInterval);
             $('.crawler-loading').hide()
             $('.crawler_finish').show()
@@ -98,7 +98,7 @@ $(document).ready(function () {
 
     const checkCrawlStatus = (taskId) => {
         $.ajax({
-            url: api_domain + 'crawl/?task_id='+taskId,
+            url: api_domain + 'crawl/?task_id=' + taskId,
             type: 'GET',
             success: showCrawlSuccess,
             error: showCrawlFailure,
@@ -121,7 +121,7 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             success: res => {
                 task_id = res['task_id'] // api 요청으로부터 task_id 받기
-                alert(`Task ${task_id} 에서 크롤링을 진행 하고 입니다!`)
+                alert(`Task ${task_id} 에서 크롤링을 진행 하고 있습니다!`)
                 console.log(task_id)
             },
             error: e => {
@@ -131,12 +131,12 @@ $(document).ready(function () {
     })
 
     // Row를 만드는 함수
-    const createTableRow = (data, type='data') => {
+    const createTableRow = (data, type = 'data') => {
         const tableRow = $('<tr></tr>')
         // 해당 row에 대한 column 데이터들 넣기
-        for(key in data){
+        for (key in data) {
             let dataCol;
-            if(key === 'id'){
+            if (key === 'id') {
                 tableRow.attr("id", data[key])
                 continue;
             }
@@ -148,26 +148,26 @@ $(document).ready(function () {
                 dataCol = $('<td></td>');
                 dataCol.append(dataColUrl);
             }
-            else if(key === 'recorded_date' || key === 'last_run'){
+            else if (key === 'recorded_date' || key === 'last_run') {
                 let dateString = '';
-                if(!data[key]){
+                if (!data[key]) {
                     dateString = '없음'
                 }
-                else{
+                else {
                     dateString = getDateString(data[key]) + ' ' + getTimeString(data[key])
                 }
                 dataCol = $('<td></td>', {
                     text: dateString,
                 })
             }
-            else{
+            else {
                 dataCol = $('<td></td>', {
-                    text:data[key],
+                    text: data[key],
                 })
             }
             tableRow.append(dataCol)
         }
-        if(type === 'schedule'){
+        if (type === 'schedule') {
             const deleteBtn = $('<button></button>', {
                 type: 'button',
                 class: 'btn btn-danger',
@@ -195,7 +195,7 @@ $(document).ready(function () {
                 platform: dataCategory
             }),
             type: 'GET',
-            datatype:'json',
+            datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
                 $('#board').html('')
@@ -213,23 +213,23 @@ $(document).ready(function () {
         const scheduleSpider = $('#spiderSelect').val();
         const scheduleMinutes = Number($('#minutesControlInput').val());
         $('#minutesControlInput').val('');
-        if(scheduleMinutes >= 0 && scheduleMinutes <= 60){
+        if (scheduleMinutes >= 0 && scheduleMinutes <= 60) {
             // Schedule 생성 API request 보내기
             $.ajax({
                 url: api_domain + 'schedules/',
                 type: 'POST',
-                data: JSON.stringify({"platform": scheduleSpider, "minutes": scheduleMinutes}),
+                data: JSON.stringify({ "platform": scheduleSpider, "minutes": scheduleMinutes }),
                 datatype: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: res => {
                     $('#close-schedulemodal').click()
                 },
                 error: e => {
-                  alert('Failed to create task')
+                    alert('Failed to create task')
                 },
             })
         }
-        else{
+        else {
             alert('0부터 60까지만 입력하세요');
         }
     })
@@ -242,7 +242,7 @@ $(document).ready(function () {
         $.ajax({
             url: api_domain + 'schedules/',
             type: 'DELETE',
-            data: JSON.stringify({"id": scheduleId}),
+            data: JSON.stringify({ "id": scheduleId }),
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
@@ -263,10 +263,10 @@ $(document).ready(function () {
     $('#listup-schedule').click(() => {
         $.ajax({
             url: api_domain + 'schedules/',
-            type:'GET',
-            datatype:'json',
+            type: 'GET',
+            datatype: 'json',
             contentType: 'application/json; charset=utf-8',
-            success:res=>{
+            success: res => {
                 $('#schedule-board').html('');
                 const schedules = res.schedules;
                 schedules.forEach(schedule => {
@@ -274,7 +274,7 @@ $(document).ready(function () {
                     $('#schedule-board').append(createTableRow(schedule, 'schedule'));
                 })
             },
-            error: e=> {
+            error: e => {
                 alert('Failed to listup schedules')
             },
         })

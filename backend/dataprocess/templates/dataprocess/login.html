@@ -5,7 +5,18 @@
 
    {% block content %}
 
+   <script>
+      function go_to_login(){
+          location.href = "{% url 'account:user_simple_login_api' %}";
+      }
+   </script>
+
    <!-- 로그인 -->
+   <div class="forms">
+      <button class="excel-btn" id="login-btn" onclick=go_to_login()>
+         로그인
+      </button>
+   </div>
 
    {% endblock content %}
 

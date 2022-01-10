@@ -96,8 +96,8 @@
 }
 
 .add-target-input{
-    width: 70%;
-    float: left;
+    width: 100% !important;
+    /* float: left; */
 }
 
 .url-description{
@@ -106,7 +106,7 @@
     font-size: small;
 }
 
-.add-submit{
+/* .add-submit{
     width: 100px;
     border: 1px solid black !important;
     margin-left: 10px;
@@ -119,7 +119,7 @@
     top: -2px;
     border: 2px solid black;
     box-shadow: 0px 0px 10px grey;
-}
+} */
 
 .select-target{
     position: absolute;
