@@ -59,7 +59,7 @@ class CollectTarget(models.Model):
 
 class CollectData(models.Model):
     collect_target = models.ForeignKey(CollectTarget, on_delete=models.CASCADE)
-    collect_item = models.JSONField(default=dict)
+    collect_items = models.JSONField(default=dict)
 
     class Meta:
         db_table = "collect_data"

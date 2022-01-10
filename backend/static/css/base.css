@@ -319,3 +319,7 @@ input{
     border: 1px solid lightslategray;
     text-align: center;
 }
+
+#board th{
+    font-weight: bold !important;
+}

@@ -55,32 +55,19 @@ def base(request):
 
 @csrf_exempt
 def daily(request):
-    '''
-    general page
-    '''
-    platforms = Platform.objects.all() #get all platform info from db
-    values = {
-        'first_depth' : '데이터 리포트',
-        'second_depth': '일별 리포트',
-        'platforms': platforms
-    }
-    request = logincheck(request)
-    return render(request, 'dataprocess/daily.html',values)
-    
-def platform(request):
-     '''
+    if request.method == 'GET':
+        '''
         general page
         '''
-     values = {
-        'first_depth' : '플랫폼 관리',
-        'second_depth': '플랫폼 관리'
-    }
-     request = logincheck(request)
-     return render(request, 'dataprocess/platform.html',values)
-
-
-def excel(request):
-    if request.method == 'POST':
+        platforms = Platform.objects.all() #get all platform info from db
+        values = {
+            'first_depth' : '데이터 리포트',
+            'second_depth': '일별 리포트',
+            'platforms': platforms
+        }
+        request = logincheck(request)
+        return render(request, 'dataprocess/daily.html',values)
+    else:
         type = request.POST['type']
         if type == 'import':
             '''
@@ -95,7 +82,8 @@ def excel(request):
             values = {
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
-                'platforms': platforms
+                'platforms': platforms,
+                'alert': 'Successfully save to DB!'
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
@@ -111,7 +99,7 @@ def excel(request):
             return response
         elif type == 'import2':
             '''
-            import tmp from excel
+            import2 from excel
             '''
             import_file = request.FILES['importData2']
             wb = openpyxl.load_workbook(import_file)
@@ -122,10 +110,71 @@ def excel(request):
             values = {
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
-                'platforms': platforms
+                'platforms': platforms,
+                'alert': 'Successfully save to DB!'
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
+    
+def platform(request):
+     '''
+        general page
+        '''
+     values = {
+        'first_depth' : '플랫폼 관리',
+        'second_depth': '플랫폼 관리'
+    }
+     request = logincheck(request)
+     return render(request, 'dataprocess/platform.html',values)
+
+
+# def excel(request):
+#     if request.method == 'POST':
+#         type = request.POST['type']
+#         if type == 'import':
+#             '''
+#             import from excel
+#             '''
+#             import_file = request.FILES['importData']
+#             wb = openpyxl.load_workbook(import_file)
+#             sheets = wb.sheetnames
+#             worksheet = wb[sheets[0]]
+#             import_datareport(worksheet)
+#             platforms = Platform.objects.all() #get all platform info from db
+#             values = {
+#                 'first_depth' : '데이터 리포트',
+#                 'second_depth': '일별 리포트',
+#                 'platforms': platforms
+#                 }
+#             request = logincheck(request)
+#             return render(request, 'dataprocess/daily.html',values)
+#         elif type == 'export':
+#             '''
+#             export to excel
+#             '''
+#             book = export_datareport()
+#             today_date = datetime.datetime.today()
+#             filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
+#             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
+#             response['Content-Disposition'] = 'attachment; filename='+filename
+#             return response
+#         elif type == 'import2':
+#             '''
+#             import tmp from excel
+#             '''
+#             import_file = request.FILES['importData2']
+#             wb = openpyxl.load_workbook(import_file)
+#             sheets = wb.sheetnames
+#             worksheet = wb[sheets[0]]
+#             import_total(worksheet)
+#             platforms = Platform.objects.all() #get all platform info from db
+#             values = {
+#                 'first_depth' : '데이터 리포트',
+#                 'second_depth': '일별 리포트',
+#                 'platforms': platforms
+#                 }
+#             request = logincheck(request)
+#             return render(request, 'dataprocess/daily.html',values)
 
 def artist(request):
     artists = Artist.objects.all()
