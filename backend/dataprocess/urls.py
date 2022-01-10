@@ -12,6 +12,7 @@ urlpatterns = [
     path('', base ,name='base'),
     path('daily/',daily,name='daily'),
     path('platform/',platform,name='platform'),
+    path('excel/',csrf_exempt(views.excel),name='excel'),
     path('artist/',artist,name='artist'),
     path('artist/add/',artist_add,name='artist_add'),
     path('login/',login,name='login'),

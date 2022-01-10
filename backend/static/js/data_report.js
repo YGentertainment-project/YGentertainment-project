@@ -349,7 +349,7 @@ $(document).on('click','.platform-name',function(){
     console.log($(this).attr("name"));
 
     $.ajax({
-        url: '/dataprocess/api/daily//?' + $.param({
+        url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -386,7 +386,7 @@ $(document).on('click','.platform-name',function(){
 })
 
 //update crawled data
-$('#update-data').click(function(){
+$('#update-data-report').click(function(){
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
@@ -412,7 +412,7 @@ $('#update-data').click(function(){
 
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'uploads[]' : uploads, 
@@ -457,7 +457,7 @@ $('#update-data').click(function(){
 
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'members[]' : members, 
@@ -474,6 +474,7 @@ $('#update-data').click(function(){
                 showVliveCrawledData(data_list) // Data들을 화면상에 표시
             },
             error : function (){
+                alert('error');
             }
           });
     }
@@ -490,7 +491,7 @@ $('#update-data').click(function(){
         }
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'followers[]' : followers,  
@@ -528,7 +529,7 @@ $('#update-data').click(function(){
         }
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'uploads[]':uploads,
@@ -564,7 +565,7 @@ $('#update-data').click(function(){
         }
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'followers[]' : followers,  
@@ -596,7 +597,7 @@ $('#update-data').click(function(){
         }
 
         $.ajax({
-            type: 'POST',
+            type: 'PUT',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'weverses[]' : weverses,  

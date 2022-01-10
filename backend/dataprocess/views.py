@@ -55,19 +55,32 @@ def base(request):
 
 @csrf_exempt
 def daily(request):
-    if request.method == 'GET':
-        '''
-        general page
-        '''
-        platforms = Platform.objects.all() #get all platform info from db
-        values = {
+    '''
+    general page
+    '''
+    platforms = Platform.objects.all() #get all platform info from db
+    values = {
         'first_depth' : '데이터 리포트',
         'second_depth': '일별 리포트',
         'platforms': platforms
-        }
-        request = logincheck(request)
-        return render(request, 'dataprocess/daily.html',values)
-    else:
+    }
+    request = logincheck(request)
+    return render(request, 'dataprocess/daily.html',values)
+    
+def platform(request):
+     '''
+        general page
+        '''
+     values = {
+        'first_depth' : '플랫폼 관리',
+        'second_depth': '플랫폼 관리'
+    }
+     request = logincheck(request)
+     return render(request, 'dataprocess/platform.html',values)
+
+
+def excel(request):
+    if request.method == 'POST':
         type = request.POST['type']
         if type == 'import':
             '''
@@ -79,8 +92,8 @@ def daily(request):
             worksheet = wb[sheets[0]]
             import_datareport(worksheet)
             values = {
-                'first_depth' : '플랫폼 관리',
-                'second_depth': '플랫폼 관리'
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트'
             }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
@@ -93,54 +106,6 @@ def daily(request):
             filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
-            return response
-
-def platform(request):
-    if request.method == 'GET':
-        '''
-        general page
-        '''
-        values = {
-        'first_depth' : '플랫폼 관리',
-        'second_depth': '플랫폼 관리'
-        }
-        request = logincheck(request)
-        return render(request, 'dataprocess/platform.html',values)
-    
-    else:
-        type = request.POST['type']
-        if type == 'import':
-            platform_resource = PlatformResource()
-            dataset = Dataset()
-            import_file = request.FILES['importData']
-            wb = openpyxl.load_workbook(import_file)
-            sheets = wb.sheetnames
-            worksheet = wb[sheets[0]]
-            excel_data = list()
-            row_num = 0
-            columns = []
-            for row in worksheet.iter_rows():
-                if row_num == 0:
-                    for cell in row:
-                        columns.append(str(cell.value))
-                    row_num += 1
-                    continue
-                row_data = {}
-                for i, cell in enumerate(row):
-                    row_data[columns[i]] = str(cell.value)
-                excel_data.append(row_data)
-            values = {
-                'first_depth' : '플랫폼 관리',
-                'second_depth': '플랫폼 관리',
-                'excel_data': excel_data
-            }
-            request = logincheck(request)
-            return render(request, 'dataprocess/platform.html',values)
-        elif type == 'export':
-            platform_resource = PlatformResource()
-            dataset = platform_resource.export()
-            response = HttpResponse(dataset.xlsx, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="platform_data.xlsx"'
             return response
 
 def artist(request):
@@ -291,7 +256,7 @@ class ArtistAPI(APIView):
                 artist_datas = []
                 for artist_value in artist_objects_values:
                     artist_datas.append(artist_value)
-                return JsonResponse(data={'success': True, 'data': artist_datas})
+                return JsonResponse(status=200,data={'success': True, 'data': artist_datas})
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:

@@ -472,7 +472,6 @@ $(document).on('click','.platform-name',function(){
                 showYoutubeCrawledData(data_list)
             } else if(platform === 'vlive'){
                 showVliveCrawledData(data_list)
-                showNotCrawledData(not_crawled_artists)
             } else if(platform === 'instagram' || platform === 'facebook'){
                 showCrowdtangleCrawledData(data_list)
             } else if(platform === 'twitter' || platform === 'twitter2'){
@@ -495,8 +494,8 @@ $('#update-data').click(function(){
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
+    trs_value = trs_value.slice(2)
 
-    console.log('start');
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];
@@ -561,6 +560,7 @@ $('#update-data').click(function(){
             plays.push(uncomma(trs_value[i].value))
         }
 
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -698,8 +698,10 @@ $('#update-data').click(function(){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=1){
-            weverses.push(uncomma(trs_value[i].value))
+            weverses.push(parseInt(uncomma(trs_value[i].value)))
         }
+
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -721,6 +723,4 @@ $('#update-data').click(function(){
     }
 
 })
-
-
 
