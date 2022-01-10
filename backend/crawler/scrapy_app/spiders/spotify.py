@@ -1,6 +1,8 @@
 from time import sleep
-
+import json
 import scrapy
+from bs4 import BeautifulSoup
+
 from ..items import SpotifyItem
 
 class SpotifySpider(scrapy.Spider):
@@ -87,12 +89,21 @@ class SpotifySpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta['artist']
-        listen = response.xpath('//*[@class="jDhY6c7obZ6QMTKlZM_w"]/text()').get()
-        follow = response.xpath('//*[@class="JSkXrK3CXFYeDgTW8iHv"]/text()').get()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        artist_id = response.url[32:]
+        result = soup.select_one('script[id="initial-state"]').text
+        json_object = json.loads(result)
+        head = 'spotify:artist:'
+        dummy = json_object['entities']['items'][head+artist_id]['nodes']
+        for target in dummy:
+            if not target: continue
+            if target['id'] == 'artist_biography_row':
+                listen = target['custom']['monthly_listeners_count']
+                follow = target['custom']['followers']
         item = SpotifyItem()
         item['artist'] = artist
-        item['monthly_listens'] = listen.replace(',','')
-        item['followers'] = follow[:-18].replace(',','')
+        item['monthly_listens'] = listen
+        item['followers'] = follow
         item['url1'] = response.url
         item['url2'] = None
         yield item
