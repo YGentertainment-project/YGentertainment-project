@@ -2,9 +2,15 @@ import os
 import django
 from celery import Celery
 from celery.schedules import crontab
+from utils.shortcuts import get_env
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'yg.settings')
-app = Celery('crawler', backend='rpc://', broker='amqp://guest:guest@localhost:5672/')
+
+production_env = get_env("YG_ENV", "dev") == "production"
+if production_env:
+    app = Celery('crawler', backend='rpc://', broker='amqp://guest:guest@172.18.0.1:5672/')
+else:
+    app = Celery('crawler', backend='rpc://', broker='amqp://guest:guest@localhost:5672/')
 
 # settigs.py에서 celery setting을 CELERY_로 시작하게 한다.
 app.config_from_object('django.conf:settings', namespace='CELERY')

@@ -25,11 +25,9 @@
 > Frontent 개발<br>
 
 #### 최영우 [@cyw320712](https://github.com/cyw320712)<br>
-> DBMS 조사 및 DB schema 설계 <br>
 > 시스템 아키텍쳐 설계 및 개발 <br>
 > 서버 및 도커 설계 및 개발, 유지보수 <br>
 > backend 개발 <br>
-> GitHub 관리 <br>
 
 
 ## <div id = "Documents">Documentation 📑</div>
