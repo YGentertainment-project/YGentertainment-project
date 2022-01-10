@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from account.models import User
-from dataprocess.functions import export_datareport, import_datareport
+from dataprocess.functions import export_datareport, import_datareport, import_total
 from crawler.models import *
 from config.models import PlatformTargetItem
 from config.serializers import PlatformTargetItemSerializer
@@ -78,10 +78,12 @@ def daily(request):
             sheets = wb.sheetnames
             worksheet = wb[sheets[0]]
             import_datareport(worksheet)
+            platforms = Platform.objects.all() #get all platform info from db
             values = {
-                'first_depth' : '플랫폼 관리',
-                'second_depth': '플랫폼 관리'
-            }
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트',
+                'platforms': platforms
+                }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
         elif type == 'export':
@@ -94,6 +96,23 @@ def daily(request):
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
             return response
+        elif type == 'import2':
+            '''
+            import tmp from excel
+            '''
+            import_file = request.FILES['importData2']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            import_total(worksheet)
+            platforms = Platform.objects.all() #get all platform info from db
+            values = {
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트',
+                'platforms': platforms
+                }
+            request = logincheck(request)
+            return render(request, 'dataprocess/daily.html',values)
 
 def platform(request):
     if request.method == 'GET':

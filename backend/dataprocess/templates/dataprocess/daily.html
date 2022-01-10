@@ -18,6 +18,12 @@
             <input type="text" name="type" value="export" style="display:none;">
             <button class="excel-btn" type="submit">Export</button>
         </form>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="importData2">
+            <input type="text" name="type" value="import2" style="display:none;">
+            <button class="excel-btn" type="submit">Import2</button>
+        </form>
         </div>
     <form method="get">
         <div class="select-days">
