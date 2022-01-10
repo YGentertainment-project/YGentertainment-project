@@ -139,41 +139,7 @@ RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
-LOGGING_HANDLERS = ['console']
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
-        }
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': LOGGING_HANDLERS,
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'django.db.backends': {
-            'handlers': LOGGING_HANDLERS,
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        '': {
-            'handlers': LOGGING_HANDLERS,
-            'level': 'WARNING',
-            'propagate': True,
-        }
-    },
-}
+LOGGING_HANDLERS = ['file']
 
 LOGGING = {
     'version': 1,
@@ -185,11 +151,13 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
+        'file': {
             'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard'
-        }
+            'encoding': 'utf-8',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_PATH, "Django.log"),
+            'formatter': 'standard',
+        },
     },
     'loggers': {
         'django.request': {
