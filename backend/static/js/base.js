@@ -154,3 +154,7 @@ $("#login-btn").click(function(){
 $("#logout-btn").click(function(){
     logout_function();
 });
+
+if(document.getElementById("alert")){
+    alert(document.getElementById("alert").innerHTML);
+}
