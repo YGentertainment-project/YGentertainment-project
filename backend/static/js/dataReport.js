@@ -452,19 +452,19 @@ $(document).on('click','.platform-name',function(){
                 data_artist_list.push(data_list[i]['artist']);
             }
 
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]['name']);
-            }
+            //let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            //for (let i = 0; i<artist_list.length; i++){
+            //    db_artist_list.push(artist_list[i]['name']);
+            //}
 
-            let not_crawled_artists=[];
-            for(let i = 0; i<db_artist_list.length; i++){
-                if(db_artist_list[i] in data_artist_list){
-                    continue;
-                } else{
-                    not_crawled_artists.push(db_artist_list[i]);
-                }
-            }
+            //let not_crawled_artists=[];
+            //for(let i = 0; i<db_artist_list.length; i++){
+            //    if(db_artist_list[i] in data_artist_list){
+            //        continue;
+            //    } else{
+            //        not_crawled_artists.push(db_artist_list[i]);
+            //    }
+            //}
             
 
             $('tbody').eq(0).empty();
