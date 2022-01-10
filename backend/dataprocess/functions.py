@@ -53,7 +53,7 @@ def get_platform_data(artist, platform):
         #숫자필드값만 보내주기
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
                 filter_datas.append(filter_value[field_name])
         return filter_datas
     else:
@@ -117,10 +117,13 @@ def export_datareport():
     sheet.cell(row=2, column=1).alignment = Alignment(horizontal='center', vertical='center')
     col += 1
     sheet.row_dimensions[2].height = 35
-    sheet.column_dimensions['A'].width = 50
+    sheet.column_dimensions['A'].width = 40
 
     #플랫폼 이름과 수집항목 띄우기
+    print(db_platform_datas)
     for data in db_platform_datas:
+        if len(data["collect_item"]) == 0:
+            continue
         sheet.cell(row=row, column=col).value = data["platform"]
         sheet.merge_cells(start_row=row, start_column=col,
             end_row=row, end_column=col+len(data["collect_item"])-1)
@@ -146,6 +149,10 @@ def export_datareport():
             #아티스트의 플랫폼마다의 정보 가져오기
             platform_name = platform["platform"]
             platform_data_list = get_platform_data(artist=artist_name, platform=platform_name)
+            print("platform_name")
+            print(platform_name)
+            print("platform_data_list")
+            print(platform_data_list)
             for i, platform_data in enumerate(platform_data_list):
                 if platform_data == "NULL":
                     # null이면 shade 처리
@@ -370,7 +377,7 @@ def import_total(worksheet):
         })
         #platform_target_item 저장
         for j in range(platform_data["item_num"]):
-            if platform_data["item_list"][j] != 'None' and platform_data["item_xpath_list"][j] != 'None' and platform_data["item_xpath_list"][j] != '수집불가':
+            if platform_data["item_list"][j] != 'None' and platform_data["item_list"][j] != 'url' and platform_data["item_list"][j] != 'url1'and platform_data["item_list"][j] != 'url2'and platform_data["item_xpath_list"][j] != '수집불가':
                 platform_filter_object = Platform.objects.filter(name = platform_data["platform"])
                 if platform_filter_object.exists():
                     platform_filter_object = platform_filter_object.values().first()
