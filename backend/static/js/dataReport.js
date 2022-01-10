@@ -23,7 +23,7 @@ $(document).on('click','input[name=day]',function(){
    var year = next_day.getFullYear();
    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
    var day = ("0" + next_day.getDate()).slice(-2);
-   $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+   $('input[name=start_date]').val(year+'-'+month+'-'+day);  
 })
 
 $(document).on('click','input[name=week]',function(){
@@ -32,7 +32,7 @@ $(document).on('click','input[name=week]',function(){
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
 $(document).on('click','input[name=month]',function(){
@@ -41,7 +41,7 @@ $(document).on('click','input[name=month]',function(){
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
 //not crawled artist
@@ -452,19 +452,19 @@ $(document).on('click','.platform-name',function(){
                 data_artist_list.push(data_list[i]['artist']);
             }
 
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]['name']);
-            }
+            //let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            //for (let i = 0; i<artist_list.length; i++){
+            //    db_artist_list.push(artist_list[i]['name']);
+            //}
 
-            let not_crawled_artists=[];
-            for(let i = 0; i<db_artist_list.length; i++){
-                if(db_artist_list[i] in data_artist_list){
-                    continue;
-                } else{
-                    not_crawled_artists.push(db_artist_list[i]);
-                }
-            }
+            //let not_crawled_artists=[];
+            //for(let i = 0; i<db_artist_list.length; i++){
+            //    if(db_artist_list[i] in data_artist_list){
+            //        continue;
+            //    } else{
+            //        not_crawled_artists.push(db_artist_list[i]);
+            //    }
+            //}
             
 
             $('tbody').eq(0).empty();
@@ -472,7 +472,6 @@ $(document).on('click','.platform-name',function(){
                 showYoutubeCrawledData(data_list)
             } else if(platform === 'vlive'){
                 showVliveCrawledData(data_list)
-                showNotCrawledData(not_crawled_artists)
             } else if(platform === 'instagram' || platform === 'facebook'){
                 showCrowdtangleCrawledData(data_list)
             } else if(platform === 'twitter' || platform === 'twitter2'){
@@ -495,8 +494,8 @@ $('#update-data').click(function(){
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
+    trs_value = trs_value.slice(3)
 
-    console.log('start');
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];
@@ -561,6 +560,7 @@ $('#update-data').click(function(){
             plays.push(uncomma(trs_value[i].value))
         }
 
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -698,8 +698,10 @@ $('#update-data').click(function(){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=1){
-            weverses.push(uncomma(trs_value[i].value))
+            weverses.push(parseInt(uncomma(trs_value[i].value)))
         }
+
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -721,6 +723,4 @@ $('#update-data').click(function(){
     }
 
 })
-
-
 

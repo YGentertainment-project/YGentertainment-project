@@ -5,56 +5,61 @@
     {% block content %}
     <div class="forms">
         <form method="POST" class="add-form">
-           <div><button class="add-submit">저장</button></div>
-            <table class="artist-add-table" border="1">
-                <tr>
-                    <th class="title-th">항목</th>
-                    <th class="title-th">내용</th>
-                </tr>
-                <tr>
-                    <th>아티스트명</th>
-                    <td><input class="add-target-input"  type="text" placeholder="blackpink"/></td>
-                </tr>
-                <tr>
-                    <th>구분</th>
-                    <td><input class="add-target-input"  type="text" placeholder="S/A/B/.." /></td>
-                </tr> <tr>
-                    <th>성별</th>
-                    <td><input class="add-target-input"  type="text" placeholder="M/F" /></td>
-                </tr> <tr>
-                    <th>맴버</th>
-                    <td><input class="add-target-input"  type="text" placeholder="맴버 수" /></td>
-                </tr> <tr>
-                    <th>국적</th>
-                    <td><input class="add-target-input"  type="text" placeholder="대한민국 4, 미국 1.." /></td>
-                </tr> 
-                <tr>
-                    <th>기획사</th>
-                    <td><input class="add-target-input"  type="text" placeholder="기획사" /></td>
-                </tr>
-                <tr>
-                    <th>데뷔일</th>
-                    <td><input class="add-target-input"  type="text" placeholder="2001-1-1" /></td>
-                </tr>
-            </table>
-           <table class="add-table" border="1">
-               <tr>
-                   <th class="title-th">플랫폼</th>
-                   <th class="title-th">데이터 수집 URL</th>
-                   <th class="title-th">데이터 수집 URL 2</th>
-               </tr>
-              {% if platforms %}
-               {% for platform in platforms %}
-               <tr>
-                    <th>{{platform.name}}</th>
-                    <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
-                    <td><input class="add-target-input"  type="text" placeholder="URL 2" /></td>
-                </tr>
-               {% endfor %}
-              {% else %}
-              {% endif %}
-                
-           </table>
+           <div class="row_layout flexstart_layout">
+                <button class="add-submit excel-btn">저장</button>
+            </div>
+            <div class="row_layout flexstart_layout">
+                <table class="artist-add-table" border="1">
+                    <tr>
+                        <th class="title-th">항목</th>
+                        <th class="title-th">내용</th>
+                    </tr>
+                    <tr>
+                        <th>아티스트명</th>
+                        <td><input class="add-target-input"  type="text" placeholder="blackpink"/></td>
+                    </tr>
+                    <tr>
+                        <th>구분</th>
+                        <td><input class="add-target-input"  type="text" placeholder="S/A/B/.." /></td>
+                    </tr> <tr>
+                        <th>성별</th>
+                        <td><input class="add-target-input"  type="text" placeholder="M/F" /></td>
+                    </tr> <tr>
+                        <th>맴버</th>
+                        <td><input class="add-target-input"  type="text" placeholder="맴버 수" /></td>
+                    </tr> <tr>
+                        <th>국적</th>
+                        <td><input class="add-target-input"  type="text" placeholder="대한민국 4, 미국 1.." /></td>
+                    </tr> 
+                    <tr>
+                        <th>기획사</th>
+                        <td><input class="add-target-input"  type="text" placeholder="기획사" /></td>
+                    </tr>
+                    <tr>
+                        <th>데뷔일</th>
+                        <td><input class="add-target-input"  type="text" placeholder="2001-1-1" /></td>
+                    </tr>
+                </table>
+               <table class="add-table" border="1">
+                   <tr>
+                       <th class="title-th">플랫폼</th>
+                       <th class="title-th">데이터 수집 URL</th>
+                       <th class="title-th">데이터 수집 URL 2</th>
+                   </tr>
+                  {% if platforms %}
+                   {% for platform in platforms %}
+                   <tr>
+                        <th>{{platform.name}}</th>
+                        <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
+                        <td><input class="add-target-input"  type="text" placeholder="URL 2" /></td>
+                    </tr>
+                   {% endfor %}
+                  {% else %}
+                  {% endif %}
+                    
+               </table>
+            </div>
+        
 
 
         </form>

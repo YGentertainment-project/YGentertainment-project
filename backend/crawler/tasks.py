@@ -18,7 +18,6 @@ from crawler.scrapy_app.spiders.weverse import WeverseSpider
 from crawler.scrapy_app.spiders.melon import MelonSpider
 from crawler.scrapy_app.spiders.spotify import SpotifySpider
 
-
 settings = Settings()
 os.environ['SCRAPY_SETTINGS_MODULE'] = 'crawler.scrapy_app.settings'
 settings_module_path = os.environ['SCRAPY_SETTINGS_MODULE']

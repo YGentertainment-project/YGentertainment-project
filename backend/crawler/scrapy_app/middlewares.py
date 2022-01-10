@@ -71,6 +71,7 @@ class ScrapyAppSpiderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
+
 def driver_setting(proxy_idx=None):
     s = Service(ChromeDriverManager().install())
     chrome_options = Options()
@@ -123,7 +124,7 @@ def driver_setting(proxy_idx=None):
         s = Service(ChromeDriverManager().install())
     # driver = webdriver.Chrome(executable_path=executable_path, options=chrome_options)
     driver = webdriver.Chrome(service=s, options=chrome_options)
-    return driver
+    return driver   
 
 
 class NoLoginDownloaderMiddleware:

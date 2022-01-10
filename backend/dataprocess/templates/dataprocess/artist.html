@@ -36,15 +36,20 @@
                     {% if artists %}
                     {% for artist in artists %}
                     <tr>
-                        <td class="hidden"><input type="text" value={{artist.id}} style="width:100%"></input></td>
-                        <td><input type="button" name="artist-name" value={{artist.name}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.level}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.gender}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.member_num}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.member_nationality}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.agency}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.debut_date|date:"Y-m-d"}} style="width:100%"></input></td>
-                        <td><input type="text" value={{artist.active}} style="width:100%"></input></td>
+                        <td class="hidden"><input type="text" style="width:100%" value={{artist.id}}></input></td>
+                        <td><input type="button" name="artist-name" style="width:100%" value="{{artist.name}}"></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.level}}></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.gender}}></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.member_num}}></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.member_nationality}}></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.agency}}></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.debut_date|date:"Y-m-d"}}></input></td>
+                        <!-- <td><input type="text" style="width:100%" value={{artist.active}}></input></td> -->
+                        {% if artist.active %}
+                            <td><input checked type="checkbox"></input></td>
+                        {% else %}
+                            <td><input type="checkbox"></input></td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                     {% else %}
