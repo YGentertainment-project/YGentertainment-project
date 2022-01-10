@@ -23,7 +23,7 @@ $(document).on('click','input[name=day]',function(){
    var year = next_day.getFullYear();
    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
    var day = ("0" + next_day.getDate()).slice(-2);
-   $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+   $('input[name=start_date]').val(year+'-'+month+'-'+day);  
 })
 
 $(document).on('click','input[name=week]',function(){
@@ -32,7 +32,7 @@ $(document).on('click','input[name=week]',function(){
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
 $(document).on('click','input[name=month]',function(){
@@ -41,7 +41,7 @@ $(document).on('click','input[name=month]',function(){
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
 //not crawled artist
@@ -494,7 +494,7 @@ $('#update-data').click(function(){
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
-    trs_value = trs_value.slice(2)
+    trs_value = trs_value.slice(3)
 
     //youtube
     if(platform_name === 'youtube'){
