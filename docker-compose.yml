@@ -34,6 +34,8 @@ services:
     restart: always
     depends_on:
       - yg-mariadb
+    volumes:
+      - ./data/log:/data/log
     environment:
       - MYSQL_DB=ygenter
       - MYSQL_USER=ygenter
