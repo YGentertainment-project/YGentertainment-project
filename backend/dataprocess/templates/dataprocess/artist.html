@@ -37,8 +37,8 @@
                     {% for artist in artists %}
                     <tr>
                         <td class="hidden"><input type="text" style="width:100%" value={{artist.id}}></input></td>
-                        <td><input type="button" name="artist-name" style="width:100%" value={{artist.name}}></input></td>
-                        <td><input type="text"  style="width:100%" value={{artist.level}}></input></td>
+                        <td><input type="button" name="artist-name" style="width:100%" value="{{artist.name}}"></input></td>
+                        <td><input type="text" style="width:100%" value={{artist.level}}></input></td>
                         <td><input type="text" style="width:100%" value={{artist.gender}}></input></td>
                         <td><input type="text" style="width:100%" value={{artist.member_num}}></input></td>
                         <td><input type="text" style="width:100%" value={{artist.member_nationality}}></input></td>
