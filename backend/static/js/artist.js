@@ -70,8 +70,7 @@ $('#save-artists').click(function(){
 
     for(var r=0;r<artist_tr.length;r++){
         var cells = artist_tr[r].getElementsByTagName("td");
-
-        datas.push({
+        var tmp_json = {
             "id": cells[0].firstElementChild.value,
             "name": cells[1].firstElementChild.value,
             "level": cells[2].firstElementChild.value,
@@ -79,11 +78,12 @@ $('#save-artists').click(function(){
             "member_num": cells[4].firstElementChild.value,
             "member_nationality": cells[5].firstElementChild.value,
             "agency":cells[6].firstElementChild.value,
-            "debut_date": cells[7].firstElementChild.value,
-            "active": cells[8].firstElementChild.value
-        });
+            "active": cells[8].firstElementChild.checked
+        };
+        if (cells[7].firstElementChild.value!="")
+            tmp_json["debut_date"] = cells[7].firstElementChild.value;
+        datas.push(tmp_json);
     }
-
     $.ajax({
         url: '/dataprocess/api/artist/',
         type: 'PUT',

@@ -120,7 +120,6 @@ def export_datareport():
     sheet.column_dimensions['A'].width = 40
 
     #플랫폼 이름과 수집항목 띄우기
-    print(db_platform_datas)
     for data in db_platform_datas:
         if len(data["collect_item"]) == 0:
             continue
@@ -149,10 +148,6 @@ def export_datareport():
             #아티스트의 플랫폼마다의 정보 가져오기
             platform_name = platform["platform"]
             platform_data_list = get_platform_data(artist=artist_name, platform=platform_name)
-            print("platform_name")
-            print(platform_name)
-            print("platform_data_list")
-            print(platform_data_list)
             for i, platform_data in enumerate(platform_data_list):
                 if platform_data == "NULL":
                     # null이면 shade 처리
