@@ -15,6 +15,10 @@ BOT_NAME = 'scrapy_app'
 SPIDER_MODULES = ['crawler.scrapy_app.spiders']
 # NEWSPIDER_MODULE = 'spiders'
 
+LOG_ENABLED = True
+LOG_FILE = './data/log/Crawler.log'
+LOG_LEVEL = 'INFO'
+
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
@@ -22,4 +26,4 @@ ITEM_PIPELINES = {
     'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,
 }
 
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 1
