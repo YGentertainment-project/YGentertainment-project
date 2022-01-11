@@ -8,7 +8,7 @@ from django.utils.translation import deactivate
 
 class Platform(models.Model):
     name = models.TextField(unique=True)
-    url = models.TextField(unique=True)
+    url = models.TextField()
     description = models.TextField(null=True, blank=True, default="")
     active = models.BooleanField(default=True)
 

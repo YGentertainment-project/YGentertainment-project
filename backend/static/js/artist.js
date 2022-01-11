@@ -21,11 +21,16 @@ $('.add-submit').click(function(e){
     var urls = [];
     for(var i=7;i<trs_value.length;i++){
         var collect_item = trs_value[i].value;
-        urls.push(collect_item)
+        if(collect_item !="" && !collect_item.startsWith("http") && !collect_item.startsWith("www") ){
+            alert("데이터 수집 URL의 형식이 잘못되었습니다.");
+            e.preventDefault();
+            return;
+        }
+        urls.push(collect_item);
            
     }
 
-    console.log(urls);
+    var charRe = /^[a-z]|[A-Z]$/;
 
     var target_urls = {};
     for( var i = 0; i<platform_names.length; i++){
@@ -35,11 +40,11 @@ $('.add-submit').click(function(e){
         alert("아티스트의 이름을 입력해주세요.");
         e.preventDefault();
         return;
-    }else if(trs_value[1].value==""){
+    }else if(trs_value[1].value=="" || !charRe.test(trs_value[1].value)){
         alert("구분을 S/A/B형태로 입력해주세요.");
         e.preventDefault();
         return;
-    }else if(trs_value[2].value==""){
+    }else if(trs_value[2].value=="" || trs_value[2].value!="M" || trs_value[2].value!="F"){
         alert("성별을 M/F형태로 입력해주세요.");
         e.preventDefault();
         return;
