@@ -44,340 +44,11 @@ $(document).on('click','input[name=month]',function(){
     $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
-//creat header from data in DB
-//플랫폼 이름을 받아옴
-const createTableHeader = (platform) => {
-    //ajax get
-    $.ajax({
-        url: '/dataprocess/api/platform_info/?' + $.param({
-            platform: platform,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            var datas = res.data 
-            console.log(datas);
-            const tableHeader = $('<tr></tr>');
-            let col = $('<th></th>', {
-                text: '아티스트',
-            })
-            tableHeader.append(col);
-            for(let i = 0; i<datas.length; i++){
-                let col = $('<th></th>', {
-                    text: datas['target_name'][i],
-                })
-                tableHeader.append(col);
-            }
-            return tableHeader;
-        },
-        error: e => {
-            console.log(e);
-            alert(e.responseText);
-        },
-    })
-}
-
-// show table header (general)
-const showTableHeader = (platform) => {
-    const tableH = createTableHeader(platform)
-    $('#board').append(tableH);
-}
 
 
+//show crawled data
 
-//youtube
-//table creation
-const createYoutubeTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '업로드 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '구독자 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '총 조회 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for youtube
-const createYoutubeTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'||key === 'platform' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showYoutubeCrawledData = (datas) => {
-    $('#board').append(createYoutubeTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createYoutubeTableRow(data))
-    })
-}
-
-//vlive
-const createVliveTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '맴버 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '스타 영상 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    let col5 =  $('<th></th>', {
-        text: '재생 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    tableHeader.append(col5)
-    return tableHeader;
-}
-// create rows for youtube
-const createVliveTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            if(isEmpty(data[key])){
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%; background-color:lightgray;"></input></td>')    
-            } else{
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-            }
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showVliveCrawledData = (datas,platform) => {
-    $('#board').append(createVliveTableHeader());
-    //showTableHeader(platform)
-    datas.forEach(data => {
-        $('#board').append(createVliveTableRow(data))
-    })
-}
-
-
-//weverse
-//table creation
-const createWeverseTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: 'Wever 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for youtube
-const createWeverseTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showWeverseCrawledData = (datas) => {
-    $('#board').append(createWeverseTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createWeverseTableRow(data))
-    })
-}
-
-//twitter 1
-//table creation
-const createTwitter1TableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '트위터 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '트윗 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    return tableHeader;
-}
-// create rows for twitter
-const createTwitter1TableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showTwitter1CrawledData = (datas) => {
-    $('#board').append(createTwitter1TableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTwitter1TableRow(data))
-    })
-}
-
-//facebook & insta
-//table creation
-const createCrowdtangleTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for twitter
-const createCrowdtangleTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol =  $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showCrowdtangleCrawledData = (datas) => {
-    $('#board').append(createCrowdtangleTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createCrowdtangleTableRow(data))
-    })
-}
-
-//tik tok
-//table creation
-const createTiktokTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '업로드 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for tiktok
-const createTiktokTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' ){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showTiktokCrawledData = (datas) => {
-    $('#board').append(createTiktokTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTiktokTableRow(data))
-    })
-}
-
+//change color of button when clicking platform
 $('option').click(function(){
     if($(this).hasClass("platform-selected")){
       $(this).removeClass("platform-selected");
@@ -387,13 +58,14 @@ $('option').click(function(){
     }
 });
 
+//when clicking platform name
 $(document).on('click','.platform-name',function(){
-    var platform = $(this).attr("name")
+    var platform = $(this).val();
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
 
-    console.log(platform);
+    //console.log($(this).attr("name"));
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
@@ -406,26 +78,19 @@ $(document).on('click','.platform-name',function(){
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            let table_html = ''
             let data_list = [];
             let artist_list = [];
-            data_list = res.data
-            artist_list = res.artists
-            //console.log(artist_list[0]['name']);
+            let platform_targets = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_list = res.platform //수집 항목
 
+            
+            //console.log(data_list[0]['artist']);
+            //console.log(artist_list[0]['name']);
+            //console.log(platform_list.length);
 
             $('tbody').eq(0).empty();
-            if(platform === 'youtube'){
-                showYoutubeCrawledData(data_list)
-            } else if(platform === 'instagram' || platform === 'facebook'){
-                showCrowdtangleCrawledData(data_list)
-            } else if(platform === 'twitter' || platform === 'twitter2'){
-                showTwitter1CrawledData(data_list)
-            } else if(platform === 'tiktok'){
-                showTiktokCrawledData(data_list)
-            } else if(platform === 'weverse'){
-                showWeverseCrawledData(data_list)
-            }
         },
         error: e => {
             console.log(e);
@@ -433,6 +98,7 @@ $(document).on('click','.platform-name',function(){
         },
     })
 })
+
 
 //update crawled data
 $('#update-data').click(function(){

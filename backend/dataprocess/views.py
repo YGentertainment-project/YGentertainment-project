@@ -540,6 +540,13 @@ class DataReportAPI(APIView):
         for a in artist_objects_values:
             artist_list.append(a)
 
+        platform_id = Platform.objects.get(name = platform).id
+        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
+        platform_objects_values = platform_objects.values()
+        platform_list = []
+        for p in platform_objects_values:
+            platform_list.append(p)
+
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -551,7 +558,7 @@ class DataReportAPI(APIView):
                     artist_datas = []
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
-                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
                 else:
                     return JsonResponse(status=400, data={'success': True, 'data': []})
             elif type == "기간별":
@@ -592,7 +599,7 @@ class DataReportAPI(APIView):
                             else:
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
-                    return JsonResponse(data={'success': True, 'data': filter_datas_total})
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
                 else:
                     if not filter_objects_start.exists():
                         datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
@@ -605,7 +612,7 @@ class DataReportAPI(APIView):
                     platform_datas = []
                     for queryset_value in platform_queryset_values:
                         platform_datas.append(queryset_value)
-                    return JsonResponse(data={'success': True, 'data': platform_datas})
+                    return JsonResponse(data={'success': True, 'data': platform_datas,'artists':artist_list,'platform':platform_list})
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
