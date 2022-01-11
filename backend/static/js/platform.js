@@ -92,7 +92,11 @@ function platform_create_function(){
         alert("플랫폼 이름을 입력해주세요.");
         return;
     }else if(created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value==""){
-        alert("플랫폼 url을 입력해주세요.");
+        alert("플랫폼 URL을 입력해주세요.");
+        return;
+    }else if(!created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value.startsWith("http") &&
+    !created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value.startsWith("www")){
+        alert("플랫폼 URL의 형식이 잘못되었습니다.");
         return;
     }
     var data = {

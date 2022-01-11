@@ -19,7 +19,7 @@ function addDays(date, days) {
 
 $(document).on('click','input[name=day]',function(){
    const today = new Date();
-   const next_day = addDays(today,-1);
+   const next_day = addDays(today,0);
    var year = next_day.getFullYear();
    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
    var day = ("0" + next_day.getDate()).slice(-2);
@@ -32,7 +32,7 @@ $(document).on('click','input[name=day]',function(){
 
 $(document).on('click','input[name=week]',function(){
     const today = new Date();
-    const next_day = addDays(today,-7);
+    const next_day = addDays(today,-6);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
@@ -514,6 +514,12 @@ $(document).on('click','.platform-name',function(){
 
 //update crawled data
 $('#update-data').click(function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    console.log(type);
+    if(type=="기간별"){
+        alert("기간별 데이터는 수정할 수 없습니다.");
+        return;
+    }
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
@@ -549,9 +555,10 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
-                const data_list = res.data
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showYoutubeCrawledData(data_list); // Data들을 화면상에 표시
                 alert("Successfully save!");
@@ -597,9 +604,10 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
-                let table_html = ''
-                const data_list = res.data
+                let table_html = '';
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showVliveCrawledData(data_list); // Data들을 화면상에 표시
                 alert("Successfully save!");
@@ -628,9 +636,10 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
-                let table_html = ''
-                const data_list = res.data
+                let table_html = '';
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showCrowdtangleCrawledData(data_list); // Data들을 화면상에 표시
                 alert("Successfully save!");
@@ -669,9 +678,10 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
-                let table_html = ''
-                const data_list = res.data
+                let table_html = '';
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTiktokCrawledData(data_list); // Data들을 화면상에 표시
                 alert("Successfully save!");
@@ -705,9 +715,10 @@ $('#update-data').click(function(){
             },
            url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
-                let table_html = ''
-                const data_list = res.data
+                let table_html = '';
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTwitter1CrawledData(data_list); // Data들을 화면상에 표시
                 alert("Successfully save!");

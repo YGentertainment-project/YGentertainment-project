@@ -560,7 +560,8 @@ class DataReportAPI(APIView):
                         filter_datas.append(filter_value)
                     return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
                 else:
-                    return JsonResponse(status=400, data={'success': True, 'data': []})
+                    datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                    return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
