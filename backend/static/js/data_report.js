@@ -750,11 +750,11 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showWeverseCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -763,3 +763,41 @@ $('#update-data').click(function(){
 
 })
 
+//excel popup
+$(".excel-form-open").click(function(){
+    if(this.innerHTML=="Excel파일로부터 크롤링데이터 DB에 저장하기"){
+        document.getElementById("excel_form1").style.display = "flex";
+        document.getElementById("excel_form2").style.display = "none";
+        document.getElementById("excel_form3").style.display = "none";
+    }else if(this.innerHTML=="Excel파일로 크롤링데이터 추출"){
+        document.getElementById("excel_form1").style.display = "none";
+        document.getElementById("excel_form2").style.display = "flex";
+        document.getElementById("excel_form3").style.display = "none";
+    }else if(this.innerHTML=="Excel파일로부터 수집정보 DB에 저장하기"){
+        document.getElementById("excel_form1").style.display = "none";
+        document.getElementById("excel_form2").style.display = "none";
+        document.getElementById("excel_form3").style.display = "flex";
+    }
+    return;
+});
+
+document.getElementById('close_button1').onclick = function(){
+    document.getElementById("excel_form1").style.display = "none";
+}
+document.getElementById('close_button2').onclick = function(){
+    document.getElementById("excel_form2").style.display = "none";
+}
+document.getElementById('close_button3').onclick = function(){
+    document.getElementById("excel_form3").style.display = "none";
+}
+
+document.getElementById('excel-btn1').onclick = function(){
+    document.getElementById('progress-bar__bar1').classList.add('active');
+}
+document.getElementById('excel-btn2').onclick = function(){
+    document.getElementById('progress-bar__bar2').classList.add('active');
+}
+document.getElementById('excel-btn3').onclick = function(){
+    console.log("33");
+    document.getElementById('progress-bar__bar3').classList.add('active');
+}

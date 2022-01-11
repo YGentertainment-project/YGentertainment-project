@@ -10,7 +10,7 @@ app_name = 'dataprocess'
 
 urlpatterns = [
     path('', base ,name='base'),
-    path('daily/',daily,name='daily'),
+    path('daily/', daily,name='daily'),
     path('platform/',platform,name='platform'),
     # path('excel/',csrf_exempt(views.excel),name='excel'),
     path('artist/',artist,name='artist'),
