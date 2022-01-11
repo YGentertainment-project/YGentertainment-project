@@ -59,10 +59,12 @@ def daily(request):
     general page
     '''
     platforms = Platform.objects.all() #get all platform info from db
+    artists = Artist.objects.all() #get all artist info from db
     values = {
         'first_depth' : '데이터 리포트',
         'second_depth': '일별 리포트',
-        'platforms': platforms
+        'platforms': platforms,
+        'artists':artists,
     }
     request = logincheck(request)
     return render(request, 'dataprocess/daily.html',values)
@@ -485,6 +487,11 @@ class DataReportAPI(APIView):
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
+        artist_objects = Artist.objects.all()
+        artist_objects_values = artist_objects.values()
+        artist_list = []
+        for a in artist_objects_values:
+            artist_list.append(a)
 
         try:
             if type == "누적":
@@ -493,15 +500,11 @@ class DataReportAPI(APIView):
                     recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
-                    artist_objects = Artist.objects.all()
-                    artist_objects_values = artist_objects.values()
                     filter_datas=[]
                     artist_datas = []
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
-                    for artist in artist_objects_values:
-                        artist_datas.append(artist)
-                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_datas})
+                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list})
                 else:
                     return JsonResponse(status=400, data={'success': True, 'data': []})
             elif type == "기간별":

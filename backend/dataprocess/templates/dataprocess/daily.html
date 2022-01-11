@@ -44,16 +44,13 @@
             <div class="contents-platforms">
                 <label>플랫폼</label>
                 <!--DB 데이터로 변경 필요-->
-                <option class="platform-name" name="youtube" value="youtube">You Tube</option>
-                <option class="platform-name" name="vlive" value="vlive">V Live</option>
-                <option class="platform-name" name="melon" value="melon">Melon</option>
-                <option class="platform-name" name="spotify" value="spotify">Spotify</option>
-                <option class="platform-name" name="instagram" value="instagram">인스타그램</option>
-                <option class="platform-name" name="facebook" value="facebook">페이스북</option>
-                <option class="platform-name" name="twitter" value="twitter">트위터 1</option>
-                <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
-                <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
-                <option class="platform-name" name="weverse" value="weverse">Weverse</option>
+                {% if platforms %}
+                {% for platform in platforms %}
+                <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
+                {% endfor %}
+                {%else%}
+                <div>플랫폼이 없습니다.</div>
+                {% endif %}
             </div>
             <hr>
             <div id="result-table">
@@ -66,7 +63,8 @@
                     style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label> -->
                 </div>
                 <table id="table">
-                    <tbody id="board"></tbody>
+                    <tbody id="board">
+                    </tbody>
                 </table>
             </div>
         </div>
