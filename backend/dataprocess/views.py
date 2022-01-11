@@ -535,6 +535,21 @@ class DataReportAPI(APIView):
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
 
+        #artist name
+        artist_objects = Artist.objects.all()
+        artist_objects_values = artist_objects.values()
+        artist_list = []
+        for a in artist_objects_values:
+            artist_list.append(a['name'])
+
+        #platform target names
+        platform_id = Platform.objects.get(name = platform).id
+        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
+        platform_objects_values = platform_objects.values()
+        platform_list = []
+        for p in platform_objects_values:
+            platform_list.append(p)
+
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -542,17 +557,14 @@ class DataReportAPI(APIView):
                     recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
-                    artist_objects = Artist.objects.all()
-                    artist_objects_values = artist_objects.values()
                     filter_datas=[]
                     artist_datas = []
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
-                    for artist in artist_objects_values:
-                        artist_datas.append(artist)
-                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_datas})
+                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
                 else:
-                    return JsonResponse(status=400, data={'success': True, 'data': []})
+                    datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                    return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
@@ -591,7 +603,7 @@ class DataReportAPI(APIView):
                             else:
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
-                    return JsonResponse(data={'success': True, 'data': filter_datas_total})
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
                 else:
                     if not filter_objects_start.exists():
                         datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
@@ -604,7 +616,7 @@ class DataReportAPI(APIView):
                     platform_datas = []
                     for queryset_value in platform_queryset_values:
                         platform_datas.append(queryset_value)
-                    return JsonResponse(data={'success': True, 'data': platform_datas})
+                    return JsonResponse(data={'success': True, 'data': platform_datas,'artists':artist_list,'platform':platform_list})
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:

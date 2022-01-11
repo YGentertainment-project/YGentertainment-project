@@ -155,6 +155,7 @@ $("#logout-btn").click(function(){
     logout_function();
 });
 
+//alert message
 if(document.getElementById("alert")){
     alert(document.getElementById("alert").innerHTML);
 }

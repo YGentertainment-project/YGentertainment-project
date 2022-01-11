@@ -8,28 +8,64 @@
    {% if alert %}
     <span id="alert">{{alert}}</span>
    {% endif %}
-  
 
-   <div class="forms">
-    <!-- data export&import button -->
-    <div class="column_layout flexend_layout">
-        <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+   <div class="excel_form" id="excel_form1">
+        <div class="popup_button_layout">
+            <span>Excel파일로부터 크롤링데이터 DB에 저장하기</span>
+            <button id="close_button1">닫기</button>
+        </div>
+        <div style="height: 25px;"></div>
+         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
-            <button class="excel-btn" type="submit">Import</button>
+            <button class="excel-btn black-btn2" id="excel-btn1" type="submit">Import</button>
         </form>
+        <div class="progress-bar">
+            <div class="progress-bar__bar" id="progress-bar__bar1"></div>
+        </div>
+   </div>
+
+   <div class="excel_form" id="excel_form2">
+        <div class="popup_button_layout">
+            <span>Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
+            <button id="close_button2">닫기</button>
+        </div>
+        <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="text" name="type" value="export" style="display:none;">
-            <button class="excel-btn" type="submit">Export</button>
+            <button class="excel-btn black-btn2" id="excel-btn2" type="submit">Export</button>
         </form>
+        <div class="progress-bar">
+            <div class="progress-bar__bar" id="progress-bar__bar2"></div>
+        </div>
+    </div>
+
+    <div class="excel_form" id="excel_form3">
+        <div class="popup_button_layout">
+            <span>Excel파일로부터 수집정보 DB에 저장하기</span>
+            <button id="close_button3">닫기</button>
+        </div>
+        <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="importData2">
             <input type="text" name="type" value="import2" style="display:none;">
-            <button class="excel-btn" type="submit">Import2</button>
+            <button class="excel-btn black-btn2" id="excel-btn3" type="submit">Import</button>
         </form>
+        <div class="progress-bar">
+            <div class="progress-bar__bar" id="progress-bar__bar3"></div>
+        </div>
+   </div>
+  
+
+   <div class="forms">
+    <div class="column_layout flexend_layout">
+        <!-- 버튼 이름 바뀌면 js에서도 수정 -->
+        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로부터 크롤링데이터 DB에 저장하기</button>
+        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로 크롤링데이터 추출</button>
+        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로부터 수집정보 DB에 저장하기</button>
     </div>
        
     <form method="get">
@@ -50,30 +86,28 @@
             <div class="contents-platforms">
                 <label>플랫폼</label>
                 <!--DB 데이터로 변경 필요-->
-                <option class="platform-name" name="youtube" value="youtube">You Tube</option>
-                <option class="platform-name" name="vlive" value="vlive">V Live</option>
-                <option class="platform-name" name="melon" value="melon">Melon</option>
-                <option class="platform-name" name="spotify" value="spotify">Spotify</option>
-                <option class="platform-name" name="instagram" value="instagram">인스타그램</option>
-                <option class="platform-name" name="facebook" value="facebook">페이스북</option>
-                <option class="platform-name" name="twitter" value="twitter">트위터 1</option>
-                <option class="platform-name" name="twitter2" value="twitter2">트위터 2</option>
-                <option class="platform-name" name="tiktok" value="tiktok">Tik Tok</option>
-                <option class="platform-name" name="weverse" value="weverse">Weverse</option>
+                {% if platforms %}
+                {% for platform in platforms %}
+                <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
+                {% endfor %}
+                {%else%}
+                <div>플랫폼이 없습니다.</div>
+                {% endif %}
             </div>
             <hr>
             <div id="result-table">
-                <label style="margin-bottom: 5px;">리포트</label>
+                <label id="platform-title" style="margin-bottom: 5px; font-weight: bold;"></label>
+                <table id="table">
+                    <tbody id="board">
+                    </tbody>
+                </table>
                 <div class="button_layout">
-                    <label id="update-data">
+                    <label id="update-data" style="display: none; margin: 10px">
                         저장
                     </label>
                     <!-- <label id="update-data"
                     style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label> -->
                 </div>
-                <table id="table">
-                    <tbody id="board"></tbody>
-                </table>
             </div>
         </div>
         </form>

@@ -9,7 +9,7 @@ const isEmpty =
 
 
 //artist create function
-$('.add-submit').click(function(){
+$('.add-submit').click(function(e){
     var th = $('.add-table').find('th'); //platform names
     var trs_value = $('input[type=text]');  //artist info
 
@@ -21,17 +21,38 @@ $('.add-submit').click(function(){
     var urls = [];
     for(var i=7;i<trs_value.length;i++){
         var collect_item = trs_value[i].value;
-        urls.push(collect_item)
+        if(collect_item !="" && !collect_item.startsWith("http") && !collect_item.startsWith("www") ){
+            alert("데이터 수집 URL의 형식이 잘못되었습니다.");
+            e.preventDefault();
+            return;
+        }
+        urls.push(collect_item);
            
     }
 
-    console.log(urls);
+    var charRe = /^[a-z]|[A-Z]$/;
 
     var target_urls = {};
     for( var i = 0; i<platform_names.length; i++){
         target_urls[platform_names[i]] = urls[i];
     }
-
+    if(trs_value[0].value==""){
+        alert("아티스트의 이름을 입력해주세요.");
+        e.preventDefault();
+        return;
+    }else if(trs_value[1].value=="" || !charRe.test(trs_value[1].value)){
+        alert("구분을 S/A/B형태로 입력해주세요.");
+        e.preventDefault();
+        return;
+    }else if(trs_value[2].value=="" || trs_value[2].value!="M" || trs_value[2].value!="F"){
+        alert("성별을 M/F형태로 입력해주세요.");
+        e.preventDefault();
+        return;
+    }else if(trs_value[3].value==""){
+        alert("멤버 수를 입력해주세요.");
+        e.preventDefault();
+        return;
+    }
     var data = {
         "name": trs_value[0].value,
         "level": trs_value[1].value,
@@ -39,9 +60,12 @@ $('.add-submit').click(function(){
         "member_num": trs_value[3].value,
         "member_nationality": trs_value[4].value,
         "agency":trs_value[5].value,
-        "debut_date": trs_value[6].value,
+        // "debut_date": trs_value[6].value,
         "urls": urls,
     };
+    if(trs_value[6].value!=""){
+        data["debut_date"] = trs_value[6].value;
+    }
 
     console.log(JSON.stringify(data));
 
@@ -51,8 +75,6 @@ $('.add-submit').click(function(){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
-            console.log(res);
-            console.log('success');
             location.href = "/dataprocess/artist/";
         },
         error: e => {
