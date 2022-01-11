@@ -46,14 +46,14 @@ def crawling_start(platform, task_id):
     process.start()
 
 
-@shared_task(name="crawling_platform", bind=True, default_retry_delay=10, max_retries=5)
-def crawling_platform(self, platform):
+@shared_task(name="direct_crawling_platform", bind=True, default_retry_delay=10, max_retries=5)
+def direct_crawling_platform(self, platform):
     try:
         proc = Process(target=crawling_start, args=[platform, self.request.id])
         proc.start()
         proc.join()
     except:
-        crawling_platform.retry()
+        direct_crawling_platform.retry()
         print(f'Error with Crawling task')
 
 
@@ -64,96 +64,96 @@ def crawling(platform, request_id):
 
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="youtube_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def youtube_crawling(self):
+@shared_task(name="youtube_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def youtube_schedule_crawling(self):
     try:
         crawling('youtube', self.request.id)
     except:
-        youtube_crawling.retry()
+        youtube_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="twitter_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def twitter_crawling(self):
+@shared_task(name="twitter_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def twitter_schedule_crawling(self):
     try:
         crawling('twitter', self.request.id)
     except:
-        twitter_crawling.retry()
+        twitter_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="twitter2_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def twitter2_crawling(self):
+@shared_task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def twitter2_schedule_crawling(self):
     try:
         crawling('twitter2', self.request.id)
     except:
-        twitter2_crawling.retry()
+        twitter2_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="tiktok_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def tiktok_crawling(self):
+@shared_task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def tiktok_schedule_crawling(self):
     try:
         crawling('tiktok', self.request.id)
     except:
-        tiktok_crawling.retry()
+        tiktok_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="weverse_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def weverse_crawling(self):
+@shared_task(name="weverse_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def weverse_schedule_crawling(self):
     try:
         crawling('weverse', self.request.id)
     except:
-        weverse_crawling.retry()
+        weverse_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="crowdtangle_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def crowdtangle_crawling(self):
+@shared_task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def crowdtangle_schedule_crawling(self):
     try:
         crawling('crowdtangle', self.request.id)
     except:
-        crowdtangle_crawling.retry()
+        crowdtangle_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="vlive_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def vlive_crawling(self):
+@shared_task(name="vlive_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def vlive_schedule_crawling(self):
     try:
         crawling('vlive', self.request.id)
     except:
-        vlive_crawling.retry()
+        vlive_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="spotify_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def spotify_crawling(self):
+@shared_task(name="spotify_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def spotify_schedule_crawling(self):
     try:
         crawling('spotify', self.request.id)
     except:
-        spotify_crawling.retry()
+        spotify_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
 # @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="melon_crawling", bind=True, default_retry_delay=10, max_retries=5)
-def melon_crawling(self):
+@shared_task(name="melon_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+def melon_schedule_crawling(self):
     try:
         crawling('melon', self.request.id)
     except:
-        melon_crawling.retry()
+        melon_schedule_crawling.retry()
         print(f'Error with Crawling task')

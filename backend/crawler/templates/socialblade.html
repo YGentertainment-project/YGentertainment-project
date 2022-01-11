@@ -44,6 +44,9 @@
             <button id="listup-schedule" type="button" class="btn btn-dark" data-toggle="modal" data-target="#scheduleListModal">
                 스케줄 목록
             </button>
+            <button id="listup-tasks" type="button" class="btn btn-warning" data-toggle="modal" data-target="#taskListModal">
+                실행 Task 목록
+            </button>
         </div>
         <div id="progress">
             <div class="spinner-border text-primary crawler-loading" role="status">
@@ -117,19 +120,49 @@
           </div>
           <div class="modal-body">
              <table class="table">
-            <thead>
-                <tr>
-<!--                    <th scope="col">ID</th>-->
-                    <th scope="col">Task Name</th>
-                    <th scope="col">Minute</th>
-                    <th scope="col">Last Run</th>
-                    <th scope="col">Enabled</th>
-                    <th scope="col">삭제</th>
-                    <th scope="col">정보 조회</th>
-                </tr>
-            </thead>
-            <tbody id="schedule-board"></tbody>
-        </table>
+                 <thead>
+                    <tr>
+                        <!--<th scope="col">ID</th>-->
+                        <th scope="col">Schedule Name</th>
+                        <th scope="col">Minute</th>
+                        <th scope="col">Last Run</th>
+                        <th scope="col">Enabled</th>
+                        <th scope="col">삭제</th>
+                        <th scope="col">정보 조회</th>
+                    </tr>
+                 </thead>
+             <tbody id="schedule-board"></tbody>
+             </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="taskListModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">실행된 Task 목록</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+             <table class="table">
+                 <thead>
+                    <tr>
+                        <th scope="col">Task id</th>
+                        <th scope="col">Task 이름</th>
+                        <th scope="col">상태</th>
+                        <th scope="col">시작된 시간</th>
+                        <th scope="col">Args</th>
+                        <th scope="col">실행 시간</th>
+                    </tr>
+                 </thead>
+             <tbody id="task-board"></tbody>
+             </table>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
