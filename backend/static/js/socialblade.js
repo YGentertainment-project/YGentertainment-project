@@ -140,7 +140,7 @@ $(document).ready(function () {
                 tableRow.attr("id", data[key])
                 continue;
             }
-            if (key === 'url') {
+            else if (key === 'url') {
                 let dataColUrl = $('<a></a>', {
                     href: data[key],
                     text: data[key],
@@ -158,6 +158,16 @@ $(document).ready(function () {
                 }
                 dataCol = $('<td></td>', {
                     text: dateString,
+                })
+            }
+            else if(key === 'started'){
+                dataCol = $('<td></td>', {
+                    text: data[key],
+                })
+            }
+            else if(key === 'runtime'){
+                dataCol = $('<td></td>', {
+                    text: `${Number(data[key]).toFixed(2)}초`,
                 })
             }
             else {
@@ -276,6 +286,25 @@ $(document).ready(function () {
             },
             error: e => {
                 alert('Failed to listup schedules')
+            },
+        })
+    })
+
+    $('#listup-tasks').click(() => {
+        $.ajax({
+            url: api_domain + 'taskinfos/',
+            type: 'GET',
+            datatype: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: res => {
+              $('#task-board').html('');
+              const taskinfos = res.taskinfos;
+              taskinfos.forEach(taskinfo => {
+                  $('#task-board').append(createTableRow(taskinfo, 'task'));
+              })
+            },
+            error: e => {
+                alert('Failed to listup executed tasks')
             },
         })
     })

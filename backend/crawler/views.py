@@ -1,13 +1,14 @@
-import json
+import requests, json, datetime
 
 # api utilities
 from uuid import uuid4
 from urllib.parse import urlparse
 from rest_framework.decorators import api_view
+from dataprocess.models import Artist
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from dataprocess.models import Artist
+from utils.shortcuts import get_env
 
 # crawler models
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
@@ -18,7 +19,7 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
 
 # celery
-from .tasks import crawling_platform
+from .tasks import direct_crawling_platform
 from .celery import app
 from celery.result import AsyncResult
 
@@ -35,6 +36,12 @@ DataModels = {
     "melon": Melon,
     "spotify": Spotify,
 }
+flower_domain = ""
+production_env = get_env("YG_ENV", "dev") == "production"
+if production_env:
+    flower_domain = "0.0.0.0:5555/"
+else:
+    flower_domain = "http://localhost:5555/"
 
 
 @csrf_exempt
@@ -47,7 +54,7 @@ def crawl(request):
         body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
 
-        task = crawling_platform.apply_async(args=[platform])
+        task = direct_crawling_platform.apply_async(args=[platform])
         return JsonResponse({'task_id': task.id, 'status': 'started'})
 
     # Task 상태를 체크하는 GET 요청
@@ -107,16 +114,16 @@ def schedules(request):
                 timezone='Asia/Seoul',
             )
             # 존재하는 task는 상태 및 interval만 업데이트
-            if PeriodicTask.objects.filter(name='{}_crawling'.format(platform)).exists():
-                task = PeriodicTask.objects.get(name='{}_crawling'.format(platform))
+            if PeriodicTask.objects.filter(name='{}_schedule_crawling'.format(platform)).exists():
+                task = PeriodicTask.objects.get(name='{}_schedule_crawling'.format(platform))
                 task.enabled = True
                 task.crontab = schedule
                 task.save()
             else:
                 PeriodicTask.objects.create(
                     crontab=schedule,
-                    name='{}_crawling'.format(platform),
-                    task='{}_crawling'.format(platform),
+                    name='{}_schedule_crawling'.format(platform),
+                    task='{}_schedule_crawling'.format(platform),
                     # args=json.dumps((platform,)),
                 )
             return JsonResponse(data={'success': True})
@@ -144,6 +151,41 @@ def schedules(request):
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
 
+def get_all_tasks():
+    response = requests.get(flower_domain + 'api/tasks')
+    tasks_json = json.loads(response.content.decode('utf-8'))
+    return tasks_json
+
+@csrf_exempt
+@require_http_methods(['POST', 'GET'])
+def taskinfos(request):
+    if request.method == "GET":
+        schedule_id = request.GET.get('id', None)
+        collect_list = ['uuid', 'name', 'state', 'args', 'started', 'runtime']
+        tasks_json = get_all_tasks()
+        if schedule_id is None:
+            task_infos = []
+            for task in tasks_json.values():
+                task_info = dict()
+                for key, value in task.items():
+                    if key in collect_list:
+                        if key == 'started':
+                            datetimestr = datetime.datetime.fromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S')
+                            task_info[key] = datetimestr
+                        else:
+                            task_info[key] = value
+                task_infos.append(task_info)
+            return JsonResponse(data={'taskinfos': task_infos})
+        else:
+            task_info = dict()
+            for task in tasks_json.values():
+                if task['uuid'] == schedule_id:
+                    for key, value in task.items():
+                        if key in collect_list:
+                            task_info[key] = value
+                    break
+
+            return JsonResponse(data={'taskinfo': task_info})
 
 # @csrf_exempt
 # @require_http_methods(['POST'])  # only post

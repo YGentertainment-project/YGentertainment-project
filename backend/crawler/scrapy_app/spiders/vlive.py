@@ -1,3 +1,5 @@
+import json
+
 import scrapy
 from bs4 import BeautifulSoup
 import re
@@ -91,20 +93,18 @@ class VliveSpider(scrapy.Spider):
     def parse(self, response):
         artist = response.meta['artist']
         soup = BeautifulSoup(response.text, 'html.parser')
-        s = soup.find('script').get_text()
-        regex = r"(\"[\w\s]+\"\:[0-9]+\,)"
-        matches = re.finditer(regex, s, re.MULTILINE)
-        for matchNum, match in enumerate(matches, start=1):
-            if not match.group().find('"memberCount":'): member_num = match.group()[14:]
-            if not match.group().find('"videoPlayCountOfStar":'): total_view_num = match.group()[23:]
-            if not match.group().find('"videoCountOfStar":'): upload_num = match.group()[19:]
-            if not match.group().find('"videoLikeCountOfStar":'): like_num = match.group()[23:]
+        script = soup.find('script').get_text()
+        json_object = json.loads( script[27:-308] )
+        members = json_object['channel']['channel']['memberCount']
+        videoplay = json_object['channel']['channel']['videoPlayCountOfStar']
+        videocount = json_object['channel']['channel']['videoCountOfStar']
+        videolike = json_object['channel']['channel']['videoLikeCountOfStar']
 
         item = VliveItem()
         item['artist'] = artist
-        item['likes'] = like_num[:-1]
-        item['members'] = member_num[:-1]
-        item['plays'] = total_view_num[:-1]
-        item['videos'] = upload_num[:-1]
+        item['likes'] = videolike
+        item['members'] = members
+        item['plays'] = videoplay
+        item['videos'] = videocount
         item['url'] = response.url
         yield item
