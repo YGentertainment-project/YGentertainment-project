@@ -489,6 +489,8 @@ $(document).on('click','.platform-name',function(){
             
 
             $('tbody').eq(0).empty();
+            $('#update-data').show();
+            $('#platform-title').text(platform+' 리포트');
             if(platform === 'youtube'){
                 showYoutubeCrawledData(data_list);
             } else if(platform === 'vlive'){

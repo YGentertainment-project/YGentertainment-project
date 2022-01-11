@@ -538,7 +538,7 @@ class DataReportAPI(APIView):
         artist_objects_values = artist_objects.values()
         artist_list = []
         for a in artist_objects_values:
-            artist_list.append(a)
+            artist_list.append(a['name'])
 
         platform_id = Platform.objects.get(name = platform).id
         platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)

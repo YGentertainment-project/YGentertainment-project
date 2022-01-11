@@ -18,35 +18,107 @@ function addDays(date, days) {
 }
 
 $(document).on('click','input[name=day]',function(){
-   const today = new Date();
-   const next_day = addDays(today,1);
-   var year = next_day.getFullYear();
-   var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-   var day = ("0" + next_day.getDate()).slice(-2);
-   $('input[name=start_date]').val(year+'-'+month+'-'+day);  
-})
-
-$(document).on('click','input[name=week]',function(){
     const today = new Date();
-    const next_day = addDays(today,7);
+    const next_day = addDays(today,-1);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);
+    year = today.getFullYear();
+    month = ("0" + (1 + today.getMonth())).slice(-2);
+    day = ("0" + today.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
  })
+ 
+ $(document).on('click','input[name=week]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-7);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+    month = ("0" + (1 + today.getMonth())).slice(-2);
+    day = ("0" + today.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
+  })
+ 
+ $(document).on('click','input[name=month]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-30);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+     month = ("0" + (1 + today.getMonth())).slice(-2);
+     day = ("0" + today.getDate()).slice(-2);
+     $('input[name=end_date]').val(year+'-'+month+'-'+day); 
+  })
 
-$(document).on('click','input[name=month]',function(){
-    const today = new Date();
-    const next_day = addDays(today,30);
-    var year = next_day.getFullYear();
-    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-    var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=start_date]').val(year+'-'+month+'-'+day);  
- })
 
+//create Table header
+const createTableHeader = (platform_list) => {
+    const tableHeader = $('<tr></tr>');
+
+    let c = $('<th></th>', {
+        text:'artist',
+    })
+    tableHeader.append(c)
+    for(let i = 0; i< platform_list.length; i++){
+        let col = $('<th></th>', {
+            text: platform_list[i]['target_name'],
+        })
+        tableHeader.append(col)
+    }
+
+    return tableHeader;
+}
+
+//create artist table column 
+const createTableArtistColumn = (list) => {
+    let th = $('th:first')
+    for(let i = 0; i< list.length; i++){
+        let dataCol = $('<tr></tr>', {
+            text:list[i],
+        })
+        th.append(dataCol)
+    }
+}
+
+//create other table columns
+const createTableColumn = (platform_list,artist_list,datas,crawling_artist_list) => {
+
+    for(let i = 0; i<platform_list.length; i++){
+        let th = $(`th:eq(${i+1})`);
+
+        for(let j = 0; j<artist_list.length; j++){
+            if(crawling_artist_list.indexOf(artist_list[j])>=0){
+                let dataCol = $('<tr><td><input type="text" value="'+numToString(datas[j][platform_list[i]['target_name']])+'" style="width:100%"></input></td></tr>')
+                th.append(dataCol)
+                k+=1
+            } else{
+                let dataCol = `
+                <tr>
+                <td>
+                    <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+                </td>
+                </tr>
+                `
+                th.append(dataCol)
+            }
+        }
+    }
+}
 
 
 //show crawled data
+const showCrawledData = (platform_list,artist_list,datas,crawling_artist_list) => {
+    $('#board').append(createTableHeader(platform_list));
+    $('#board').append(createTableArtistColumn(artist_list));
+    $('#board').append(createTableColumn(platform_list,artist_list,datas,crawling_artist_list));
+    
+}
 
 //change color of button when clicking platform
 $('option').click(function(){
@@ -67,6 +139,18 @@ $(document).on('click','.platform-name',function(){
 
     //console.log($(this).attr("name"));
 
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 날짜를 선택해주세요.");
+        return;
+    }else if(type=="기간별" && (start_date=="" ||end_date=="" )){
+        alert("시작과 끝 날짜를 선택해주세요.");
+        return;
+    }
+
+
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
@@ -85,12 +169,18 @@ $(document).on('click','.platform-name',function(){
             artist_list = res.artists //DB 아티스트 리스트
             platform_list = res.platform //수집 항목
 
-            
-            //console.log(data_list[0]['artist']);
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+
+            console.log(artist_list);
             //console.log(artist_list[0]['name']);
             //console.log(platform_list.length);
 
             $('tbody').eq(0).empty();
+            showCrawledData(platform_list,artist_list,data_list,crawling_artist_list)
         },
         error: e => {
             console.log(e);
