@@ -534,12 +534,15 @@ class DataReportAPI(APIView):
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
+
+        #artist name
         artist_objects = Artist.objects.all()
         artist_objects_values = artist_objects.values()
         artist_list = []
         for a in artist_objects_values:
             artist_list.append(a['name'])
 
+        #platform target names
         platform_id = Platform.objects.get(name = platform).id
         platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
         platform_objects_values = platform_objects.values()
