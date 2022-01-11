@@ -50,7 +50,13 @@ function platform_update_function(){
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
         var cells = platform_tr[r].getElementsByTagName("td");
-
+        if(cells[1].firstElementChild.value==""){
+            alert("플랫폼의 이름은 빈칸일 수 없습니다.");
+            return;
+        }else if(cells[2].firstElementChild.value==""){
+            alert("플랫폼의 url은 빈칸일 수 없습니다.");
+            return;
+        }
         datas.push({
             "id": cells[0].firstElementChild.value,
             "name": cells[1].firstElementChild.value,
@@ -65,11 +71,9 @@ function platform_update_function(){
         datatype:'json',
         data: JSON.stringify(datas),
         success: res => {
-            console.log(res);
             alert("Successfully save!");
         },
         error: e => {
-            console.log(e);
             alert(e.responseText);
         },
     })
@@ -83,6 +87,13 @@ function platform_create_function(){
         var collect_item = created_attribute_tr[i].getElementsByTagName("td")[1].firstElementChild.value;
         if(collect_item!="")
             collect_items_list.push(collect_item);
+    }
+    if(created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value==""){
+        alert("플랫폼 이름을 입력해주세요.");
+        return;
+    }else if(created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value==""){
+        alert("플랫폼 url을 입력해주세요.");
+        return;
     }
     var data = {
         "name":created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value,
