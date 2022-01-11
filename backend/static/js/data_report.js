@@ -533,6 +533,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
                 const data_list = res.data
@@ -580,9 +581,10 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
-                let table_html = ''
-                const data_list = res.data
+                let table_html = '';
+                const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showVliveCrawledData(data_list) // Data들을 화면상에 표시
             },
@@ -610,6 +612,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
                 const data_list = res.data
@@ -650,6 +653,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
                 const data_list = res.data
@@ -685,6 +689,7 @@ $('#update-data').click(function(){
             },
            url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
                 const data_list = res.data
@@ -718,6 +723,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 console.log('success');
                 let table_html = ''
                 const data_list = res.data

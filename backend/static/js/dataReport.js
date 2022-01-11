@@ -44,47 +44,6 @@ $(document).on('click','input[name=month]',function(){
     $('input[name=start_date]').val(year+'-'+month+'-'+day);  
  })
 
-//not crawled artist
-const createNotCrawledTableRow = (data) => {
-    const tableRow = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text:data
-    })
-    //조사 항목 개수만큼 넣기
-    let col2 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col3 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col4 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col5 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    tableRow.append(col1)
-    tableRow.append(col2)
-    tableRow.append(col3)
-    tableRow.append(col4)
-    tableRow.append(col5)
-    return tableRow;
-}
-
-const showNotCrawledData = (datas) => {
-    datas.forEach(data => {
-        $('#board').append(createNotCrawledTableRow(data))
-    })
-}
-
 //creat header from data in DB
 //플랫폼 이름을 받아옴
 const createTableHeader = (platform) => {
@@ -98,7 +57,12 @@ const createTableHeader = (platform) => {
         contentType: 'application/json; charset=utf-8',
         success: res => {
             var datas = res.data 
+            console.log(datas);
             const tableHeader = $('<tr></tr>');
+            let col = $('<th></th>', {
+                text: '아티스트',
+            })
+            tableHeader.append(col);
             for(let i = 0; i<datas.length; i++){
                 let col = $('<th></th>', {
                     text: datas['target_name'][i],
@@ -116,7 +80,8 @@ const createTableHeader = (platform) => {
 
 // show table header (general)
 const showTableHeader = (platform) => {
-    $('#board').append(createTableHeader(platform));
+    const tableH = createTableHeader(platform)
+    $('#board').append(tableH);
 }
 
 
@@ -221,8 +186,9 @@ const createVliveTableRow = (data) => {
 }
 
 // show crawled data
-const showVliveCrawledData = (datas) => {
+const showVliveCrawledData = (datas,platform) => {
     $('#board').append(createVliveTableHeader());
+    //showTableHeader(platform)
     datas.forEach(data => {
         $('#board').append(createVliveTableRow(data))
     })
@@ -422,12 +388,12 @@ $('option').click(function(){
 });
 
 $(document).on('click','.platform-name',function(){
-    var platform = $(this).val();
+    var platform = $(this).attr("name")
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
 
-    //console.log($(this).attr("name"));
+    console.log(platform);
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
@@ -445,33 +411,12 @@ $(document).on('click','.platform-name',function(){
             let artist_list = [];
             data_list = res.data
             artist_list = res.artists
-            console.log(data_list[0]['artist']);
+            //console.log(artist_list[0]['name']);
 
-            let data_artist_list = []; //크롤링 된 데이터에 있는 아티스트 리스트
-            for(let i = 0; i<data_list.length; i++){
-                data_artist_list.push(data_list[i]['artist']);
-            }
-
-            //let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            //for (let i = 0; i<artist_list.length; i++){
-            //    db_artist_list.push(artist_list[i]['name']);
-            //}
-
-            //let not_crawled_artists=[];
-            //for(let i = 0; i<db_artist_list.length; i++){
-            //    if(db_artist_list[i] in data_artist_list){
-            //        continue;
-            //    } else{
-            //        not_crawled_artists.push(db_artist_list[i]);
-            //    }
-            //}
-            
 
             $('tbody').eq(0).empty();
             if(platform === 'youtube'){
                 showYoutubeCrawledData(data_list)
-            } else if(platform === 'vlive'){
-                showVliveCrawledData(data_list)
             } else if(platform === 'instagram' || platform === 'facebook'){
                 showCrowdtangleCrawledData(data_list)
             } else if(platform === 'twitter' || platform === 'twitter2'){

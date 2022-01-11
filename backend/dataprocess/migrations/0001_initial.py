@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
             name='CollectData',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('collect_item', models.JSONField(default=dict)),
+                ('collect_items', models.JSONField(default=dict)),
                 ('collect_target', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dataprocess.collecttarget')),
             ],
             options={
