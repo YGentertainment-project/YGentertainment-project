@@ -642,51 +642,41 @@ class DataReportAPI(APIView):
         """
         Data-Report update api
         """
-
-
         platform = request.POST.get('platform_name', None)
-        platform_target_length = request.POST.get('platform_target_length',None)
         artists = request.POST.getlist('artists[]')
-        target_items = request.POST.getlist('target_items[]')
-        idx = 0
+        uploads = request.POST.getlist('uploads[]')
+        subscribers = request.POST.getlist('subscribers[]')
+        views = request.POST.getlist('views[]')
+        members = request.POST.getlist('members[]')
+        videos = request.POST.getlist('videos[]')
+        likes = request.POST.getlist('likes[]')
+        plays = request.POST.getlist('plays[]')
+        followers = request.POST.getlist('followers[]')
+        twits = request.POST.getlist('twits[]')
+        weverses = request.POST.getlist('weverses[]')
 
-        #artist name
-        artist_objects = Artist.objects.all()
-        artist_objects_values = artist_objects.values()
-        artist_list = []
-        for a in artist_objects_values:
-            artist_list.append(a['name'])
 
-        #platform target names
-        platform_id = Platform.objects.get(name = platform).id
-        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
-        platform_objects_values = platform_objects.values()
-        platform_list = []
-        for p in platform_objects_values:
-            platform_list.append(p)
+    
 
-        for artist in artists:
+        for index,artist in enumerate(artists):
             obj = DataModels[platform].objects.filter(artist=artist)
             if platform == 'youtube':
-                obj.update(uploads=target_items[idx], subscribers=target_items[idx+1], views=target_items[idx+2])
-                idx += platform_target_length
+                obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index])
             elif platform == 'vlive':
-                obj.update(members=target_items[idx], videos=target_items[idx+1], likes=target_items[idx+2], plays=target_items[idx+3])
-                idx += platform_target_length
-            elif platform == 'instagram' or platform == 'facebook':
-                obj.update(followers=target_items[idx])
-                idx += platform_target_length
-            elif platform == 'twitter' or platform == 'twitter2':
-                obj.update(followers=target_items[idx], twits=target_items[idx+1])
-                idx += platform_target_length
+                obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+            elif platform == 'instagram' or platform=='facebook':
+                obj.update(followers = followers[index])
+            elif platform == 'twitter' or platform=='twitter2':
+                obj.update(followers = followers[index],twits=twits[index])
             elif platform == 'tiktok':
-                obj.update(followers=target_items[idx], uploads=target_items[idx+1], likes=target_items[idx+2])
-                idx += platform_target_length
+                obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
             elif platform == 'weverse':
-                obj.update(weverses=target_items[idx])
-                idx += platform_target_length
+                obj.update(weverses= weverses[index])
         platform_queryset_values = DataModels[platform].objects.values()
         platform_datas = []
         for queryset_value in platform_queryset_values:
             platform_datas.append(queryset_value)
-        return JsonResponse(data={'success': True, 'data': platform_datas,'artists':artist_list,'platform':platform_list})
+        return JsonResponse(data={'success': True, 'data': platform_datas})
+
+
+       

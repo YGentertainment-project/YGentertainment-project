@@ -263,21 +263,44 @@ $('#update-data').click(function(){
 
 
 //excel popup
-$(".excel-form-open").click(function(){
-    if(this.innerHTML=="Excel파일로부터 크롤링데이터 DB에 저장하기"){
-        document.getElementById("excel_form1").style.display = "flex";
-        document.getElementById("excel_form2").style.display = "none";
-        document.getElementById("excel_form3").style.display = "none";
-    }else if(this.innerHTML=="Excel파일로 크롤링데이터 추출"){
-        document.getElementById("excel_form1").style.display = "none";
-        document.getElementById("excel_form2").style.display = "flex";
-        document.getElementById("excel_form3").style.display = "none";
-    }else if(this.innerHTML=="Excel파일로부터 수집정보 DB에 저장하기"){
-        document.getElementById("excel_form1").style.display = "none";
-        document.getElementById("excel_form2").style.display = "none";
-        document.getElementById("excel_form3").style.display = "flex";
+$("#excel-form-open1").click(function(){
+    document.getElementById("excel_form1").style.display = "flex";
+    document.getElementById("excel_form2").style.display = "none";
+    document.getElementById("excel_form3").style.display = "none";
+});
+$("#excel-form-open2").click(function(){
+    document.getElementById("excel_form1").style.display = "none";
+    document.getElementById("excel_form2").style.display = "flex";
+    document.getElementById("excel_form3").style.display = "none";
+});
+$("#excel-form-open3").click(function(){
+    document.getElementById("excel_form1").style.display = "none";
+    document.getElementById("excel_form2").style.display = "none";
+    document.getElementById("excel_form3").style.display = "flex";
+});
+$("#excel-form-open1").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint1").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint1").style.display = "none";
     }
-    return;
+});
+$("#excel-form-open2").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint2").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint2").style.display = "none";
+    }
+});
+$("#excel-form-open3").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint3").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint3").style.display = "none";
+    }
 });
 
 document.getElementById('close_button1').onclick = function(){
