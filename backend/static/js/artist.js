@@ -162,7 +162,7 @@ $('input[name=artist-name]').click(function(){
                             dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
                         </td>
                         `;
                     }
@@ -245,7 +245,7 @@ $(document).on('click','.platform-names',function(){
                     else{
                         dataHTML.push( `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
                         </td>
                         `);
                     }

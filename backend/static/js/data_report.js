@@ -56,6 +56,13 @@ $(document).on('click','input[name=month]',function(){
     $('input[name=end_date]').val(year+'-'+month+'-'+day); 
  })
 
+ //refresh button
+ $(document).on('click','input[name=refresh]',function(){
+    $('input[name=start_date]').val("");
+    $('input[name=end_date]').val("");
+ })
+ 
+
 //not crawled artist
 const createNotCrawledTableRow = (data) => {
     const tableRow = $('<tr></tr>');
