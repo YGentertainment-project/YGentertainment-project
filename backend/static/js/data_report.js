@@ -563,12 +563,10 @@ $('#update-data').click(function(){
             url: '/dataprocess/api/daily/',
             success: res => {
                 alert("Successfully save!");
-                console.log('success');
                 let table_html = ''
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showYoutubeCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -617,7 +615,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showVliveCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -649,7 +646,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showCrowdtangleCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -691,7 +687,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTiktokCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -728,7 +723,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTwitter1CrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
