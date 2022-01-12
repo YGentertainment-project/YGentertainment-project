@@ -18,400 +18,109 @@ function addDays(date, days) {
 }
 
 $(document).on('click','input[name=day]',function(){
-   const today = new Date();
-   const next_day = addDays(today,1);
-   var year = next_day.getFullYear();
-   var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-   var day = ("0" + next_day.getDate()).slice(-2);
-   $('input[name=end_date]').val(year+'-'+month+'-'+day);  
-})
-
-$(document).on('click','input[name=week]',function(){
     const today = new Date();
-    const next_day = addDays(today,7);
+    const next_day = addDays(today,-1);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
+    $('input[name=start_date]').val(year+'-'+month+'-'+day);
+    year = today.getFullYear();
+    month = ("0" + (1 + today.getMonth())).slice(-2);
+    day = ("0" + today.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
  })
-
-$(document).on('click','input[name=month]',function(){
-    const today = new Date();
-    const next_day = addDays(today,30);
-    var year = next_day.getFullYear();
-    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-    var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day);  
- })
-
-//not crawled artist
-const createNotCrawledTableRow = (data) => {
-    const tableRow = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text:data
-    })
-    //조사 항목 개수만큼 넣기
-    let col2 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col3 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col4 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col5 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    tableRow.append(col1)
-    tableRow.append(col2)
-    tableRow.append(col3)
-    tableRow.append(col4)
-    tableRow.append(col5)
-    return tableRow;
-}
-
-const showNotCrawledData = (datas) => {
-    datas.forEach(data => {
-        $('#board').append(createNotCrawledTableRow(data))
-    })
-}
-
-//creat header from data in DB
-//플랫폼 이름을 받아옴
-const createTableHeader = (platform) => {
-    //ajax get
-    $.ajax({
-        url: '/dataprocess/api/platform_info/?' + $.param({
-            platform: platform,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            var datas = res.data 
-            const tableHeader = $('<tr></tr>');
-            for(let i = 0; i<datas.length; i++){
-                let col = $('<th></th>', {
-                    text: datas['target_name'][i],
-                })
-                tableHeader.append(col);
-            }
-            return tableHeader;
-        },
-        error: e => {
-            console.log(e);
-            alert(e.responseText);
-        },
-    })
-}
-
-// show table header (general)
-const showTableHeader = (platform) => {
-    $('#board').append(createTableHeader(platform));
-}
+ 
+ $(document).on('click','input[name=week]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-7);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+    month = ("0" + (1 + today.getMonth())).slice(-2);
+    day = ("0" + today.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
+  })
+ 
+ $(document).on('click','input[name=month]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-30);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+     month = ("0" + (1 + today.getMonth())).slice(-2);
+     day = ("0" + today.getDate()).slice(-2);
+     $('input[name=end_date]').val(year+'-'+month+'-'+day); 
+  })
 
 
-
-//youtube
-//table creation
-const createYoutubeTableHeader = () => {
+//create Table header
+const createTableHeader = (platform_list) => {
     const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
+
+    let c = $('<th></th>', {
+        text:'artist',
     })
-    let col2 = $('<th></th>', {
-        text: '업로드 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '구독자 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '총 조회 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for youtube
-const createYoutubeTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'||key === 'platform' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
+    tableHeader.append(c)
+    for(let i = 0; i< platform_list.length; i++){
+        let col = $('<th></th>', {
+            text: platform_list[i]['target_name'],
+        })
+        tableHeader.append(col)
     }
-    return tableRow
-}
 
-// show crawled data
-const showYoutubeCrawledData = (datas) => {
-    $('#board').append(createYoutubeTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createYoutubeTableRow(data))
-    })
-}
-
-//vlive
-const createVliveTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '맴버 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '스타 영상 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    let col5 =  $('<th></th>', {
-        text: '재생 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    tableHeader.append(col5)
     return tableHeader;
 }
-// create rows for youtube
-const createVliveTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            if(isEmpty(data[key])){
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%; background-color:lightgray;"></input></td>')    
+
+//create artist table column 
+const createTableArtistColumn = (list) => {
+    let th = $('th:first')
+    for(let i = 0; i< list.length; i++){
+        let dataCol = $('<tr></tr>', {
+            text:list[i],
+        })
+        th.append(dataCol)
+    }
+}
+
+//create other table columns
+const createTableColumn = (platform_list,artist_list,datas,crawling_artist_list) => {
+
+    for(let i = 0; i<platform_list.length; i++){
+        let th = $(`th:eq(${i+1})`);
+
+        for(let j = 0; j<artist_list.length; j++){
+            if(crawling_artist_list.indexOf(artist_list[j])>=0){
+                let dataCol = $('<tr><td><input type="text" value="'+numToString(datas[j][platform_list[i]['target_name']])+'" style="width:100%"></input></td></tr>')
+                th.append(dataCol)
+                k+=1
             } else{
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
+                let dataCol = `
+                <tr>
+                <td>
+                    <input type="text" value="" style="width:100%; background-color:lightgray"></input>
+                </td>
+                </tr>
+                `
+                th.append(dataCol)
             }
         }
-        tableRow.append(dataCol)
     }
-    return tableRow
-}
-
-// show crawled data
-const showVliveCrawledData = (datas) => {
-    $('#board').append(createVliveTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createVliveTableRow(data))
-    })
 }
 
 
-//weverse
-//table creation
-const createWeverseTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: 'Wever 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for youtube
-const createWeverseTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
+//show crawled data
+const showCrawledData = (platform_list,artist_list,datas,crawling_artist_list) => {
+    $('#board').append(createTableHeader(platform_list));
+    $('#board').append(createTableArtistColumn(artist_list));
+    $('#board').append(createTableColumn(platform_list,artist_list,datas,crawling_artist_list));
+    
 }
 
-// show crawled data
-const showWeverseCrawledData = (datas) => {
-    $('#board').append(createWeverseTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createWeverseTableRow(data))
-    })
-}
-
-//twitter 1
-//table creation
-const createTwitter1TableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '트위터 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '트윗 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    return tableHeader;
-}
-// create rows for twitter
-const createTwitter1TableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showTwitter1CrawledData = (datas) => {
-    $('#board').append(createTwitter1TableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTwitter1TableRow(data))
-    })
-}
-
-//facebook & insta
-//table creation
-const createCrowdtangleTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for twitter
-const createCrowdtangleTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol =  $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showCrowdtangleCrawledData = (datas) => {
-    $('#board').append(createCrowdtangleTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createCrowdtangleTableRow(data))
-    })
-}
-
-//tik tok
-//table creation
-const createTiktokTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '업로드 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for tiktok
-const createTiktokTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' ){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showTiktokCrawledData = (datas) => {
-    $('#board').append(createTiktokTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTiktokTableRow(data))
-    })
-}
-
+//change color of button when clicking platform
 $('option').click(function(){
     if($(this).hasClass("platform-selected")){
       $(this).removeClass("platform-selected");
@@ -421,6 +130,7 @@ $('option').click(function(){
     }
 });
 
+//when clicking platform name
 $(document).on('click','.platform-name',function(){
     var platform = $(this).val();
     var type = $(':radio[name="view_days"]:checked').val();
@@ -428,6 +138,18 @@ $(document).on('click','.platform-name',function(){
     var end_date = $('input[name=end_date]').val();
 
     //console.log($(this).attr("name"));
+
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 날짜를 선택해주세요.");
+        return;
+    }else if(type=="기간별" && (start_date=="" ||end_date=="" )){
+        alert("시작과 끝 날짜를 선택해주세요.");
+        return;
+    }
+
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
@@ -440,48 +162,25 @@ $(document).on('click','.platform-name',function(){
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            let table_html = ''
             let data_list = [];
             let artist_list = [];
-            data_list = res.data
-            artist_list = res.artists
-            console.log(data_list[0]['artist']);
+            let platform_targets = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_list = res.platform //수집 항목
 
-            let data_artist_list = []; //크롤링 된 데이터에 있는 아티스트 리스트
-            for(let i = 0; i<data_list.length; i++){
-                data_artist_list.push(data_list[i]['artist']);
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
             }
 
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]['name']);
-            }
 
-            let not_crawled_artists=[];
-            for(let i = 0; i<db_artist_list.length; i++){
-                if(db_artist_list[i] in data_artist_list){
-                    continue;
-                } else{
-                    not_crawled_artists.push(db_artist_list[i]);
-                }
-            }
-            
+            console.log(artist_list);
+            //console.log(artist_list[0]['name']);
+            //console.log(platform_list.length);
 
             $('tbody').eq(0).empty();
-            if(platform === 'youtube'){
-                showYoutubeCrawledData(data_list)
-            } else if(platform === 'vlive'){
-                showVliveCrawledData(data_list)
-                showNotCrawledData(not_crawled_artists)
-            } else if(platform === 'instagram' || platform === 'facebook'){
-                showCrowdtangleCrawledData(data_list)
-            } else if(platform === 'twitter' || platform === 'twitter2'){
-                showTwitter1CrawledData(data_list)
-            } else if(platform === 'tiktok'){
-                showTiktokCrawledData(data_list)
-            } else if(platform === 'weverse'){
-                showWeverseCrawledData(data_list)
-            }
+            showCrawledData(platform_list,artist_list,data_list,crawling_artist_list)
         },
         error: e => {
             console.log(e);
@@ -490,13 +189,14 @@ $(document).on('click','.platform-name',function(){
     })
 })
 
+
 //update crawled data
 $('#update-data').click(function(){
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
+    trs_value = trs_value.slice(3)
 
-    console.log('start');
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];
@@ -561,6 +261,7 @@ $('#update-data').click(function(){
             plays.push(uncomma(trs_value[i].value))
         }
 
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -698,8 +399,10 @@ $('#update-data').click(function(){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=1){
-            weverses.push(uncomma(trs_value[i].value))
+            weverses.push(parseInt(uncomma(trs_value[i].value)))
         }
+
+        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
@@ -721,6 +424,4 @@ $('#update-data').click(function(){
     }
 
 })
-
-
 

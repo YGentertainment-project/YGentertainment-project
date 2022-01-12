@@ -67,12 +67,26 @@ input[type='checkbox']:checked:after {
     color: white;
     background-color: black !important;
     text-align: center;
-    font-weight: normal;
+    font-weight: bold;
     font-size : 1.2rem;
 }
 
 #platform-body td{
     text-align: center;
+}
+
+.popup_button_layout{
+    height: 100%;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.popup_button_layout > span{
+    font-weight: bold;
+    font-size: 20px;
 }
 
 .button_layout{
@@ -84,7 +98,7 @@ input[type='checkbox']:checked:after {
 }
 
 /* 거의 모든 버튼 형태 */
-.button_layout > button, .excel-btn, .add-submit{
+.button_layout > button, .popup_button_layout>button, .excel-btn, .add-submit{
     background-color: rgb(226, 226, 226) !important;
     font-weight: bold;
     font-size: 1rem;
@@ -102,7 +116,16 @@ input[type='checkbox']:checked:after {
     position: relative;
 }
 
-.button_layout > button:hover, .excel-btn:hover{
+.black-btn2{
+    background-color: rgb(59, 59, 59) !important;
+    color: white !important;
+}
+
+.excel-form-open{
+    width: 300px !important;
+}
+
+.button_layout > button:hover,.popup_button_layout > button:hover, .excel-btn:hover{
     top: -2px;
     border: 2px solid black;
     box-shadow: 0px 0px 10px grey;
@@ -115,7 +138,7 @@ input[type='checkbox']:checked:after {
 }
 
 /* popup form */
-.create_form{
+.create_form, .excel_form{
     padding-top: 20px;
     padding-bottom: 20px;
     display: none;
@@ -132,6 +155,12 @@ input[type='checkbox']:checked:after {
     background-color: white;
     border: 3px solid LightSlateGrey;
     z-index: 10;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.excel_form{
+    padding-bottom: 0px !important;
+    width: 40% !important;
 }
 
 .table_layout{
@@ -190,4 +219,33 @@ input[type='checkbox']:checked:after {
     margin: 0;
     align-items: flex-end;
     justify-self: flex-end;
+}
+
+/* excel popup */
+.progress-bar {
+    background-color: rgb(59, 59, 59);
+    border-radius: 4px;
+    box-shadow: inset 0 0.5em 0.5em rgba(0,0,0,0.05);
+    height: 5px;
+    margin: 2rem 0 2rem 0;
+    overflow: hidden;
+    position: relative;
+    transform: translateZ(0);
+    width: 100%;
+}
+
+.progress-bar__bar {
+    background-color: #ececec;
+    box-shadow: inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05);
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.progress-bar__bar.active {
+    transition: all 5000ms ease-out;
+    transform: translateX(100%);
+    -webkit-transform: translateX(100%)
 }

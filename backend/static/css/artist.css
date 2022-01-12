@@ -1,5 +1,5 @@
-
 #first-table{
+    resize: horizontal;
     text-align: center;
     width: 40%;
     height: 650px;
@@ -13,9 +13,11 @@
 }
 
 #second-table{
+    resize: horizontal;
     justify-content: center;
     text-align: center;
     width:30%;
+    min-width: 300px;
     height: 650px;
     overflow-y: scroll;
     border: 1px solid lightgray;
@@ -66,8 +68,12 @@
     margin-top: 20px;
     font-size: 1.2rem;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     
+}
+
+#artist-body td{
+    min-width: 10px;
 }
 
 .artist-add-table{
@@ -83,6 +89,7 @@
 }
 
 .title-th{
+    font-weight: bold;
     background-color: lightblue;
     color: white;
 }
