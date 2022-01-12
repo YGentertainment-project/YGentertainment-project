@@ -44,7 +44,7 @@ $('.add-submit').click(function(e){
         alert("구분을 S/A/B형태로 입력해주세요.");
         e.preventDefault();
         return;
-    }else if(trs_value[2].value=="" || trs_value[2].value!="M" || trs_value[2].value!="F"){
+    }else if(trs_value[2].value=="" ||( trs_value[2].value!="M" && trs_value[2].value!="F")){
         alert("성별을 M/F형태로 입력해주세요.");
         e.preventDefault();
         return;

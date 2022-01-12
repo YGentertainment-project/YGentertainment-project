@@ -423,7 +423,6 @@ class PlatformOfArtistAPI(APIView):
         try:
             collecttarget_list = JSONParser().parse(request)
             for collecttarget_object in collecttarget_list:
-                print(collecttarget_object['target_url'])
                 CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
                 if collecttarget_object['target_url_2']:
                      CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
@@ -574,6 +573,7 @@ class DataReportAPI(APIView):
                 filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
                     recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
                 filter_datas_total=[]
+                # 둘 다 존재할 때
                 if filter_objects_start.exists() and filter_objects_end.exists():
                     filter_objects_start_values=filter_objects_start.values()
                     model_fields = DataModels[platform]._meta.fields
@@ -604,11 +604,27 @@ class DataReportAPI(APIView):
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
                     return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                elif not filter_objects_start.exists() and filter_objects_end.exists():
+                    # 시작날짜의 데이터가 존재하지 않고 끝날짜의 데이터만 존재할 때
+                    # 0으로 해서 계산
+                    filter_objects_end_values=filter_objects_end.values()
+                    model_fields = DataModels[platform]._meta.fields
+                    model_fields_name = []
+                    artist_datas = set()
+                    for model_field in model_fields:
+                        model_fields_name.append(model_field.name)
+                    values_len = len(filter_objects_end_values)
+                    for i in range(values_len):
+                        # 이미 넣은 데이터면 pass
+                        if filter_objects_end_values[i]["artist"] in artist_datas:
+                            continue
+                        artist_datas.add(filter_objects_end_values[i]["artist"])
+                        filter_datas_total.append(filter_objects_end_values[i])
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                    # datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                # 끝날짜의 데이터가 아예 존재하지 않을 때
                 else:
-                    if not filter_objects_start.exists():
-                        datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
-                    else:
-                        datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
+                    datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
                     return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
             else:
                 if DataModels[platform].objects.exists():
