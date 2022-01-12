@@ -639,9 +639,6 @@ class DataReportAPI(APIView):
             return JsonResponse(status=400, data={'success': False})
     
     def post(self, request):
-        """
-        Data-Report update api
-        """
         platform = request.POST.get('platform_name', None)
         artists = request.POST.getlist('artists[]')
         uploads = request.POST.getlist('uploads[]')
@@ -654,29 +651,55 @@ class DataReportAPI(APIView):
         followers = request.POST.getlist('followers[]')
         twits = request.POST.getlist('twits[]')
         weverses = request.POST.getlist('weverses[]')
+        start_date = request.POST.get('start_date',None)
+
+         #artist name
+        artist_objects = Artist.objects.all()
+        artist_objects_values = artist_objects.values()
+        artist_list = []
+        for a in artist_objects_values:
+            artist_list.append(a['name'])
+
+        #platform target names
+        platform_id = Platform.objects.get(name = platform).id
+        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
+        platform_objects_values = platform_objects.values()
+        platform_list = []
+        for p in platform_objects_values:
+            platform_list.append(p)
 
 
     
 
-        for index,artist in enumerate(artists):
-            obj = DataModels[platform].objects.filter(artist=artist)
-            if platform == 'youtube':
-                obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index])
-            elif platform == 'vlive':
-                obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
-            elif platform == 'instagram' or platform=='facebook':
-                obj.update(followers = followers[index])
-            elif platform == 'twitter' or platform=='twitter2':
-                obj.update(followers = followers[index],twits=twits[index])
-            elif platform == 'tiktok':
-                obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
-            elif platform == 'weverse':
-                obj.update(weverses= weverses[index])
-        platform_queryset_values = DataModels[platform].objects.values()
-        platform_datas = []
-        for queryset_value in platform_queryset_values:
-            platform_datas.append(queryset_value)
-        return JsonResponse(data={'success': True, 'data': platform_datas})
+        try:
+            start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            for index,artist in enumerate(artists):
+                obj = DataModels[platform].objects.filter(artist=artist,recorded_date__year=start_date_dateobject.year,
+                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
 
-
-       
+                if obj:
+                    if platform == 'youtube':
+                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index])
+                    elif platform == 'vlive':
+                        obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+                    elif platform == 'instagram' or platform=='facebook':
+                        obj.update(followers = followers[index])
+                    elif platform == 'twitter' or platform=='twitter2':
+                        obj.update(followers = followers[index],twits=twits[index])
+                    elif platform == 'tiktok':
+                        obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+                    elif platform == 'weverse':
+                        obj.update(weverses= weverses[index])
+                else:
+                    pass
+            filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            if filter_objects.exists():
+                filter_objects_values=filter_objects.values()
+                filter_datas=[]
+                   
+                for filter_value in filter_objects_values:
+                    filter_datas.append(filter_value)
+            return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+        except:
+            return JsonResponse(status=400, data={'success': False})
