@@ -39,9 +39,9 @@ DataModels = {
 flower_domain = ""
 production_env = get_env("YG_ENV", "dev") == "production"
 if production_env:
-    flower_domain = "0.0.0.0:5555/"
+    flower_domain = "172.18.0.1:5555/"
 else:
-    flower_domain = "http://localhost:5555/"
+    flower_domain = "0.0.0.0:5555/"
 
 
 @csrf_exempt
