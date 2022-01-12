@@ -40,8 +40,8 @@ spiders = {
 
 def crawling_start(platform, task_id):
     process = CrawlerProcess(settings)
-    log_path = "crawler/logs/tasks/{}.log".format(task_id)
-    settings.set('LOG_FILE', log_path)
+    # log_path = "crawler/logs/tasks/{}.log".format(task_id)
+    # settings.set('LOG_FILE', log_path)
     process.crawl(spiders[platform])
     process.start()
 
