@@ -93,7 +93,13 @@ const createRow = (datas, platform_list,db_artist_list, crawling_artist_list) =>
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
-                let dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]['target_name']])+'" style="width:100%"></input></td>')
+                let dataCol;
+                if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]['target_name']]){
+                    dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]['target_name']])+'" style="width:100%"></input></td>')
+                }
+                else{
+                    dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                }
                 tableRow.append(dataCol)
             }
         } else{
