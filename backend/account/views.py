@@ -5,7 +5,6 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from drf_yasg.utils import swagger_auto_schema
 
 from rest_framework.views import APIView
 from utils.api import APIView, validate_serializer
