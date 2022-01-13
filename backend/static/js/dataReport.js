@@ -35,9 +35,9 @@ $(document).on('click','input[name=refresh]',function(){
  })
  
 
-$(document).on('click','input[name=day]',function(){
+ $(document).on('click','input[name=day]',function(){
     const today = new Date();
-    const next_day = addDays(today,-1);
+    const next_day = addDays(today,0);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
@@ -50,7 +50,7 @@ $(document).on('click','input[name=day]',function(){
  
  $(document).on('click','input[name=week]',function(){
      const today = new Date();
-     const next_day = addDays(today,-7);
+     const next_day = addDays(today,-6);
      var year = next_day.getFullYear();
      var month = ("0" + (1 + next_day.getMonth())).slice(-2);
      var day = ("0" + next_day.getDate()).slice(-2);
@@ -277,6 +277,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -360,8 +361,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-
-                console.log(res.success);
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -423,6 +423,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -494,6 +495,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -565,6 +567,7 @@ $('#update-data').click(function(){
             },
            url: '/dataprocess/api/daily/',
             success: res => {
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -633,7 +636,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                console.log('success');
+                alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];

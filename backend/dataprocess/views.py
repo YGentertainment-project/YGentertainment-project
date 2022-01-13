@@ -1,21 +1,17 @@
 from django.contrib import auth
 from django.contrib.auth.models import Permission
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import render
 from account.models import User
-from dataprocess.functions import export_datareport, import_datareport, import_total
 from crawler.models import *
 from config.models import PlatformTargetItem
-from config.serializers import PlatformTargetItemSerializer
-from config.serializers import CollectTargetItemSerializer
+from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
+from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 from django.shortcuts import render
 from django.http import HttpResponse
 
 import datetime
-from tablib import Dataset
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
@@ -598,8 +594,13 @@ class DataReportAPI(APIView):
                         filter_artist_end = filter_artist_end[0]
                         for field_name in model_fields_name:
                             if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
-                                data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
-                            else:
+                                if filter_artist_end[field_name] is not None and filter_objects_start_values[i][field_name] is not None:
+                                    data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
+                                elif filter_artist_end[field_name] is not None: #앞의 날짜를 0으로 처리한 형태
+                                    data_json[field_name] = filter_artist_end[field_name]
+                                else:
+                                    data_json[field_name] = 0
+                            else: #숫자 아닌 다른 정보들
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
                     return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
@@ -618,9 +619,16 @@ class DataReportAPI(APIView):
                         if filter_objects_end_values[i]["artist"] in artist_datas:
                             continue
                         artist_datas.add(filter_objects_end_values[i]["artist"])
-                        filter_datas_total.append(filter_objects_end_values[i])
+                        data_json = {}
+                        for field_name in model_fields_name:
+                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+                                # None때문에 오류나면 비워놓고 보내기
+                                if filter_objects_end_values[i][field_name] is not None:
+                                    data_json[field_name] = filter_objects_end_values[i][field_name]
+                            else:
+                                data_json[field_name] = filter_objects_end_values[i][field_name]
+                        filter_datas_total.append(data_json)
                     return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
-                    # datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
                 # 끝날짜의 데이터가 아예 존재하지 않을 때
                 else:
                     datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
