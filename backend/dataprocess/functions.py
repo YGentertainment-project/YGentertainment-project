@@ -1,4 +1,5 @@
 import datetime
+from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
@@ -149,7 +150,7 @@ def export_datareport():
             platform_name = platform["platform"]
             platform_data_list = get_platform_data(artist=artist_name, platform=platform_name)
             for i, platform_data in enumerate(platform_data_list):
-                if platform_data == "NULL":
+                if platform_data is None or platform_data == "NULL":
                     # null이면 shade 처리
                     sheet.cell(row=row, column=col+i).fill = PatternFill(start_color='C4C4C4', end_color='C4C4C4', fill_type="solid")
                 else:
@@ -221,8 +222,13 @@ def import_datareport(worksheet):
                     collect_value = platform_data_list[platform_index]["item_list"][current_index]
                     value = str(cell.value)
                     if value != 'None':
+                        # -가 있으면 날짜
                         if "-" in value:
                             value = str(cell.value)
+                        # ,가 있으면 날짜
+                        elif "," in value:
+                            dateobject = parse(str(cell.value))
+                            value =  '%s-%s-%s'%(dateobject.year, dateobject.month, dateobject.day)
                         else:
                             value = int(cell.value)
                         data_json[collect_value] = value

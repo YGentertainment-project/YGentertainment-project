@@ -1,21 +1,17 @@
 from django.contrib import auth
 from django.contrib.auth.models import Permission
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import render
 from account.models import User
-from dataprocess.functions import export_datareport, import_datareport, import_total
 from crawler.models import *
 from config.models import PlatformTargetItem
-from config.serializers import PlatformTargetItemSerializer
-from config.serializers import CollectTargetItemSerializer
+from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
+from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 from django.shortcuts import render
 from django.http import HttpResponse
 
 import datetime
-from tablib import Dataset
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
@@ -423,7 +419,6 @@ class PlatformOfArtistAPI(APIView):
         try:
             collecttarget_list = JSONParser().parse(request)
             for collecttarget_object in collecttarget_list:
-                print(collecttarget_object['target_url'])
                 CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
                 if collecttarget_object['target_url_2']:
                      CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
@@ -558,7 +553,6 @@ class DataReportAPI(APIView):
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
                     filter_datas=[]
-                    artist_datas = []
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
                     return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
@@ -574,6 +568,7 @@ class DataReportAPI(APIView):
                 filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
                     recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
                 filter_datas_total=[]
+                # 둘 다 존재할 때
                 if filter_objects_start.exists() and filter_objects_end.exists():
                     filter_objects_start_values=filter_objects_start.values()
                     model_fields = DataModels[platform]._meta.fields
@@ -599,16 +594,44 @@ class DataReportAPI(APIView):
                         filter_artist_end = filter_artist_end[0]
                         for field_name in model_fields_name:
                             if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
-                                data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
-                            else:
+                                if filter_artist_end[field_name] is not None and filter_objects_start_values[i][field_name] is not None:
+                                    data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
+                                elif filter_artist_end[field_name] is not None: #앞의 날짜를 0으로 처리한 형태
+                                    data_json[field_name] = filter_artist_end[field_name]
+                                else:
+                                    data_json[field_name] = 0
+                            else: #숫자 아닌 다른 정보들
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
                     return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                elif not filter_objects_start.exists() and filter_objects_end.exists():
+                    # 시작날짜의 데이터가 존재하지 않고 끝날짜의 데이터만 존재할 때
+                    # 0으로 해서 계산
+                    filter_objects_end_values=filter_objects_end.values()
+                    model_fields = DataModels[platform]._meta.fields
+                    model_fields_name = []
+                    artist_datas = set()
+                    for model_field in model_fields:
+                        model_fields_name.append(model_field.name)
+                    values_len = len(filter_objects_end_values)
+                    for i in range(values_len):
+                        # 이미 넣은 데이터면 pass
+                        if filter_objects_end_values[i]["artist"] in artist_datas:
+                            continue
+                        artist_datas.add(filter_objects_end_values[i]["artist"])
+                        data_json = {}
+                        for field_name in model_fields_name:
+                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+                                # None때문에 오류나면 비워놓고 보내기
+                                if filter_objects_end_values[i][field_name] is not None:
+                                    data_json[field_name] = filter_objects_end_values[i][field_name]
+                            else:
+                                data_json[field_name] = filter_objects_end_values[i][field_name]
+                        filter_datas_total.append(data_json)
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                # 끝날짜의 데이터가 아예 존재하지 않을 때
                 else:
-                    if not filter_objects_start.exists():
-                        datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
-                    else:
-                        datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
+                    datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
                     return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
             else:
                 if DataModels[platform].objects.exists():
@@ -638,23 +661,58 @@ class DataReportAPI(APIView):
         followers = request.POST.getlist('followers[]')
         twits = request.POST.getlist('twits[]')
         weverses = request.POST.getlist('weverses[]')
+        user_creation = request.POST.getlist('user_creation[]')
+        start_date = request.POST.get('start_date',None)
 
-        for index, artist in enumerate(artists):
-            obj = DataModels[platform].objects.filter(artist=artist)
-            if platform == 'youtube':
-                obj.update(uploads=uploads[index], subscribers=subscribers[index], views=views[index])
-            elif platform == 'vlive':
-                obj.update(members=members[index], videos=videos[index], likes=likes[index], plays=plays[index])
-            elif platform == 'instagram' or platform == 'facebook':
-                obj.update(followers=followers[index])
-            elif platform == 'twitter' or platform == 'twitter2':
-                obj.update(followers=followers[index], twits=twits[index])
-            elif platform == 'tiktok':
-                obj.update(followers=followers[index], uploads=uploads[index], likes=likes[index])
-            elif platform == 'weverse':
-                obj.update(weverses=weverses[index])
-        platform_queryset_values = DataModels[platform].objects.values()
-        platform_datas = []
-        for queryset_value in platform_queryset_values:
-            platform_datas.append(queryset_value)
-        return JsonResponse(data={'success': True, 'data': platform_datas})
+        #artist name
+        artist_objects = Artist.objects.all()
+        artist_objects_values = artist_objects.values()
+        artist_list = []
+        for a in artist_objects_values:
+            artist_list.append(a['name'])
+
+        #platform target names
+        platform_id = Platform.objects.get(name = platform).id
+        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
+        platform_objects_values = platform_objects.values()
+        platform_list = []
+        for p in platform_objects_values:
+            platform_list.append(p)
+
+
+    
+
+        try:
+            start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            for index,artist in enumerate(artists):
+                obj = DataModels[platform].objects.filter(artist=artist,recorded_date__year=start_date_dateobject.year,
+                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+
+                if obj:
+                    if platform == 'youtube':
+                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
+                    elif platform == 'vlive':
+                        obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+                    elif platform == 'instagram' or platform=='facebook':
+                        obj.update(followers = followers[index])
+                    elif platform == 'twitter' or platform=='twitter2':
+                        obj.update(followers = followers[index],twits=twits[index],user_created=user_creation[index])
+                    elif platform == 'tiktok':
+                        obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+                    elif platform == 'weverse':
+                        obj.update(weverses= weverses[index])
+                else:
+                    pass
+            filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
+                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            if filter_objects.exists():
+                filter_objects_values=filter_objects.values()
+                filter_datas=[]
+                   
+                for filter_value in filter_objects_values:
+                    filter_datas.append(filter_value)
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+            else:
+                return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
+        except:
+            return JsonResponse(status=400, data={'success': False})

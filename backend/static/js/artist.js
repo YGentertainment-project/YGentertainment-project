@@ -44,7 +44,7 @@ $('.add-submit').click(function(e){
         alert("구분을 S/A/B형태로 입력해주세요.");
         e.preventDefault();
         return;
-    }else if(trs_value[2].value=="" || trs_value[2].value!="M" || trs_value[2].value!="F"){
+    }else if(trs_value[2].value=="" ||( trs_value[2].value!="M" && trs_value[2].value!="F")){
         alert("성별을 M/F형태로 입력해주세요.");
         e.preventDefault();
         return;
@@ -162,7 +162,7 @@ $('input[name=artist-name]').click(function(){
                             dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
                         </td>
                         `;
                     }
@@ -245,7 +245,7 @@ $(document).on('click','.platform-names',function(){
                     else{
                         dataHTML.push( `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
                         </td>
                         `);
                     }

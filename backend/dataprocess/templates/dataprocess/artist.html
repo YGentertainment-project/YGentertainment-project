@@ -38,12 +38,12 @@
                     <tr>
                         <td class="hidden"><input type="text" style="width:100%" value={{artist.id}}></input></td>
                         <td><input type="button" name="artist-name" style="width:100%" value="{{artist.name}}"></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.level}}></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.gender}}></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.member_num}}></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.member_nationality}}></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.agency}}></input></td>
-                        <td><input type="text" style="width:100%" value={{artist.debut_date|date:"Y-m-d"}}></input></td>
+                        <td><input type="text" style="width:100%" title={{artist.level}} value={{artist.level}}></input></td>
+                        <td><input type="text" style="width:100%" title={{artist.gender}} value={{artist.gender}}></input></td>
+                        <td><input type="text" style="width:100%" title={{artist.member_num}} value={{artist.member_num}}></input></td>
+                        <td><input type="text" style="width:100%" title="{{artist.member_nationality}}" value={{artist.member_nationality}}></input></td>
+                        <td><input type="text" style="width:100%" title="{{artist.agency}}" value={{artist.agency}}></input></td>
+                        <td><input type="text" style="width:100%" title="{{artist.debut_date|date:"Y-m-d"}}" value={{artist.debut_date|date:"Y-m-d"}}></input></td>
                         <!-- <td><input type="text" style="width:100%" value={{artist.active}}></input></td> -->
                         {% if artist.active %}
                             <td><input checked type="checkbox"></input></td>

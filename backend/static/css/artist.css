@@ -50,6 +50,7 @@
 #artist-header{
     color: white;
     background-color: black !important;
+    font-size: small;
 }
 
 #artist-header td{
