@@ -557,7 +557,6 @@ class DataReportAPI(APIView):
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
                     filter_datas=[]
-                    artist_datas = []
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
                     return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
@@ -639,6 +638,9 @@ class DataReportAPI(APIView):
             return JsonResponse(status=400, data={'success': False})
     
     def post(self, request):
+        """
+        Data-Report update api
+        """
         platform = request.POST.get('platform_name', None)
         artists = request.POST.getlist('artists[]')
         uploads = request.POST.getlist('uploads[]')
@@ -651,9 +653,10 @@ class DataReportAPI(APIView):
         followers = request.POST.getlist('followers[]')
         twits = request.POST.getlist('twits[]')
         weverses = request.POST.getlist('weverses[]')
+        user_creation = request.POST.getlist('user_creation[]')
         start_date = request.POST.get('start_date',None)
 
-         #artist name
+        #artist name
         artist_objects = Artist.objects.all()
         artist_objects_values = artist_objects.values()
         artist_list = []
@@ -679,13 +682,13 @@ class DataReportAPI(APIView):
 
                 if obj:
                     if platform == 'youtube':
-                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index])
+                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
                     elif platform == 'vlive':
                         obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
                     elif platform == 'instagram' or platform=='facebook':
                         obj.update(followers = followers[index])
                     elif platform == 'twitter' or platform=='twitter2':
-                        obj.update(followers = followers[index],twits=twits[index])
+                        obj.update(followers = followers[index],twits=twits[index],user_created=user_creation[index])
                     elif platform == 'tiktok':
                         obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
                     elif platform == 'weverse':
@@ -700,6 +703,8 @@ class DataReportAPI(APIView):
                    
                 for filter_value in filter_objects_values:
                     filter_datas.append(filter_value)
-            return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+            else:
+                return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
             return JsonResponse(status=400, data={'success': False})
