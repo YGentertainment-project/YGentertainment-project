@@ -16,15 +16,37 @@ function getCookie(name) {
 }
 //sidebar toggle 
 $(".data-report").click(function(){
-    $(".in-data-report").slideToggle();
+   if(!$('.data-report-in').hasClass("show")){
+    $('.data-report-in').removeClass("hide")
+    $('.data-report-in').addClass("show")
+   } else{
+    $('.data-report-in').removeClass("show")
+    $('.data-report-in').addClass("hide")
+   }
 });
+
+
 
 $(".platforms-m").click(function(){
-    $(".in-platforms").slideToggle();
+    if(!$('.platform-in').hasClass("show")){
+        $('.platform-in').removeClass("hide")
+        $('.platform-in').addClass("show")
+    } else{
+        $('.platform-in').removeClass("show")
+        $('.platform-in').addClass("hide")
+    }
 });
 
+
+
 $(".artists-m").click(function(){
-    $(".in-artists").slideToggle();
+    if(!$('.artist-in').hasClass("show")){
+        $('.artist-in').removeClass("hide")
+        $('.artist-in').addClass("show")
+    } else{
+        $('.artist-in').removeClass("show")
+        $('.artist-in').addClass("hide")
+    }
 });
 
 

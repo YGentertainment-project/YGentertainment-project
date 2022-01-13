@@ -558,7 +558,7 @@ class DataReportAPI(APIView):
                     return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
                 else:
                     datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
-                    return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
+                    return JsonResponse(status=200, data={'success': False, 'data':'there is no data for '+datename,'artists':artist_list,'platform':platform_list})
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
@@ -662,6 +662,9 @@ class DataReportAPI(APIView):
         twits = request.POST.getlist('twits[]')
         weverses = request.POST.getlist('weverses[]')
         user_creation = request.POST.getlist('user_creation[]')
+        listens = request.POST.getlist('listens[]')
+        streams = request.POST.getlist('streams[]')
+        fans =  request.POST.getlist('fans[]')
         start_date = request.POST.get('start_date',None)
 
         #artist name
@@ -701,6 +704,10 @@ class DataReportAPI(APIView):
                         obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
                     elif platform == 'weverse':
                         obj.update(weverses= weverses[index])
+                    elif platform == 'spotify':
+                        obj.update(monthly_listens = listens[index],followers=followers[index])
+                    elif platform == 'melon':
+                        obj.update(listeners = listens[index],streams=streams[index])
                 else:
                     pass
             filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,

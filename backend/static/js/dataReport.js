@@ -210,7 +210,7 @@ $(document).on('click','.platform-name',function(){
                 }
             }
 
-            //console.log(platform_header);
+            console.log(platform_header);
 
             $('tbody').eq(0).empty();
             $('#update-data').show();
@@ -325,6 +325,158 @@ $('#update-data').click(function(){
             }
           });
     }
+
+    //spotify 
+     if(platform_name === 'spotify'){
+        var artists = [];
+        var listens = [];
+        var followers = [];
+        for(var i = 3; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=2){
+            listens.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=2){
+            followers.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'listens[]' : listens, 
+            'followers[]': followers, 
+            'start_date': start_date
+            },
+            url: '/dataprocess/api/daily/',
+            success: res => {
+                alert("Successfully save!");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_list = res.platform //수집 항목
+
+
+                console.log(data_list);
+
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+             //헤더 순서를 db 컬럼 순하고 맞추기
+             let platform_target_name = [];
+             let platform_header = [];
+             for(let i = 0; i<platform_list.length; i++){
+                 platform_target_name.push(platform_list[i]['target_name'])
+             }
+ 
+ 
+             for (key in data_list[0]){
+                 if(platform_target_name.includes(key)){
+                     platform_header.push(key)
+                 }
+             }
+
+            $('tbody').eq(0).empty();
+            $('#update-data').show();
+            $('#platform-title').text(platform_name+' 리포트');
+            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            },
+            error : function (e){
+                console.log(e);
+                alert(e.responseText);
+            }
+          });
+    }
+
+
+     //melon
+     if(platform_name === 'melon'){
+        var artists = [];
+        var listens = [];
+        var streams = [];
+        for(var i = 3; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=2){
+            listens.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=2){
+            streams.push(uncomma(trs_value[i].value))
+        }
+        
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'listens[]' : listens, 
+            'streams[]': streams, 
+            'start_date': start_date
+            },
+            url: '/dataprocess/api/daily/',
+            success: res => {
+                alert("Successfully save!");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_list = res.platform //수집 항목
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+             //헤더 순서를 db 컬럼 순하고 맞추기
+             let platform_target_name = [];
+             let platform_header = [];
+             for(let i = 0; i<platform_list.length; i++){
+                 platform_target_name.push(platform_list[i]['target_name'])
+             }
+ 
+ 
+             for (key in data_list[0]){
+                 if(platform_target_name.includes(key)){
+                     platform_header.push(key)
+                 }
+             }
+
+            $('tbody').eq(0).empty();
+            $('#update-data').show();
+            $('#platform-title').text(platform_name+' 리포트');
+            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            },
+            error : function (e){
+                console.log(e);
+                alert(e.responseText);
+            }
+          });
+    }
+
+
+
+
+
+
+
 
     //vlive
     if(platform_name === 'vlive'){

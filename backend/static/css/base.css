@@ -167,8 +167,12 @@ input{
    text-align: center;
 }
 
-.in-data-report, .in-platforms, .in-artists{
+.hide{
     display:none;
+}
+
+.show{
+    display: flex;
 }
 
 .sidebar-description{
