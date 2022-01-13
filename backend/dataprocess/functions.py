@@ -54,13 +54,13 @@ def get_platform_data(artist, platform):
         #숫자필드값만 보내주기
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2":
                 filter_datas.append(filter_value[field_name])
         return filter_datas
     else:
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" :
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2":
                 filter_datas.append("NULL")
         return filter_datas
 
@@ -230,6 +230,7 @@ def import_datareport(worksheet):
                             dateobject = parse(str(cell.value))
                             value =  '%s-%s-%s'%(dateobject.year, dateobject.month, dateobject.day)
                         else:
+                            print(cell.value)
                             value = int(cell.value)
                         data_json[collect_value] = value
                     current_index += 1
