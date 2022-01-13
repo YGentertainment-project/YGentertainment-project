@@ -9,6 +9,17 @@ function uncomma(str) {
     return str.replace(/[^\d]+/g, '');
 }
 
+//string check
+function isString(inputText){
+    if(typeof inputText === 'string' || inputText instanceof String){
+        //it is string
+        return true;    
+    }else{
+        //it is not string
+        return false;
+    }
+}
+
 //date setting
 
 function addDays(date, days) { 
@@ -95,7 +106,11 @@ const createRow = (datas, platform_list,db_artist_list, crawling_artist_list) =>
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
                 let dataCol;
                 if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
-                    dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
+                    if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
+                        dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
+                    } else{
+                        dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                    }
                 }
                 else{
                     dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
