@@ -40,5 +40,51 @@ services:
       - MYSQL_DB=ygenter
       - MYSQL_USER=ygenter
       - MYSQL_PASSWORD=ygenter
+    command: >
+      sh -c "python3 manage.py wait_for_db &&
+             python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py makemigrations crawler &&
+             python3 manage.py migrate crawler &&
+             python3 manage.py makemigrations dataprocess &&
+             python3 manage.py migrate dataprocess &&
+             python3 manage.py makemigrations account &&
+             python3 manage.py migrate account &&
+             python3 manage.py makemigrations config &&
+             python3 manage.py migrate config &&
+             python3 manage.py runserver 0.0.0.0:8000"
     ports:
       - "0.0.0.0:8081:8000"
+
+#  command: celery -A crawler worker --beat -c 6 -l info
+  celery_worker:
+    build: .
+    container_name: yg-celery-worker
+    command: celery -A crawler worker -c 6 -l info
+    volumes:
+      - ./data/log:/app/data/log
+    ports: [ ]
+    depends_on:
+      - rabbitmq
+      - yg-mariadb
+
+  celery_beat:
+    build: .
+    container_name: yg-celery-beat
+    command: celery -A crawler beat -l info
+    ports: [ ]
+    depends_on:
+      - rabbitmq
+      - celery_worker
+      - yg-mariadb
+
+  celery_flower:
+    build: .
+    container_name: yg-celery-flower
+    command: celery -A crawler flower --port=5555
+    depends_on:
+      - rabbitmq
+      - celery_worker
+      - yg-mariadb
+    ports:
+      - "5555:5555"

@@ -12,7 +12,8 @@ RUN apt-get update \
     && apt-get install -yqq unzip curl \
     && rm -rf /var/lib/apt/lists/*
 
-# install the latest version google-chrome binary
+
+## install the latest version google-chrome binary
 RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | \
     tee -a /etc/apt/sources.list.d/google.list && \
     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | \
@@ -32,10 +33,14 @@ RUN BROWSER_MAJOR=$(google-chrome --version | sed 's/Google Chrome \([0-9]*\).*/
     if [ $BROWSER_MAJOR != $DRIVER_MAJOR ]; then echo "VERSION MISMATCH"; exit 1; fi
 
 RUN pip install --no-cache-dir -r /app/deploy/requirements.txt
-RUN chmod 755 /app/deploy/entrypoint.sh
+
+ARG DATA=/data
+RUN mkdir -p ${DATA}/log ${DATA}/config ${DATA}/public/avatar ${DATA}/public/website
+RUN if [ ! -f "${DATA}/config/secret.key" ] ; then echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > "${DATA}/config/secret.key" ; fi
 
 # COPY --from=builder /build/dist /app/dist
 # COPY --from=builder /app .
 EXPOSE 8000
-
-ENTRYPOINT /app/deploy/entrypoint.sh
+EXPOSE 5555
+#RUN chmod 755 /app/deploy/entrypoint.sh
+#ENTRYPOINT /app/deploy/entrypoint.sh
