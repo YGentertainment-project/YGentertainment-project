@@ -221,20 +221,20 @@ $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
     var artist_name = document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼","");
-    var artist_id = $('.hidden').find('input').val();
+    // var artist_id = $('.hidden').find('input').val();
     var platform = $(this).text();
-
 
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
-        data : {'platform': platform, 'artist_id': artist_id},
+        data : {'platform': platform, 'artist': artist_name},
         contentType: 'application/json; charset=utf-8',
         success: res => {
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
 
             const data_list = res.data;
+            console.log(data_list);
             $('#artist-body-list').empty();
             data_list.forEach(data=>{//data를 화면에 표시
                 const tableRow = $('<tr></tr>');

@@ -456,15 +456,16 @@ class CollectTargetItemAPI(APIView):
         CollectTargetItem read api
         """
         try:
-            artist_id = request.GET.get('artist_id', None)
+            artist = request.GET.get('artist', None)
             platform = request.GET.get('platform', None)
             # 해당 artist,platform 찾기
-            # artist_object = Artist.objects.filter(id = artist)
-            # artist_object = artist_object.values()[0]
+            artist_object = Artist.objects.filter(name = artist)
+            artist_object = artist_object.values()[0]
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]
             # 해당 artist와 platform을 가지는 collect_target 가져오기
-            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_id, platform_id = platform_object['id'])
+            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id = platform_object['id'])
+            print(collecttarget_objects)
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
                 collecttarget_objects_value = collecttarget_objects.values()[0]
