@@ -235,7 +235,6 @@ $(document).on('click','.platform-names',function(){
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
 
             const data_list = res.data;
-            console.log(data_list);
             $('#artist-body-list').empty();
             data_list.forEach(data=>{//data를 화면에 표시
                 const tableRow = $('<tr></tr>');
@@ -281,13 +280,9 @@ $(document).on('click','.platform-names',function(){
 
 //update platform collect target
 $(document).on('click','#save-list',function(){
-    var platform_name = document.getElementById("platform-subtitle").innerHTML.split(' ')[0];
-    console.log(platform_name);
-    // var platform = $(this).text();
     var bodydatas = [];
 
     var item_tr = $('#artist-body-list').find('tr');
-
     for(var r=0;r<item_tr.length;r++){
         var cells = item_tr[r].getElementsByTagName("td");
         var cells2 = item_tr[r].getElementsByTagName("textarea");
@@ -298,7 +293,6 @@ $(document).on('click','#save-list',function(){
             "xpath": cells2[0].value,
         });
     }
-    console.log(bodydatas);
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
         type: 'PUT',
@@ -306,7 +300,7 @@ $(document).on('click','#save-list',function(){
         data :JSON.stringify(bodydatas),
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            alert('successfully saved!');
+            alert('Successfully saved!');
 
         },
         error: e => {
