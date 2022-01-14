@@ -744,30 +744,7 @@ class DataReportAPI(APIView):
                     elif platform == 'melon':
                         obj.update(listeners = listens[index],streams=streams[index])
                 else:
-                    second_obj = DataModels[platform].object.filter(artist=artist)
-                    dt_now = datetime.datetime.now()
-                    time = dt_now.time()
-                    date = start_date_dateobject.year + '-' + start_date_dateobject.month + '-' + start_date_dateobject.day + '-' + ' ' + time
-                    
-                    if second_obj:
-                        if platform == 'youtube':
-                            DataModels[platform].objects.create(artist=artist,uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index],recorded_date=date)
-                        elif platform == 'vlive':
-                            DataModels[platform].objects.create(artist=artist,members=members[index],videos=videos[index],likes=likes[index],plays=plays[index],recorded_date=date)
-                        elif platform == 'instagram' or platform=='facebook':
-                            DataModels[platform].objects.create(artist=artist,followers = followers[index],recorded_date=date)
-                        elif platform == 'twitter' or platform=='twitter2':
-                            DataModels[platform].objects.create(artist=artist,followers = followers[index],twits=twits[index],user_created=user_creation[index],recorded_date=date)
-                        elif platform == 'tiktok':
-                            DataModels[platform].objects.create(artist=artist,followers = followers[index],uploads=uploads[index],likes=likes[index],recorded_date=date)
-                        elif platform == 'weverse':
-                            DataModels[platform].objects.create(artist=artist,weverses= weverses[index],recorded_date=date)
-                        elif platform == 'spotify':
-                            DataModels[platform].objects.create(artist=artist,monthly_listens = listens[index],followers=followers[index],recorded_date=date)
-                        elif platform == 'melon':
-                            DataModels[platform].objects.create(artist=artist,listeners = listens[index],streams=streams[index],recorded_date=date)
-                    else:
-                        pass
+                    pass
             filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
             if filter_objects.exists():
