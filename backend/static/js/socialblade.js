@@ -221,14 +221,16 @@ $(document).ready(function () {
     // 스케줄 생성 AJAX 요청
     $('#create-schedule').click(() => {
         const scheduleSpider = $('#spiderSelect').val();
+        const scheduleHours = $('#hoursControlInput').val() === '' ? '' : Number($('#hoursControlInput').val());
         const scheduleMinutes = Number($('#minutesControlInput').val());
+        $('#hoursControlInput').val('');
         $('#minutesControlInput').val('');
-        if (scheduleMinutes >= 0 && scheduleMinutes <= 60) {
+        if (scheduleMinutes >= 0 && scheduleMinutes <= 59 && scheduleHours >= 0 && scheduleHours <= 23 && !isNaN(scheduleHours)) {
             // Schedule 생성 API request 보내기
             $.ajax({
                 url: api_domain + 'schedules/',
                 type: 'POST',
-                data: JSON.stringify({ "platform": scheduleSpider, "minutes": scheduleMinutes }),
+                data: JSON.stringify({ "platform": scheduleSpider, "hours": scheduleHours, "minutes": scheduleMinutes }),
                 datatype: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: res => {
@@ -240,7 +242,7 @@ $(document).ready(function () {
             })
         }
         else {
-            alert('0부터 60까지만 입력하세요');
+            alert('스케줄 시간 입력이 잘못되었습니다.');
         }
     })
 
