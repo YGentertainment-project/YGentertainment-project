@@ -92,8 +92,9 @@ def get_schedules():
         if('crawling' in task['name']):
             crontab_id = task['crontab_id']
             crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+            hour = crontab_info[0]['hour']
             minute = crontab_info[0]['minute']
-            schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
+            schedule_dict = dict(id=task['id'], name=task['name'], hour=hour, minute=minute, last_run=task['last_run_at'],
                                  enabled=task['enabled'])
             schedule_list.append(schedule_dict)
     return schedule_list
