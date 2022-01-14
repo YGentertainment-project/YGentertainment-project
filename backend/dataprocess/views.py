@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import render
 from account.models import User
 from crawler.models import *
-from config.models import PlatformTargetItem
+from config.models import PlatformTargetItem, CollectTargetItem
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
@@ -208,11 +208,20 @@ def platform_info(request):
             
             if platform_objects.exists():
                 platform_objects_values = platform_objects.values()
-                platform_collect_items = PlatformTargetItem.objects.filter(platform_id = platform_objects_values['id'])
-                platform_datas = []
-                for platform_item in platform_collect_items:
-                    platform_datas.append(platform_item)
-                return JsonResponse(data={'success': True, 'data': platform_datas})
+                platform_id = platform_objects_values['id']
+                collecttargets = CollectTarget.objects.filter(platform = platform_id)
+                collecttargets = collecttargets.values()
+                platform_set = set()
+                platform_list = []
+                for collecttarget in collecttargets:
+                    platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+                    platform_objects_values = platform_objects.values()
+                    for p in platform_objects_values:
+                        if p["target_name"] in platform_set:
+                            continue
+                        platform_set.add(p["target_name"])
+                        platform_list.append(p)
+                return JsonResponse(data={'success': True, 'data': platform_list})
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
@@ -271,15 +280,28 @@ class PlatformAPI(APIView):
                         artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
+                    #3. 만든 collect target에 대해 수집항목들 생성
+                    collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
+                            artist = artist_objects_value['id'])
+                    collecttarget_object = collecttarget_object.values()[0]
+                    print(collecttarget_object)
+                    for collect_item in platform_object['collect_items']:
+                        print(collect_item)
+                        collect_item = CollectTargetItem(
+                            collect_target_id = collecttarget_object['id'],
+                            target_name = collect_item["target_name"],
+                            xpath = collect_item["xpath"]
+                        )
+                        collect_item.save()
                 
                 #3. 플랫폼에 대한 platform target 생성
-                for collect_item in platform_object['collect_items']:
-                    collect_item = PlatformTargetItem(
-                        platform_id = platform_serializer.data['id'],
-                        target_name = collect_item["target_name"],
-                        xpath = collect_item["xpath"]
-                    )
-                    collect_item.save()
+                # for collect_item in platform_object['collect_items']:
+                #     collect_item = PlatformTargetItem(
+                #         platform_id = platform_serializer.data['id'],
+                #         target_name = collect_item["target_name"],
+                #         xpath = collect_item["xpath"]
+                #     )
+                #     collect_item.save()
 
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
@@ -540,12 +562,18 @@ class DataReportAPI(APIView):
 
         #platform target names
         platform_id = Platform.objects.get(name = platform).id
-        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
-        platform_objects_values = platform_objects.values()
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
+        collecttargets = collecttargets.values()
+        platform_set = set()
         platform_list = []
-        for p in platform_objects_values:
-            platform_list.append(p)
-
+        for collecttarget in collecttargets:
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+            platform_objects_values = platform_objects.values()
+            for p in platform_objects_values:
+                if p["target_name"] in platform_set:
+                    continue
+                platform_set.add(p["target_name"])
+                platform_list.append(p)
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
@@ -677,11 +705,18 @@ class DataReportAPI(APIView):
 
         #platform target names
         platform_id = Platform.objects.get(name = platform).id
-        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
-        platform_objects_values = platform_objects.values()
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
+        collecttargets = collecttargets.values()
+        platform_set = set()
         platform_list = []
-        for p in platform_objects_values:
-            platform_list.append(p)
+        for collecttarget in collecttargets:
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+            platform_objects_values = platform_objects.values()
+            for p in platform_objects_values:
+                if p["target_name"] in platform_set:
+                    continue
+                platform_set.add(p["target_name"])
+                platform_list.append(p)
 
 
     
