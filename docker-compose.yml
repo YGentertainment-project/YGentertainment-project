@@ -58,7 +58,7 @@ services:
 
 #  command: celery -A crawler worker --beat -c 6 -l info
   celery_worker:
-    build: .
+    image: data-analysis
     container_name: yg-celery-worker
     command: celery -A crawler worker -c 6 -l info
     volumes:
@@ -67,9 +67,10 @@ services:
     depends_on:
       - rabbitmq
       - yg-mariadb
+      - yg-data-analysis
 
   celery_beat:
-    build: .
+    image: data-analysis
     container_name: yg-celery-beat
     command: celery -A crawler beat -l info
     ports: [ ]
@@ -77,14 +78,16 @@ services:
       - rabbitmq
       - celery_worker
       - yg-mariadb
+      - yg-data-analysis
 
   celery_flower:
-    build: .
+    image: data-analysis
     container_name: yg-celery-flower
     command: celery -A crawler flower --port=5555
     depends_on:
       - rabbitmq
       - celery_worker
       - yg-mariadb
+      - yg-data-analysis
     ports:
       - "5555:5555"
