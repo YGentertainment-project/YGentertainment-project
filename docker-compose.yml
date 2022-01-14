@@ -60,7 +60,7 @@ services:
   celery_worker:
     image: data-analysis
     container_name: yg-celery-worker
-    command: celery -A crawler worker -c 6 -l info
+    command: celery -A crawler worker -c 8 -l info
     volumes:
       - ./data/log:/app/data/log
     ports: [ ]
