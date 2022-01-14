@@ -14,6 +14,7 @@
         grip.style.bottom = 0;
         grip.style.width = '5px';
         grip.style.cursor = 'col-resize';
+        grip.style.position = 'absolute';
         grip.addEventListener('mousedown', function (e) {
             thElm = th;
             startOffset = th.offsetWidth - e.pageX;
