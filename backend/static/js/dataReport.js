@@ -94,7 +94,58 @@ const createTableHeader = (platform_header) => {
 }
 
 
-const createRow = (datas, platform_list,db_artist_list, crawling_artist_list) => {
+const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_list) => {
+    for(let i = 0; i< db_artist_list.length; i++){
+        const tableRow = $('<tr></tr>')
+        if(crawling_artist_list.includes(db_artist_list[i])){ //db 아티스트가 크롤링 된 아티스트 리스트 안에 있을 때
+            let dataCol = $('<th></th>', {
+                text:db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                let dataCol;
+                if(type === '누적'){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                        if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
+                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
+                        } else{
+                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                        }
+                    }
+                    else{
+                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                    }
+                } else{ //기간별일 때는 수정 불가능
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                        if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
+                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%" disabled></input></td>')
+                        } else{
+                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%" disabled></input></td>')
+                        }
+                    }
+                    else{
+                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                    }
+                }
+                tableRow.append(dataCol)
+            }
+        } else{
+            let dataCol = $('<th></th>', {
+                text: db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                let dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                tableRow.append(dataCol)
+            }
+        }
+        $('#board').append(tableRow);
+    }
+    
+}
+
+//create Rows for empty case
+const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
     for(let i = 0; i< db_artist_list.length; i++){
         const tableRow = $('<tr></tr>')
         if(crawling_artist_list.includes(db_artist_list[i])){
@@ -105,16 +156,7 @@ const createRow = (datas, platform_list,db_artist_list, crawling_artist_list) =>
             for(let j =0; j<platform_list.length; j++){
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
                 let dataCol;
-                if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
-                    if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                        dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
-                    } else{
-                        dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
-                    }
-                }
-                else{
-                    dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
-                }
+                dataCol = $('<td><input type="text" value="'+'" style="width:100%"></input></td>')
                 tableRow.append(dataCol)
             }
         } else{
@@ -134,9 +176,16 @@ const createRow = (datas, platform_list,db_artist_list, crawling_artist_list) =>
 
 
 //show crawled data
-const showCrawledData = (platform_list,datas,db_artist_list,crawling_artist_list) => {
+const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
     $('#board').append(createTableHeader(platform_list));
-    createRow(datas,platform_list,db_artist_list,crawling_artist_list);
+    createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
+}
+
+
+//show empty table (when data is none)
+const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
+    $('#board').append(createTableHeader(platform_list));
+    createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
 
 //change color of button when clicking platform
@@ -149,12 +198,110 @@ $('option').click(function(){
     }
 });
 
-//when clicking platform name
-$(document).on('click','.platform-name',function(){
-    var platform = $(this).val();
+//누적 일 때 다른 버튼 안보이게
+$(document).on('change','input[type=radio]',function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type === '누적'){
+        $('input[name=end_date]').hide()
+        $('input[name=day]').hide()
+        $('input[name=week]').hide()
+        $('input[name=month]').hide()
+    } else{
+        $('input[name=end_date]').show()
+        $('input[name=day]').show()
+        $('input[name=week]').show()
+        $('input[name=month]').show()
+    }
+})
+
+//when change date(only platform button clicked)
+$(document).on('change','#start_date',function(){
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
+    if(!platform){
+        return false;
+    } else if(type === '기간별' && !end_date){ 
+        return false;
+    }
+
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 날짜를 선택해주세요.");
+        return;
+    }
+
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            alert(e.responseText);
+        },
+    })
+})
+
+$(document).on('change','#end_date',function(){
+    var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    if(!platform){
+        return false;
+    }
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+   
 
     if(type == undefined){
         alert("누적/기간별 중 선택해주세요.");
@@ -186,6 +333,9 @@ $(document).on('click','.platform-name',function(){
             artist_list = res.artists //DB 아티스트 리스트
             platform_list = res.platform //수집 항목
 
+
+            console.log(data_list);
+
             let crawling_artist_list = [] //크롤링 된 아티스트 리스트
             for (let i = 0; i<data_list.length; i++){
                 crawling_artist_list.push(data_list[i]['artist']);
@@ -213,9 +363,13 @@ $(document).on('click','.platform-name',function(){
             console.log(platform_header);
 
             $('tbody').eq(0).empty();
-            $('#update-data').show();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
             $('#platform-title').text(platform+' 리포트');
-            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
         },
         error: e => {
             console.log(e);
@@ -225,20 +379,90 @@ $(document).on('click','.platform-name',function(){
 })
 
 
+
+//when clicking platform name
+$(document).on('click','.platform-name',function(){
+    var platform = $(this).val();
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+
+
+    if(type == undefined){
+        return;
+    }else if(type=="누적" && start_date==""){
+        return;
+    }
+
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            alert(e.responseText);
+            $('#result-table').eq(0).empty();
+        },
+    })
+})
+
+
 //update crawled data
 $('#update-data').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
-    if(type=="기간별"){
-        alert("기간별 데이터는 수정할 수 없습니다.");
-        return;
-    }
     var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
     trs_value = trs_value.slice(3)
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
 
 
     //youtube
@@ -315,9 +539,13 @@ $('#update-data').click(function(){
              }
 
             $('tbody').eq(0).empty();
-            $('#update-data').show();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
             $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (e){
                 console.log(e);
@@ -357,7 +585,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
 
 
                 console.log(data_list);
@@ -374,24 +602,15 @@ $('#update-data').click(function(){
                 db_artist_list.push(artist_list[i]);
             }
 
-             //헤더 순서를 db 컬럼 순하고 맞추기
-             let platform_target_name = [];
-             let platform_header = [];
-             for(let i = 0; i<platform_list.length; i++){
-                 platform_target_name.push(platform_list[i]['target_name'])
-             }
- 
- 
-             for (key in data_list[0]){
-                 if(platform_target_name.includes(key)){
-                     platform_header.push(key)
-                 }
-             }
 
             $('tbody').eq(0).empty();
-            $('#update-data').show();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
             $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (e){
                 console.log(e);
@@ -432,7 +651,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
 
 
             let crawling_artist_list = [] //크롤링 된 아티스트 리스트
@@ -445,24 +664,15 @@ $('#update-data').click(function(){
                 db_artist_list.push(artist_list[i]);
             }
 
-             //헤더 순서를 db 컬럼 순하고 맞추기
-             let platform_target_name = [];
-             let platform_header = [];
-             for(let i = 0; i<platform_list.length; i++){
-                 platform_target_name.push(platform_list[i]['target_name'])
-             }
- 
- 
-             for (key in data_list[0]){
-                 if(platform_target_name.includes(key)){
-                     platform_header.push(key)
-                 }
-             }
 
             $('tbody').eq(0).empty();
-            $('#update-data').show();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
             $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (e){
                 console.log(e);
@@ -470,13 +680,6 @@ $('#update-data').click(function(){
             }
           });
     }
-
-
-
-
-
-
-
 
     //vlive
     if(platform_name === 'vlive'){
@@ -519,7 +722,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header= res.platform //수집 항목
     
                 let crawling_artist_list = [] //크롤링 된 아티스트 리스트
                 for (let i = 0; i<data_list.length; i++){
@@ -530,25 +733,15 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-
-                 //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
     
                 $('tbody').eq(0).empty();
-                $('#update-data').show();
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
                 $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -581,7 +774,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
     
                 let crawling_artist_list = [] //크롤링 된 아티스트 리스트
                 for (let i = 0; i<data_list.length; i++){
@@ -593,24 +786,15 @@ $('#update-data').click(function(){
                     db_artist_list.push(artist_list[i]);
                 }
 
-                 //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
     
                 $('tbody').eq(0).empty();
-                $('#update-data').show();
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
                 $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -653,7 +837,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
     
                 let crawling_artist_list = [] //크롤링 된 아티스트 리스트
                 for (let i = 0; i<data_list.length; i++){
@@ -664,25 +848,15 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-
-                 //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
     
                 $('tbody').eq(0).empty();
-                $('#update-data').show();
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
                 $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -725,7 +899,7 @@ $('#update-data').click(function(){
                 let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
 
                 console.log(res.success);
     
@@ -738,25 +912,15 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-
-                 //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
     
                 $('tbody').eq(0).empty();
-                $('#update-data').show();
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
                 $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -775,10 +939,6 @@ $('#update-data').click(function(){
             weverses.push(uncomma(trs_value[i].value))
         }
 
-        console.log(artists);
-
-        console.log(trs_value);
-
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
@@ -789,12 +949,12 @@ $('#update-data').click(function(){
             url: '/dataprocess/api/daily/',
             success: res => {
                 alert("Successfully save!");
+                console.log(res.success);
                 let data_list = [];
                 let artist_list = [];
-                let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header= res.platform //수집 항목
     
                 let crawling_artist_list = [] //크롤링 된 아티스트 리스트
                 for (let i = 0; i<data_list.length; i++){
@@ -805,27 +965,19 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-
-                 //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
     
                 $('tbody').eq(0).empty();
-                $('#update-data').show();
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
                 $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(platform_header,data_list,db_artist_list,crawling_artist_list)
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
-            error : function (){
+            error : function (e){
+                console.log(e.success);
+                console.log(e.data);
             }
           });
     }

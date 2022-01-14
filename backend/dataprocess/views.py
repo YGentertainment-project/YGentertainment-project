@@ -543,7 +543,23 @@ class DataReportAPI(APIView):
         platform_objects_values = platform_objects.values()
         platform_list = []
         for p in platform_objects_values:
-            platform_list.append(p)
+            platform_list.append(p['target_name'])
+
+        #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
+        platform_header = []
+        objects = DataModels[platform].objects.all()
+        objects_values = objects.values()
+        obj_datas = []
+        for v in objects_values:
+            obj_datas.append(v)
+        key_list = list(obj_datas[0].keys())
+
+        for key in key_list:
+            if key in platform_list:
+                platform_header.append(key)
+            else:
+                continue
+
 
         try:
             if type == "누적":
@@ -555,10 +571,15 @@ class DataReportAPI(APIView):
                     filter_datas=[]
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
-                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
                 else:
-                    datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
-                    return JsonResponse(status=200, data={'success': False, 'data':'there is no data for '+datename,'artists':artist_list,'platform':platform_list})
+                    crawling_artist_list = [] 
+                    objects = DataModels[platform].objects.all()
+                    objects_value = objects.values()
+                    for val in objects_value:
+                        crawling_artist_list.append(val['artist'])
+                    #datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                    return JsonResponse(status=200, data={'success': True, 'data':'no data','artists':artist_list,'platform':platform_header,'crawling_artist_list':crawling_artist_list})
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
@@ -603,7 +624,7 @@ class DataReportAPI(APIView):
                             else: #숫자 아닌 다른 정보들
                                 data_json[field_name] = filter_objects_start_values[i][field_name]
                         filter_datas_total.append(data_json)
-                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_header})
                 elif not filter_objects_start.exists() and filter_objects_end.exists():
                     # 시작날짜의 데이터가 존재하지 않고 끝날짜의 데이터만 존재할 때
                     # 0으로 해서 계산
@@ -628,7 +649,7 @@ class DataReportAPI(APIView):
                             else:
                                 data_json[field_name] = filter_objects_end_values[i][field_name]
                         filter_datas_total.append(data_json)
-                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total,'artists':artist_list,'platform':platform_header})
                 # 끝날짜의 데이터가 아예 존재하지 않을 때
                 else:
                     datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
@@ -639,7 +660,7 @@ class DataReportAPI(APIView):
                     platform_datas = []
                     for queryset_value in platform_queryset_values:
                         platform_datas.append(queryset_value)
-                    return JsonResponse(data={'success': True, 'data': platform_datas,'artists':artist_list,'platform':platform_list})
+                    return JsonResponse(data={'success': True, 'data': platform_datas,'artists':artist_list,'platform':platform_header})
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
@@ -664,7 +685,7 @@ class DataReportAPI(APIView):
         user_creation = request.POST.getlist('user_creation[]')
         listens = request.POST.getlist('listens[]')
         streams = request.POST.getlist('streams[]')
-        fans =  request.POST.getlist('fans[]')
+        #fans =  request.POST.getlist('fans[]')
         start_date = request.POST.get('start_date',None)
 
         #artist name
@@ -680,9 +701,22 @@ class DataReportAPI(APIView):
         platform_objects_values = platform_objects.values()
         platform_list = []
         for p in platform_objects_values:
-            platform_list.append(p)
+            platform_list.append(p['target_name'])
 
+        #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
+        platform_header = []
+        objects = DataModels[platform].objects.all()
+        objects_values = objects.values()
+        obj_datas = []
+        for v in objects_values:
+            obj_datas.append(v)
+        key_list = list(obj_datas[0].keys())
 
+        for key in key_list:
+            if key in platform_list:
+                platform_header.append(key)
+            else:
+                continue
     
 
         try:
@@ -691,7 +725,7 @@ class DataReportAPI(APIView):
                 obj = DataModels[platform].objects.filter(artist=artist,recorded_date__year=start_date_dateobject.year,
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
 
-                if obj:
+                if obj: #처음부터 크롤링 잘 된 경우
                     if platform == 'youtube':
                         obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
                     elif platform == 'vlive':
@@ -709,7 +743,30 @@ class DataReportAPI(APIView):
                     elif platform == 'melon':
                         obj.update(listeners = listens[index],streams=streams[index])
                 else:
-                    pass
+                    second_obj = DataModels[platform].object.filter(artist=artist)
+                    dt_now = datetime.datetime.now()
+                    time = dt_now.time()
+                    date = start_date_dateobject.year + '-' + start_date_dateobject.month + '-' + start_date_dateobject.day + '-' + ' ' + time
+                    
+                    if second_obj:
+                        if platform == 'youtube':
+                            DataModels[platform].objects.create(artist=artist,uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index],recorded_date=date)
+                        elif platform == 'vlive':
+                            DataModels[platform].objects.create(artist=artist,members=members[index],videos=videos[index],likes=likes[index],plays=plays[index],recorded_date=date)
+                        elif platform == 'instagram' or platform=='facebook':
+                            DataModels[platform].objects.create(artist=artist,followers = followers[index],recorded_date=date)
+                        elif platform == 'twitter' or platform=='twitter2':
+                            DataModels[platform].objects.create(artist=artist,followers = followers[index],twits=twits[index],user_created=user_creation[index],recorded_date=date)
+                        elif platform == 'tiktok':
+                            DataModels[platform].objects.create(artist=artist,followers = followers[index],uploads=uploads[index],likes=likes[index],recorded_date=date)
+                        elif platform == 'weverse':
+                            DataModels[platform].objects.create(artist=artist,weverses= weverses[index],recorded_date=date)
+                        elif platform == 'spotify':
+                            DataModels[platform].objects.create(artist=artist,monthly_listens = listens[index],followers=followers[index],recorded_date=date)
+                        elif platform == 'melon':
+                            DataModels[platform].objects.create(artist=artist,listeners = listens[index],streams=streams[index],recorded_date=date)
+                    else:
+                        pass
             filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
             if filter_objects.exists():
@@ -718,7 +775,7 @@ class DataReportAPI(APIView):
                    
                 for filter_value in filter_objects_values:
                     filter_datas.append(filter_value)
-                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_list})
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
             else:
                 return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
