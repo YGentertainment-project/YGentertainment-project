@@ -193,39 +193,3 @@ def taskinfos(request):
                     break
 
             return JsonResponse(data={'taskinfo': task_info})
-
-# @csrf_exempt
-# @require_http_methods(['POST'])  # only post
-# def daily_update(request):
-#     platform = request.POST.get('platform_name', None)
-#     artists = request.POST.getlist('artists[]')
-#     uploads = request.POST.getlist('uploads[]')
-#     subscribers = request.POST.getlist('subscribers[]')
-#     views = request.POST.getlist('views[]')
-#     members = request.POST.getlist('members[]')
-#     videos = request.POST.getlist('videos[]')
-#     likes = request.POST.getlist('likes[]')
-#     plays = request.POST.getlist('plays[]')
-#     followers = request.POST.getlist('followers[]')
-#     twits = request.POST.getlist('twits[]')
-#     weverses = request.POST.getlist('weverses[]')
-
-#     for index, artist in enumerate(artists):
-#         obj = DataModels[platform].objects.filter(artist=artist)
-#         if platform == 'youtube':
-#             obj.update(uploads=uploads[index], subscribers=subscribers[index], views=views[index])
-#         elif platform == 'vlive':
-#             obj.update(members=members[index], videos=videos[index], likes=likes[index], plays=plays[index])
-#         elif platform == 'instagram' or platform == 'facebook':
-#             obj.update(followers=followers[index])
-#         elif platform == 'twitter' or platform == 'twitter2':
-#             obj.update(followers=followers[index], twits=twits[index])
-#         elif platform == 'tiktok':
-#             obj.update(followers=followers[index], uploads=uploads[index], likes=likes[index])
-#         elif platform == 'weverse':
-#             obj.update(weverses=weverses[index])
-#     platform_queryset_values = DataModels[platform].objects.values()
-#     platform_datas = []
-#     for queryset_value in platform_queryset_values:
-#         platform_datas.append(queryset_value)
-#     return JsonResponse(data={'success': True, 'data': platform_datas})

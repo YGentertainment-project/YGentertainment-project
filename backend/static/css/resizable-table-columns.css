@@ -1,0 +1,21 @@
+table.resizeable{
+  width: 100%;
+}
+td.resizeable {
+  border-color: transparent !important;
+}
+th.resizeable {
+  border-color: transparent !important;
+  background-color: transparent !important;
+}
+.resiazable_column{
+  text-align: center;
+  height: 650px;
+  overflow-y: scroll;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+  padding: 20px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+}

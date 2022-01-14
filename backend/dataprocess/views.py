@@ -276,7 +276,8 @@ class PlatformAPI(APIView):
                 for collect_item in platform_object['collect_items']:
                     collect_item = PlatformTargetItem(
                         platform_id = platform_serializer.data['id'],
-                        target_name = collect_item
+                        target_name = collect_item["target_name"],
+                        xpath = collect_item["xpath"]
                     )
                     collect_item.save()
 
