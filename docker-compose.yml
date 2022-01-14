@@ -41,29 +41,53 @@ services:
       - MYSQL_USER=ygenter
       - MYSQL_PASSWORD=ygenter
     command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "python3 manage.py wait_for_db &&
+             python3 manage.py makemigrations &&
+             python3 manage.py migrate &&
+             python3 manage.py makemigrations crawler &&
+             python3 manage.py migrate crawler &&
+             python3 manage.py makemigrations dataprocess &&
+             python3 manage.py migrate dataprocess &&
+             python3 manage.py makemigrations account &&
+             python3 manage.py migrate account &&
+             python3 manage.py makemigrations config &&
+             python3 manage.py migrate config &&
+             python3 manage.py runserver 0.0.0.0:8000"
     ports:
       - "0.0.0.0:8081:8000"
 
+#  command: celery -A crawler worker --beat -c 6 -l info
   celery_worker:
-    build: .
+    image: data-analysis
     container_name: yg-celery-worker
-    command: celery -A crawler worker --beat -c 6 -l info
+    command: celery -A crawler worker -c 8 -l info
+    volumes:
+      - ./data/log:/app/data/log
     ports: [ ]
     depends_on:
       - rabbitmq
       - yg-mariadb
+      - yg-data-analysis
 
-
-  celery_flower:
-    build: .
-    container_name: yg-celery-flower
-    command: celery -A crawler flower
+  celery_beat:
+    image: data-analysis
+    container_name: yg-celery-beat
+    command: celery -A crawler beat -l info
+    ports: [ ]
     depends_on:
       - rabbitmq
       - celery_worker
       - yg-mariadb
+      - yg-data-analysis
+
+  celery_flower:
+    image: data-analysis
+    container_name: yg-celery-flower
+    command: celery -A crawler flower --port=5555
+    depends_on:
+      - rabbitmq
+      - celery_worker
+      - yg-mariadb
+      - yg-data-analysis
     ports:
-      - "0.0.0.0:5555:5555"
+      - "5555:5555"

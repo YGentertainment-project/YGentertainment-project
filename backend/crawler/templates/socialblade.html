@@ -75,7 +75,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Schedule 생성하기(시간별 크롤링)</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Schedule 생성하기</h5>
             <button id="close-schedulemodal" type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -95,6 +95,10 @@
                         <option value="melon">Melon</option>
                         <option value="spotify">Spotify</option>
                 </select>
+              </div>
+                <div class="form-group">
+                  <label for="hoursControlInput">몇 시에 진행?</label>
+                  <input type="number" class="form-control" id="hoursControlInput" placeholder="0 ~ 23; 빈 칸이면 시간별로 진행">
               </div>
               <div class="form-group">
                   <label for="minutesControlInput">시간별로 몇 분에 진행?</label>
