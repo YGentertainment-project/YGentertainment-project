@@ -141,6 +141,7 @@ LOG_PATH = os.path.join(DATA_DIR, "log")
 
 LOGGING_HANDLERS = ['file']
 
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
