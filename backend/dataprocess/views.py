@@ -234,7 +234,6 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from config.models import CollectTargetItem
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 
@@ -457,15 +456,15 @@ class CollectTargetItemAPI(APIView):
         CollectTargetItem read api
         """
         try:
-            artist = request.GET.get('artist', None)
+            artist_id = request.GET.get('artist_id', None)
             platform = request.GET.get('platform', None)
             # 해당 artist,platform 찾기
-            artist_object = Artist.objects.filter(id = artist)
-            artist_object = artist_object.values()[0]
+            # artist_object = Artist.objects.filter(id = artist)
+            # artist_object = artist_object.values()[0]
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]
             # 해당 artist와 platform을 가지는 collect_target 가져오기
-            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id = platform_object['id'])
+            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_id, platform_id = platform_object['id'])
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
                 collecttarget_objects_value = collecttarget_objects.values()[0]
@@ -487,7 +486,7 @@ class CollectTargetItemAPI(APIView):
         try:
             collecttargetitem_list = JSONParser().parse(request)
             for collecttargetitem_object in collecttargetitem_list:
-                collecttargetitem_data = CollectTargetItem.objects.get(pk=collecttargetitem_object["id"])
+                collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'])[0]
                 collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                 if collecttargetitem_serializer.is_valid():
                     collecttargetitem_serializer.save()
