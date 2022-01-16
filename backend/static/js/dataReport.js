@@ -464,6 +464,7 @@ $('#update-data').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
 
+    console.log(trs_value);
 
     //youtube
     if(platform_name === 'youtube'){
@@ -804,17 +805,17 @@ $('#update-data').click(function(){
      //tiktok
      if(platform_name === 'tiktok'){
         var artists = [];
-        var uploads = [];
         var followers = [];
+        var uploads = [];
         var likes = [];
         for(var i = 4; i< th.length ; i++){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=3){
-            uploads.push(uncomma(trs_value[i].value))
+            followers.push(uncomma(trs_value[i].value))
         }
         for(var i = 1 ; i < trs_value.length ; i+=3){
-            followers.push(uncomma(trs_value[i].value))
+            uploads.push(uncomma(trs_value[i].value))
         }
         for(var i = 2 ; i < trs_value.length ; i+=3){
             likes.push(uncomma(trs_value[i].value))
@@ -827,14 +828,13 @@ $('#update-data').click(function(){
             'uploads[]':uploads,
             'followers[]' : followers,  
             'likes[]' : likes,  
-            'start_date':start_date
+            'start_date':start_date,
             },
             url: '/dataprocess/api/daily/',
             success: res => {
                 alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
-                let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
                 platform_header = res.platform //수집 항목
@@ -861,6 +861,8 @@ $('#update-data').click(function(){
             error : function (){
             }
           });
+
+       
     }
 
      //twitter 1, 2
