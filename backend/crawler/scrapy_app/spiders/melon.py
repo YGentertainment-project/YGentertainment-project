@@ -103,7 +103,7 @@ class MelonSpider(scrapy.Spider):
         item['artist'] = artist
         item['listeners'] = listener.replace(',', '')
         item['streams'] = streaming.replace(',', '')
-        # item['fans'] = -1
+        item['fans'] = -1
         item['url1'] = response.url
         item['url2'] = None
         yield item
