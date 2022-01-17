@@ -561,17 +561,15 @@ class DataReportAPI(APIView):
         platform_id = Platform.objects.get(name = platform).id
         collecttargets = CollectTarget.objects.filter(platform = platform_id)
         collecttargets = collecttargets.values()
-        platform_set = set()#중복 확인용
-        platform_list = []
+        platform_list = set()
         for collecttarget in collecttargets:
             platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
             platform_objects_values = platform_objects.values()
             for p in platform_objects_values:
-                if p["target_name"] in platform_set:
+                if p["target_name"] in platform_list:
                     continue
-                platform_set.add(p["target_name"])
-                platform_list.append(p)
-
+                platform_list.add(p["target_name"])
+        platform_list = list(platform_list)
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = DataModels[platform].objects.all()
@@ -726,17 +724,15 @@ class DataReportAPI(APIView):
         platform_id = Platform.objects.get(name = platform).id
         collecttargets = CollectTarget.objects.filter(platform = platform_id)
         collecttargets = collecttargets.values()
-        platform_set = set()#중복 확인용
-        platform_list = []
+        platform_list = set()
         for collecttarget in collecttargets:
             platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
             platform_objects_values = platform_objects.values()
             for p in platform_objects_values:
-                if p["target_name"] in platform_set:
+                if p["target_name"] in platform_list:
                     continue
-                platform_set.add(p["target_name"])
-                platform_list.append(p)
-
+                platform_list.add(p["target_name"])
+        platform_list = list(platform_list)
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = DataModels[platform].objects.all()
