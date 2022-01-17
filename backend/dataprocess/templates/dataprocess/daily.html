@@ -16,13 +16,15 @@
         </div>
         <div style="height: 25px;"></div>
          <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" class="column_layout">
+            {% csrf_token %}
              <div class="row_layout" style="justify-content: flex-start;">
                 <span style="margin-right: 30px;">저장 날짜: </span>
                 <input type="date" name="excel_import_date" id="excel_import_date"/>
              </div>
-            {% csrf_token %}
+             <div style="height: 10px;"></div>
             <input type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
+            <div style="height: 10px;"></div>
             <button class="excel-btn black-btn2" id="excel-btn1" type="submit">Import</button>
         </form>
         <div class="progress-bar">

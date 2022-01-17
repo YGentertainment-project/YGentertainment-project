@@ -63,7 +63,7 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             filter_value=filter_objects.values().first()
             #숫자필드값+user_created만 보내주기
             for field_name in model_fields_name:
-                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
+                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name !="reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
                     # 싱크 맞춰서 넣기
                     filter_datas[collect_item_list.index(field_name)] = filter_value[field_name]
             return filter_datas
@@ -85,7 +85,7 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             filter_end_value=filter_end_objects.values().first()
             #숫자필드값+user_created만 보내주기
             for field_name in model_fields_name:
-                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
+                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name !="reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
                     if filter_end_value[field_name] is not None and filter_start_value[field_name] is not None:
                         filter_datas[collect_item_list.index(field_name)] = filter_end_value[field_name]-filter_start_value[field_name]
                         # 둘 중 하나라도 field값이 없으면 NULL로 들어감
@@ -499,12 +499,14 @@ def save_collect_data_target(data_json, platform, excel_import_date):
                 recorded_date__month=recorded_date.month, recorded_date__day=recorded_date.day).first()
     if obj is None:
     # 원래 없는 건 새로 저장
+        data_json["reserved_date"] = recorded_date
         platform_serializer = DataSerializers[platform](data=data_json)
         if platform_serializer.is_valid():
             # platform_serializer.recorded_date = recorded_date
             platform_serializer.save()
     # 있는 건 업데이트
     else:
+        data_json["reserved_date"] = recorded_date
         platform_serializer = DataSerializers[platform](obj, data=data_json)
         if platform_serializer.is_valid():
             platform_serializer.save()
