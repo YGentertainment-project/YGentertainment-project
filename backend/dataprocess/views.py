@@ -3,7 +3,7 @@ from django.contrib.auth.models import Permission
 from django.shortcuts import render
 from account.models import User
 from crawler.models import *
-from config.models import PlatformTargetItem
+from config.models import PlatformTargetItem, CollectTargetItem
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
@@ -208,11 +208,20 @@ def platform_info(request):
             
             if platform_objects.exists():
                 platform_objects_values = platform_objects.values()
-                platform_collect_items = PlatformTargetItem.objects.filter(platform_id = platform_objects_values['id'])
-                platform_datas = []
-                for platform_item in platform_collect_items:
-                    platform_datas.append(platform_item)
-                return JsonResponse(data={'success': True, 'data': platform_datas})
+                platform_id = platform_objects_values['id']
+                collecttargets = CollectTarget.objects.filter(platform = platform_id)
+                collecttargets = collecttargets.values()
+                platform_set = set()
+                platform_list = []
+                for collecttarget in collecttargets:
+                    platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+                    platform_objects_values = platform_objects.values()
+                    for p in platform_objects_values:
+                        if p["target_name"] in platform_set:
+                            continue
+                        platform_set.add(p["target_name"])
+                        platform_list.append(p)
+                return JsonResponse(data={'success': True, 'data': platform_list})
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
@@ -225,7 +234,6 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from config.models import CollectTargetItem
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 
@@ -271,15 +279,26 @@ class PlatformAPI(APIView):
                         artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
+                    #3. 만든 collect target에 대해 수집항목들 생성
+                    collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
+                            artist = artist_objects_value['id'])
+                    collecttarget_object = collecttarget_object.values()[0]
+                    for collect_item in platform_object['collect_items']:
+                        collect_item = CollectTargetItem(
+                            collect_target_id = collecttarget_object['id'],
+                            target_name = collect_item["target_name"],
+                            xpath = collect_item["xpath"]
+                        )
+                        collect_item.save()
                 
                 #3. 플랫폼에 대한 platform target 생성
-                for collect_item in platform_object['collect_items']:
-                    collect_item = PlatformTargetItem(
-                        platform_id = platform_serializer.data['id'],
-                        target_name = collect_item["target_name"],
-                        xpath = collect_item["xpath"]
-                    )
-                    collect_item.save()
+                # for collect_item in platform_object['collect_items']:
+                #     collect_item = PlatformTargetItem(
+                #         platform_id = platform_serializer.data['id'],
+                #         target_name = collect_item["target_name"],
+                #         xpath = collect_item["xpath"]
+                #     )
+                #     collect_item.save()
 
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
@@ -438,7 +457,7 @@ class CollectTargetItemAPI(APIView):
             artist = request.GET.get('artist', None)
             platform = request.GET.get('platform', None)
             # 해당 artist,platform 찾기
-            artist_object = Artist.objects.filter(id = artist)
+            artist_object = Artist.objects.filter(name = artist)
             artist_object = artist_object.values()[0]
             platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]
@@ -465,7 +484,7 @@ class CollectTargetItemAPI(APIView):
         try:
             collecttargetitem_list = JSONParser().parse(request)
             for collecttargetitem_object in collecttargetitem_list:
-                collecttargetitem_data = CollectTargetItem.objects.get(pk=collecttargetitem_object["id"])
+                collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'])[0]
                 collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                 if collecttargetitem_serializer.is_valid():
                     collecttargetitem_serializer.save()
@@ -540,11 +559,18 @@ class DataReportAPI(APIView):
 
         #platform target names
         platform_id = Platform.objects.get(name = platform).id
-        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
-        platform_objects_values = platform_objects.values()
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
+        collecttargets = collecttargets.values()
+        platform_set = set()#중복 확인용
         platform_list = []
-        for p in platform_objects_values:
-            platform_list.append(p['target_name'])
+        for collecttarget in collecttargets:
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+            platform_objects_values = platform_objects.values()
+            for p in platform_objects_values:
+                if p["target_name"] in platform_set:
+                    continue
+                platform_set.add(p["target_name"])
+                platform_list.append(p)
 
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
@@ -698,11 +724,18 @@ class DataReportAPI(APIView):
 
         #platform target names
         platform_id = Platform.objects.get(name = platform).id
-        platform_objects = PlatformTargetItem.objects.filter(platform_id = platform_id)
-        platform_objects_values = platform_objects.values()
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
+        collecttargets = collecttargets.values()
+        platform_set = set()#중복 확인용
         platform_list = []
-        for p in platform_objects_values:
-            platform_list.append(p['target_name'])
+        for collecttarget in collecttargets:
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+            platform_objects_values = platform_objects.values()
+            for p in platform_objects_values:
+                if p["target_name"] in platform_set:
+                    continue
+                platform_set.add(p["target_name"])
+                platform_list.append(p)
 
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
