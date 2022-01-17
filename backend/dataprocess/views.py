@@ -70,10 +70,13 @@ def daily(request):
             import from excel
             '''
             import_file = request.FILES['importData']
+            # platform = request.GET.get('platform', None)
+            excel_import_date = request.POST.get('excel_import_date', None) # 0000-0-0 형태
+
             wb = openpyxl.load_workbook(import_file)
             sheets = wb.sheetnames
             worksheet = wb[sheets[0]]
-            import_datareport(worksheet)
+            import_datareport(worksheet, excel_import_date)
             platforms = Platform.objects.all() #get all platform info from db
             values = {
                 'first_depth' : '데이터 리포트',
@@ -87,7 +90,13 @@ def daily(request):
             '''
             export to excel
             '''
-            book = export_datareport()
+            excel_export_type = request.POST.get('excel_export_days', None) # 누적 or 기간별
+            excel_export_start_date = request.POST.get('excel_export_start_date', None) # 0000-0-0 형태
+            excel_export_end_date = request.POST.get('excel_export_end_date', None) # 0000-0-0 형태
+            print(excel_export_type)
+            print(excel_export_start_date)
+            print(excel_export_end_date)
+            book = export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date)
             today_date = datetime.datetime.today()
             filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')

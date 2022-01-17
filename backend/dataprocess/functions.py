@@ -37,7 +37,8 @@ DataSerializers = {
             "spotify": SpotifySerializer,
         }
 
-def get_platform_data(artist, platform):
+def get_platform_data(artist, platform, type, start_date, end_date, collect_item_list):
+    #각각 이용하는 걸로 수정
     if not platform in DataModels:
         return []
     model_fields = DataModels[platform]._meta.fields
@@ -45,28 +46,56 @@ def get_platform_data(artist, platform):
     for model_field in model_fields:
         model_fields_name.append(model_field.name)
     
+    filter_datas = []
+    # 길이 초기화
+    for i in collect_item_list:
+        filter_datas.append("NULL")
+    
     #오늘 날짜 기준으로 가져오기
-    today_date = datetime.datetime.today()
-    filter_objects = DataModels[platform].objects.filter(
-        artist = artist,
-        recorded_date__year=today_date.year,
-        recorded_date__month=today_date.month, recorded_date__day=today_date.day)
-    if filter_objects.exists():
-        filter_value=filter_objects.values().first()
-        #숫자필드값+user_created만 보내주기
-        filter_datas=[]
-        for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
-                filter_datas.append(filter_value[field_name])
-        return filter_datas
+    if type=="누적":
+        # today_date = datetime.datetime.today()
+        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        filter_objects = DataModels[platform].objects.filter(
+            artist = artist,
+            recorded_date__year=start_date_dateobject.year,
+            recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        if filter_objects.exists():
+            filter_value=filter_objects.values().first()
+            #숫자필드값+user_created만 보내주기
+            for field_name in model_fields_name:
+                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
+                    # 싱크 맞춰서 넣기
+                    filter_datas[collect_item_list.index(field_name)] = filter_value[field_name]
+            return filter_datas
+        else:
+            return filter_datas
+    elif type=="기간별":
+        start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
+        end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+        filter_start_objects = DataModels[platform].objects.filter(
+            artist = artist,
+            recorded_date__year=start_date_dateobject.year,
+            recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+        filter_end_objects = DataModels[platform].objects.filter(
+            artist = artist,
+            recorded_date__year=end_date_dateobject.year,
+            recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
+        if filter_start_objects.exists() and filter_end_objects.exists():
+            filter_start_value=filter_start_objects.values().first()
+            filter_end_value=filter_end_objects.values().first()
+            #숫자필드값+user_created만 보내주기
+            for field_name in model_fields_name:
+                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
+                    if filter_end_value[field_name] is not None and filter_start_value[field_name] is not None:
+                        filter_datas[collect_item_list.index(field_name)] = filter_end_value[field_name]-filter_start_value[field_name]
+                        # 둘 중 하나라도 field값이 없으면 NULL로 들어감
+            return filter_datas
+        else:
+            return filter_datas
     else:
-        filter_datas=[]
-        for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
-                filter_datas.append("NULL")
         return filter_datas
 
-def export_datareport():
+def export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date):
     # DB에서 platform과 platform_target_item 가져오기
     db_platform_datas=[]
     platforms = Platform.objects.all()
@@ -151,7 +180,9 @@ def export_datareport():
         for platform in db_platform_datas:
             #아티스트의 플랫폼마다의 정보 가져오기
             platform_name = platform["platform"]
-            platform_data_list = get_platform_data(artist=artist_name, platform=platform_name)
+            platform_data_list = get_platform_data(artist=artist_name, platform=platform_name,
+                type=excel_export_type, start_date=excel_export_start_date, end_date=excel_export_end_date,
+                collect_item_list=platform["collect_item"])
             for i, platform_data in enumerate(platform_data_list):
                 if platform_data is None or platform_data == "NULL":
                     # null이면 shade 처리
@@ -165,9 +196,10 @@ def export_datareport():
     return book
 
 
-def import_datareport(worksheet):
+def import_datareport(worksheet, excel_import_date):
     platform_data_list=[]
     row_num = 0
+
     for row in worksheet.iter_rows():
         # 플랫폼 정보 나열
         if row_num == 0:
@@ -239,7 +271,8 @@ def import_datareport(worksheet):
                     if current_index >= platform_data_list[platform_index]["item_num"]:
                         # 데이터 저장
                         data_json["artist"] = artist_name
-                        save_collect_data_target(data_json, platform_name)
+                        # turn_off_auto_now_add(DataModels[platform_name], "recorded_date")
+                        save_collect_data_target(data_json, platform_name, excel_import_date)
                         platform_index += 1
                         current_index = 0
                         data_json = {}
@@ -435,23 +468,47 @@ def import_total(worksheet):
     for collect_target_item_data in collect_target_item_data_list:
         save_collect_target_item(collect_target_item_data)
 
-def save_collect_data_target(data_json, platform):
+def turn_off_auto_now(ModelClass, field_name):
+    def auto_now_off(field):
+        field.auto_now = False
+    do_to_model(ModelClass, field_name, auto_now_off)
+
+def turn_off_auto_now_add(ModelClass, field_name):
+    def auto_now_add_off(field):
+        field.auto_now_add = False
+    do_to_model(ModelClass, field_name, auto_now_add_off)
+
+def do_to_model(ModelClass, field_name, func):
+    model_fields = ModelClass._meta.fields
+    for model_field in model_fields:
+        if model_field.name == field_name:
+            break
+    func(model_field)
+
+
+def save_collect_data_target(data_json, platform, excel_import_date):
     '''
     수집(크롤링) 데이터 저장
     '''
-    today_date = datetime.datetime.today()
-    obj = DataModels[platform].objects.filter(artist=data_json["artist"],recorded_date__year=today_date.year,
-                recorded_date__month=today_date.month, recorded_date__day=today_date.day).first()
+    if excel_import_date is None:
+        recorded_date = datetime.datetime.today()
+    else:
+        recorded_date = datetime.datetime.strptime(excel_import_date, '%Y-%m-%d')
+    
+    obj = DataModels[platform].objects.filter(artist=data_json["artist"],recorded_date__year=recorded_date.year,
+                recorded_date__month=recorded_date.month, recorded_date__day=recorded_date.day).first()
     if obj is None:
     # 원래 없는 건 새로 저장
         platform_serializer = DataSerializers[platform](data=data_json)
         if platform_serializer.is_valid():
+            # platform_serializer.recorded_date = recorded_date
             platform_serializer.save()
     # 있는 건 업데이트
     else:
         platform_serializer = DataSerializers[platform](obj, data=data_json)
         if platform_serializer.is_valid():
             platform_serializer.save()
+            platform_serializer.update(recorded_date = recorded_date)
     # artist 이외 값이 없으면 저장 안됨
 
 def save_platform(data_json):
