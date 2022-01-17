@@ -570,7 +570,7 @@ class DataReportAPI(APIView):
                     continue
                 platform_list.add(p["target_name"])
         platform_list = list(platform_list)
-        
+
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = DataModels[platform].objects.all()
@@ -594,9 +594,17 @@ class DataReportAPI(APIView):
                 start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
                 filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
                     recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+                filter_objects_2 = DataModels[platform].objects.filter(updated_at=start_date)
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
                     filter_datas=[]
+                    for filter_value in filter_objects_values:
+                        filter_datas.append(filter_value)
+                    return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
+                elif filter_objects_2.exists():
+                    filter_objects_values=filter_objects_2.values()
+                    filter_datas=[]
+                   
                     for filter_value in filter_objects_values:
                         filter_datas.append(filter_value)
                     return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
@@ -723,6 +731,14 @@ class DataReportAPI(APIView):
         for a in artist_objects_values:
             artist_list.append(a['name'])
 
+        #crawled artist list
+        a_objects = DataModels[platform].objects.all()
+        a_objects_values = a_objects.values()
+        a_list = []
+        for val in a_objects_values:
+            a_list.append(val['artist'])
+        
+
         #platform target names
         platform_id = Platform.objects.get(name = platform).id
         collecttargets = CollectTarget.objects.filter(platform = platform_id)
@@ -754,6 +770,7 @@ class DataReportAPI(APIView):
 
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            print(start_date)
             for index,artist in enumerate(artists):
                 obj = DataModels[platform].objects.filter(artist=artist,recorded_date__year=start_date_dateobject.year,
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
@@ -777,11 +794,54 @@ class DataReportAPI(APIView):
                     elif platform == 'melon':
                         obj.update(listeners = listens[index],streams=streams[index])
                 else:
-                    pass
+                    second_obj = DataModels[platform].objects.filter(artist=artist,updated_at = start_date)
+                    if second_obj:
+                        if platform == 'youtube':
+                            second_obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
+                        elif platform == 'vlive':
+                            second_obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+                        elif platform == 'instagram' or platform=='facebook':
+                            second_obj.update(followers = followers[index])
+                        elif platform == 'twitter' or platform=='twitter2':
+                            second_obj.update(followers = followers[index],twits=twits[index],user_created=user_creation[index])
+                        elif platform == 'tiktok':
+                            second_obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+                        elif platform == 'weverse':
+                            second_obj.update(weverses= weverses[index])
+                        elif platform == 'spotify':
+                            second_obj.update(monthly_listens = listens[index],followers=followers[index])
+                        elif platform == 'melon':
+                            second_obj.update(listeners = listens[index],streams=streams[index])
+                    elif artist in a_list:
+                        if platform == 'youtube':
+                            instance = DataModels[platform](artist=artist,uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'vlive':
+                            instance = DataModels[platform](artist=artist,members=members[index],videos=videos[index],likes=likes[index],plays=plays[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'instagram' or platform=='facebook':
+                            instance = DataModels[platform](artist=artist,followers = followers[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'twitter' or platform=='twitter2':
+                            instance = DataModels[platform](artist=artist,followers = followers[index],twits=twits[index],user_created=user_creation[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'tiktok':
+                            instance = DataModels[platform](artist=artist,followers = followers[index],uploads=uploads[index],likes=likes[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'weverse':
+                            instance = DataModels[platform](artist=artist,weverses= weverses[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'spotify':
+                            instance = DataModels[platform](artist=artist,monthly_listens = listens[index],followers=followers[index],updated_at = start_date)
+                            instance.save()
+                        elif platform == 'melon':
+                            instance = DataModels[platform](artist=artist,listeners = listens[index],streams=streams[index],updated_at = start_date)
+                            instance.save() 
+                    else:
+                        pass
             filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
                 recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-            filter_objects_2 = DataModels[platform].objects.filter(updated_at__year=start_date_dateobject.year,
-                updated_at__month=start_date_dateobject.month, updated_at__day=start_date_dateobject.day)
+            filter_objects_2 = DataModels[platform].objects.filter(updated_at = start_date)
             if filter_objects.exists():
                 filter_objects_values=filter_objects.values()
                 filter_datas=[]
@@ -790,13 +850,19 @@ class DataReportAPI(APIView):
                     filter_datas.append(filter_value)
                 return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
             elif filter_objects_2.exists():
-                filter_objects_values=filter_objects.values()
+                filter_objects_values=filter_objects_2.values()
                 filter_datas=[]
                    
                 for filter_value in filter_objects_values:
                     filter_datas.append(filter_value)
                 return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
             else:
-                return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
+                crawling_artist_list = [] 
+                objects = DataModels[platform].objects.all()
+                objects_value = objects.values()
+                for val in objects_value:
+                    crawling_artist_list.append(val['artist'])
+                #datename = '%s-%s-%s'%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                return JsonResponse(status=200, data={'success': True, 'data':'no data','artists':artist_list,'platform':platform_header,'crawling_artist_list':crawling_artist_list})
         except:
             return JsonResponse(status=400, data={'success': False})

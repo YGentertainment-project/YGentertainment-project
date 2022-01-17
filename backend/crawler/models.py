@@ -74,7 +74,7 @@ class SocialbladeTwitter2(models.Model):
 
 class Weverse(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    weverses = models.IntegerField()
+    weverses = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
