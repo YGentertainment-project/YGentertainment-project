@@ -10,6 +10,7 @@ class SocialbladeYoutube(models.Model):
     views = models.BigIntegerField(null=True)  # 조회수
     user_created = models.TextField(null=True)  # 계정 생성일
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -26,6 +27,7 @@ class SocialbladeTiktok(models.Model):
     uploads = models.IntegerField()
     likes = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -42,6 +44,7 @@ class SocialbladeTwitter(models.Model):
     twits = models.IntegerField()
     user_created = models.TextField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -58,6 +61,7 @@ class SocialbladeTwitter2(models.Model):
     twits = models.IntegerField()
     user_created = models.TextField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -72,6 +76,7 @@ class Weverse(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     weverses = models.IntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -86,6 +91,7 @@ class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -100,6 +106,7 @@ class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -117,6 +124,7 @@ class Vlive(models.Model):
     likes = models.BigIntegerField()
     plays = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
         constraints = [
@@ -133,6 +141,7 @@ class Melon(models.Model):
     streams = models.BigIntegerField()
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
     class Meta:
@@ -149,6 +158,7 @@ class Spotify(models.Model):
     monthly_listens = models.BigIntegerField()
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
     class Meta:

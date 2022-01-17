@@ -464,8 +464,6 @@ $('#update-data').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
 
-    console.log(trs_value);
-
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];
@@ -505,10 +503,9 @@ $('#update-data').click(function(){
                 alert("Successfully save!");
                 let data_list = [];
                 let artist_list = [];
-                let platform_list = [];
                 data_list = res.data //필터링 데이터
                 artist_list = res.artists //DB 아티스트 리스트
-                platform_list = res.platform //수집 항목
+                platform_header = res.platform //수집 항목
 
 
                 console.log(data_list);
@@ -524,20 +521,6 @@ $('#update-data').click(function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
-             //헤더 순서를 db 컬럼 순하고 맞추기
-             let platform_target_name = [];
-             let platform_header = [];
-             for(let i = 0; i<platform_list.length; i++){
-                 platform_target_name.push(platform_list[i]['target_name'])
-             }
- 
- 
-             for (key in data_list[0]){
-                 if(platform_target_name.includes(key)){
-                     platform_header.push(key)
-                 }
-             }
 
             $('tbody').eq(0).empty();
             if(type === '누적'){
@@ -978,8 +961,7 @@ $('#update-data').click(function(){
                 showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (e){
-                console.log(e.success);
-                console.log(e.data);
+                console.log(e);
             }
           });
     }
