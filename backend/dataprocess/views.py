@@ -283,9 +283,7 @@ class PlatformAPI(APIView):
                     collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
                             artist = artist_objects_value['id'])
                     collecttarget_object = collecttarget_object.values()[0]
-                    print(collecttarget_object)
                     for collect_item in platform_object['collect_items']:
-                        print(collect_item)
                         collect_item = CollectTargetItem(
                             collect_target_id = collecttarget_object['id'],
                             target_name = collect_item["target_name"],
@@ -465,7 +463,6 @@ class CollectTargetItemAPI(APIView):
             platform_object = platform_object.values()[0]
             # 해당 artist와 platform을 가지는 collect_target 가져오기
             collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id = platform_object['id'])
-            print(collecttarget_objects)
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
                 collecttarget_objects_value = collecttarget_objects.values()[0]

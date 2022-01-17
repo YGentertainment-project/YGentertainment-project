@@ -38,6 +38,8 @@ DataSerializers = {
         }
 
 def get_platform_data(artist, platform):
+    if not platform in DataModels:
+        return []
     model_fields = DataModels[platform]._meta.fields
     model_fields_name = []
     for model_field in model_fields:
@@ -51,16 +53,16 @@ def get_platform_data(artist, platform):
         recorded_date__month=today_date.month, recorded_date__day=today_date.day)
     if filter_objects.exists():
         filter_value=filter_objects.values().first()
-        #숫자필드값만 보내주기
+        #숫자필드값+user_created만 보내주기
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2":
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
                 filter_datas.append(filter_value[field_name])
         return filter_datas
     else:
         filter_datas=[]
         for field_name in model_fields_name:
-            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2":
+            if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name!="fans":
                 filter_datas.append("NULL")
         return filter_datas
 
@@ -71,11 +73,17 @@ def export_datareport():
     if platforms.exists():
         platform_objects_values = platforms.values()
         for platform_value in platform_objects_values:
-            collect_item = []
-            platform_target_items = PlatformTargetItem.objects.filter(platform_id = platform_value['id'])
-            platform_target_items = platform_target_items.values()
-            for platform_target_item in platform_target_items:
-                collect_item.append(platform_target_item['target_name'])
+            collecttargets = CollectTarget.objects.filter(platform = platform_value['id'])
+            collecttargets = collecttargets.values()
+            collect_item = set()
+            for collecttarget in collecttargets:
+                platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
+                platform_objects_values = platform_objects.values()
+                for p in platform_objects_values:
+                    if p["target_name"] in collect_item:
+                        continue
+                    collect_item.add(p["target_name"])
+            collect_item = list(collect_item)
             db_platform_datas.append({
                 "platform" : platform_value['name'],
                 "collect_item": collect_item
@@ -95,11 +103,6 @@ def export_datareport():
 
     row = 1
     col = 1
-
-    thin_border = Border(left=Side(style='thin'), 
-                     right=Side(style='thin'), 
-                     top=Side(style='thin'), 
-                     bottom=Side(style='thin'))
 
     thick_border = Border(left=Side(style='medium'), 
                      right=Side(style='medium'), 
