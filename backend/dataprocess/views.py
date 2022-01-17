@@ -577,8 +577,10 @@ class DataReportAPI(APIView):
         obj_datas = []
         for v in objects_values:
             obj_datas.append(v)
-        key_list = list(obj_datas[0].keys())
-
+        if len(obj_datas) > 0:
+            key_list = list(obj_datas[0].keys())
+        else:
+            key_list = []
         for key in key_list:
             if key in platform_list:
                 platform_header.append(key)
