@@ -508,7 +508,7 @@ $('#update-data').click(function(){
                 platform_header = res.platform //수집 항목
 
 
-                console.log(data_list);
+                console.log(platform_header);
 
 
 

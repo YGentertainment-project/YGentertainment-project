@@ -570,6 +570,7 @@ class DataReportAPI(APIView):
                     continue
                 platform_list.add(p["target_name"])
         platform_list = list(platform_list)
+        
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = DataModels[platform].objects.all()
