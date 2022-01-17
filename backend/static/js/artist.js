@@ -220,30 +220,29 @@ $('#save-artists-platform').click(function(){
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
-    var artist_name = document.getElementById("artist-subtitle").innerHTML.replace("플랫폼","");
-    // var artist = $('.hidden').find('input').val();
+    var artist_name = document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼","");
+    // var artist_id = $('.hidden').find('input').val();
     var platform = $(this).text();
 
-    //console.log(platform);
-
     $.ajax({
-        url: '/dataprocess/api/platform_target_item/',
+        url: '/dataprocess/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
-        data : {'platform':platform},
+        data : {'platform': platform, 'artist': artist_name},
         contentType: 'application/json; charset=utf-8',
         success: res => {
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
 
             const data_list = res.data;
+            console.log(data_list);
             $('#artist-body-list').empty();
             data_list.forEach(data=>{//data를 화면에 표시
-                const tableRow = $('<tr></tr>')
+                const tableRow = $('<tr></tr>');
                 // 해당 row에 대한 column 데이터들 넣기
-                // (id), target_name, xpath
+                // (id, collect_target_id), target_name, xpath
                 for(key in data){
                     let dataCol;
-                    if(key==='platform_id'){
+                    if(key==='id' || key==='collect_target_id'){
                         dataCol = document.createElement('td');
                         dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
@@ -284,25 +283,24 @@ $(document).on('click','#save-list',function(){
     var bodydatas = [];
 
     var item_tr = $('#artist-body-list').find('tr');
-
     for(var r=0;r<item_tr.length;r++){
         var cells = item_tr[r].getElementsByTagName("td");
-        console.log(cells);
+        var cells2 = item_tr[r].getElementsByTagName("textarea");
         bodydatas.push({
-            "platform":cells[0].firstElementChild.value,
-            "target_name":cells[1].firstElementChild.value,
-            "xpath":cells[2].firstElementChild.value,
+            "id": cells[0].firstElementChild.value,
+            "collect_target": cells[1].firstElementChild.value,
+            "target_name": cells[2].firstElementChild.value,
+            "xpath": cells2[0].value,
         });
     }
-
     $.ajax({
-        url: '/dataprocess/api/platform_target_item/',
+        url: '/dataprocess/api/collect_target_item/',
         type: 'PUT',
         datatype:'json',
         data :JSON.stringify(bodydatas),
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            alert('successfully saved!');
+            alert('Successfully saved!');
 
         },
         error: e => {
