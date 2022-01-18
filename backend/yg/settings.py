@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'request_logging.middleware.LoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'yg.urls'
@@ -140,8 +141,9 @@ RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
 LOGGING_HANDLERS = ['file']
+HTTP_HANDLERS = ['httpfile']
 
-
+REQUEST_LOGGING_ENABLE_COLORIZE=False
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -159,11 +161,18 @@ LOGGING = {
             'filename': os.path.join(LOG_PATH, "Django.log"),
             'formatter': 'standard',
         },
+        'httpfile': {
+            'level': 'DEBUG',
+            'encoding': 'utf-8',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_PATH, "User.log"),
+            'formatter': 'standard',
+        }
     },
     'loggers': {
         'django.request': {
-            'handlers': LOGGING_HANDLERS,
-            'level': 'ERROR',
+            'handlers': HTTP_HANDLERS,
+            'level': 'INFO',
             'propagate': True,
         },
         'django.db.backends': {
