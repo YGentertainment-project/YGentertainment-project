@@ -1,3 +1,4 @@
+import logging
 from django.contrib import auth
 from django.contrib.auth.models import Permission
 from django.shortcuts import redirect, render
@@ -20,6 +21,10 @@ import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
 from .models import *
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 DataModels = {
         "youtube": SocialbladeYoutube,
@@ -116,6 +121,7 @@ def daily(request):
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
     
+
 def platform(request):
      '''
         general page
@@ -127,54 +133,6 @@ def platform(request):
      request = logincheck(request)
      return render(request, 'dataprocess/platform.html',values)
 
-
-# def excel(request):
-#     if request.method == 'POST':
-#         type = request.POST['type']
-#         if type == 'import':
-#             '''
-#             import from excel
-#             '''
-#             import_file = request.FILES['importData']
-#             wb = openpyxl.load_workbook(import_file)
-#             sheets = wb.sheetnames
-#             worksheet = wb[sheets[0]]
-#             import_datareport(worksheet)
-#             platforms = Platform.objects.all() #get all platform info from db
-#             values = {
-#                 'first_depth' : '데이터 리포트',
-#                 'second_depth': '일별 리포트',
-#                 'platforms': platforms
-#                 }
-#             request = logincheck(request)
-#             return render(request, 'dataprocess/daily.html',values)
-#         elif type == 'export':
-#             '''
-#             export to excel
-#             '''
-#             book = export_datareport()
-#             today_date = datetime.datetime.today()
-#             filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
-#             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
-#             response['Content-Disposition'] = 'attachment; filename='+filename
-#             return response
-#         elif type == 'import2':
-#             '''
-#             import tmp from excel
-#             '''
-#             import_file = request.FILES['importData2']
-#             wb = openpyxl.load_workbook(import_file)
-#             sheets = wb.sheetnames
-#             worksheet = wb[sheets[0]]
-#             import_total(worksheet)
-#             platforms = Platform.objects.all() #get all platform info from db
-#             values = {
-#                 'first_depth' : '데이터 리포트',
-#                 'second_depth': '일별 리포트',
-#                 'platforms': platforms
-#                 }
-#             request = logincheck(request)
-#             return render(request, 'dataprocess/daily.html',values)
 
 def artist(request):
     artists = Artist.objects.all()
@@ -251,6 +209,7 @@ class PlatformAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
+            logger.error("Error to read platforms")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -287,6 +246,7 @@ class PlatformAPI(APIView):
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
         except:
+            logger.error("Error to create platform")
             return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
@@ -309,6 +269,7 @@ class PlatformAPI(APIView):
                         platform_serializer.save()
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
+            logger.error("Error to update platform")
             return JsonResponse(data={'success': False}, status=400)
 
 class ArtistAPI(APIView):
@@ -328,6 +289,7 @@ class ArtistAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
+            logger.error("Error to read artists")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -362,6 +324,7 @@ class ArtistAPI(APIView):
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:
+            logger.error("Error to create artist")
             return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
@@ -380,6 +343,7 @@ class ArtistAPI(APIView):
                     return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
+            logger.error("Error to add/modify artist")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -413,6 +377,7 @@ class PlatformOfArtistAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
+            logger.error("Error to read platform of artist")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -429,6 +394,7 @@ class PlatformOfArtistAPI(APIView):
                      CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
+            logger.error("Error to update platform of artist")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -459,6 +425,7 @@ class CollectTargetItemAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
+            logger.error("Error to read collect target items")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -477,6 +444,7 @@ class CollectTargetItemAPI(APIView):
                     return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
+            logger.error("Error to update collect target item")
             return JsonResponse(data={'success': False}, status=400)
 
 #platform collect target API 
@@ -504,6 +472,7 @@ class PlatformTargetItemAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
+            logger.error("Error to read platform target items")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -519,9 +488,11 @@ class PlatformTargetItemAPI(APIView):
                 if collecttargetitem_serializer.is_valid():
                     collecttargetitem_serializer.save()
                 else:
+                    logger.error("collect target item serializer is invalid")
                     return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
+            logger.error("Error to update platform target item")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -620,6 +591,7 @@ class DataReportAPI(APIView):
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
+            logger.error("Error to read data for data report")
             return JsonResponse(status=400, data={'success': False})
     
     def post(self, request):
