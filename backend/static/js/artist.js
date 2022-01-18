@@ -44,7 +44,7 @@ $('.add-submit').click(function(e){
         alert("구분을 S/A/B형태로 입력해주세요.");
         e.preventDefault();
         return;
-    }else if(trs_value[2].value=="" || trs_value[2].value!="M" || trs_value[2].value!="F"){
+    }else if(trs_value[2].value=="" ||( trs_value[2].value!="M" && trs_value[2].value!="F")){
         alert("성별을 M/F형태로 입력해주세요.");
         e.preventDefault();
         return;
@@ -135,6 +135,7 @@ $('input[name=artist-name]').click(function(){
         data : {'artist':artist},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            document.getElementById("artist-subtitle").innerHTML = artist+" 플랫폼";
             const data_list = res.data;
             $('#artist-body-platform').empty();
             data_list.forEach(data => {//data를 화면에 표시
@@ -162,7 +163,7 @@ $('input[name=artist-name]').click(function(){
                             dataCol.setAttribute('class', 'hidden');
                         dataCol.innerHTML = `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
                         </td>
                         `;
                     }
@@ -219,56 +220,58 @@ $('#save-artists-platform').click(function(){
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
-    //var artist = $('.hidden').find('input').val();
+    var artist_name = document.getElementById("artist-subtitle").innerHTML.replace("플랫폼","");
+    // var artist = $('.hidden').find('input').val();
     var platform = $(this).text();
 
-    //console.log(artist);
-    console.log(platform);
+    //console.log(platform);
 
     $.ajax({
         url: '/dataprocess/api/platform_target_item/',
         type: 'GET',
         datatype:'json',
-        data : { 'platform':platform},
+        data : {'platform':platform},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
+
             const data_list = res.data;
-            console.log(data_list);
             $('#artist-body-list').empty();
-            const tableRow = $('<tr></tr>')
-            let dataHTML = [];
-            data_list.forEach(data => {//data를 화면에 표시
+            data_list.forEach(data=>{//data를 화면에 표시
+                const tableRow = $('<tr></tr>')
+                // 해당 row에 대한 column 데이터들 넣기
+                // (id), target_name, xpath
                 for(key in data){
-                    if(key !=='target_name' ){
-                        continue;
-                    } 
-                    else{
-                        dataHTML.push( `
+                    let dataCol;
+                    if(key==='platform_id'){
+                        dataCol = document.createElement('td');
+                        dataCol.setAttribute('class', 'hidden');
+                        dataCol.innerHTML = `
                         <td>
-                            <input type="text" value="${data[key]}" style="width:100%"></input>
+                            <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
                         </td>
-                        `);
+                        `;
+                        tableRow.append(dataCol);
+                    }else if(key==='target_name'){
+                        dataCol = document.createElement('td');
+                        dataCol.innerHTML = `
+                        <td>
+                            <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
+                        </td>
+                        `;
+                        tableRow.append(dataCol);
+                    }else if(key==='xpath'){
+                        dataCol = document.createElement('td');
+                        dataCol.innerHTML = `
+                        <td>
+                            <textarea style="width:100%">${data[key]}</textarea>
+                        </td>
+                        `;
+                        tableRow.append(dataCol);
                     }
                 }
+                $('#artist-body-list').append(tableRow);
             });
-           
-
-
-            dataCol = document.createElement('td');
-            dataCol.setAttribute('class', 'hidden');
-            dataCol.innerHTML = `<td>
-            <input type="text" value="${res.platform_id}" style="width:100%"></input>
-        </td>
-        `;
-            tableRow.append(dataCol)
-
-            for(let i = 0; i<dataHTML.length; i++){
-                dataCol = document.createElement('td');
-                dataCol.innerHTML = dataHTML[i];
-                tableRow.append(dataCol);
-            }
-            $('#artist-body-list').append(tableRow);
-
         },
         error: e => {
             alert(e.responseText);
@@ -278,33 +281,25 @@ $(document).on('click','.platform-names',function(){
 
 //update platform collect target
 $(document).on('click','#save-list',function(){
-    var datas=[];
-    var items = [];
+    var bodydatas = [];
+
     var item_tr = $('#artist-body-list').find('tr');
 
     for(var r=0;r<item_tr.length;r++){
         var cells = item_tr[r].getElementsByTagName("td");
-        for(var k = 0; k<cells.length; k++){
-            items.push(cells[k].firstElementChild.value)
-        }
+        console.log(cells);
+        bodydatas.push({
+            "platform":cells[0].firstElementChild.value,
+            "target_name":cells[1].firstElementChild.value,
+            "xpath":cells[2].firstElementChild.value,
+        });
     }
-
-
-    for(var j = 1; j<items.length; j++){
-        datas.push({
-            //"platform":items[0],
-            "platform":items[0],
-            "target_name":items[j],
-        })
-    }
-
-    console.log(datas);
 
     $.ajax({
         url: '/dataprocess/api/platform_target_item/',
         type: 'PUT',
         datatype:'json',
-        data :JSON.stringify(datas),
+        data :JSON.stringify(bodydatas),
         contentType: 'application/json; charset=utf-8',
         success: res => {
             alert('successfully saved!');

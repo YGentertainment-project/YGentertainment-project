@@ -85,8 +85,13 @@ function platform_create_function(){
     var collect_items_list = [];
     for(var i=0;i<created_attribute_tr.length;i++){
         var collect_item = created_attribute_tr[i].getElementsByTagName("td")[1].firstElementChild.value;
-        if(collect_item!="")
-            collect_items_list.push(collect_item);
+        var xpath = created_attribute_tr[i].getElementsByTagName("td")[2].firstElementChild.value;
+        if(collect_item!=""){
+            collect_items_list.push(
+                {"target_name": collect_item,
+                "xpath": xpath}
+            );
+        }
     }
     if(created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value==""){
         alert("플랫폼 이름을 입력해주세요.");
@@ -131,6 +136,21 @@ function open_form_function(e) {
 }
   
 function close_form_function() {
+    //입력된 내용 지우기
+    var created_platform_tr = document.getElementById("platform_attribute").getElementsByTagName("tr");
+    created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value="";
+    created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value="";
+    created_platform_tr[2].getElementsByTagName("td")[1].firstElementChild.value="";
+    var created_attribute_tr = document.getElementById("crawling_attribute").getElementsByTagName("tr");
+    const len = created_attribute_tr.length;
+    for(var i=0;i<len;i++){
+        if(i>0)
+            document.getElementById("crawling_attribute").deleteRow(-1);
+        else{
+            created_attribute_tr[i].getElementsByTagName("td")[1].firstElementChild.value="";
+            created_attribute_tr[i].getElementsByTagName("td")[2].firstElementChild.value="";
+        }
+    }
     document.getElementById("create_form").style.display = "none";
 }
 
@@ -140,6 +160,7 @@ function add_attribute_function(){
     var attributeCol = document.createElement('tr');
     attributeCol.innerHTML = `
     <td>항목${attribute_num.length+1}</td>
+    <td><input type="text" value="" style="width:100%"></input></td>
     <td><input type="text" value="" style="width:100%"></input></td>
     `;
     document.getElementById("crawling_attribute").append(attributeCol);

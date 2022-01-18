@@ -3,9 +3,21 @@
     {% extends 'main.html' %}
     
     {% block content %}
+
+    <script>
+        function go_to_artist2(){
+            location.href = "{% url 'dataprocess:artist' %}";
+        }
+     </script>
+    
     <div class="forms">
         <form method="POST" class="add-form">
            <div class="row_layout flexstart_layout">
+                <a href="{% url 'dataprocess:artist' %}" class="excel-btn"
+                style="color: black; text-decoration-line: none;">
+                    취소
+                </a>
+                <!-- <button class="excel-btn" onclick=go_to_artist2()>취소</button> -->
                 <button class="add-submit excel-btn">저장</button>
             </div>
             <div class="row_layout flexstart_layout">

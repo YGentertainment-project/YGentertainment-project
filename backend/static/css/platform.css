@@ -122,7 +122,14 @@ input[type='checkbox']:checked:after {
 }
 
 .excel-form-open{
-    width: 300px !important;
+    min-width: 180px !important;
+    width: 180px !important;
+}
+
+.excel-form-open-hint{
+    display: none;
+    font-weight: normal;
+    font-size : 1.2rem;
 }
 
 .button_layout > button:hover,.popup_button_layout > button:hover, .excel-btn:hover{

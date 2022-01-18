@@ -1,5 +1,4 @@
 #first-table{
-    resize: horizontal;
     text-align: center;
     width: 40%;
     height: 650px;
@@ -13,7 +12,6 @@
 }
 
 #second-table{
-    resize: horizontal;
     justify-content: center;
     text-align: center;
     width:30%;
@@ -50,6 +48,7 @@
 #artist-header{
     color: white;
     background-color: black !important;
+    font-size: small;
 }
 
 #artist-header td{
@@ -158,4 +157,9 @@
 .artist-name-select{
     line-height: 40px;
     padding-left: 10px;
+}
+
+.artist-title{
+    font-size : 1rem;
+    font-weight: bold;
 }

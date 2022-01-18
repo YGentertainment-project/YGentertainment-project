@@ -6,7 +6,7 @@
    {% block content %}
 
    {% if alert %}
-    <span id="alert">{{alert}}</span>
+    <span id="alert" class="hidden">{{alert}}</span>
    {% endif %}
 
    <div class="excel_form" id="excel_form1">
@@ -62,10 +62,26 @@
 
    <div class="forms">
     <div class="column_layout flexend_layout">
-        <!-- 버튼 이름 바뀌면 js에서도 수정 -->
-        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로부터 크롤링데이터 DB에 저장하기</button>
-        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로 크롤링데이터 추출</button>
-        <button class="excel-btn excel-form-open" id="excel-form-open">Excel파일로부터 수집정보 DB에 저장하기</button>
+        <span style="font-size: 1.3rem; font-weight:bold;">크롤링데이터 관련</span>
+        <div class="row_layout">
+            <span class="excel-form-open-hint" id="excel-form-open-hint1">Excel파일로부터 크롤링데이터 DB에 저장하기</span>
+            <button class="excel-btn excel-form-open" id="excel-form-open1">Excel파일 Import</button>
+        </div>
+
+        <div class="row_layout">
+            <span class="excel-form-open-hint" id="excel-form-open-hint2">Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
+            <button class="excel-btn excel-form-open" id="excel-form-open2">Excel파일 Export</button>
+        </div>
+
+        <span style="font-size: 1.3rem; font-weight:bold;">수집정보 관련</span>
+        <div class="row_layout">
+            <span class="excel-form-open-hint" id="excel-form-open-hint3">Excel파일로부터 수집정보 DB에 저장하기</span>
+            <button class="excel-btn excel-form-open" id="excel-form-open3">Excel파일 Import</button>
+        </div>
+        
+        
+        
+        
     </div>
        
     <form method="get">
@@ -76,7 +92,7 @@
                 <input type="radio" name="view_days" value="기간별" /> <label>기간별</label>
             </div>
             <div class="select-days-date">
-                <input type="date" name="start_date" /> ~ <input type="date" name="end_date" />
+                <input type="date" name="start_date" id="start_date"/> ~ <input type="date" name="end_date" id="end_date" /> <input type="button" name="refresh" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="날짜 초기화"></input>
                 <input type="button" name="day" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1일"></input>
                 <input type="button" name="week" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1주"></input>
                 <input type="button" name="month" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1개월"></input>
@@ -105,8 +121,6 @@
                     <label id="update-data" style="display: none; margin: 10px">
                         저장
                     </label>
-                    <!-- <label id="update-data"
-                    style="cursor: pointer; margin-bottom: 10px; font-size: 1rem;">저장</label> -->
                 </div>
             </div>
         </div>

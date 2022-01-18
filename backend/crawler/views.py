@@ -39,9 +39,10 @@ DataModels = {
 flower_domain = ""
 production_env = get_env("YG_ENV", "dev") == "production"
 if production_env:
-    flower_domain = "0.0.0.0:5555/"
+    flower_domain = "http://172.18.0.1:5555/"
+    # flower_domain = "http://localhost:5555/"
 else:
-    flower_domain = "http://localhost:5555/"
+    flower_domain = "http://0.0.0.0:5555/"
 
 
 @csrf_exempt
@@ -91,8 +92,9 @@ def get_schedules():
         if('crawling' in task['name']):
             crontab_id = task['crontab_id']
             crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+            hour = crontab_info[0]['hour']
             minute = crontab_info[0]['minute']
-            schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
+            schedule_dict = dict(id=task['id'], name=task['name'], hour=hour, minute=minute, last_run=task['last_run_at'],
                                  enabled=task['enabled'])
             schedule_list.append(schedule_dict)
     return schedule_list
@@ -107,10 +109,14 @@ def schedules(request):
         body_unicode = request.body.decode('utf-8')  # body값 추출
         body = json.loads(body_unicode)
         platform = body.get("platform")
+        hour = body.get("hours")
         minutes = body.get("minutes")
+        if hour == '':
+            hour = '*'
         try:
             schedule, created = CrontabSchedule.objects.get_or_create(
-                minute='{}'.format(minutes),
+                hour= '{}'.format(hour),
+                minute= '{}'.format(minutes),
                 timezone='Asia/Seoul',
             )
             # 존재하는 task는 상태 및 interval만 업데이트
@@ -152,6 +158,8 @@ def schedules(request):
             return JsonResponse(status=400, data={'error': str(e)})
 
 def get_all_tasks():
+    flower_url = flower_domain + 'api/tasks'
+    print('flower_url : {}'.format(flower_url))
     response = requests.get(flower_domain + 'api/tasks')
     tasks_json = json.loads(response.content.decode('utf-8'))
     return tasks_json
@@ -186,39 +194,3 @@ def taskinfos(request):
                     break
 
             return JsonResponse(data={'taskinfo': task_info})
-
-# @csrf_exempt
-# @require_http_methods(['POST'])  # only post
-# def daily_update(request):
-#     platform = request.POST.get('platform_name', None)
-#     artists = request.POST.getlist('artists[]')
-#     uploads = request.POST.getlist('uploads[]')
-#     subscribers = request.POST.getlist('subscribers[]')
-#     views = request.POST.getlist('views[]')
-#     members = request.POST.getlist('members[]')
-#     videos = request.POST.getlist('videos[]')
-#     likes = request.POST.getlist('likes[]')
-#     plays = request.POST.getlist('plays[]')
-#     followers = request.POST.getlist('followers[]')
-#     twits = request.POST.getlist('twits[]')
-#     weverses = request.POST.getlist('weverses[]')
-
-#     for index, artist in enumerate(artists):
-#         obj = DataModels[platform].objects.filter(artist=artist)
-#         if platform == 'youtube':
-#             obj.update(uploads=uploads[index], subscribers=subscribers[index], views=views[index])
-#         elif platform == 'vlive':
-#             obj.update(members=members[index], videos=videos[index], likes=likes[index], plays=plays[index])
-#         elif platform == 'instagram' or platform == 'facebook':
-#             obj.update(followers=followers[index])
-#         elif platform == 'twitter' or platform == 'twitter2':
-#             obj.update(followers=followers[index], twits=twits[index])
-#         elif platform == 'tiktok':
-#             obj.update(followers=followers[index], uploads=uploads[index], likes=likes[index])
-#         elif platform == 'weverse':
-#             obj.update(weverses=weverses[index])
-#     platform_queryset_values = DataModels[platform].objects.values()
-#     platform_datas = []
-#     for queryset_value in platform_queryset_values:
-#         platform_datas.append(queryset_value)
-#     return JsonResponse(data={'success': True, 'data': platform_datas})

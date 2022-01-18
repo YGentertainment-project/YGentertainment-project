@@ -3,7 +3,6 @@ import os
 from billiard.context import Process
 
 from .celery import app
-from celery import shared_task
 
 import scrapy
 from scrapy.crawler import CrawlerProcess
@@ -39,13 +38,13 @@ spiders = {
 
 def crawling_start(platform, task_id):
     process = CrawlerProcess(settings)
-    log_path = "crawler/logs/tasks/{}.log".format(task_id)
-    settings.set('LOG_FILE', log_path)
+    # log_path = "crawler/logs/tasks/{}.log".format(task_id)
+    # settings.set('LOG_FILE', log_path)
     process.crawl(spiders[platform])
     process.start()
 
 
-@shared_task(name="direct_crawling_platform", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="direct_crawling_platform", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def direct_crawling_platform(self, platform):
     try:
         proc = Process(target=crawling_start, args=[platform, self.request.id])
@@ -62,8 +61,7 @@ def crawling(platform, request_id):
     proc.join()
 
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="youtube_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="youtube_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def youtube_schedule_crawling(self):
     try:
         crawling('youtube', self.request.id)
@@ -71,10 +69,9 @@ def youtube_schedule_crawling(self):
         youtube_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="twitter_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="twitter_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def twitter_schedule_crawling(self):
     try:
         crawling('twitter', self.request.id)
@@ -82,10 +79,9 @@ def twitter_schedule_crawling(self):
         twitter_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def twitter2_schedule_crawling(self):
     try:
         crawling('twitter2', self.request.id)
@@ -93,10 +89,9 @@ def twitter2_schedule_crawling(self):
         twitter2_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def tiktok_schedule_crawling(self):
     try:
         crawling('tiktok', self.request.id)
@@ -104,10 +99,9 @@ def tiktok_schedule_crawling(self):
         tiktok_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="weverse_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="weverse_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def weverse_schedule_crawling(self):
     try:
         crawling('weverse', self.request.id)
@@ -115,10 +109,9 @@ def weverse_schedule_crawling(self):
         weverse_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def crowdtangle_schedule_crawling(self):
     try:
         crawling('crowdtangle', self.request.id)
@@ -127,8 +120,7 @@ def crowdtangle_schedule_crawling(self):
         print(f'Error with Crawling task')
 
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="vlive_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="vlive_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def vlive_schedule_crawling(self):
     try:
         crawling('vlive', self.request.id)
@@ -137,8 +129,7 @@ def vlive_schedule_crawling(self):
         print(f'Error with Crawling task')
 
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
-@shared_task(name="spotify_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="spotify_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def spotify_schedule_crawling(self):
     try:
         crawling('spotify', self.request.id)
@@ -146,10 +137,9 @@ def spotify_schedule_crawling(self):
         spotify_schedule_crawling.retry()
         print(f'Error with Crawling task')
 
-# @shared_task(name="crawling", bind=True, default_retry_delay=10, max_retries=5, soft_time_limit=250)
 
 
-@shared_task(name="melon_schedule_crawling", bind=True, default_retry_delay=10, max_retries=5)
+@app.task(name="melon_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def melon_schedule_crawling(self):
     try:
         crawling('melon', self.request.id)
