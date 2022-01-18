@@ -601,8 +601,8 @@ class DataReportAPI(APIView):
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-                filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-                    recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+                filter_objects = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
+                    reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
                 filter_objects_2 = DataModels[platform].objects.filter(updated_at=start_date)
                 if filter_objects.exists():
                     filter_objects_values=filter_objects.values()
@@ -629,10 +629,10 @@ class DataReportAPI(APIView):
                 # 전날 값을 구함
                 start_date_dateobject=datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
                 end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
-                filter_objects_start=DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-                    recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
-                filter_objects_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
-                    recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
+                filter_objects_start=DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
+                    reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
+                filter_objects_end=DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
+                    reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
                 filter_datas_total=[]
                 # 둘 다 존재할 때
                 if filter_objects_start.exists() and filter_objects_end.exists():
@@ -651,8 +651,8 @@ class DataReportAPI(APIView):
                         # id랑 artist, date 빼고 보내주기
                         data_json = {}
                         # 현재 보고 있는 거랑 맞는 끝 날짜를 가져오기
-                        filter_artist_end=DataModels[platform].objects.filter(recorded_date__year=end_date_dateobject.year,
-                            recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day,
+                        filter_artist_end=DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
+                            reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day,
                             artist = filter_objects_start_values[i]["artist"])
                         filter_artist_end = filter_artist_end.values()
                         if not filter_artist_end.exists():
@@ -781,8 +781,8 @@ class DataReportAPI(APIView):
             start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
             print(start_date)
             for index,artist in enumerate(artists):
-                obj = DataModels[platform].objects.filter(artist=artist,recorded_date__year=start_date_dateobject.year,
-                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+                obj = DataModels[platform].objects.filter(artist=artist,reserved_date__year=start_date_dateobject.year,
+                reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
 
 
                 if obj: #처음부터 크롤링 잘 된 경우
@@ -848,8 +848,8 @@ class DataReportAPI(APIView):
                             instance.save() 
                     else:
                         pass
-            filter_objects = DataModels[platform].objects.filter(recorded_date__year=start_date_dateobject.year,
-                recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            filter_objects = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
+                reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
             filter_objects_2 = DataModels[platform].objects.filter(updated_at = start_date)
             if filter_objects.exists():
                 filter_objects_values=filter_objects.values()

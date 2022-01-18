@@ -57,8 +57,8 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
         start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
         filter_objects = DataModels[platform].objects.filter(
             artist = artist,
-            recorded_date__year=start_date_dateobject.year,
-            recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            reserved_date__year=start_date_dateobject.year,
+            reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
         if filter_objects.exists():
             filter_value=filter_objects.values().first()
             #숫자필드값+user_created만 보내주기
@@ -74,12 +74,12 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
         end_date_dateobject=datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
         filter_start_objects = DataModels[platform].objects.filter(
             artist = artist,
-            recorded_date__year=start_date_dateobject.year,
-            recorded_date__month=start_date_dateobject.month, recorded_date__day=start_date_dateobject.day)
+            reserved_date__year=start_date_dateobject.year,
+           reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
         filter_end_objects = DataModels[platform].objects.filter(
             artist = artist,
-            recorded_date__year=end_date_dateobject.year,
-            recorded_date__month=end_date_dateobject.month, recorded_date__day=end_date_dateobject.day)
+            reserved_date__year=end_date_dateobject.year,
+            reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
         if filter_start_objects.exists() and filter_end_objects.exists():
             filter_start_value=filter_start_objects.values().first()
             filter_end_value=filter_end_objects.values().first()
@@ -491,26 +491,25 @@ def save_collect_data_target(data_json, platform, excel_import_date):
     수집(크롤링) 데이터 저장
     '''
     if excel_import_date is None:
-        recorded_date = datetime.datetime.today()
+        target_date = datetime.datetime.today()
     else:
-        recorded_date = datetime.datetime.strptime(excel_import_date, '%Y-%m-%d')
+        target_date = datetime.datetime.strptime(excel_import_date, '%Y-%m-%d')
     
-    obj = DataModels[platform].objects.filter(artist=data_json["artist"],recorded_date__year=recorded_date.year,
-                recorded_date__month=recorded_date.month, recorded_date__day=recorded_date.day).first()
+    obj = DataModels[platform].objects.filter(artist=data_json["artist"],reserved_date__year=target_date.year,
+                reserved_date__month=target_date.month, reserved_date__day=target_date.day).first()
     if obj is None:
     # 원래 없는 건 새로 저장
-        data_json["reserved_date"] = recorded_date
+        data_json["reserved_date"] = target_date
         platform_serializer = DataSerializers[platform](data=data_json)
         if platform_serializer.is_valid():
             # platform_serializer.recorded_date = recorded_date
             platform_serializer.save()
     # 있는 건 업데이트
     else:
-        data_json["reserved_date"] = recorded_date
+        data_json["reserved_date"] = target_date
         platform_serializer = DataSerializers[platform](obj, data=data_json)
         if platform_serializer.is_valid():
             platform_serializer.save()
-            platform_serializer.update(recorded_date = recorded_date)
     # artist 이외 값이 없으면 저장 안됨
 
 def save_platform(data_json):
