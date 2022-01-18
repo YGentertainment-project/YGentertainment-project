@@ -689,7 +689,7 @@ class DataReportAPI(APIView):
                 # 끝날짜의 데이터가 아예 존재하지 않을 때
                 else:
                     datename = '%s-%s-%s'%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
-                    return JsonResponse(status=400, data={'success': False, 'data':'there is no data for '+datename})
+                    return JsonResponse(status=400, data={'success': False, 'data':datename})
             else:
                 if DataModels[platform].objects.exists():
                     platform_queryset_values = DataModels[platform].objects.values()
