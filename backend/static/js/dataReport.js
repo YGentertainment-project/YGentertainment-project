@@ -1046,6 +1046,22 @@ document.getElementById('excel-btn2').onclick = function(){
     document.getElementById('progress-bar__bar2').classList.add('active');
 }
 document.getElementById('excel-btn3').onclick = function(){
-    console.log("33");
     document.getElementById('progress-bar__bar3').classList.add('active');
+}
+
+// default 누적 & today 설정
+document.getElementById('excel_import_date').valueAsDate = new Date();
+document.getElementById('excel_export_start_date').valueAsDate = new Date();
+document.getElementById('excel_export_date_text').style.display = "none";
+document.getElementById('excel_export_end_date').style.display = "none";
+document.getElementById('excel_export_days1').onclick = function(){
+    //excel form - 누적 선택
+    document.getElementById('excel_export_date_text').style.display = "none";
+    document.getElementById('excel_export_end_date').style.display = "none";
+}
+document.getElementById('excel_export_days2').onclick = function(){
+    //excel form - 기간별 선택
+    document.getElementById('excel_export_end_date').valueAsDate = new Date();
+    document.getElementById('excel_export_date_text').style.display = "block";
+    document.getElementById('excel_export_end_date').style.display = "block";
 }
