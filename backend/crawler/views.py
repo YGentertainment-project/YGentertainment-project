@@ -22,6 +22,7 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 from .tasks import direct_crawling_platform
 from .celery import app
 from celery.result import AsyncResult
+from .logparser import LogWatcher
 
 # data models
 DataModels = {
