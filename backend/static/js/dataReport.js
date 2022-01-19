@@ -589,7 +589,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -655,7 +655,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -726,7 +726,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -778,7 +778,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -841,7 +841,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 data_list = res.data //필터링 데이터
@@ -904,7 +904,7 @@ $('#update-data').click(function(){
             },
            url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -959,7 +959,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 console.log(res.success);
                 let data_list = [];
                 let artist_list = [];

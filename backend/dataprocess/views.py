@@ -82,7 +82,7 @@ def daily(request):
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
                 'platforms': platforms,
-                'alert': 'Successfully save to DB!'
+                'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
@@ -113,7 +113,7 @@ def daily(request):
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
                 'platforms': platforms,
-                'alert': 'Successfully save to DB!'
+                'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
