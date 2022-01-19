@@ -68,7 +68,7 @@ function platform_update_function(){
         datatype:'json',
         data: JSON.stringify(datas),
         success: res => {
-            alert("저장 되었습니다.");
+            alert("저장되었습니다.");
         },
         error: e => {
             alert(e.responseText);
@@ -114,7 +114,7 @@ function platform_create_function(){
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
-            alert("저장 되었습니다.");
+            alert("저장되었습니다.");
             //reload-page
             location.reload();
         },

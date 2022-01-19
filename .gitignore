@@ -49,7 +49,6 @@ media
 *.py[cod]
 *$py.class
 
-backend/*/migrations/
 backend/data/config/*
 backend/data/log/*
 backend/data/public/avatar/*
@@ -57,3 +56,5 @@ backend/data/public/avatar/*
 backend/data/public/upload/*
 backend/data/public/website/*
 !backend/data/public/website/favicon.ico
+
+dbbackup

@@ -1,4 +1,6 @@
-import requests, json, datetime
+import requests
+import json
+import datetime
 
 # api utilities
 from uuid import uuid4
@@ -39,8 +41,7 @@ DataModels = {
 flower_domain = ""
 production_env = get_env("YG_ENV", "dev") == "production"
 if production_env:
-    flower_domain = "http://172.18.0.1:5555/"
-    # flower_domain = "http://localhost:5555/"
+    flower_domain = "http://yg-celery-flower:5555/"
 else:
     flower_domain = "http://0.0.0.0:5555/"
 
@@ -92,8 +93,9 @@ def get_schedules():
         if('crawling' in task['name']):
             crontab_id = task['crontab_id']
             crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+            hour = crontab_info[0]['hour']
             minute = crontab_info[0]['minute']
-            schedule_dict = dict(id=task['id'], name=task['name'], minute=minute, last_run=task['last_run_at'],
+            schedule_dict = dict(id=task['id'], name=task['name'], hour=hour, minute=minute, last_run=task['last_run_at'],
                                  enabled=task['enabled'])
             schedule_list.append(schedule_dict)
     return schedule_list
@@ -114,8 +116,8 @@ def schedules(request):
             hour = '*'
         try:
             schedule, created = CrontabSchedule.objects.get_or_create(
-                hour= '{}'.format(hour),
-                minute= '{}'.format(minutes),
+                hour='{}'.format(hour),
+                minute='{}'.format(minutes),
                 timezone='Asia/Seoul',
             )
             # 존재하는 task는 상태 및 interval만 업데이트
@@ -156,12 +158,14 @@ def schedules(request):
             print(e)
             return JsonResponse(status=400, data={'error': str(e)})
 
+
 def get_all_tasks():
     flower_url = flower_domain + 'api/tasks'
     print('flower_url : {}'.format(flower_url))
     response = requests.get(flower_domain + 'api/tasks')
     tasks_json = json.loads(response.content.decode('utf-8'))
     return tasks_json
+
 
 @csrf_exempt
 @require_http_methods(['POST', 'GET'])
