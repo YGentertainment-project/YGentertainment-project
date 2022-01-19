@@ -50,11 +50,8 @@ function platform_update_function(){
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
         var cells = platform_tr[r].getElementsByTagName("td");
-        if(cells[1].firstElementChild.value==""){
-            alert("플랫폼의 이름은 빈칸일 수 없습니다.");
-            return;
-        }else if(cells[2].firstElementChild.value==""){
-            alert("플랫폼의 url은 빈칸일 수 없습니다.");
+        if(cells[1].firstElementChild.value=="" || (cells[2].firstElementChild.value==""){
+            alert("플랫폼 이름과 URL을 입력해주세요");
             return;
         }
         datas.push({
@@ -71,7 +68,7 @@ function platform_update_function(){
         datatype:'json',
         data: JSON.stringify(datas),
         success: res => {
-            alert("Successfully save!");
+            alert("저장 되었습니다.");
         },
         error: e => {
             alert(e.responseText);
@@ -94,14 +91,13 @@ function platform_create_function(){
         }
     }
     if(created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value==""){
-        alert("플랫폼 이름을 입력해주세요.");
+        alert("필수값을 모두 입력하세요.");
         return;
     }else if(created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value==""){
-        alert("플랫폼 URL을 입력해주세요.");
+        alert("필수값을 모두 입력하세요.");
         return;
-    }else if(!created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value.startsWith("http") &&
-    !created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value.startsWith("www")){
-        alert("플랫폼 URL의 형식이 잘못되었습니다.");
+    }else if(collect_items_list.length == 0){
+        alert("필수값을 모두 입력하세요.");
         return;
     }
     var data = {
@@ -118,7 +114,7 @@ function platform_create_function(){
         data: JSON.stringify(data),
         success: res => {
             console.log(res);
-            alert("Successfully create!");
+            alert("저장 되었습니다.");
             //reload-page
             location.reload();
         },
