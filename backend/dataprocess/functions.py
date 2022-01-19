@@ -497,8 +497,10 @@ def save_collect_data_target(data_json, platform, excel_import_date):
     
     obj = DataModels[platform].objects.filter(artist=data_json["artist"],reserved_date__year=target_date.year,
                 reserved_date__month=target_date.month, reserved_date__day=target_date.day).first()
+    target_date = datetime.date(target_date.year, target_date.month, target_date.day)
     if obj is None:
     # 원래 없는 건 새로 저장
+        # datefield 저장
         data_json["reserved_date"] = target_date
         platform_serializer = DataSerializers[platform](data=data_json)
         if platform_serializer.is_valid():

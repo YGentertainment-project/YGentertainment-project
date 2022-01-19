@@ -416,7 +416,7 @@ $(document).on('click','#save-list',function(){
                 "xpath": cells2[0].value,
             });
         else{
-            alert("조사항목을 입력하세요");
+            alert("조사항목을 입력하세요.");
             return;
         }
     }
