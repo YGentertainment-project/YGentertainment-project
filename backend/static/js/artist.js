@@ -1,3 +1,6 @@
+// 사용 변수들
+var clicked_platform = "";
+
 const isEmpty = 
     function(value){ 
         if( value == "" || value == null || value == undefined || ( value != null && typeof value == "object" && !Object.keys(value).length ) ){ 
@@ -217,6 +220,54 @@ $('#save-artists-platform').click(function(){
     
 })
 
+function add_new_collect_target_item(item_num){
+    //새로운 collect_target_item을 row상에 추가하는 함수4
+    const tableRow = $('<tr></tr>');
+    for(var i=0;i<6;i++){
+        let dataCol = document.createElement('td');
+        if(i===0){//id -> 아직 없으므로 0으로 두기
+            dataCol.setAttribute('class', 'hidden');
+            dataCol.innerHTML = `
+            <td>
+                <input type="text" value="0"></input>
+            </td>
+            `;
+        }else if(i==1){//collect_Target_id -> 아직 없으므로 0으로 두기
+            dataCol.setAttribute('class', 'hidden');
+            dataCol.innerHTML = `
+            <td>
+                <input type="text" value="0"></input>
+            </td>
+            `;
+        }else if(i==2){//항목
+            dataCol.innerHTML = `
+                <td>
+                    <span style="width:100%">항목${item_num}</span>
+                </td>`;
+        }else if(i==3){//target name
+            dataCol.innerHTML = `
+                <td>
+                    <input type="text" value="" style="width:100%"></input>
+                </td>
+                `;
+        }else if(i==4){//xpath
+            dataCol.innerHTML = `
+            <td>
+                <textarea style="width:100%"></textarea>
+            </td>
+            `;
+        }else if(i==5){//delete button
+            dataCol.innerHTML = `
+                <td>
+                    <button class="collect_target_delete" onclick=delete_screen_collect_target_item(${item_num-1})>삭제</button>
+                </td>
+            `;
+        }
+        tableRow.append(dataCol);
+    }
+    $('#artist-body-list').append(tableRow);
+}
+
 //show collect target of platform
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
@@ -224,6 +275,7 @@ $(document).on('click','.platform-names',function(){
     var artist_name = document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼","");
     // var artist_id = $('.hidden').find('input').val();
     var platform = $(this).text();
+    clicked_platform = platform;
 
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
@@ -233,45 +285,105 @@ $(document).on('click','.platform-names',function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
-
             const data_list = res.data;
             console.log(data_list);
             $('#artist-body-list').empty();
-            data_list.forEach(data=>{//data를 화면에 표시
-                const tableRow = $('<tr></tr>');
-                // 해당 row에 대한 column 데이터들 넣기
-                // (id, collect_target_id), target_name, xpath
-                for(key in data){
-                    let dataCol;
-                    if(key==='id' || key==='collect_target_id'){
-                        dataCol = document.createElement('td');
-                        dataCol.setAttribute('class', 'hidden');
-                        dataCol.innerHTML = `
-                        <td>
-                            <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
-                        </td>
-                        `;
-                        tableRow.append(dataCol);
-                    }else if(key==='target_name'){
-                        dataCol = document.createElement('td');
-                        dataCol.innerHTML = `
-                        <td>
-                            <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
-                        </td>
-                        `;
-                        tableRow.append(dataCol);
-                    }else if(key==='xpath'){
-                        dataCol = document.createElement('td');
-                        dataCol.innerHTML = `
-                        <td>
-                            <textarea style="width:100%">${data[key]}</textarea>
-                        </td>
-                        `;
-                        tableRow.append(dataCol);
+            let len = 0;
+            if(data_list.length>0){
+                data_list.forEach(data=>{//data를 화면에 표시
+                    len += 1;
+                    const tableRow = $('<tr></tr>');
+                    // 해당 row에 대한 column 데이터들 넣기
+                    // (id, collect_target_id), target_name, xpath
+                    for(key in data){
+                        let dataCol;
+                        if(key==='id' || key==='collect_target_id'){
+                            dataCol = document.createElement('td');
+                            dataCol.setAttribute('class', 'hidden');
+                            dataCol.innerHTML = `
+                            <td>
+                                <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
+                            </td>
+                            `;
+                            tableRow.append(dataCol);
+                            if(key=='collect_target_id'){
+                                //조사항목 td 붙이기
+                                //TODO: 순서대로 나열
+                                let len2 = len;
+                                let dataCol_name = dataCol = document.createElement('td');
+                                dataCol_name.innerHTML = `
+                                <td>
+                                    <span style="width:100%">항목${len2}</span>
+                                </td>
+                                `;
+                                tableRow.append(dataCol_name);
+                            }
+                        }else if(key==='target_name'){
+                            dataCol = document.createElement('td');
+                            dataCol.innerHTML = `
+                            <td>
+                                <input type="text" title="${data[key]}" value="${data[key]}" style="width:100%"></input>
+                            </td>
+                            `;
+                            tableRow.append(dataCol);
+                        }else if(key==='xpath'){
+                            let len2 = len-1;
+                            dataCol = document.createElement('td');
+                            dataCol.innerHTML = `
+                            <td>
+                                <textarea style="width:100%">${data[key]}</textarea>
+                            </td>
+                            `;
+                            tableRow.append(dataCol);
+                            //삭제 버튼 붙이기
+                            let dataCol2 = document.createElement('td');
+                            let dataCol2Btn = document.createElement('button');
+                            dataCol2Btn.onclick = function(){
+                                delete_collect_target_item(data["id"], len2);
+                            };
+                            dataCol2Btn.setAttribute('class', 'collect_target_delete');
+                            dataCol2Btn.innerHTML = "삭제";
+                            dataCol2.append(dataCol2Btn);
+                            tableRow.append(dataCol2);
+                        }
                     }
+                    $('#artist-body-list').append(tableRow);
+                });
+            }
+            else{
+                //수집항목이 하나도 없을 때 editing 화면
+                //항목 #번 인자 넘겨주기
+                add_new_collect_target_item(len+1);
+            }
+            //맨 뒤에 스케줄 관련 row 붙이기
+            const tableRow = $('<tr></tr>');
+            for(var i=0;i<4;i++){
+                let dataCol = document.createElement('td');
+                if(i===0){
+                    dataCol.innerHTML = `
+                    <td></td>`;
+                }else if(i==1){
+                    dataCol.innerHTML = `
+                    <td>
+                       스케줄
+                    </td>`;
+                }else if(i==2){
+                    dataCol.innerHTML = `
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropbtn"> 
+                                선택
+                            </button>
+                            <div class="dropdown-content">
+                                <a href="#">일별</a>
+                                <a href="#">시간별</a>
+                            </div>
+                        </div>
+                    </td>`;
                 }
-                $('#artist-body-list').append(tableRow);
-            });
+                tableRow.append(dataCol);
+            }
+            $('#artist-body-list').append(tableRow);
         },
         error: e => {
             alert(e.responseText);
@@ -279,18 +391,21 @@ $(document).on('click','.platform-names',function(){
     })
 })
 
+// collect_target_delete
+// $()
+
 //update platform collect target
 $(document).on('click','#save-list',function(){
     var bodydatas = [];
-
     var item_tr = $('#artist-body-list').find('tr');
-    for(var r=0;r<item_tr.length;r++){
+    //마지막 열은 스케줄과 관련되었기 때문에 제외
+    for(var r=0;r<item_tr.length-1;r++){
         var cells = item_tr[r].getElementsByTagName("td");
         var cells2 = item_tr[r].getElementsByTagName("textarea");
         bodydatas.push({
             "id": cells[0].firstElementChild.value,
             "collect_target": cells[1].firstElementChild.value,
-            "target_name": cells[2].firstElementChild.value,
+            "target_name": cells[3].firstElementChild.value,
             "xpath": cells2[0].value,
         });
     }
@@ -298,10 +413,14 @@ $(document).on('click','#save-list',function(){
         url: '/dataprocess/api/collect_target_item/',
         type: 'PUT',
         datatype:'json',
-        data :JSON.stringify(bodydatas),
+        data :JSON.stringify({
+            "artist": document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼",""),
+            "platform": clicked_platform,
+            "items": bodydatas
+        }),
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            alert('Successfully saved!');
+            alert('저장 되었습니다.');
 
         },
         error: e => {
@@ -318,7 +437,7 @@ $(document).on('click','#url_add_button',function(){
     console.log(tr.find('td').find('input').length);
     if(tr.find('td').find('input').length <= 1){
         tr.append(attri_col)
-    } else{
+    }else{
         alert("URL 은 최대 2개까지 입력 가능합니다.")
     }
 })
@@ -333,3 +452,29 @@ $(document).on('click','#url_delete_button',function(){
         alert("URL 을 한 개 이상 입력해주세요.")
     }
 })
+
+//delete collect_target_item (api상)
+function delete_collect_target_item(id, index){
+    var data = {"id": id};
+    $.ajax({
+        url: "/dataprocess/api/collect_target_item/",
+        type: 'DELETE',
+        datatype:'json',
+        data: JSON.stringify(data),
+        success: res => {
+            alert('삭제되었습니다.');
+            delete_screen_collect_target_item(index);
+        },
+        error: e => {
+            alert(e.responseText);
+        },
+    });
+};
+
+//delete collect_target_item (화면상)
+function delete_screen_collect_target_item(index){
+    //삭제하기
+    var item_tr = $('#artist-body-list').find('tr');
+    //마지막 열은 스케줄과 관련되었기 때문에 제외
+    item_tr[index].remove();
+};

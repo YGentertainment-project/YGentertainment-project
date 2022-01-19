@@ -93,9 +93,6 @@ def daily(request):
             excel_export_type = request.POST.get('excel_export_days', None) # 누적 or 기간별
             excel_export_start_date = request.POST.get('excel_export_start_date', None) # 0000-0-0 형태
             excel_export_end_date = request.POST.get('excel_export_end_date', None) # 0000-0-0 형태
-            print(excel_export_type)
-            print(excel_export_start_date)
-            print(excel_export_end_date)
             book = export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date)
             today_date = datetime.datetime.today()
             filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
@@ -381,7 +378,6 @@ class ArtistAPI(APIView):
                 platform_objects_values = platform_objects.values()
 
                 for obj in artist_object['urls']:
-                    print(obj)
                     platform_id = Platform.objects.get(name = obj['platform_name']).id
                     artist_id = artist_serializer.data['id']
                     target_url = obj['url1']
@@ -502,15 +498,49 @@ class CollectTargetItemAPI(APIView):
         CollectTargetItem update api
         """
         try:
-            collecttargetitem_list = JSONParser().parse(request)
+            collecttargetitem = JSONParser().parse(request)
+            collecttargetitem_list = collecttargetitem["items"]
             for collecttargetitem_object in collecttargetitem_list:
-                collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'])[0]
-                collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
-                if collecttargetitem_serializer.is_valid():
-                    collecttargetitem_serializer.save()
+                # 여기 수정!!!!
+                collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'],
+                    target_name=collecttargetitem_object['target_name'],xpath=collecttargetitem_object['xpath']).first()
+                # 없으면 새로 저장
+                if collecttargetitem_data is None:
+                    artist_object = Artist.objects.filter(name = collecttargetitem["artist"])
+                    artist_object = artist_object.values()[0]
+                    platform_object = Platform.objects.filter(name = collecttargetitem["platform"])
+                    platform_object = platform_object.values()[0]
+                    collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id=platform_object['id'])
+                    collecttarget_object = collecttarget_object.values()[0]
+                    target_item_serializer = CollectTargetItemSerializer(data={
+                        'collect_target': collecttarget_object['id'],
+                        'target_name': collecttargetitem_object['target_name'],
+                        'xpath': collecttargetitem_object['xpath']
+                    })
+                    if target_item_serializer.is_valid():
+                        target_item_serializer.save()
+                    else:
+                        return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+                # 있으면 업데이트
                 else:
-                    return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+                    collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
+                    if collecttargetitem_serializer.is_valid():
+                        collecttargetitem_serializer.save()
+                    else:
+                        return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
+
+    def delete(self, request):
+        """
+        CollectTargetItem delete api
+        """
+        try:
+            delete_id = JSONParser().parse(request)["id"]
+            obj = CollectTargetItem.objects.filter(id = delete_id)
+            obj.delete()
+            return JsonResponse(data={'success': True}, status=status.HTTP_200_OK)
         except:
             return JsonResponse(data={'success': False}, status=400)
 
@@ -782,7 +812,6 @@ class DataReportAPI(APIView):
 
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-            print(start_date)
             for index,artist in enumerate(artists):
                 obj = DataModels[platform].objects.filter(artist=artist,reserved_date__year=start_date_dateobject.year,
                 reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
