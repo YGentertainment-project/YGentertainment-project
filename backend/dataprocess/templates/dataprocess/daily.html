@@ -15,10 +15,16 @@
             <button id="close_button1">닫기</button>
         </div>
         <div style="height: 25px;"></div>
-         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" class="column_layout">
             {% csrf_token %}
+             <div class="row_layout" style="justify-content: flex-start;">
+                <span style="margin-right: 30px;">저장 날짜: </span>
+                <input type="date" name="excel_import_date" id="excel_import_date"/>
+             </div>
+             <div style="height: 10px;"></div>
             <input type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
+            <div style="height: 10px;"></div>
             <button class="excel-btn black-btn2" id="excel-btn1" type="submit">Import</button>
         </form>
         <div class="progress-bar">
@@ -31,9 +37,21 @@
             <span>Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
             <button id="close_button2">닫기</button>
         </div>
-        <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
+            <div style="height: 15px;"></div>
+            <div class="row_layout">
+                <label style="margin-right: 20px;">조회 일자: </label>
+                <input type="radio" name="excel_export_days" value="누적" id="excel_export_days1" checked/> <label style="margin-right: 10px;">누적</label>
+                <input type="radio" name="excel_export_days" value="기간별" id="excel_export_days2" /> <label>기간별</label>
+            </div>
+            <div style="height: 10px;"></div>
+            <div class="row_layout">
+                <input type="date" name="excel_export_start_date" id="excel_export_start_date"/>
+                <span id="excel_export_date_text">~</span>
+                <input type="date" name="excel_export_end_date" id="excel_export_end_date" />
+            </div>
+            <div style="height: 25px;"></div>
             <input type="text" name="type" value="export" style="display:none;">
             <button class="excel-btn black-btn2" id="excel-btn2" type="submit">Export</button>
         </form>
@@ -100,7 +118,7 @@
         </div>
         <div class="contents">
             <div class="contents-platforms">
-                <label>플랫폼</label>
+                <label style="margin-bottom: 5px; font-weight: bold;">플랫폼</label>
                 <!--DB 데이터로 변경 필요-->
                 {% if platforms %}
                 {% for platform in platforms %}

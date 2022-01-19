@@ -17,6 +17,9 @@
       function go_to_artist(){
           location.href = "{% url 'dataprocess:artist' %}";
       }
+      function go_to_monitering(){
+          location.href = "{% url 'dataprocess:monitering' %}";
+      }
    </script>
 
    <!-- 로그인 -->
@@ -33,6 +36,9 @@
          </button>
          <button class="excel-btn" style="width:200px;" onclick=go_to_artist()>
             아티스트 관리로 이동
+         </button>
+         <button class="excel-btn" style="width:200px;" onclick=go_to_monitering()>
+            모니터링 관리로 이동
          </button>
       </div>
    </div>
