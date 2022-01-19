@@ -16,7 +16,7 @@ from urllib.parse import urlparse
 from itemadapter import is_item, ItemAdapter
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -143,11 +143,15 @@ class NoLoginDownloaderMiddleware:
         # Socialblade Case
         if(domain == SOCIALBLADE_DOMAIN):
             if(request.url != SOCIALBLADE_ROBOT):
-                WebDriverWait(self.driver, 30).until(
-                    EC.presence_of_element_located(
-                        (By.ID, 'YouTubeUserTopInfoWrap')
+                try:
+                    WebDriverWait(self.driver, 30).until(
+                        EC.presence_of_element_located(
+                            (By.ID, 'YouTubeUserTopInfoWrap')
+                        )
                     )
-                )
+                except TimeoutException:
+                    print("There are no element")
+
         # Youtube Channel Case
         elif(domain == YOUTUBE_DOMAIN):
             if(request.url != YOUTUBE_ROBOT):
@@ -238,9 +242,12 @@ class LoginDownloaderMiddleware:
 
         if spider.name == 'weverse':
             if request.url != WEVERSE_ROBOT:
-                WebDriverWait(self.driver, 30).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'sc-pcxhi.kMxZOc'))
-                )
+                try:
+                    WebDriverWait(self.driver, 30).until(
+                        EC.presence_of_element_located((By.CLASS_NAME, 'sc-pcxhi.kMxZOc'))
+                    )
+                except TimeoutException:
+                    print("There are no element")
         else:
             if request.url != CROWDTANGLE_ROBOT:
                 WebDriverWait(self.driver, 30).until(
