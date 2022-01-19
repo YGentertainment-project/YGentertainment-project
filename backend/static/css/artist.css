@@ -78,13 +78,13 @@
 .artist-add-table{
     width: 30%;
     height: 100%;
-    margin-top: 40px;
+    margin-top: 30px;
 }
 
 .add-table{
-    width: 60%;
+    width: 70%;
     height: 100%;
-    margin: 40px;
+    margin: 30px;
 }
 
 .title-th{
@@ -101,7 +101,12 @@
     padding: 3px;
 }
 
-.add-target-input{
+.add-target-input-1{
+    width: 100% !important;
+    /* float: left; */
+}
+
+.add-target-input-2{
     width: 100% !important;
     /* float: left; */
 }
@@ -162,4 +167,16 @@
 .artist-title{
     font-size : 1rem;
     font-weight: bold;
+}
+
+#url_add_button, #url_delete_button{
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid LightSlateGrey;
+    border-radius: 50px;
+    width: 26px;
+    height: 26px;
+    margin: 0;
+    align-items: flex-end;
+    justify-self: flex-end;
 }
