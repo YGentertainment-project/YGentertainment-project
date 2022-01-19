@@ -15,14 +15,14 @@ for opt, arg in opts:
     if opt in ["-m", "--module"]:
         test_module = arg
 
-print(f"Coverage: {is_coverage}")
-print(f"Module: {(test_module if test_module else 'All')}")
+# print(f"Coverage: {is_coverage}")
+# print(f"Module: {(test_module if test_module else 'All')}")
 
 print("running flake8...")
 if os.system("flake8 --statistics --config .flake8 ."):
     exit()
 
-ret = os.system(f'coverage run --include="$PWD/*" manage.py test {test_module} --settings={setting}')
+# ret = os.system(f'coverage run --include="$PWD/*" manage.py test {test_module} --settings={setting}')
 
-if not ret and is_coverage:
-    os.system("coverage html && open htmlcov/index.html")
+# if not ret and is_coverage:
+    # os.system("coverage html && open htmlcov/index.html")
