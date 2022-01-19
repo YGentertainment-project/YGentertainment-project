@@ -369,20 +369,21 @@ class ArtistAPI(APIView):
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
                 platform_objects_values = platform_objects.values()
-                
-                url_index = 0
 
-                for platform_objects_value in platform_objects_values:
-                    platform_target_url = artist_object['urls'][url_index]
-                    platform_target_url_2 = artist_object['urls'][url_index+1]
-                    url_index += 2
+                for obj in artist_object['urls']:
+                    print(obj)
+                    platform_id = Platform.objects.get(name = obj['platform_name']).id
+                    artist_id = artist_serializer.data['id']
+                    target_url = obj['url1']
+                    target_url_2 = obj['url2']
                     collecttarget = CollectTarget(
-                        platform_id = platform_objects_value['id'],
-                        artist_id = artist_serializer.data['id'],
-                        target_url = platform_target_url,
-                        target_url_2 = platform_target_url_2
+                        platform_id = platform_id,
+                        artist_id = artist_id,
+                        target_url = target_url,
+                        target_url_2 = target_url_2
                     )
                     collecttarget.save()
+                
     
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)

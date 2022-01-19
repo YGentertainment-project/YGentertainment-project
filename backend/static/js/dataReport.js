@@ -29,9 +29,13 @@ function addDays(date, days) {
 }
 
 //refresh button
-$(document).on('click','input[name=refresh]',function(){
+function refresh(){
     $('input[name=start_date]').val("");
     $('input[name=end_date]').val("");
+}
+
+$(document).on('click','input[name=refresh]',function(){
+    refresh();
  })
  
 
@@ -222,15 +226,19 @@ $(document).on('change','#start_date',function(){
     var end_date = $('input[name=end_date]').val();
     if(!platform){
         return false;
-    } else if(type === '기간별' && !end_date){ 
-        return false;
+    } else if(type === '기간별' && !end_date){
+        alert('종료 일자를 선택해주세요.')
+        return;
     }
 
     if(type == undefined){
         alert("누적/기간별 중 선택해주세요.");
         return;
     }else if(type=="누적" && start_date==""){
-        alert("시작 날짜를 선택해주세요.");
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
         return;
     }
 
@@ -294,26 +302,29 @@ $(document).on('change','#start_date',function(){
 })
 
 $(document).on('change','#end_date',function(){
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    var date1 = new Date(start_date);
+    var date2 = new Date(end_date);
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type =="기간별" && date2 < date1){
+        alert('시작 일자를 종료 일자보다 과거로 입력하세요.');
+        refresh();
+        return;
+    }
     var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
     if(!platform){
         return false;
-    }
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-    var end_date = $('input[name=end_date]').val();
-   
+    } 
+
 
     if(type == undefined){
         alert("누적/기간별 중 선택해주세요.");
         return;
     }else if(type=="누적" && start_date==""){
-        alert("시작 날짜를 선택해주세요.");
+        alert("시작 일자를 선택해주세요.");
         return;
-    }else if(type=="기간별" && (start_date=="" ||end_date=="" )){
-        alert("시작과 끝 날짜를 선택해주세요.");
-        return;
-    }
-
+    } 
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
@@ -392,6 +403,12 @@ $(document).on('click','.platform-name',function(){
         return;
     }else if(type=="누적" && start_date==""){
         return;
+    }else if(type=="기간별" && start_date==""){
+        alert('시작 일자를 설정하세요.')
+        return;
+    }else if(type=="기간별" && start_date && end_date == ""){
+        alert('종료 일자를 설정하세요.')
+        return;
     }
 
 
@@ -447,7 +464,8 @@ $(document).on('click','.platform-name',function(){
         },
         error: e => {
             console.log(e);
-            alert(e.responseText);
+            var result = JSON.parse(e.responseText);
+            alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             $('#result-table').eq(0).empty();
         },
     })

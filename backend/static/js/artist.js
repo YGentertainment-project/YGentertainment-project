@@ -10,32 +10,32 @@ const isEmpty =
 
 //artist create function
 $('.add-submit').click(function(e){
-    var th = $('.add-table').find('th'); //platform names
     var trs_value = $('input[type=text]');  //artist info
+    var urls_tr = $('.add-table').find('#artist-urls').find('tr')
+    var datas = [];
 
-    var platform_names = []
-    for(var i = 2; i < th.length ; i++){
-        platform_names.push(th[i].innerHTML);
-    }
-
-    var urls = [];
-    for(var i=7;i<trs_value.length;i++){
-        var collect_item = trs_value[i].value;
-        if(collect_item !="" && !collect_item.startsWith("http") && !collect_item.startsWith("www") ){
-            alert("데이터 수집 URL의 형식이 잘못되었습니다.");
-            e.preventDefault();
-            return;
+    for(var r=0;r<urls_tr.length;r++){
+        var cells = urls_tr[r].getElementsByTagName("td");
+        //console.log(cells.length);
+        if(cells.length < 3){
+            datas.push({
+                "platform_name": cells[0].innerHTML,
+                "url1": cells[1].firstElementChild.value,
+                "url2": "",
+            });
+        } else{
+            datas.push({
+                "platform_name": cells[0].innerHTML,
+                "url1": cells[1].firstElementChild.value,
+                "url2": cells[2].firstElementChild.value,
+            });
         }
-        urls.push(collect_item);
-           
     }
+
+    console.log(datas);
 
     var charRe = /^[a-z]|[A-Z]$/;
 
-    var target_urls = {};
-    for( var i = 0; i<platform_names.length; i++){
-        target_urls[platform_names[i]] = urls[i];
-    }
     if(trs_value[0].value==""){
         alert("아티스트의 이름을 입력해주세요.");
         e.preventDefault();
@@ -61,13 +61,13 @@ $('.add-submit').click(function(e){
         "member_nationality": trs_value[4].value,
         "agency":trs_value[5].value,
         // "debut_date": trs_value[6].value,
-        "urls": urls,
+        "urls": datas,
     };
     if(trs_value[6].value!=""){
         data["debut_date"] = trs_value[6].value;
     }
 
-    console.log(JSON.stringify(data));
+    //console.log(JSON.stringify(data));
 
     $.ajax({
         url: "/dataprocess/api/artist/",
@@ -75,6 +75,7 @@ $('.add-submit').click(function(e){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
+            console.log('success');
             location.href = "/dataprocess/artist/";
         },
         error: e => {
@@ -307,4 +308,28 @@ $(document).on('click','#save-list',function(){
             alert(e.responseText);
         },
     })
+})
+
+//항목 칸 추가
+$(document).on('click','#url_add_button',function(){
+    tr = $(this).closest('tr');
+    var attri_col = $('<td style="display: flex;"><input class="add-target-input-2"  type="text" placeholder="URL 2" /></td>')
+    //tr.find('td').find('.add-target-input-2').val()
+    console.log(tr.find('td').find('input').length);
+    if(tr.find('td').find('input').length <= 1){
+        tr.append(attri_col)
+    } else{
+        alert("URL 은 최대 2개까지 입력 가능합니다.")
+    }
+})
+
+
+$(document).on('click','#url_delete_button',function(){
+    tr = $(this).closest('tr');
+    //tr.find('td').find('.add-target-input-2').val()
+    if(tr.find('td').find('input').length > 1){
+        tr.find("td:last").remove();
+    } else{
+        alert("URL 을 한 개 이상 입력해주세요.")
+    }
 })
