@@ -219,7 +219,7 @@ input[type='checkbox']:checked:after {
 
 #attr_add_button, #attr_delete_button{
     text-align: center;
-    border: 1px solid LightSlateGrey;
+    border: 1px solid rgb(107, 110, 112);
     border-radius: 50px;
     width: 26px;
     height: 26px;

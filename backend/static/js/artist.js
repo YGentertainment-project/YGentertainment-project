@@ -78,7 +78,6 @@ $('.add-submit').click(function(e){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
-            console.log('success');
             location.href = "/dataprocess/artist/";
         },
         error: e => {
@@ -116,8 +115,7 @@ $('#save-artists').click(function(){
         datatype:'json',
         data: JSON.stringify(datas),
         success: res => {
-            console.log(res);
-            alert("Successfully save!");
+            alert('저장되었습니다.');
         },
         error: e => {
             console.log(e);
@@ -209,8 +207,7 @@ $('#save-artists-platform').click(function(){
         datatype:'json',
         data: JSON.stringify(datas),
         success: res => {
-            console.log(res);
-            alert("Successfully save!");
+            alert('저장되었습니다.');
         },
         error: e => {
             console.log(e);
@@ -259,7 +256,7 @@ function add_new_collect_target_item(item_num){
         }else if(i==5){//delete button
             dataCol.innerHTML = `
                 <td>
-                    <button class="collect_target_delete" onclick=delete_screen_collect_target_item(${item_num-1})>삭제</button>
+                    <button class="collect_target_delete" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
         }
@@ -356,40 +353,44 @@ $(document).on('click','.platform-names',function(){
                 add_new_collect_target_item(len+1);
             }
             //맨 뒤에 스케줄 관련 row 붙이기
-            const tableRow = $('<tr></tr>');
-            for(var i=0;i<4;i++){
-                let dataCol = document.createElement('td');
-                if(i===0){
-                    dataCol.innerHTML = `
-                    <td></td>`;
-                }else if(i==1){
-                    dataCol.innerHTML = `
-                    <td>
-                       스케줄
-                    </td>`;
-                }else if(i==2){
-                    dataCol.innerHTML = `
-                    <td>
-                        <div class="dropdown">
-                            <button class="dropbtn"> 
-                                선택
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="#">일별</a>
-                                <a href="#">시간별</a>
-                            </div>
-                        </div>
-                    </td>`;
-                }
-                tableRow.append(dataCol);
-            }
-            $('#artist-body-list').append(tableRow);
+            append_schedule_row();
         },
         error: e => {
             alert(e.responseText);
         },
     })
 })
+
+function append_schedule_row(){
+    const tableRow = $('<tr></tr>');
+    for(var i=0;i<4;i++){
+        let dataCol = document.createElement('td');
+        if(i===0){
+            dataCol.innerHTML = `
+            <td></td>`;
+        }else if(i==1){
+            dataCol.innerHTML = `
+            <td>
+               스케줄
+            </td>`;
+        }else if(i==2){
+            dataCol.innerHTML = `
+            <td>
+                <div class="dropdown">
+                    <button class="dropbtn"> 
+                        선택
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#">일별</a>
+                        <a href="#">시간별</a>
+                    </div>
+                </div>
+            </td>`;
+        }
+        tableRow.append(dataCol);
+    }
+    $('#artist-body-list').append(tableRow);
+}
 
 // collect_target_delete
 // $()
@@ -400,14 +401,24 @@ $(document).on('click','#save-list',function(){
     var item_tr = $('#artist-body-list').find('tr');
     //마지막 열은 스케줄과 관련되었기 때문에 제외
     for(var r=0;r<item_tr.length-1;r++){
+        console.log(item_tr[r].classList);
+        if(item_tr[r].classList == 'hidden'){
+            //숨겨져 있다면 삭제된 것이므로 제외
+            continue;
+        }
         var cells = item_tr[r].getElementsByTagName("td");
         var cells2 = item_tr[r].getElementsByTagName("textarea");
-        bodydatas.push({
-            "id": cells[0].firstElementChild.value,
-            "collect_target": cells[1].firstElementChild.value,
-            "target_name": cells[3].firstElementChild.value,
-            "xpath": cells2[0].value,
-        });
+        if(cells[3].firstElementChild.value != "")
+            bodydatas.push({
+                "id": cells[0].firstElementChild.value,
+                "collect_target": cells[1].firstElementChild.value,
+                "target_name": cells[3].firstElementChild.value,
+                "xpath": cells2[0].value,
+            });
+        else{
+            alert("조사항목을 입력하세요");
+            return;
+        }
     }
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
@@ -420,7 +431,7 @@ $(document).on('click','#save-list',function(){
         }),
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            alert('저장 되었습니다.');
+            alert('저장되었습니다.');
 
         },
         error: e => {
@@ -455,26 +466,54 @@ $(document).on('click','#url_delete_button',function(){
 
 //delete collect_target_item (api상)
 function delete_collect_target_item(id, index){
-    var data = {"id": id};
-    $.ajax({
-        url: "/dataprocess/api/collect_target_item/",
-        type: 'DELETE',
-        datatype:'json',
-        data: JSON.stringify(data),
-        success: res => {
-            alert('삭제되었습니다.');
-            delete_screen_collect_target_item(index);
-        },
-        error: e => {
-            alert(e.responseText);
-        },
-    });
+    if (confirm("삭제하시겠습니까?")) {
+        var data = {"id": id};
+        $.ajax({
+            url: "/dataprocess/api/collect_target_item/",
+            type: 'DELETE',
+            datatype:'json',
+            data: JSON.stringify(data),
+            success: res => {
+                alert('삭제되었습니다.');
+                delete_screen_collect_target_item(index);
+            },
+            error: e => {
+                alert(e.responseText);
+            },
+        });
+    } 
 };
+
+function delete_collect_target_item_notindb(index){
+    if (confirm("삭제하시겠습니까?")) {
+        delete_screen_collect_target_item(index);
+    } 
+}
 
 //delete collect_target_item (화면상)
 function delete_screen_collect_target_item(index){
-    //삭제하기
+    //삭제하기: hidden 처리해서 숨기기
     var item_tr = $('#artist-body-list').find('tr');
-    //마지막 열은 스케줄과 관련되었기 때문에 제외
-    item_tr[index].remove();
+    item_tr[index].setAttribute('class','hidden');
 };
+
+//수집항목 +버튼
+$(document).on('click','#artist_attr_add_button',function(){
+    var item_tr = $('#artist-body-list').find('tr');
+    let len = item_tr.length;
+    //스케줄 삭제
+    item_tr[len-1].remove();
+    //끝에 append
+    add_new_collect_target_item(len);
+    //스케줄 추가
+    append_schedule_row();
+})
+
+//수집항목 -버튼
+// $(document).on('click','#artist_attr_delete_button',function(){
+//     var item_tr = $('#artist-body-list').find('tr');
+//     let len = item_tr.length;
+//     if(len > 2)
+//         //스케줄 삭제
+//         item_tr[len-2].remove();
+// })
