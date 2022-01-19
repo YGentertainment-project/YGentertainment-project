@@ -180,3 +180,87 @@
     align-items: flex-end;
     justify-self: flex-end;
 }
+
+#artist-body-list{
+    font-size: 0.65em;
+}
+
+.collect_target_delete{
+    font-size: 0.65em;
+    color: white;
+    background-color: rgb(247, 78, 78) !important;
+    border: 1px solid black;
+    border-radius: 4px;
+    min-width: 40px;
+    border: 1px solid black !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+    padding-right: 2px !important;
+    padding-left: 2px !important;
+}
+
+.dropdown{
+  position : relative;
+  display : inline-block;
+}
+
+.dropbtn_icon{
+  font-family : 'Material Icons';
+}
+.dropbtn{
+  border : 1px solid rgb(37, 37, 37);
+  background-color: white;
+  font-weight: 400;
+  color : rgb(114, 110, 110);
+  /* padding : 9px; */
+  width : 50px;
+  text-align: left;
+  cursor : pointer;
+  font-size : 0.9em;
+}
+.dropdown-content{
+  display : none;
+  position : absolute;
+  z-index : 1; /*다른 요소들보다 앞에 배치*/
+  font-weight: 400;
+  background-color: #f9f9f9;
+  min-width : 100px;
+  font-size: 0.65em;
+}
+
+.dropdown-content a{
+  display : block;
+  text-decoration : none;
+  color : rgb(37, 37, 37);
+  font-size : 0.9em;
+  padding : 12px 20px;
+}
+
+.dropdown-content a:hover{
+  background-color : #ececec
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.artist_attr_button_layout{
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+#artist_attr_add_button, #artist_attr_delete_button{
+    font-size: 0.8em;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid rgb(107, 110, 112);
+    border-radius: 50px;
+    width: 26px;
+    height: 26px;
+    margin-left: 3px;
+    align-items: flex-end;
+    justify-self: flex-end;
+}

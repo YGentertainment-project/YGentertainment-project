@@ -584,17 +584,11 @@ def save_collect_target_item(data_json):
         target_item_serializer = CollectTargetItemSerializer(data=data_json)
         if target_item_serializer.is_valid():
             target_item_serializer.save()
-        # else:
-        #     print(data_json)
-        #     print("===invalid1===")
     # 있는 건 업데이트
     else:
         target_item_serializer = CollectTargetItemSerializer(obj, data=data_json)
         if target_item_serializer.is_valid():
             target_item_serializer.save()
-        # else:
-        #     print(data_json)
-        #     print("===invalid2===")
 
 def save_collect_target(data_json):
     '''
