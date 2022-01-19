@@ -50,7 +50,7 @@ function platform_update_function(){
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
         var cells = platform_tr[r].getElementsByTagName("td");
-        if(cells[1].firstElementChild.value=="" || (cells[2].firstElementChild.value==""){
+        if(cells[1].firstElementChild.value=="" || cells[2].firstElementChild.value==""){
             alert("플랫폼 이름과 URL을 입력해주세요");
             return;
         }

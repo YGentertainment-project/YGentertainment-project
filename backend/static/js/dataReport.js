@@ -226,8 +226,7 @@ $(document).on('change','#start_date',function(){
     var end_date = $('input[name=end_date]').val();
     if(!platform){
         return false;
-    } else if(type === '기간별' && !end_date){
-        alert('종료 일자를 선택해주세요.')
+    } else if(type === '누적' && !end_date){
         return;
     }
 
@@ -400,8 +399,10 @@ $(document).on('click','.platform-name',function(){
 
 
     if(type == undefined){
+        alert('누적/기간별을 설정하세요.')
         return;
     }else if(type=="누적" && start_date==""){
+        alert('시작 일자를 설정하세요.')
         return;
     }else if(type=="기간별" && start_date==""){
         alert('시작 일자를 설정하세요.')

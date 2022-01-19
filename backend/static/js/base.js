@@ -49,6 +49,16 @@ $(".artists-m").click(function(){
     }
 });
 
+$(".monitering-m").click(function(){
+    if(!$('.monitering-in').hasClass("show")){
+        $('.monitering-in').removeClass("hide")
+        $('.monitering-in').addClass("show")
+    } else{
+        $('.monitering-in').removeClass("show")
+        $('.monitering-in').addClass("hide")
+    }
+});
+
 
 $(function(){
     var duration = 300;

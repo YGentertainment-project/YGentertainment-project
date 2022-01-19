@@ -10,7 +10,7 @@ class SocialbladeYoutube(models.Model):
     views = models.BigIntegerField(null=True)  # 조회수
     user_created = models.TextField(null=True)  # 계정 생성일
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -28,7 +28,7 @@ class SocialbladeTiktok(models.Model):
     uploads = models.IntegerField()
     likes = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -46,7 +46,7 @@ class SocialbladeTwitter(models.Model):
     twits = models.IntegerField()
     user_created = models.TextField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -64,7 +64,7 @@ class SocialbladeTwitter2(models.Model):
     twits = models.IntegerField()
     user_created = models.TextField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -80,7 +80,7 @@ class Weverse(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     weverses = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -96,7 +96,7 @@ class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -112,7 +112,7 @@ class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -131,7 +131,7 @@ class Vlive(models.Model):
     likes = models.BigIntegerField()
     plays = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -149,7 +149,7 @@ class Melon(models.Model):
     streams = models.BigIntegerField()
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
@@ -167,7 +167,7 @@ class Spotify(models.Model):
     monthly_listens = models.BigIntegerField()
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
-    reserved_date = models.DateTimeField(default=now)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)

@@ -15,6 +15,7 @@ urlpatterns = [
     # path('excel/',csrf_exempt(views.excel),name='excel'),
     path('artist/',artist,name='artist'),
     path('artist/add/',artist_add,name='artist_add'),
+    path('monitering/',monitering,name='monitering'),
     path('login/',login,name='login'),
 
     path('api/platform_info/', csrf_exempt(views.platform_info), name='platform_info'),
