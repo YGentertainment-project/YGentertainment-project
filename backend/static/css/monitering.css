@@ -47,3 +47,57 @@
     text-align: center;
     font-weight: bold;
 }
+
+.state-circles{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+}
+
+#outcircle{
+    display: flex;
+    background-color: lightgray;
+    width:100px;
+    height:100px;
+    border-radius: 50px;
+    margin:10px;
+}
+
+#incircle-1{
+    margin: auto;
+    background-color: #5182be;
+    width:80px;
+    height:80px;
+    border-radius: 50px;
+  }
+
+#incircle-2{
+    margin: auto;
+    background-color: #C0514E;
+    width:80px;
+    height:80px;
+    border-radius: 50px;
+  }
+
+  #incircle-3{
+    margin: auto;
+    background-color: #9fbe60;
+    width:80px;
+    height:80px;
+    border-radius: 50px;
+  }
+
+  #incircle-4{
+    margin: auto;
+    background-color: #7639b2;
+    width:80px;
+    height:80px;
+    border-radius: 50px;
+  }
+
+  .state-description{
+    line-height: 80px;
+    color: whitesmoke;
+    font-size: 15px;
+  }

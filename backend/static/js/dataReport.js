@@ -226,9 +226,7 @@ $(document).on('change','#start_date',function(){
     var end_date = $('input[name=end_date]').val();
     if(!platform){
         return false;
-    } else if(type === '누적' && !end_date){
-        return;
-    }
+    } 
 
     if(type == undefined){
         alert("누적/기간별 중 선택해주세요.");
@@ -238,6 +236,8 @@ $(document).on('change','#start_date',function(){
         return;
     } else if(type=="기간별" && start_date==""){
         alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && end_date==""){
         return;
     }
 
@@ -312,6 +312,7 @@ $(document).on('change','#end_date',function(){
         return;
     }
     var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    console.log(platform);
     if(!platform){
         return false;
     } 
@@ -347,8 +348,12 @@ $(document).on('change','#end_date',function(){
             console.log(data_list);
 
             let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            for (let i = 0; i<data_list.length; i++){
-                crawling_artist_list.push(data_list[i]['artist']);
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
             }
 
             let db_artist_list = [] //DB 에 있는 아티스트 리스트
@@ -356,19 +361,6 @@ $(document).on('change','#end_date',function(){
                 db_artist_list.push(artist_list[i]);
             }
 
-            //헤더 순서를 db 컬럼 순하고 맞추기
-            let platform_target_name = [];
-            let platform_header = [];
-            for(let i = 0; i<platform_list.length; i++){
-                platform_target_name.push(platform_list[i]['target_name'])
-            }
-
-
-            for (key in data_list[0]){
-                if(platform_target_name.includes(key)){
-                    platform_header.push(key)
-                }
-            }
 
             console.log(platform_header);
 
@@ -482,6 +474,13 @@ $('#update-data').click(function(){
     trs_value = trs_value.slice(3)
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
+
+    for(var i = 0; i<trs_value.length; i++){
+        if(isEmpty(trs_value[i].value)){
+            alert('아티스트들에 대한 모든 인풋 값을 넣어주세요.');
+            return;
+        }
+    }
 
     //youtube
     if(platform_name === 'youtube'){

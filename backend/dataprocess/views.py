@@ -838,10 +838,16 @@ class DataReportAPI(APIView):
             if filter_objects.exists():
                 filter_objects_values=filter_objects.values()
                 filter_datas=[]
+
+                crawling_artist_list = [] 
+                objects = DataModels[platform].objects.all()
+                objects_value = objects.values()
+                for val in objects_value:
+                    crawling_artist_list.append(val['artist'])
                    
                 for filter_value in filter_objects_values:
                     filter_datas.append(filter_value)
-                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header})
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header,'crawling_artist_list':crawling_artist_list})
             else:
                 crawling_artist_list = [] 
                 objects = DataModels[platform].objects.all()
