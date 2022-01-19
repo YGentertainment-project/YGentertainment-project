@@ -36,7 +36,7 @@ function refresh(){
 
 $(document).on('click','input[name=refresh]',function(){
     refresh();
- })
+})
  
 
  $(document).on('click','input[name=day]',function(){
@@ -109,7 +109,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             for(let j =0; j<platform_list.length; j++){
                 let dataCol;
                 if(type === '누적'){
-                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
                             dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
                         } else{
@@ -120,7 +120,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                         dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
                     }
                 } else{ //기간별일 때는 수정 불가능
-                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
                             dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%" disabled></input></td>')
                         } else{
@@ -128,7 +128,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                         }
                     }
                     else{
-                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:gray" disabled></input></td>')
                     }
                 }
                 tableRow.append(dataCol)
@@ -217,6 +217,14 @@ $(document).on('change','input[type=radio]',function(){
         $('input[name=month]').show()
     }
 })
+
+$(document).on('change','input[name=view_days]',function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type === '누적'){
+        refresh();
+    }
+})
+
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
@@ -476,11 +484,11 @@ $('#update-data').click(function(){
     var start_date = $('input[name=start_date]').val();
 
     for(var i = 0; i<trs_value.length; i++){
-        if(isEmpty(trs_value[i].value)){
-            alert('아티스트들에 대한 모든 인풋 값을 넣어주세요.');
-            return;
+        if(trs_value[i].value === ""){
+            trs_value[i].value = 0; //안채워진 값들은 0 으로 간주
         }
     }
+
 
     //youtube
     if(platform_name === 'youtube'){
