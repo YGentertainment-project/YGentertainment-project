@@ -11,7 +11,7 @@ from dataprocess.functions import export_datareport, import_datareport, import_t
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
-import datetime
+from datetime import datetime
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .models import Platform, Artist, CollectTarget
@@ -29,7 +29,7 @@ serverlogger = logging.getLogger(__name__)
 userlogger = logging.getLogger("HTTP-Method")
 
 trfh = logging.handlers.TimedRotatingFileHandler(
-    filename = os.path.join("/data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    filename = os.path.join("../backend/data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
     when = "midnight",
     interval=1,
     encoding="utf-8",
@@ -301,6 +301,7 @@ class PlatformAPI(APIView):
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object["id"]).first()
+                past_data = platform_data
                 if platform_data is None:
                     # 원래 없는 건 새로 저장
                     platform_serializer = PlatformSerializer(data=platform_object)
@@ -310,8 +311,19 @@ class PlatformAPI(APIView):
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
                         platform_serializer.save()
+                # logging User and Change
+                # TODO: 바뀐게 있을 때만 로그를 남길지, 다남길지 결정
+                past_name = past_data["name"]
+                cur_name = platform_object["name"]
+                past_url = past_data["url"]
+                cur_url = platform_object["url"]
+                if past_name != cur_name:
+                    userlogger.debug(f"change: {past_name} -> {cur_name}")
+                if past_url != cur_url:
+                    userlogger.debug(f"change: {past_url} -> {cur_url}")
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except Exception:
+        except Exception as e:
+            serverlogger.error(e)
             return JsonResponse(data={"success": False}, status=400)
 
 
@@ -346,7 +358,6 @@ class ArtistAPI(APIView):
                 # 1. artist 생성
                 artist_serializer.save()
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
-                platform_objects = Platform.objects.all()
                 # platform_objects_values = platform_objects.values()
 
                 for obj in artist_object["urls"]:
@@ -376,11 +387,24 @@ class ArtistAPI(APIView):
             artist_list = JSONParser().parse(request)
             for artist_object in artist_list:
                 artist_data = Artist.objects.get(pk=artist_object["id"])
+                past_data = artist_data;
                 artist_serializer = ArtistSerializer(artist_data, data=artist_object)
                 if artist_serializer.is_valid():
                     artist_serializer.save()
                 else:
                     return JsonResponse(data={"success": False, "data": artist_serializer.errors}, status=400)
+                past_name = past_data["name"]
+                past_mem_num = past_data["member_num"]
+                past_agency = past_data["agency"]
+                cur_name = artist_object["name"]
+                cur_mem_num = artist_object["member_num"]
+                cur_agency = artist_object["agency"]
+                if past_name != cur_name:
+                    userlogger.debug(f"change: {past_name} -> {cur_name}")
+                if past_mem_num != cur_mem_num:
+                    userlogger.debug(f"change: {past_mem_num} -> {cur_mem_num}")
+                if past_agency != cur_agency:
+                    userlogger.debug(f"change: {past_agency} -> {cur_agency}")
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
         except Exception:
             return JsonResponse(data={"success": False}, status=400)
@@ -470,6 +494,9 @@ class CollectTargetItemAPI(APIView):
         """
         try:
             collecttargetitem = JSONParser().parse(request)
+            artist = collecttargetitem["artist"]
+            platform = collecttargetitem["platform"]
+            period = collecttargetitem["period"]
             collecttargetitem_list = collecttargetitem["items"]
             for collecttargetitem_object in collecttargetitem_list:
                 # 여기 수정!!!!
@@ -495,9 +522,11 @@ class CollectTargetItemAPI(APIView):
                         return JsonResponse(data={"success": False}, status=400)
                 # 있으면 업데이트
                 else:
+                    
                     collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
+                        userlogger.debug(f"{artist} - {platform} - {period}: ")
                     else:
                         return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
