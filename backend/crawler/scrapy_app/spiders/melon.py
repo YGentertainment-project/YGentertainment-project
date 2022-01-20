@@ -1,10 +1,8 @@
-
 import scrapy
 from ..items import MelonItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
-from django.db.models import Q
 
 
 class MelonSpider(scrapy.Spider):
@@ -18,33 +16,43 @@ class MelonSpider(scrapy.Spider):
     def start_requests(self):
         crawl_url = {}
         melon_platform_id = Platform.objects.get(name="melon").id
-        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=melon_platform_id) & Q(target_url__istartswith="https://xn--o39an51b2re.com"))
+        CrawlingTarget = CollectTarget.objects.filter(platform_id=melon_platform_id)
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
-            crawl_url[artist_name] = artist_url
+            artist_urls = [row.target_url, row.target_url_2]
+            crawl_url[artist_name] = artist_urls
 
-        for artist, url in crawl_url.items():
+        for artist, urls in crawl_url.items():
             print("artist : {}, url : {}, url_len: {}".format(
-                artist, url, len(url)))
-            if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
-            else:
-                continue
+                artist, urls[0], len(urls[0])))
+            yield scrapy.Request(url=urls[0], callback=self.parse, encoding="utf-8", meta={"artist": artist,
+                                                                                           "next": urls[1]})
 
     def parse(self, response):
         artist = response.meta["artist"]
-        id = "main-wrapper"
-        # listener = response.xpath("//*[@class="list-style-none"]/li[2]/i/text()").extract()[2]
-        # streaming = response.xpath("//*[@class="list-style-none"]/li[3]/i/text()").extract()[2]
-        listener = response.xpath(f"//*[@id={id}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[2]
-        streaming = response.xpath(f"//*[@id={id}]/div/div[2]/div[2]/div/div/div/ul/li[4]/text()").extract()[2]
+        mainwrapper = "main-wrapper"
+        listener = response.xpath(
+            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[
+            2].replace(",", "")
+        streaming = response.xpath(
+            f"//*[@id={mainwrapper}]/div/div[2]/div[2]cd/div/div/div/ul/li[4]/text()").extract()[
+            2].replace(",", "")
+        url1 = response.url
+        yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
+                             meta={"artist": artist,
+                                   "listeners": listener,
+                                   "streams": streaming,
+                                   "url1": url1})
 
+    def parse_melon(self, response):
         item = MelonItem()
-        item["artist"] = artist
-        item["listeners"] = listener.replace(",", "")
-        item["streams"] = streaming.replace(",", "")
-        item["fans"] = -1
-        item["url1"] = response.url
-        item["url2"] = None
+        d_like_count = "d_like_count"
+        fans = response.xpath(
+            f"//span[@id={d_like_count}]/text()").get().replace(",", "")
+        item["artist"] = response.meta["artist"]
+        item["listeners"] = response.meta["listeners"]
+        item["streams"] = response.meta["streams"]
+        item["fans"] = fans
+        item["url1"] = response.meta["url1"]
+        item["url2"] = response.url
         yield item

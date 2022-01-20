@@ -1,36 +1,28 @@
-# -*- coding: utf-8 -*-
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-
-
 from scrapy import signals
 from scrapy.http import HtmlResponse
 from scrapy.utils.python import to_bytes
 from urllib.parse import urlparse
-
-# useful for handling different item types with a single interface
-
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
 from utils.shortcuts import get_env
 
 production_env = get_env("YG_ENV", "dev") == "production"
 
+
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
-MELON_DOMAIN = "xn--o39an51b2re.com"
+GUYSOME_DOMAIN = "xn--o39an51b2re.com"
+MELON_DOMAIN = "melon.com"
 
 YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
-MELON_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
+GUYSOME_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
+MELON_ROBOT = "https://www.melon.com/robots.txt"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
 CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
@@ -39,6 +31,18 @@ WEVERSE_ID = "sunrinkingh2160@gmail.com"
 WEVERSE_PW = "!eogksalsrnr123"
 CROWDTANGLE_ID = "jaewon@ygmail.net"
 CROWDTANGLE_PW = "Ygfamily1234@"
+
+
+class MelonElementIsPositive(object):
+    def __init__(self, locator):
+        self.locator = locator
+
+    def __call__(self, driver):
+        element = driver.find_element(*self.locator)
+        if int(element.text.replace(",", "")) > 0:
+            return element
+        else:
+            return False
 
 
 class ScrapyAppSpiderMiddleware:
@@ -135,8 +139,8 @@ class NoLoginDownloaderMiddleware:
         print("crawling url : {}".format(request.url))
 
         # Socialblade Case
-        if(domain == SOCIALBLADE_DOMAIN):
-            if(request.url != SOCIALBLADE_ROBOT):
+        if domain == SOCIALBLADE_DOMAIN:
+            if request.url != SOCIALBLADE_ROBOT:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located(
@@ -144,30 +148,45 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    print("Can't load the page")
+                    print("Can not load the page")
                 except NoSuchElementException:
                     print("Please check the ID of element")
 
         # Youtube Channel Case
-        elif(domain == YOUTUBE_DOMAIN):
-            if(request.url != YOUTUBE_ROBOT):
-                WebDriverWait(self.driver, 30).until(
-                    EC.presence_of_element_located(
-                        (By.ID, "right-column")
+        elif domain == YOUTUBE_DOMAIN:
+            if request.url != YOUTUBE_ROBOT:
+                try:
+                    WebDriverWait(self.driver, 30).until(
+                        EC.presence_of_element_located(
+                            (By.ID, "right-column")
+                        )
                     )
                 except TimeoutException:
-                    print("Can't load the page")
+                    print("Can not load the page")
                 except NoSuchElementException:
                     print("Please check the ID of element")
-        # Melon Channel Case
-        elif(domain == MELON_DOMAIN):
-            if(request.url != MELON_ROBOT):
-                WebDriverWait(self.driver, 30).until(
-                    EC.presence_of_element_located(
-                        (By.CLASS_NAME, "list-style-none")
+
+        # 가이섬 Channel Case
+        elif domain == GUYSOME_DOMAIN:
+            if request.url != GUYSOME_ROBOT:
+                try:
+                    WebDriverWait(self.driver, 30).until(
+                        EC.presence_of_element_located(
+                            (By.CLASS_NAME, "list-style-none")
+                        )
                     )
                 except TimeoutException:
-                    print("Can't load the page")
+                    print("Can not load the page")
+                except NoSuchElementException:
+                    print("Please check the CLASS NAME of element")
+        elif domain == MELON_DOMAIN:
+            if request.url != MELON_ROBOT:
+                try:
+                    WebDriverWait(self.driver, 10).until(
+                        MelonElementIsPositive((By.ID, "d_like_count"))
+                    )
+                except TimeoutException:
+                    print("Can not load the page")
                 except NoSuchElementException:
                     print("Please check the CLASS NAME of element")
 
@@ -192,9 +211,10 @@ class NoLoginDownloaderMiddleware:
         #     spider_idx = 3
         # self.driver = driver_setting(proxy_idx)
         self.driver = driver_setting(None)
-        
+
     def spider_closed(self, spider):
         self.driver.quit()
+
 
 class LoginDownloaderMiddleware:
     @classmethod
@@ -251,7 +271,7 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOc"))
                     )
                 except TimeoutException:
-                    print("Can't load the page")
+                    print("Can not load the page")
                 except NoSuchElementException:
                     print("Please check the CLASS NAME of element")
         else:
