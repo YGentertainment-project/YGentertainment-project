@@ -1,10 +1,7 @@
 import re
 
 from django.contrib import auth
-from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect, render
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 from rest_framework.views import APIView
 from utils.api import APIView, validate_serializer
@@ -14,6 +11,8 @@ from .models import User
 from .serializers import *
 
 # "/"로 접속시 사이트 시작화면
+
+
 def base(request):
     return render(request, 'account/main.html')
 
@@ -63,9 +62,9 @@ class UserSimpleLoginAPI(APIView):
             user.save()
             # register 후 login
             auth.login(request, user)
-        
+
         values = {
-            'first_depth' : '데이터 리포트',
+            'first_depth': '데이터 리포트',
         }
         response = redirect('dataprocess:base')
         response.set_cookie('username', username)
@@ -76,7 +75,7 @@ class UserLogoutAPI(APIView):
     def get(self, request):
         auth.logout(request)
         values = {
-            'first_depth' : '로그인'
+            'first_depth': '로그인'
         }
         response = redirect('dataprocess:base')
         response.delete_cookie('username')

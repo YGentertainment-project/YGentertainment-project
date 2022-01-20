@@ -1,6 +1,7 @@
 from django.db import models
 from dataprocess.models import CollectTarget, Platform
 
+
 class PlatformTargetItem(models.Model):
     platform = models.ForeignKey(to=Platform, on_delete=models.CASCADE)
     target_name = models.TextField(default="")
@@ -29,7 +30,7 @@ class Schedule(models.Model):
     collect_target = models.ForeignKey(to=CollectTarget, on_delete=models.CASCADE)
     schedule_type = models.TextField(default="")
     excute_time = models.TimeField()
-    period = models.TextField(default="hour") #hour or daily
+    period = models.TextField(default="hour")  # hour or daily
     active = models.BooleanField(default=True)
     create_dt = models.DateTimeField(auto_now_add=True)
     update_dt = models.DateTimeField(auto_now_add=True)
@@ -40,7 +41,7 @@ class Schedule(models.Model):
 
 class AuthInfo(models.Model):
     collect_target = models.ForeignKey(to=CollectTarget, on_delete=models.CASCADE)
-    access_type = models.TextField(default="login") #API or login
+    access_type = models.TextField(default="login")  # API or login
     user_id = models.TextField(null=True)
     user_pw = models.TextField(null=True)
     api_key = models.TextField(null=True)
