@@ -144,7 +144,9 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    print("There are no element")
+                    print("Can't load the page")
+                except NoSuchElementException:
+                    print("Please check the ID of element")
 
         # Youtube Channel Case
         elif(domain == YOUTUBE_DOMAIN):
@@ -153,7 +155,10 @@ class NoLoginDownloaderMiddleware:
                     EC.presence_of_element_located(
                         (By.ID, "right-column")
                     )
-                )
+                except TimeoutException:
+                    print("Can't load the page")
+                except NoSuchElementException:
+                    print("Please check the ID of element")
         # Melon Channel Case
         elif(domain == MELON_DOMAIN):
             if(request.url != MELON_ROBOT):
@@ -161,7 +166,10 @@ class NoLoginDownloaderMiddleware:
                     EC.presence_of_element_located(
                         (By.CLASS_NAME, "list-style-none")
                     )
-                )
+                except TimeoutException:
+                    print("Can't load the page")
+                except NoSuchElementException:
+                    print("Please check the CLASS NAME of element")
 
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
@@ -184,7 +192,9 @@ class NoLoginDownloaderMiddleware:
         #     spider_idx = 3
         # self.driver = driver_setting(proxy_idx)
         self.driver = driver_setting(None)
-
+        
+    def spider_closed(self, spider):
+        self.driver.quit()
 
 class LoginDownloaderMiddleware:
     @classmethod
@@ -228,7 +238,7 @@ class LoginDownloaderMiddleware:
             )
 
     def spider_closed(self, spider):
-        self.driver.close()
+        self.driver.quit()
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
@@ -241,7 +251,9 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOc"))
                     )
                 except TimeoutException:
-                    print("There are no element")
+                    print("Can't load the page")
+                except NoSuchElementException:
+                    print("Please check the CLASS NAME of element")
         else:
             if request.url != CROWDTANGLE_ROBOT:
                 WebDriverWait(self.driver, 30).until(
