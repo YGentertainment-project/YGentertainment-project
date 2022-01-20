@@ -5,11 +5,14 @@ from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
 from config.models import PlatformTargetItem, CollectTargetItem
 from dataprocess.models import Platform, Artist, CollectTarget
-from crawler.models import *
+from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
+                            Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
 
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
 from dataprocess.serializers import ArtistSerializer, PlatformSerializer, CollectTargetSerializer
-from crawler.serializers import *
+from crawler.serializers import (SocialbladeYoutubeSerializer, SocialbladeTiktokSerializer, SocialbladeTwitterSerializer,
+                                SocialbladeTwitter2Serializer, WeverseSerializer, CrowdtangleInstagramSerializer,
+                                CrowdtangleFacebookSerializer, VliveSerializer, MelonSerializer, SpotifySerializer)
 
 DataModels = {
             "youtube": SocialbladeYoutube,
@@ -136,9 +139,9 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     col = 1
 
     thick_border = Border(left=Side(style="medium"),
-                     right=Side(style="medium"),
-                     top=Side(style="medium"),
-                     bottom=Side(style="medium"))
+                          right=Side(style="medium"),
+                          top=Side(style="medium"),
+                          bottom=Side(style="medium"))
 
     sheet.cell(row=1, column=1).value = "플랫폼"
     sheet.cell(row=1, column=1).border = thick_border
@@ -158,7 +161,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
             continue
         sheet.cell(row=row, column=col).value = data["platform"]
         sheet.merge_cells(start_row=row, start_column=col,
-            end_row=row, end_column=col+len(data["collect_item"])-1)
+                          end_row=row, end_column=col+len(data["collect_item"])-1)
         sheet.cell(row=row, column=col).border = thick_border
         sheet.cell(row=row, column=col).alignment = Alignment(horizontal="center", vertical="center")
         sheet.cell(row=row, column=col).font = fonts.Font(bold=True)
@@ -181,8 +184,8 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
             # 아티스트의 플랫폼마다의 정보 가져오기
             platform_name = platform["platform"]
             platform_data_list = get_platform_data(artist=artist_name, platform=platform_name,
-                type=excel_export_type, start_date=excel_export_start_date, end_date=excel_export_end_date,
-                collect_item_list=platform["collect_item"])
+                                                   type=excel_export_type, start_date=excel_export_start_date, end_date=excel_export_end_date,
+                                                   collect_item_list=platform["collect_item"])
             for i, platform_data in enumerate(platform_data_list):
                 if platform_data is None or platform_data == "NULL":
                     # null이면 shade 처리
@@ -451,17 +454,15 @@ def import_total(worksheet):
                 artist_filter_object = Artist.objects.filter(name=artist_data["name"])
                 artist_filter_object = artist_filter_object.values().first()
                 if "target_url_2" in collect_target_data_list[collect_target_index]:
-                    save_collect_target({
-                    "artist": artist_filter_object["id"],
-                    "platform": platform_filter_object["id"],
-                    "target_url": collect_target_data_list[collect_target_index]["target_url"],
-                    "target_url_2": collect_target_data_list[collect_target_index]["target_url_2"],
+                    save_collect_target({"artist": artist_filter_object["id"],
+                                         "platform": platform_filter_object["id"],
+                                         "target_url": collect_target_data_list[collect_target_index]["target_url"],
+                                         "target_url_2": collect_target_data_list[collect_target_index]["target_url_2"],
                 })
                 else:
-                    save_collect_target({
-                        "artist": artist_filter_object["id"],
-                        "platform": platform_filter_object["id"],
-                        "target_url": collect_target_data_list[collect_target_index]["target_url"]
+                    save_collect_target({"artist": artist_filter_object["id"],
+                                         "platform": platform_filter_object["id"],
+                                         "target_url": collect_target_data_list[collect_target_index]["target_url"]
                     })
             collect_target_index += 1
     # collecttargetitem 저장

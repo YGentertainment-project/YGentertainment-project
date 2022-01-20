@@ -48,8 +48,9 @@ def direct_crawling_platform(self, platform):
         proc = Process(target=crawling_start, args=[platform, self.request.id])
         proc.start()
         proc.join()
-    except Exception:
+    except Exception as e:
         direct_crawling_platform.retry()
+        print(e)    
         print("Error with Crawling task")
 
 

@@ -1,7 +1,6 @@
 from django.urls.conf import path
 from dataprocess.views import base
-from django.urls import path
-from dataprocess.views import *
+from dataprocess.views import (daily, platform, artist, artist_add, monitering, login)
 from dataprocess import views
 from django.views.decorators.csrf import csrf_exempt
 

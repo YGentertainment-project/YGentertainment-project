@@ -12,6 +12,7 @@ class WeverseSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.LoginDownloaderMiddleware": 100
         },
     }
+
     def start_requests(self):
         crawl_url = {}
         weverse_platform_id = Platform.objects.get(name="weverse").id

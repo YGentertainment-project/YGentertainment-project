@@ -18,7 +18,7 @@ class MelonSpider(scrapy.Spider):
     def start_requests(self):
         crawl_url = {}
         melon_platform_id = Platform.objects.get(name="melon").id
-        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=melon_platform_id)&Q(target_url__istartswith="https://xn--o39an51b2re.com"))
+        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=melon_platform_id) & Q(target_url__istartswith="https://xn--o39an51b2re.com"))
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
             artist_url = row.target_url

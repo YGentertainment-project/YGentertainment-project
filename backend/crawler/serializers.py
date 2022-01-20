@@ -1,5 +1,5 @@
 from .models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
-                        Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
+                     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
 from rest_framework import serializers
 
 

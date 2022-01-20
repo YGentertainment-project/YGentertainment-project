@@ -11,10 +11,11 @@ from django.db.models import Q
 
 class SpotifySpider(scrapy.Spider):
     name = "spotify"
+
     def start_requests(self):
         crawl_url = {}
         spotify_platform_id = Platform.objects.get(name="spotify").id
-        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id)&Q(target_url__istartswith="https://open.spotify.com"))
+        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id) & Q(target_url__istartswith="https://open.spotify.com"))
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
             artist_url = row.target_url
@@ -37,7 +38,8 @@ class SpotifySpider(scrapy.Spider):
         head = "spotify:artist:"
         dummy = json_object["entities"]["items"][head+artist_id]["nodes"]
         for target in dummy:
-            if not target: continue
+            if not target:
+                continue
             if target["id"] == "artist_biography_row":
                 listen = target["custom"]["monthly_listeners_count"]
                 follow = target["custom"]["followers"]

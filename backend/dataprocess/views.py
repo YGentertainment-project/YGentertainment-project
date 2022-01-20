@@ -7,15 +7,18 @@ from config.models import PlatformTargetItem, CollectTargetItem
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
-
-from django.shortcuts import render
 from django.http import HttpResponse
 
 import datetime
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
-from .resources import *
-from .models import Platform
+from .models import Platform, Artist, CollectTarget
+from .serializers import (PlatformSerializer, ArtistSerializer)
+
+from django.http.response import JsonResponse
+from rest_framework.parsers import JSONParser
+from rest_framework import status
+from utils.api import APIView
 
 DataModels = {
         "youtube": SocialbladeYoutube,
@@ -125,15 +128,15 @@ def daily(request):
 
 
 def platform(request):
-     """
-        general page
-        """
-     values = {
+    """
+    general page
+    """
+    values = {
         "first_depth": "플랫폼 관리",
         "second_depth": "플랫폼 관리"
     }
-     request = logincheck(request)
-     return render(request, "dataprocess/platform.html", values)
+    request = logincheck(request)
+    return render(request, "dataprocess/platform.html", values)
 
 
 # def excel(request):
@@ -251,15 +254,6 @@ def platform_info(request):
                 return JsonResponse(data={"success": True, "data": []})
         except Exception:
             return JsonResponse(status=400, data={"success": False})
-
-
-from .serializers import *
-from .models import *
-from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
-from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
-from utils.api import APIView
 
 
 class PlatformAPI(APIView):
@@ -384,7 +378,7 @@ class ArtistAPI(APIView):
                 artist_serializer.save()
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
                 platform_objects = Platform.objects.all()
-                platform_objects_values = platform_objects.values()
+                # platform_objects_values = platform_objects.values()
 
                 for obj in artist_object["urls"]:
                     platform_id = Platform.objects.get(name=obj["platform_name"]).id
@@ -465,7 +459,7 @@ class PlatformOfArtistAPI(APIView):
             for collecttarget_object in collecttarget_list:
                 CollectTarget.objects.filter(pk=collecttarget_object["id"]).update(target_url=collecttarget_object["target_url"])
                 if collecttarget_object["target_url_2"]:
-                     CollectTarget.objects.filter(pk=collecttarget_object["id"]).update(target_url_2=collecttarget_object["target_url_2"])
+                    CollectTarget.objects.filter(pk=collecttarget_object["id"]).update(target_url_2=collecttarget_object["target_url_2"])
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
         except Exception:
             return JsonResponse(data={"success": False}, status=400)
@@ -511,7 +505,7 @@ class CollectTargetItemAPI(APIView):
             for collecttargetitem_object in collecttargetitem_list:
                 # 여기 수정!!!!
                 collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object["id"],
-                    target_name=collecttargetitem_object["target_name"], xpath=collecttargetitem_object["xpath"]).first()
+                                                                          target_name=collecttargetitem_object["target_name"], xpath=collecttargetitem_object["xpath"]).first()
                 # 없으면 새로 저장
                 if collecttargetitem_data is None:
                     artist_object = Artist.objects.filter(name=collecttargetitem["artist"])
@@ -528,7 +522,8 @@ class CollectTargetItemAPI(APIView):
                     if target_item_serializer.is_valid():
                         target_item_serializer.save()
                     else:
-                        return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
+                        # return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
+                        return JsonResponse(data={"success": False}, status=400)
                 # 있으면 업데이트
                 else:
                     collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
@@ -652,7 +647,7 @@ class DataReportAPI(APIView):
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 filter_objects = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
-                    reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
+                                                                     reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
                 if filter_objects.exists():
                     filter_objects_values = filter_objects.values()
                     filter_datas = []
@@ -666,15 +661,16 @@ class DataReportAPI(APIView):
                     for val in objects_value:
                         crawling_artist_list.append(val["artist"])
                     # datename = "%s-%s-%s"%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
-                    return JsonResponse(status=200, data={"success": True, "data": "no data", "artists": artist_list, "platform": platform_header, "crawling_artist_list": crawling_artist_list})
+                    return JsonResponse(status=200, data={"success": True, "data": "no data", "artists": artist_list, "platform": platform_header,
+                                                          "crawling_artist_list": crawling_artist_list})
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
                 end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                 filter_objects_start = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
-                    reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
+                                                                           reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
                 filter_objects_end = DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
-                    reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
+                                                                         reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
                 filter_datas_total = []
                 # 둘 다 존재할 때
                 if filter_objects_start.exists() and filter_objects_end.exists():
@@ -694,8 +690,8 @@ class DataReportAPI(APIView):
                         data_json = {}
                         # 현재 보고 있는 거랑 맞는 끝 날짜를 가져오기
                         filter_artist_end = DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
-                            reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day,
-                            artist=filter_objects_start_values[i]["artist"])
+                                                                                reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day,
+                                                                                artist=filter_objects_start_values[i]["artist"])
                         filter_artist_end = filter_artist_end.values()
                         if not filter_artist_end.exists():
                             continue

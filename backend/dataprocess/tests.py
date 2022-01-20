@@ -6,7 +6,8 @@ from django.test import Client
 class ArtistTest(TestCase):
     def setUP(self):
         client = Client()
+        return client
 
     def test_get_artist_view(self):
-        response = self.client.get('api/artist/')
+        response = self.client.get("api/artist/")
         self.assertEqual(response.status, 200)
