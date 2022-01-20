@@ -130,6 +130,7 @@ class NoLoginDownloaderMiddleware:
         # This method is used by Scrapy to create your spiders.
         s = cls()
         crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        crawler.signals.connect(s.spider_closed, signal=signals.spider_closed)
         return s
 
     def process_request(self, request, spider):
@@ -199,7 +200,7 @@ class NoLoginDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
-        self.driver = driver_setting(None)
+        self.driver = driver_setting()
 
     def spider_closed(self, spider):
         self.driver.close()
