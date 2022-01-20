@@ -10,16 +10,16 @@ SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 
 
 class Twitter2Spider(scrapy.Spider):
-    name = 'twitter2'
+    name = "twitter2"
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES': {
-            'crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware': 100
+        "DOWNLOADER_MIDDLEWARES": {
+            "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
 
     def start_requests(self):
         crawl_url = {}
-        twitter2_platform_id = Platform.objects.get(name='twitter2').id
+        twitter2_platform_id = Platform.objects.get(name="twitter2").id
         CrawlingTarget = CollectTarget.objects.filter(platform_id=twitter2_platform_id)
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
@@ -29,7 +29,7 @@ class Twitter2Spider(scrapy.Spider):
             print("artist : {}, url : {}, url_len: {}".format(
                 artist, url, len(url)))
             if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding='utf-8', meta={'artist': artist})
+                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
             else:
                 continue
 
@@ -41,18 +41,19 @@ class Twitter2Spider(scrapy.Spider):
             if response.request.url == SOCIALBLADE_ROBOT:
                 pass
             else:
-                artist = response.request.meta['artist']
-                followers = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
-                twits = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[5]/span[2]/text()').get()
-                user_created = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[6]/span[2]/text()').get()
+                artist = response.request.meta["artist"]
+                youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+                followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
+                twits = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
+                user_created = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[6]/span[2]/text()").get()
 
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
             item = SocialbladeTwitter2Item()
             item["artist"] = artist
-            item["followers"] = followers.replace(',', '')
-            item["twits"] = twits.replace(',', '')
+            item["followers"] = followers.replace(",", "")
+            item["twits"] = twits.replace(",", "")
             item["user_created"] = user_created
             item["url"] = response.url
             yield item

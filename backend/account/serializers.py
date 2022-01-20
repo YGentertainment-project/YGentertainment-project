@@ -1,4 +1,3 @@
-from django import forms
 from rest_framework import serializers
 
 from .models import AdminType, User
@@ -44,7 +43,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class EditUserSerializer(serializers.Serializer):
-    #for super admin and admin
+    # for super admin and admin
     id = serializers.IntegerField()
     username = serializers.CharField(max_length=32)
     password = serializers.CharField(min_length=6, allow_blank=True, required=False, default=None)
