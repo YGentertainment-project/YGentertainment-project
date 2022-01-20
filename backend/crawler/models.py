@@ -1,6 +1,5 @@
-import json
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import now
 
 
 class SocialbladeYoutube(models.Model):
@@ -9,8 +8,11 @@ class SocialbladeYoutube(models.Model):
     subscribers = models.IntegerField(null=True)  # 구독자수
     views = models.BigIntegerField(null=True)  # 조회수
     user_created = models.TextField(null=True)  # 계정 생성일
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -25,8 +27,11 @@ class SocialbladeTiktok(models.Model):
     followers = models.IntegerField()
     uploads = models.IntegerField()
     likes = models.BigIntegerField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -41,8 +46,11 @@ class SocialbladeTwitter(models.Model):
     followers = models.IntegerField()
     twits = models.IntegerField()
     user_created = models.TextField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -57,8 +65,11 @@ class SocialbladeTwitter2(models.Model):
     followers = models.IntegerField()
     twits = models.IntegerField()
     user_created = models.TextField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -70,9 +81,12 @@ class SocialbladeTwitter2(models.Model):
 
 class Weverse(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    weverses = models.IntegerField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    weverses = models.IntegerField(null=True)
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -85,8 +99,11 @@ class Weverse(models.Model):
 class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -99,8 +116,11 @@ class CrowdtangleInstagram(models.Model):
 class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField()
-    recorded_date = models.DateTimeField(auto_now_add=True)  # 업데이트 일
+    recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -117,7 +137,10 @@ class Vlive(models.Model):
     likes = models.BigIntegerField()
     plays = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -133,8 +156,11 @@ class Melon(models.Model):
     streams = models.BigIntegerField()
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -149,8 +175,11 @@ class Spotify(models.Model):
     monthly_listens = models.BigIntegerField()
     followers = models.BigIntegerField()
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
+    updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

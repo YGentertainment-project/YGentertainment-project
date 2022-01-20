@@ -9,6 +9,7 @@ from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
 logger = logging.getLogger("")
 
+
 class APIError(Exception):
     def __init__(self, msg, err=None):
         self.err = err
@@ -143,7 +144,7 @@ class APIView(View):
             if e.err:
                 ret["err"] = e.err
             return self.error(**ret)
-        except Exception as e:
+        except Exception:
             logger.exception(e)
             return self.server_error()
 

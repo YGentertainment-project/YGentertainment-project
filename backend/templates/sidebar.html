@@ -10,17 +10,21 @@
         onclick=go_to_mainpage() />
     <ul class="sidebar-items">
         <li><h4 class="sidebar-item data-report">데이터리포트</h4></li>
-        <div class="sidebar-item-in in-data-report">
+        <div class="sidebar-item-in hide data-report-in">
             <a href="{% url 'dataprocess:daily' %}" class="sidebar-description">일별 리포트</a>
             <a class="sidebar-description">시간별 리포트</a>
         </div>
         <li><h4 class="sidebar-item platforms-m">플랫폼 관리</h4></li>
-        <div class="sidebar-item-in in-platforms">
+        <div class="sidebar-item-in hide platform-in">
             <a href="{% url 'dataprocess:platform' %}" class="sidebar-description">플랫폼 관리</a>
         </div>
         <li><h4 class="sidebar-item artists-m">아티스트 관리</h4></li>
-        <div class="sidebar-item-in in-artists">
+        <div class="sidebar-item-in hide artist-in">
             <a href="{% url 'dataprocess:artist' %}" class="sidebar-description">데이터 URL 관리</a>
+        </div>
+        <li><h4 class="sidebar-item monitering-m">모니터링 관리</h4></li>
+        <div class="sidebar-item-in hide monitering-in">
+            <a href="{% url 'dataprocess:monitering' %}" class="sidebar-description">모니터링</a>
         </div>
     </ul>
     <button class="sidebar-btn"><span><i class="fas fa-chevron-left"></i></span></button>

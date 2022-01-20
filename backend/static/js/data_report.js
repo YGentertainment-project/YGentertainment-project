@@ -56,6 +56,13 @@ $(document).on('click','input[name=month]',function(){
     $('input[name=end_date]').val(year+'-'+month+'-'+day); 
  })
 
+ //refresh button
+ $(document).on('click','input[name=refresh]',function(){
+    $('input[name=start_date]').val("");
+    $('input[name=end_date]').val("");
+ })
+ 
+
 //not crawled artist
 const createNotCrawledTableRow = (data) => {
     const tableRow = $('<tr></tr>');
@@ -556,12 +563,10 @@ $('#update-data').click(function(){
             url: '/dataprocess/api/daily/',
             success: res => {
                 alert("Successfully save!");
-                console.log('success');
                 let table_html = ''
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showYoutubeCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -610,7 +615,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showVliveCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -642,7 +646,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showCrowdtangleCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -684,7 +687,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTiktokCrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -721,7 +723,6 @@ $('#update-data').click(function(){
                 const data_list = res.data;
                 $('tbody').eq(0).empty();
                 showTwitter1CrawledData(data_list); // Data들을 화면상에 표시
-                alert("Successfully save!");
             },
             error : function (){
             }
@@ -764,21 +765,44 @@ $('#update-data').click(function(){
 })
 
 //excel popup
-$(".excel-form-open").click(function(){
-    if(this.innerHTML=="Excel파일로부터 크롤링데이터 DB에 저장하기"){
-        document.getElementById("excel_form1").style.display = "flex";
-        document.getElementById("excel_form2").style.display = "none";
-        document.getElementById("excel_form3").style.display = "none";
-    }else if(this.innerHTML=="Excel파일로 크롤링데이터 추출"){
-        document.getElementById("excel_form1").style.display = "none";
-        document.getElementById("excel_form2").style.display = "flex";
-        document.getElementById("excel_form3").style.display = "none";
-    }else if(this.innerHTML=="Excel파일로부터 수집정보 DB에 저장하기"){
-        document.getElementById("excel_form1").style.display = "none";
-        document.getElementById("excel_form2").style.display = "none";
-        document.getElementById("excel_form3").style.display = "flex";
+$("#excel-form-open1").click(function(){
+    document.getElementById("excel_form1").style.display = "flex";
+    document.getElementById("excel_form2").style.display = "none";
+    document.getElementById("excel_form3").style.display = "none";
+});
+$("#excel-form-open2").click(function(){
+    document.getElementById("excel_form1").style.display = "none";
+    document.getElementById("excel_form2").style.display = "flex";
+    document.getElementById("excel_form3").style.display = "none";
+});
+$("#excel-form-open3").click(function(){
+    document.getElementById("excel_form1").style.display = "none";
+    document.getElementById("excel_form2").style.display = "none";
+    document.getElementById("excel_form3").style.display = "flex";
+});
+$("#excel-form-open1").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint1").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint1").style.display = "none";
     }
-    return;
+});
+$("#excel-form-open2").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint2").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint2").style.display = "none";
+    }
+});
+$("#excel-form-open3").on({
+    mouseenter: function () {
+        document.getElementById("excel-form-open-hint3").style.display = "grid";
+    },
+    mouseleave: function () {
+        document.getElementById("excel-form-open-hint3").style.display = "none";
+    }
 });
 
 document.getElementById('close_button1').onclick = function(){

@@ -1,6 +1,6 @@
 import functools
 
-from .api import JSONResponse, APIError
+from .api import JSONResponse
 
 
 class BasePermissionDecorator(object):

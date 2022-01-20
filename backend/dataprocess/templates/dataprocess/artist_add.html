@@ -3,9 +3,21 @@
     {% extends 'main.html' %}
     
     {% block content %}
+
+    <script>
+        function go_to_artist2(){
+            location.href = "{% url 'dataprocess:artist' %}";
+        }
+     </script>
+    
     <div class="forms">
         <form method="POST" class="add-form">
            <div class="row_layout flexstart_layout">
+                <a href="{% url 'dataprocess:artist' %}" class="excel-btn"
+                style="color: black; text-decoration-line: none;">
+                    취소
+                </a>
+                <!-- <button class="excel-btn" onclick=go_to_artist2()>취소</button> -->
                 <button class="add-submit excel-btn">저장</button>
             </div>
             <div class="row_layout flexstart_layout">
@@ -41,22 +53,25 @@
                     </tr>
                 </table>
                <table class="add-table" border="1">
-                   <tr>
+                   <thead id="url-header">
                        <th class="title-th">플랫폼</th>
                        <th class="title-th">데이터 수집 URL</th>
-                       <th class="title-th">데이터 수집 URL 2</th>
-                   </tr>
+                   </thead>
+                   <tbody id="artist-urls">
                   {% if platforms %}
                    {% for platform in platforms %}
                    <tr>
-                        <th>{{platform.name}}</th>
-                        <td><input class="add-target-input"  type="text" placeholder="URL" /></td>
-                        <td><input class="add-target-input"  type="text" placeholder="URL 2" /></td>
+                        <td style="text-align: center;">{{platform.name}}</td>
+                        <td style="display: flex;">
+                            <input class="add-target-input-1"  type="text" placeholder="URL" />
+                            <span id="url_add_button"> + </span>
+                            <span id="url_delete_button"> - </span>
+                        </td>
                     </tr>
                    {% endfor %}
                   {% else %}
                   {% endif %}
-                    
+                </tbody>
                </table>
             </div>
         

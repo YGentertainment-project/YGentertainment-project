@@ -2,6 +2,7 @@ from .models import *
 from rest_framework import serializers
 from dataprocess.serializers import CollectTargetSerializer, PlatformSerializer
 
+
 class PlatformTargetItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlatformTargetItem
@@ -10,6 +11,7 @@ class PlatformTargetItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['platform'] = PlatformSerializer(read_only=True)
         return super(PlatformSerializer, self).to_representation(instance)
+
 
 class CollectTargetItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +22,7 @@ class CollectTargetItemSerializer(serializers.ModelSerializer):
         self.fields['collect_target'] = CollectTargetSerializer(read_only=True)
         return super(CollectTargetItemSerializer, self).to_representation(instance)
 
+
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
@@ -28,6 +31,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         self.fields['collect_target'] = CollectTargetSerializer(read_only=True)
         return super(ScheduleSerializer, self).to_representation(instance)
+
 
 class AuthInfoSerializer(serializers.ModelSerializer):
     class Meta:
