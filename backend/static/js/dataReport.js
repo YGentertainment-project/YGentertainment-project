@@ -1,3 +1,5 @@
+
+
 //number format
 function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -85,11 +87,13 @@ const createTableHeader = (platform_header) => {
 
     let c = $('<th></th>', {
         text:'artist',
+        class:"border-0"
     })
     tableHeader.append(c)
     for(let i = 0; i< platform_header.length; i++){
         let col = $('<th></th>', {
             text: platform_header[i],
+            class:"border-0"
         })
         tableHeader.append(col)
     }
@@ -111,25 +115,35 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                 if(type === '누적'){
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end;"></input></td>')
                         } else{
-                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
                         }
                     }
                     else{
-                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
                     }
                 } else{ //기간별일 때는 수정 불가능
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%" disabled></input></td>')
+                            if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] >0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] < 0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else{
+                                dataCol = $('<td></td>',{
+                                    text: numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])
+                                })
+                            }
                         } else{
-                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%" disabled></input></td>')
+                            dataCol = $('<td></td>',{
+                                text: datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]
+                            })
                         }
                     }
                     else{
-                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:gray" disabled></input></td>')
-                    }
+                        dataCol = $('<td></td>')
+                    } 
                 }
                 tableRow.append(dataCol)
             }
@@ -139,7 +153,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                let dataCol = $('<td></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -169,7 +183,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                let dataCol = $('<td></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -181,24 +195,24 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
 
 //show crawled data
 const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
-    $('#board').append(createTableHeader(platform_list));
+    $('.thead-light').append(createTableHeader(platform_list));
     createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
 }
 
 
 //show empty table (when data is none)
 const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
-    $('#board').append(createTableHeader(platform_list));
+    $('.thead-light').append(createTableHeader(platform_list));
     createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
 
 //change color of button when clicking platform
 $('option').click(function(){
-    if($(this).hasClass("platform-selected")){
-      $(this).removeClass("platform-selected");
+    if($(this).hasClass("btn-gray-800")){
+      $(this).removeClass("btn-gray-800");
     }else{
-      $(this).addClass("platform-selected");  
-      $('option').not($(this)).removeClass("platform-selected");  
+      $(this).addClass("btn-gray-800");  
+      $('option').not($(this)).removeClass("btn-gray-800");  
     }
 });
 
@@ -288,6 +302,7 @@ $(document).on('change','#start_date',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -372,6 +387,7 @@ $(document).on('change','#end_date',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -412,7 +428,6 @@ $(document).on('click','.platform-name',function(){
         return;
     }
 
-
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
@@ -450,6 +465,7 @@ $(document).on('click','.platform-name',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -470,6 +486,9 @@ $(document).on('click','.platform-name',function(){
             $('#result-table').eq(0).empty();
         },
     })
+
+
+    
 })
 
 
@@ -547,7 +566,7 @@ $('#update-data').click(function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -612,7 +631,7 @@ $('#update-data').click(function(){
                 db_artist_list.push(artist_list[i]);
             }
 
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -673,8 +692,7 @@ $('#update-data').click(function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -743,7 +761,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -796,7 +815,7 @@ $('#update-data').click(function(){
                     db_artist_list.push(artist_list[i]);
                 }
 
-    
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -857,7 +876,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -923,7 +943,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -976,7 +997,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
