@@ -190,7 +190,9 @@ class NoLoginDownloaderMiddleware:
             spider_idx = 3
         # self.driver = driver_setting(proxy_idx)
         self.driver = driver_setting(None)
-
+        
+    def spider_closed(self, spider):
+        self.driver.quit()
 
 class LoginDownloaderMiddleware:
     @classmethod
@@ -234,7 +236,7 @@ class LoginDownloaderMiddleware:
             )
 
     def spider_closed(self, spider):
-        self.driver.close()
+        self.driver.quit()
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
