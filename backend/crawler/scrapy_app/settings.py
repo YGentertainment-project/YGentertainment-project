@@ -20,7 +20,7 @@ LOG_FILE = './data/log/Crawler.log'
 LOG_LEVEL = 'INFO'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 ITEM_PIPELINES = {
     'crawler.scrapy_app.pipelines.CrawlerPipeline': 100,

@@ -256,7 +256,7 @@ function add_new_collect_target_item(item_num){
         }else if(i==5){//delete button
             dataCol.innerHTML = `
                 <td>
-                    <button class="collect_target_delete" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
+                    <button class="btn-danger" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
         }
@@ -282,7 +282,7 @@ $(document).on('click','.platform-names',function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
-            const data_list = res.data;
+            const data_list = res.data["items"];
             console.log(data_list);
             $('#artist-body-list').empty();
             let len = 0;
@@ -338,7 +338,7 @@ $(document).on('click','.platform-names',function(){
                             dataCol2Btn.onclick = function(){
                                 delete_collect_target_item(data["id"], len2);
                             };
-                            dataCol2Btn.setAttribute('class', 'collect_target_delete');
+                            dataCol2Btn.setAttribute('class', 'btn-danger');
                             dataCol2Btn.innerHTML = "삭제";
                             dataCol2.append(dataCol2Btn);
                             tableRow.append(dataCol2);
@@ -354,12 +354,24 @@ $(document).on('click','.platform-names',function(){
             }
             //맨 뒤에 스케줄 관련 row 붙이기
             append_schedule_row();
+            var period = res.data["period"];
+                                if(period=="hour"){
+                                    period = "시간별";
+                                }else if(period=="daily"){
+                                    period = "일별";
+                                }
+                                console.log(period);
+                                document.getElementById("dropTitle").innerHTML = period;
         },
         error: e => {
             alert(e.responseText);
         },
-    })
+    });
 })
+
+function check_schedule(period){
+    document.getElementById("dropTitle").innerHTML = period;
+}
 
 function append_schedule_row(){
     const tableRow = $('<tr></tr>');
@@ -377,12 +389,12 @@ function append_schedule_row(){
             dataCol.innerHTML = `
             <td>
                 <div class="dropdown">
-                    <button class="dropbtn"> 
+                    <button class="dropbtn" id="dropTitle"> 
                         선택
                     </button>
                     <div class="dropdown-content">
-                        <a href="#">일별</a>
-                        <a href="#">시간별</a>
+                        <div onclick="check_schedule('일별')">일별</div>
+                        <div onclick="check_schedule('시간별')">시간별</div>
                     </div>
                 </div>
             </td>`;
@@ -420,6 +432,10 @@ $(document).on('click','#save-list',function(){
             return;
         }
     }
+    var period = "daily";
+    if(document.getElementById("dropTitle").innerHTML=="시간별"){
+        period = "hour";
+    }
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
         type: 'PUT',
@@ -427,7 +443,8 @@ $(document).on('click','#save-list',function(){
         data :JSON.stringify({
             "artist": document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼",""),
             "platform": clicked_platform,
-            "items": bodydatas
+            "items": bodydatas,
+            "period": period
         }),
         contentType: 'application/json; charset=utf-8',
         success: res => {
