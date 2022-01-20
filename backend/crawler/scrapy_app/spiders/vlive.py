@@ -10,11 +10,11 @@ from ..items import VliveItem
 
 
 class VliveSpider(scrapy.Spider):
-    name = 'vlive'
+    name = "vlive"
 
     def start_requests(self):
         crawl_url = {}
-        vlive_platform_id = Platform.objects.get(name='vlive').id
+        vlive_platform_id = Platform.objects.get(name="vlive").id
         CrawlingTarget = CollectTarget.objects.filter(platform_id=vlive_platform_id)
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
@@ -24,25 +24,25 @@ class VliveSpider(scrapy.Spider):
             print("artist : {}, url : {}, url_len: {}".format(
                 artist, url, len(url)))
             if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding='utf-8', meta={'artist': artist})
+                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
             else:
                 continue
 
     def parse(self, response):
-        artist = response.meta['artist']
-        soup = BeautifulSoup(response.text, 'html.parser')
-        script = soup.find('script').get_text()
+        artist = response.meta["artist"]
+        soup = BeautifulSoup(response.text, "html.parser")
+        script = soup.find("script").get_text()
         json_object = json.loads(script[27:-308])
-        members = json_object['channel']['channel']['memberCount']
-        videoplay = json_object['channel']['channel']['videoPlayCountOfStar']
-        videocount = json_object['channel']['channel']['videoCountOfStar']
-        videolike = json_object['channel']['channel']['videoLikeCountOfStar']
+        members = json_object["channel"]["channel"]["memberCount"]
+        videoplay = json_object["channel"]["channel"]["videoPlayCountOfStar"]
+        videocount = json_object["channel"]["channel"]["videoCountOfStar"]
+        videolike = json_object["channel"]["channel"]["videoLikeCountOfStar"]
 
         item = VliveItem()
-        item['artist'] = artist
-        item['likes'] = videolike
-        item['members'] = members
-        item['plays'] = videoplay
-        item['videos'] = videocount
-        item['url'] = response.url
+        item["artist"] = artist
+        item["likes"] = videolike
+        item["members"] = members
+        item["plays"] = videoplay
+        item["videos"] = videocount
+        item["url"] = response.url
         yield item

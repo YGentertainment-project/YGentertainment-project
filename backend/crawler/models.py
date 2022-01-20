@@ -12,6 +12,7 @@ class SocialbladeYoutube(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -30,6 +31,7 @@ class SocialbladeTiktok(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -48,6 +50,7 @@ class SocialbladeTwitter(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -66,6 +69,7 @@ class SocialbladeTwitter2(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -82,6 +86,7 @@ class Weverse(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -98,6 +103,7 @@ class CrowdtangleInstagram(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -114,6 +120,7 @@ class CrowdtangleFacebook(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -133,6 +140,7 @@ class Vlive(models.Model):
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -152,6 +160,7 @@ class Melon(models.Model):
     updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -170,6 +179,7 @@ class Spotify(models.Model):
     updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

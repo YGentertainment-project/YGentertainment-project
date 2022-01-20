@@ -144,7 +144,7 @@ class APIView(View):
             if e.err:
                 ret["err"] = e.err
             return self.error(**ret)
-        except Exception as e:
+        except Exception:
             logger.exception(e)
             return self.server_error()
 

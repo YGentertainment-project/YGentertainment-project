@@ -249,7 +249,7 @@ def platform_info(request):
                 return JsonResponse(data={"success": True, "data": platform_list})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
 
@@ -278,7 +278,7 @@ class PlatformAPI(APIView):
                 return JsonResponse(data={"success": True, "data": platform_datas})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     # @login_required
@@ -326,7 +326,7 @@ class PlatformAPI(APIView):
 
                 return JsonResponse(data={"success": True, "data": platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={"success": False, "data": platform_serializer.errors}, status=400)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
     # @login_required
@@ -348,7 +348,7 @@ class PlatformAPI(APIView):
                     if platform_serializer.is_valid():
                         platform_serializer.save()
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
 
@@ -368,7 +368,7 @@ class ArtistAPI(APIView):
                 return JsonResponse(status=200, data={"success": True, "data": artist_datas})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     # @login_required
@@ -401,7 +401,7 @@ class ArtistAPI(APIView):
 
                 return JsonResponse(data={"success": True, "data": artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={"success": False, "data": artist_serializer.errors}, status=400)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
     # @login_required
@@ -419,7 +419,7 @@ class ArtistAPI(APIView):
                 else:
                     return JsonResponse(data={"success": False, "data": artist_serializer.errors}, status=400)
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
 
@@ -452,7 +452,7 @@ class PlatformOfArtistAPI(APIView):
                 return JsonResponse(data={"success": True, "data": platform_datas})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     # @login_required
@@ -467,7 +467,7 @@ class PlatformOfArtistAPI(APIView):
                 if collecttarget_object["target_url_2"]:
                      CollectTarget.objects.filter(pk=collecttarget_object["id"]).update(target_url_2=collecttarget_object["target_url_2"])
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
 
@@ -497,7 +497,7 @@ class CollectTargetItemAPI(APIView):
                 return JsonResponse(data={"success": True, "data": collecttargetitems_datas})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     # @login_required
@@ -537,7 +537,7 @@ class CollectTargetItemAPI(APIView):
                     else:
                         return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
     def delete(self, request):
@@ -549,7 +549,7 @@ class CollectTargetItemAPI(APIView):
             obj = CollectTargetItem.objects.filter(id=delete_id)
             obj.delete()
             return JsonResponse(data={"success": True}, status=status.HTTP_200_OK)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
 # platform collect target API
@@ -578,7 +578,7 @@ class PlatformTargetItemAPI(APIView):
                 return JsonResponse(data={"success": True, "data": collecttargetitems_datas, "platform_id": collecttarget_objects_value["platform_id"]})
             else:
                 return JsonResponse(data={"success": True, "data": []})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     # @login_required
@@ -596,7 +596,7 @@ class PlatformTargetItemAPI(APIView):
                 else:
                     return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except:
+        except Exception:
             return JsonResponse(data={"success": False}, status=400)
 
 
@@ -750,7 +750,7 @@ class DataReportAPI(APIView):
                     return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header})
                 else:
                     return JsonResponse(status=400, data={"success": False, "data": "there is no data"})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})
 
     def post(self, request):
@@ -891,5 +891,5 @@ class DataReportAPI(APIView):
                     crawling_artist_list.append(val["artist"])
                 # datename = "%s-%s-%s"%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
                 return JsonResponse(status=200, data={"success": True, "data": "no data", "artists": artist_list, "platform": platform_header, "crawling_artist_list": crawling_artist_list})
-        except:
+        except Exception:
             return JsonResponse(status=400, data={"success": False})

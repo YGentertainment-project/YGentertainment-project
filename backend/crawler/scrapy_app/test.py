@@ -1,3 +1,3 @@
- import os
+import os
 
-print(os.path.dirname(os.path.abspath('.')))
+print(os.path.dirname(os.path.abspath(".")))

@@ -55,7 +55,7 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     # 오늘 날짜 기준으로 가져오기
     if type == "누적":
         # today_date = datetime.datetime.today()
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         filter_objects = DataModels[platform].objects.filter(
             artist=artist,
             reserved_date__year=start_date_dateobject.year,
@@ -71,8 +71,8 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
         else:
             return filter_datas
     elif type == "기간별":
-        start_date_dateobject = datetime.datetime.strptime(start_date, '%Y-%m-%d').date() - datetime.timedelta(1)
-        end_date_dateobject = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+        start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
+        end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
         filter_start_objects = DataModels[platform].objects.filter(
             artist=artist,
             reserved_date__year=start_date_dateobject.year,
@@ -104,11 +104,11 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     if platforms.exists():
         platform_objects_values = platforms.values()
         for platform_value in platform_objects_values:
-            collecttargets = CollectTarget.objects.filter(platform=platform_value['id'])
+            collecttargets = CollectTarget.objects.filter(platform=platform_value["id"])
             collecttargets = collecttargets.values()
             collect_item = set()
             for collecttarget in collecttargets:
-                platform_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget['id'])
+                platform_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget["id"])
                 platform_objects_values = platform_objects.values()
                 for p in platform_objects_values:
                     if p["target_name"] in collect_item:
@@ -116,7 +116,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                     collect_item.add(p["target_name"])
             collect_item = list(collect_item)
             db_platform_datas.append({
-                "platform": platform_value['name'],
+                "platform": platform_value["name"],
                 "collect_item": collect_item
             })
 
@@ -126,7 +126,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     if artists.exists():
         artist_objects_values = artists.values()
         for artist_value in artist_objects_values:
-            db_artists.append(artist_value['name'])
+            db_artists.append(artist_value["name"])
 
     # export excel
     book = openpyxl.Workbook()
@@ -135,22 +135,22 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     row = 1
     col = 1
 
-    thick_border = Border(left=Side(style='medium'),
-                     right=Side(style='medium'),
-                     top=Side(style='medium'),
-                     bottom=Side(style='medium'))
+    thick_border = Border(left=Side(style="medium"),
+                     right=Side(style="medium"),
+                     top=Side(style="medium"),
+                     bottom=Side(style="medium"))
 
     sheet.cell(row=1, column=1).value = "플랫폼"
     sheet.cell(row=1, column=1).border = thick_border
-    sheet.cell(row=1, column=1).alignment = Alignment(horizontal='center', vertical='center')
+    sheet.cell(row=1, column=1).alignment = Alignment(horizontal="center", vertical="center")
     sheet.cell(row=1, column=1).font = fonts.Font(bold=True)
 
     sheet.cell(row=2, column=1).value = "아티스트"
     sheet.cell(row=2, column=1).border = thick_border
-    sheet.cell(row=2, column=1).alignment = Alignment(horizontal='center', vertical='center')
+    sheet.cell(row=2, column=1).alignment = Alignment(horizontal="center", vertical="center")
     col += 1
     sheet.row_dimensions[2].height = 35
-    sheet.column_dimensions['A'].width = 40
+    sheet.column_dimensions["A"].width = 40
 
     # 플랫폼 이름과 수집항목 띄우기
     for data in db_platform_datas:
@@ -160,13 +160,13 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
         sheet.merge_cells(start_row=row, start_column=col,
             end_row=row, end_column=col+len(data["collect_item"])-1)
         sheet.cell(row=row, column=col).border = thick_border
-        sheet.cell(row=row, column=col).alignment = Alignment(horizontal='center', vertical='center')
+        sheet.cell(row=row, column=col).alignment = Alignment(horizontal="center", vertical="center")
         sheet.cell(row=row, column=col).font = fonts.Font(bold=True)
 
         for i, collect_data in enumerate(data["collect_item"]):
             sheet.cell(row=row+1, column=col+i).value = collect_data
             sheet.cell(row=row+1, column=col+i).border = thick_border
-            sheet.cell(row=row+1, column=col+i).alignment = Alignment(horizontal='center', vertical='center')
+            sheet.cell(row=row+1, column=col+i).alignment = Alignment(horizontal="center", vertical="center")
         col += len(data["collect_item"])
 
     # 아티스트별로 플랫폼순서대로 가져와서 띄우기
@@ -186,7 +186,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
             for i, platform_data in enumerate(platform_data_list):
                 if platform_data is None or platform_data == "NULL":
                     # null이면 shade 처리
-                    sheet.cell(row=row, column=col+i).fill = PatternFill(start_color='C4C4C4', end_color='C4C4C4', fill_type="solid")
+                    sheet.cell(row=row, column=col+i).fill = PatternFill(start_color="C4C4C4", end_color="C4C4C4", fill_type="solid")
                 else:
                     sheet.cell(row=row, column=col+i).value = platform_data
             sheet.cell(row=row, column=col+len(platform["collect_item"])-1).border = Border(right=Side(style="medium"))
@@ -208,10 +208,10 @@ def import_datareport(worksheet, excel_import_date):
             data_json = {}
             for cell in row:
                 platform_value = str(cell.value)
-                if platform_value == '플랫폼':
-                    platform_name = '플랫폼'
-                elif platform_value != 'None':
-                    if platform_name != '플랫폼':
+                if platform_value == "플랫폼":
+                    platform_name = "플랫폼"
+                elif platform_value != "None":
+                    if platform_name != "플랫폼":
                         # 새로운 게 등장한 거므로 저장
                         data_json["platform"] = platform_name
                         data_json["item_num"] = item_num
@@ -234,7 +234,7 @@ def import_datareport(worksheet, excel_import_date):
             current_index = 0
             for cell in row:
                 collect_value = str(cell.value)
-                if collect_value != '아티스트':
+                if collect_value != "아티스트":
                     platform_data_list[platform_index]["item_list"].append(collect_value)
                     current_index += 1
                     if current_index >= platform_data_list[platform_index]["item_num"]:
@@ -256,14 +256,14 @@ def import_datareport(worksheet, excel_import_date):
                     platform_name = platform_data_list[platform_index]["platform"]
                     collect_value = platform_data_list[platform_index]["item_list"][current_index]
                     value = str(cell.value)
-                    if value != 'None':
+                    if value != "None":
                         # -가 있으면 날짜
                         if "-" in value:
                             value = str(cell.value)
                         # ,가 있으면 날짜
                         elif "," in value:
                             dateobject = parse(str(cell.value))
-                            value = '%s-%s-%s'%(dateobject.year, dateobject.month, dateobject.day)
+                            value = "%s-%s-%s"%(dateobject.year, dateobject.month, dateobject.day)
                         else:
                             value = int(cell.value)
                         data_json[collect_value] = value
@@ -298,8 +298,8 @@ def import_total(worksheet):
                 if i < platform_start_index:
                     continue
                 platform_value = str(cell.value)
-                if platform_value != 'None':
-                    if platform_name != '플랫폼':
+                if platform_value != "None":
+                    if platform_name != "플랫폼":
                         # 새로운 게 등장한 거므로 저장
                         data_json["platform"] = platform_name
                         data_json["item_num"] = item_num
@@ -327,7 +327,7 @@ def import_total(worksheet):
                     continue
                 collect_value = str(cell.value)
                 current_index += 1
-                if collect_value != 'None':
+                if collect_value != "None":
                     platform_data_list[platform_index]["url"] = collect_value
                 if current_index >= platform_data_list[platform_index]["item_num"]:
                     platform_index += 1
@@ -341,7 +341,7 @@ def import_total(worksheet):
                 if i < platform_start_index:
                     continue
                 collect_value = str(cell.value)
-                if collect_value != '지표 이름':
+                if collect_value != "지표 이름":
                     platform_data_list[platform_index]["item_list"].append(collect_value)
                     current_index += 1
                     if current_index >= platform_data_list[platform_index]["item_num"]:
@@ -356,7 +356,7 @@ def import_total(worksheet):
         #         if i < platform_start_index:
         #             continue
         #         collect_value = str(cell.value)
-        #         if collect_value != 'xpath':
+        #         if collect_value != "xpath":
         #             platform_data_list[platform_index]["item_xpath_list"].append(collect_value)
         #             current_index += 1
         #             if current_index >= platform_data_list[platform_index]["item_num"]:
@@ -374,7 +374,7 @@ def import_total(worksheet):
             for i, cell in enumerate(row):
                 # 아티스트 이름 나열
                 if i == 0:  # 이름
-                    if str(cell.value) == 'None':
+                    if str(cell.value) == "None":
                         break
                     data_json["name"] = str(cell.value)
                     artist_name = str(cell.value)
@@ -395,7 +395,7 @@ def import_total(worksheet):
                         data_json["agency"] = str(cell.value)
                 elif i == 6:  # 데뷔일
                     if str(cell.value) != "None":
-                        strings = str(cell.value).split(' ')
+                        strings = str(cell.value).split(" ")
                         data_json["debut_date"] = strings[0]
                     artist_data_list.append(data_json)
                     data_json = {}
@@ -408,7 +408,7 @@ def import_total(worksheet):
                             data_json2["target_url_2"] = collect_value
                         else:
                             data_json2["target_url"] = collect_value
-                    elif collect_value != ' ' and collect_value != 'None' and platform_data_list[platform_index]["item_list"][current_index-1] != 'None':
+                    elif collect_value != " " and collect_value != "None" and platform_data_list[platform_index]["item_list"][current_index-1] != "None":
                         data_json3 = {
                             "platform": platform_data_list[platform_index]["platform"],
                             "artist": artist_name,
@@ -430,12 +430,12 @@ def import_total(worksheet):
         })
         # #platform_target_item 저장
         # for j in range(platform_data["item_num"]):
-        #     if platform_data["item_list"][j] != 'None' and platform_data["item_list"][j] != 'url' and platform_data["item_list"][j] != 'url1'and platform_data["item_list"][j] != 'url2'and platform_data["item_xpath_list"][j] != '수집불가':
+        #     if platform_data["item_list"][j] != "None" and platform_data["item_list"][j] != "url" and platform_data["item_list"][j] != "url1"and platform_data["item_list"][j] != "url2"and platform_data["item_xpath_list"][j] != "수집불가":
         #         platform_filter_object = Platform.objects.filter(name = platform_data["platform"])
         #         if platform_filter_object.exists():
         #             platform_filter_object = platform_filter_object.values().first()
         #             save_platform_target_item({
-        #                 "platform": platform_filter_object['id'],
+        #                 "platform": platform_filter_object["id"],
         #                 "target_name": platform_data["item_list"][j],
         #                 "xpath": platform_data["item_xpath_list"][j],
         #             })
@@ -445,23 +445,23 @@ def import_total(worksheet):
         save_artist(artist_data)
         # collect_target 저장
         for platform_data in platform_data_list:
-            if 'target_url' in collect_target_data_list[collect_target_index]:
+            if "target_url" in collect_target_data_list[collect_target_index]:
                 platform_filter_object = Platform.objects.filter(name=platform_data["platform"])
                 platform_filter_object = platform_filter_object.values().first()
                 artist_filter_object = Artist.objects.filter(name=artist_data["name"])
                 artist_filter_object = artist_filter_object.values().first()
-                if 'target_url_2' in collect_target_data_list[collect_target_index]:
+                if "target_url_2" in collect_target_data_list[collect_target_index]:
                     save_collect_target({
-                    "artist": artist_filter_object['id'],
-                    "platform": platform_filter_object['id'],
-                    "target_url": collect_target_data_list[collect_target_index]['target_url'],
-                    "target_url_2": collect_target_data_list[collect_target_index]['target_url_2'],
+                    "artist": artist_filter_object["id"],
+                    "platform": platform_filter_object["id"],
+                    "target_url": collect_target_data_list[collect_target_index]["target_url"],
+                    "target_url_2": collect_target_data_list[collect_target_index]["target_url_2"],
                 })
                 else:
                     save_collect_target({
-                        "artist": artist_filter_object['id'],
-                        "platform": platform_filter_object['id'],
-                        "target_url": collect_target_data_list[collect_target_index]['target_url']
+                        "artist": artist_filter_object["id"],
+                        "platform": platform_filter_object["id"],
+                        "target_url": collect_target_data_list[collect_target_index]["target_url"]
                     })
             collect_target_index += 1
     # collecttargetitem 저장
@@ -490,13 +490,13 @@ def do_to_model(ModelClass, field_name, func):
 
 
 def save_collect_data_target(data_json, platform, excel_import_date):
-    '''
+    """
     수집(크롤링) 데이터 저장
-    '''
+    """
     if excel_import_date is None:
         target_date = datetime.datetime.today()
     else:
-        target_date = datetime.datetime.strptime(excel_import_date, '%Y-%m-%d')
+        target_date = datetime.datetime.strptime(excel_import_date, "%Y-%m-%d")
 
     obj = DataModels[platform].objects.filter(artist=data_json["artist"], reserved_date__year=target_date.year,
                 reserved_date__month=target_date.month, reserved_date__day=target_date.day).first()
@@ -519,9 +519,9 @@ def save_collect_data_target(data_json, platform, excel_import_date):
 
 
 def save_platform(data_json):
-    '''
+    """
     플랫폼 저장
-    '''
+    """
     obj = Platform.objects.filter(name=data_json["name"]).first()
     if obj is None:
     # 원래 없는 건 새로 저장
@@ -536,9 +536,9 @@ def save_platform(data_json):
 
 
 def save_artist(data_json):
-    '''
+    """
     아티스트 저장
-    '''
+    """
     obj = Artist.objects.filter(name=data_json["name"]).first()
     if obj is None:
     # 원래 없는 건 새로 저장
@@ -553,12 +553,12 @@ def save_artist(data_json):
 
 
 def save_platform_target_item(data_json):
-    '''
+    """
     지금은 사용x
     platform 수집(조사)항목 저장
-    '''
-    obj = PlatformTargetItem.objects.filter(platform=data_json['platform'], target_name=data_json['target_name'],
-    xpath=data_json['xpath']).first()
+    """
+    obj = PlatformTargetItem.objects.filter(platform=data_json["platform"], target_name=data_json["target_name"],
+    xpath=data_json["xpath"]).first()
     if obj is None:
     # 원래 없는 건 새로 저장
         target_item_serializer = PlatformTargetItemSerializer(data=data_json)
@@ -572,20 +572,20 @@ def save_platform_target_item(data_json):
 
 
 def save_collect_target_item(data_json):
-    '''
+    """
     collect수집(조사)항목 저장
-    '''
+    """
     artist_object = Artist.objects.filter(name=data_json["artist"])
     artist_object = artist_object.values()[0]
     platform_object = Platform.objects.filter(name=data_json["platform"])
     platform_object = platform_object.values()[0]
-    collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id=platform_object['id'])
+    collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object["id"], platform_id=platform_object["id"])
     collecttarget_object = collecttarget_object.values()[0]
-    obj = CollectTargetItem.objects.filter(collect_target_id=collecttarget_object['id'], target_name=data_json['target_name']).first()
+    obj = CollectTargetItem.objects.filter(collect_target_id=collecttarget_object["id"], target_name=data_json["target_name"]).first()
     data_json = {
-        'collect_target': collecttarget_object['id'],
-        'target_name': data_json['target_name'],
-        'xpath': data_json['xpath']
+        "collect_target": collecttarget_object["id"],
+        "target_name": data_json["target_name"],
+        "xpath": data_json["xpath"]
     }
     if obj is None:
     # 원래 없는 건 새로 저장
@@ -600,11 +600,11 @@ def save_collect_target_item(data_json):
 
 
 def save_collect_target(data_json):
-    '''
+    """
     수집대상 저장
-    '''
-    obj = CollectTarget.objects.filter(platform=data_json['platform'], artist=data_json['artist'],
-        target_url=data_json['target_url']).first()
+    """
+    obj = CollectTarget.objects.filter(platform=data_json["platform"], artist=data_json["artist"],
+        target_url=data_json["target_url"]).first()
     if obj is None:
     # 원래 없는 건 새로 저장
         collect_target_item_serializer = CollectTargetSerializer(data=data_json)

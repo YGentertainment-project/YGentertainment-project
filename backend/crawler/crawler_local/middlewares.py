@@ -38,7 +38,7 @@ class CrawlerprojecctSpiderMiddleware:
             yield r
 
     def spider_opened(self, spider):
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)
 
 
 class SocialbladeDownloaderMiddleware:
@@ -53,15 +53,15 @@ class SocialbladeDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
-        options.add_argument('window-size=1920x1080')
-        options.add_argument('log-level=3')
-        options.add_argument('disable-gpu')
-        options.add_argument('user-agent=Chrome/96.0.4664')
-        options.add_argument('start-maximized')
+        # options.add_argument("headless")
+        options.add_argument("window-size=1920x1080")
+        options.add_argument("log-level=3")
+        options.add_argument("disable-gpu")
+        options.add_argument("user-agent=Chrome/96.0.4664")
+        options.add_argument("start-maximized")
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         self.driver = driver
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)
 
     def spider_closed(self, spider):
         self.driver.close()
@@ -70,7 +70,7 @@ class SocialbladeDownloaderMiddleware:
         self.driver.get(request.url)
         self.driver.implicitly_wait(time_to_wait=5)
         body = to_bytes(text=self.driver.page_source)
-        return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
+        return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
 
     def process_response(self, request, response, spider):
         return response
@@ -91,25 +91,26 @@ class WeverseDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')
-        options.add_argument('window-size=1920x1080')
-        options.add_argument('log-level=3')
-        options.add_argument('disable-gpu')
-        options.add_argument('user-agent=Chrome/96.0.4664')
-        options.add_argument('start-maximized')
+        options.add_argument("headless")
+        options.add_argument("window-size=1920x1080")
+        options.add_argument("log-level=3")
+        options.add_argument("disable-gpu")
+        options.add_argument("user-agent=Chrome/96.0.4664")
+        options.add_argument("start-maximized")
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         self.login_process()
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)
 
     def login_process(self):
-        self.driver.get('https://www.weverse.io/')
-        self.driver.find_element(By.XPATH, '//*[@id="root"]/div/header/div/div[2]/div/button[2]').click()
+        self.driver.get("https://www.weverse.io/")
+        id = "root"
+        self.driver.find_element(By.XPATH, f"//*[@id={id}]/div/header/div/div[2]/div/button[2]").click()
         self.driver.switch_to.window(self.driver.window_handles[1])
-        ID_BOX = self.driver.find_element(By.XPATH, '//*[@id="root"]/div/div/form/div[1]/input')
-        ID_BOX.send_keys('sunrinkingh2160@gmail.com')
-        PW_BOX = self.driver.find_element(By.XPATH, '//*[@id="root"]/div/div/form/div[2]/input')
-        PW_BOX.send_keys('!eogksalsrnr123')
-        self.driver.find_element(By.XPATH, '//*[@id="root"]/div/div/form/div[3]/button').click()
+        ID_BOX = self.driver.find_element(By.XPATH, f"//*[@id={id}]/div/div/form/div[1]/input")
+        ID_BOX.send_keys("sunrinkingh2160@gmail.com")
+        PW_BOX = self.driver.find_element(By.XPATH, f"//*[@id={id}]/div/div/form/div[2]/input")
+        PW_BOX.send_keys("!eogksalsrnr123")
+        self.driver.find_element(By.XPATH, f"//*[@id={id}]/div/div/form/div[3]/button").click()
         self.driver.switch_to.window(self.driver.window_handles[0])
         self.driver.implicitly_wait(time_to_wait=5)
 
@@ -118,15 +119,16 @@ class WeverseDownloaderMiddleware:
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
+        id = "root"
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '#root > div > section > aside > div > a > div > p'))
+                (By.CSS_SELECTOR, "#root > div > section > aside > div > a > div > p"))
         )
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="root"]/div/section/aside/div/div[1]'))
+            EC.presence_of_element_located((By.XPATH, f"//*[@id={id}]/div/section/aside/div/div[1]"))
         )
         body = to_bytes(text=self.driver.page_source)
-        return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
+        return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
 
     def process_response(self, request, response, spider):
         return response
@@ -146,28 +148,30 @@ class CrowdtangleDownloaderMiddleware:
 
     def spider_opened(self, spider):
         options = webdriver.ChromeOptions()
-        options.add_argument('headless')
-        options.add_argument('window-size=1920x1080')
-        options.add_argument('log-level=3')
-        options.add_argument('disable-gpu')
-        options.add_argument('user-agent=Chrome/96.0.4664')
-        options.add_argument('start-maximized')
+        options.add_argument("headless")
+        options.add_argument("window-size=1920x1080")
+        options.add_argument("log-level=3")
+        options.add_argument("disable-gpu")
+        options.add_argument("user-agent=Chrome/96.0.4664")
+        options.add_argument("start-maximized")
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         self.login_process()
-        spider.logger.info('Spider opened: %s' % spider.name)
+        spider.logger.info("Spider opened: %s" % spider.name)
 
     def login_process(self):
-        self.driver.get('https://apps.crowdtangle.com')
-        self.driver.find_element(By.XPATH, '//*[@id="account-react"]/div/div/div[2]/div/button').click()
+        id = "account-react"
+        self.driver.get("https://apps.crowdtangle.com")
+        self.driver.find_element(By.XPATH, f"//*[@id={id}]/div/div/div[2]/div/button").click()
         self.driver.switch_to.window(self.driver.window_handles[1])
-        ID_BOX = self.driver.find_element(By.XPATH, '/html/body/div/div[2]/div[1]/form/div/div[1]/div/input')
-        ID_BOX.send_keys('jaewon@ygmail.net')
-        PW_BOX = self.driver.find_element(By.XPATH, '/html/body/div/div[2]/div[1]/form/div/div[2]/div/input')
-        PW_BOX.send_keys('Ygfamily1234@')
-        self.driver.find_element(By.XPATH, '//*[@id="loginbutton"]').click()
+        ID_BOX = self.driver.find_element(By.XPATH, "/html/body/div/div[2]/div[1]/form/div/div[1]/div/input")
+        ID_BOX.send_keys("jaewon@ygmail.net")
+        PW_BOX = self.driver.find_element(By.XPATH, "/html/body/div/div[2]/div[1]/form/div/div[2]/div/input")
+        PW_BOX.send_keys("Ygfamily1234@")
+        id = "loginbutton"
+        self.driver.find_element(By.XPATH, f"//*[@id={id}").click()
         self.driver.switch_to.window(self.driver.window_handles[0])
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[1]/h1'))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[2]/div/div/div[1]/h1"))
         )
 
     def spider_closed(self, spider):
@@ -176,13 +180,13 @@ class CrowdtangleDownloaderMiddleware:
     def process_request(self, request, spider):
         self.driver.get(request.url)
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div[1]/span[2]'))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[3]/div/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div[1]/span[2]"))
         )
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[3]/div/div/div/div/div[3]/div[2]/div[1]/div/div[3]/div[2]/div/div[2]/div[1]/div/div[2]/div/span[1]'))
+            EC.presence_of_element_located((By.XPATH, "/html/body/div[3]/div/div/div/div/div[3]/div[2]/div[1]/div/div[3]/div[2]/div/div[2]/div[1]/div/div[2]/div/span[1]"))
         )
         body = to_bytes(text=self.driver.page_source)
-        return HtmlResponse(url=request.url, body=body, encoding='utf-8', request=request)
+        return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
 
     def process_response(self, request, response, spider):
         return response
