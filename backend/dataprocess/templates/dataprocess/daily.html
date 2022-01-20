@@ -122,16 +122,19 @@
                 <!--DB 데이터로 변경 필요-->
                 {% if platforms %}
                 {% for platform in platforms %}
-                <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
+                <option class="platform-name btn btn-gray-200" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
                 {% endfor %}
                 {%else%}
                 <div>플랫폼이 없습니다.</div>
                 {% endif %}
             </div>
             <hr>
-            <div id="result-table">
+            <div id="result-table" class="card-body">
                 <label id="platform-title" style="margin-bottom: 5px; font-weight: bold;"></label>
-                <table id="table">
+                <table id="table" class="table table-centered table-nowrap mb-0 rounded">
+                    <thead class="thead-light"> 
+
+                    </thead>
                     <tbody id="board">
                     </tbody>
                 </table>
