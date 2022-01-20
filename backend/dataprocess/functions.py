@@ -3,11 +3,11 @@ from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
-from config.models import PlatformTargetItem, CollectTargetItem
+from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from dataprocess.models import Platform, Artist, CollectTarget
 from crawler.models import *
 
-from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
+from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.serializers import ArtistSerializer, PlatformSerializer, CollectTargetSerializer
 from crawler.serializers import *
 
@@ -456,13 +456,18 @@ def import_total(worksheet):
                     "platform": platform_filter_object['id'],
                     "target_url": collect_target_data_list[collect_target_index]['target_url'],
                     "target_url_2": collect_target_data_list[collect_target_index]['target_url_2'],
-                })
+                    })
                 else:
                     save_collect_target({
                         "artist": artist_filter_object['id'],
                         "platform": platform_filter_object['id'],
                         "target_url": collect_target_data_list[collect_target_index]['target_url']
                     })
+                collecttarget_object = CollectTarget.objects.filter(artist_id = artist_filter_object['id'],
+                    platform=platform_filter_object['id'])
+                collecttarget_object = collecttarget_object.values().first()
+                collecttargetid = collecttarget_object["id"]
+                save_schedule(collecttargetid)
             collect_target_index += 1
     #collecttargetitem 저장
     for collect_target_item_data in collect_target_item_data_list:
@@ -591,6 +596,7 @@ def save_collect_target_item(data_json):
         target_item_serializer = CollectTargetItemSerializer(obj, data=data_json)
         if target_item_serializer.is_valid():
             target_item_serializer.save()
+    
 
 def save_collect_target(data_json):
     '''
@@ -608,3 +614,18 @@ def save_collect_target(data_json):
         collect_target_item_serializer = PlatformTargetItemSerializer(obj, data=data_json)
         if collect_target_item_serializer.is_valid():
             collect_target_item_serializer.save()
+
+def save_schedule(collecttargetid):
+    '''
+    수집대상의 스케줄 저장
+    '''
+    schedule_object = Schedule.objects.filter(collect_target_id = collecttargetid).first()
+    schedule_data = {
+        "collect_target": collecttargetid,
+        "period": "daily",
+        "active": True,
+        "excute_time": datetime.time(9,0,0)
+    }
+    schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
+    if schedule_serializer.is_valid():
+        schedule_serializer.save()

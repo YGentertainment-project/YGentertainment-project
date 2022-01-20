@@ -25,4 +25,5 @@ urlpatterns = [
     path('api/platform_of_artist/', csrf_exempt(views.PlatformOfArtistAPI.as_view()), name='platform_of_artist_api'),
     path('api/collect_target_item/', csrf_exempt(views.CollectTargetItemAPI.as_view()), name='collect_target_item_api'),
     path('api/platform_target_item/', csrf_exempt(views.PlatformTargetItemAPI.as_view()), name='platform_target_item_api'),
+    path('api/schedule/', csrf_exempt(views.ScheduleAPI.as_view()), name='schedule_api'),
 ]
