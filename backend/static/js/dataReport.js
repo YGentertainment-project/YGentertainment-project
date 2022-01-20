@@ -532,7 +532,14 @@ $('#update-data').click(function(){
         for(var i = 3 ; i < trs_value.length ; i+=4){
             user_creation.push(trs_value[i].value)
         }
-
+        console.log({'platform_name':platform_name,
+        'artists[]':artists,
+        'uploads[]' : uploads, 
+        'subscribers[]': subscribers, 
+        'views[]': views, 
+        'user_creation[]': user_creation, 
+        'start_date':start_date
+        })
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
@@ -1095,3 +1102,8 @@ document.getElementById('excel_export_days2').onclick = function(){
     document.getElementById('excel_export_date_text').style.display = "block";
     document.getElementById('excel_export_end_date').style.display = "block";
 }
+//default 누적 & end_date 안보이게
+$('input[name=end_date]').hide()
+$('input[name=day]').hide()
+$('input[name=week]').hide()
+$('input[name=month]').hide()
