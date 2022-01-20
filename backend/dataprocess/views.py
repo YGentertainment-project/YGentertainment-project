@@ -294,7 +294,18 @@ class PlatformAPI(APIView):
                         artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
-                    #3. 만든 collect target에 대해 수집항목들 생성
+                    #3. 해당 collecttarget에 대한 schedule 생성
+                    schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
+                    schedule_data = {
+                            "collect_target": collecttarget.id,
+                            "period": "daily",
+                            "active": True,
+                            "excute_time": datetime.time(9,0,0)
+                        }
+                    schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
+                    #4. 만든 collect target에 대해 수집항목들 생성
                     collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
                             artist = artist_objects_value['id'])
                     collecttarget_object = collecttarget_object.values()[0]
@@ -387,9 +398,6 @@ class ArtistAPI(APIView):
                 # 1. artist 생성
                 artist_serializer.save()
                 # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
-                platform_objects = Platform.objects.all()
-                platform_objects_values = platform_objects.values()
-
                 for obj in artist_object['urls']:
                     platform_id = Platform.objects.get(name = obj['platform_name']).id
                     artist_id = artist_serializer.data['id']
@@ -402,6 +410,17 @@ class ArtistAPI(APIView):
                         target_url_2 = target_url_2
                     )
                     collecttarget.save()
+                    #3. 해당 collecttarget에 대한 schedule 생성
+                    schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
+                    schedule_data = {
+                            "collect_target": collecttarget.id,
+                            "period": "daily",
+                            "active": True,
+                            "excute_time": datetime.time(9,0,0)
+                        }
+                    schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
                 
     
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
