@@ -24,9 +24,9 @@ class SocialbladeYoutube(models.Model):
 
 class SocialbladeTiktok(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    followers = models.IntegerField()
-    uploads = models.IntegerField()
-    likes = models.BigIntegerField()
+    followers = models.IntegerField(null=True)
+    uploads = models.IntegerField(null=True)
+    likes = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
@@ -43,9 +43,9 @@ class SocialbladeTiktok(models.Model):
 
 class SocialbladeTwitter(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    followers = models.IntegerField()
-    twits = models.IntegerField()
-    user_created = models.TextField()
+    followers = models.IntegerField(null=True)
+    twits = models.IntegerField(null=True)
+    user_created = models.TextField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
@@ -62,9 +62,9 @@ class SocialbladeTwitter(models.Model):
 
 class SocialbladeTwitter2(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    followers = models.IntegerField()
-    twits = models.IntegerField()
-    user_created = models.TextField()
+    followers = models.IntegerField(null=True)
+    twits = models.IntegerField(null=True)
+    user_created = models.TextField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
@@ -98,10 +98,10 @@ class Weverse(models.Model):
 
 class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    followers = models.BigIntegerField()
+    followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null=True)
+    updated_at = models.DateField(null=True)ain
     url = models.TextField(null=True)
 
     class Meta:
@@ -115,7 +115,7 @@ class CrowdtangleInstagram(models.Model):
 
 class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    followers = models.BigIntegerField()
+    followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
@@ -132,10 +132,10 @@ class CrowdtangleFacebook(models.Model):
 
 class Vlive(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    members = models.IntegerField()
-    videos = models.IntegerField()
-    likes = models.BigIntegerField()
-    plays = models.BigIntegerField()
+    members = models.IntegerField(null=True)
+    videos = models.IntegerField(null=True)
+    likes = models.BigIntegerField(null=True)
+    plays = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
@@ -152,8 +152,8 @@ class Vlive(models.Model):
 
 class Melon(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    listeners = models.BigIntegerField()
-    streams = models.BigIntegerField()
+    listeners = models.BigIntegerField(null=True)
+    streams = models.BigIntegerField(null=True)
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
@@ -172,8 +172,8 @@ class Melon(models.Model):
 
 class Spotify(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
-    monthly_listens = models.BigIntegerField()
-    followers = models.BigIntegerField()
+    monthly_listens = models.BigIntegerField(null=True)
+    followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null=True)
