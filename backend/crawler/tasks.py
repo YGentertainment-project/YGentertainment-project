@@ -51,8 +51,8 @@ def direct_crawling_platform(self, platform):
         proc.start()
         proc.join()
     except:
-        direct_crawling_platform.retry()
-        print(f'Error with Crawling task')
+        # direct_crawling_platform.retry()
+        print('Error with Direct {} Crawling task'.format(platform))
 
 
 def crawling(platform, request_id):
@@ -66,8 +66,8 @@ def youtube_schedule_crawling(self):
     try:
         crawling('youtube', self.request.id)
     except:
-        youtube_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # youtube_schedule_crawling.retry()
+        print(f'Error with Youtube schedule Crawling task')
 
 
 
@@ -76,8 +76,8 @@ def twitter_schedule_crawling(self):
     try:
         crawling('twitter', self.request.id)
     except:
-        twitter_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # twitter_schedule_crawling.retry()
+        print(f'Error with Twitter schedule Crawling task')
 
 
 
@@ -86,8 +86,8 @@ def twitter2_schedule_crawling(self):
     try:
         crawling('twitter2', self.request.id)
     except:
-        twitter2_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # twitter2_schedule_crawling.retry()
+        print(f'Error with Twitter2 schedule Crawling task')
 
 
 
@@ -96,8 +96,8 @@ def tiktok_schedule_crawling(self):
     try:
         crawling('tiktok', self.request.id)
     except:
-        tiktok_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # tiktok_schedule_crawling.retry()
+        print(f'Error with Tiktok schedule Crawling task')
 
 
 
@@ -106,8 +106,8 @@ def weverse_schedule_crawling(self):
     try:
         crawling('weverse', self.request.id)
     except:
-        weverse_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # weverse_schedule_crawling.retry()
+        print(f'Error with Weverse schedule Crawling task')
 
 
 
@@ -116,8 +116,8 @@ def crowdtangle_schedule_crawling(self):
     try:
         crawling('crowdtangle', self.request.id)
     except:
-        crowdtangle_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # crowdtangle_schedule_crawling.retry()
+        print(f'Error with Crowdtangle schedule Crawling task')
 
 
 @app.task(name="vlive_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
@@ -125,8 +125,8 @@ def vlive_schedule_crawling(self):
     try:
         crawling('vlive', self.request.id)
     except:
-        vlive_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # vlive_schedule_crawling.retry()
+        print(f'Error with Vlive schedule Crawling task')
 
 
 @app.task(name="spotify_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
@@ -134,8 +134,8 @@ def spotify_schedule_crawling(self):
     try:
         crawling('spotify', self.request.id)
     except:
-        spotify_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # spotify_schedule_crawling.retry()
+        print(f'Error with Spotify schedule Crawling task')
 
 
 
@@ -144,5 +144,5 @@ def melon_schedule_crawling(self):
     try:
         crawling('melon', self.request.id)
     except:
-        melon_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        # melon_schedule_crawling.retry()
+        print(f'Error with Melon Schedule Crawling task')

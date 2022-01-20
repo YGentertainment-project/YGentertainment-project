@@ -1,6 +1,7 @@
 import os
 import django
 from celery import Celery
+from celery.signals import setup_logging
 from celery.schedules import crontab
 from utils.shortcuts import get_env
 
@@ -16,6 +17,8 @@ else:
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
+
+
 app.conf.update(
     task_serializer='json',
     accept_content=['json'],
@@ -24,7 +27,15 @@ app.conf.update(
     timezone='Asia/Seoul',
     enable_utc=False,
     beat_scheduler='django_celery_beat.schedulers:DatabaseScheduler',
+    worker_redirect_stdouts_level='INFO',
 )
+
+# @setup_logging.connect
+# def config_loggers(*args, **kwargs):
+#     from logging.config import dictConfig
+#     from django.conf import settings
+#     dictConfig(settings.LOGGING)
+
 
 app.conf.beat_schedule = {
     # 'crawl-vlive-every-3minutes' : {

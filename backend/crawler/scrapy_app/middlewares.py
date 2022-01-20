@@ -28,7 +28,7 @@ from selenium.webdriver import ActionChains
 
 from utils.shortcuts import get_env
 
-production_env = get_env("YG_ENV", "dev") == "production"
+production_env = (get_env("YG_ENV", "dev") == "production")
 
 SOCIALBLADE_DOMAIN = 'socialblade.com'
 YOUTUBE_DOMAIN = 'youtube.com'
@@ -72,8 +72,7 @@ class ScrapyAppSpiderMiddleware:
 
 
 
-def driver_setting(proxy_idx=None):
-    s = Service(ChromeDriverManager().install())
+def driver_setting():
     chrome_options = Options()
     prefs = {
         'profile.default_content_setting_values': {
@@ -120,9 +119,9 @@ def driver_setting(proxy_idx=None):
     if production_env == "production":
         executable_path = "/usr/local/bin/chromedriver"
         s = Service(executable_path=executable_path)
+        print('This is using production env')
     else:
         s = Service(ChromeDriverManager().install())
-    # driver = webdriver.Chrome(executable_path=executable_path, options=chrome_options)
     driver = webdriver.Chrome(service=s, options=chrome_options)
     return driver   
 
@@ -191,20 +190,12 @@ class NoLoginDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
-        proxy_idx = 0
-        if spider.name == "youtube":
-            proxy_idx = 0
-        elif spider.name == "twitter":
-            proxy_idx = 1
-        elif spider.name == "twitter2":
-            proxy_idx = 2
-        else:
-            spider_idx = 3
-        # self.driver = driver_setting(proxy_idx)
         self.driver = driver_setting(None)
         
     def spider_closed(self, spider):
+        self.driver.close()
         self.driver.quit()
+        self.driver = None
 
 class LoginDownloaderMiddleware:
     @classmethod
@@ -258,7 +249,9 @@ class LoginDownloaderMiddleware:
                 print("Please check the CLASS NAME of element")
 
     def spider_closed(self, spider):
+        self.driver.close()
         self.driver.quit()
+        self.driver = None
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
