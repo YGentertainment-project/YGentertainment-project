@@ -1,10 +1,8 @@
-import logging
 import os
 from billiard.context import Process
 
 from .celery import app
 
-import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
@@ -70,7 +68,6 @@ def youtube_schedule_crawling(self):
         print(f'Error with Crawling task')
 
 
-
 @app.task(name="twitter_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def twitter_schedule_crawling(self):
     try:
@@ -78,7 +75,6 @@ def twitter_schedule_crawling(self):
     except:
         twitter_schedule_crawling.retry()
         print(f'Error with Crawling task')
-
 
 
 @app.task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
@@ -90,7 +86,6 @@ def twitter2_schedule_crawling(self):
         print(f'Error with Crawling task')
 
 
-
 @app.task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def tiktok_schedule_crawling(self):
     try:
@@ -100,7 +95,6 @@ def tiktok_schedule_crawling(self):
         print(f'Error with Crawling task')
 
 
-
 @app.task(name="weverse_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def weverse_schedule_crawling(self):
     try:
@@ -108,7 +102,6 @@ def weverse_schedule_crawling(self):
     except:
         weverse_schedule_crawling.retry()
         print(f'Error with Crawling task')
-
 
 
 @app.task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
@@ -136,7 +129,6 @@ def spotify_schedule_crawling(self):
     except:
         spotify_schedule_crawling.retry()
         print(f'Error with Crawling task')
-
 
 
 @app.task(name="melon_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)

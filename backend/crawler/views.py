@@ -4,11 +4,8 @@ import datetime
 
 # api utilities
 from uuid import uuid4
-from urllib.parse import urlparse
-from rest_framework.decorators import api_view
-from dataprocess.models import Artist
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from utils.shortcuts import get_env
 

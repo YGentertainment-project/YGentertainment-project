@@ -2,15 +2,12 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-from time import sleep
 
 from scrapy import signals
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
 from scrapy.http import HtmlResponse
 from scrapy.utils.python import to_bytes
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -42,6 +39,7 @@ class CrawlerprojecctSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
 
 class SocialbladeDownloaderMiddleware:
     @classmethod
@@ -79,6 +77,7 @@ class SocialbladeDownloaderMiddleware:
 
     def process_exception(self, request, exception, spider):
         pass
+
 
 class WeverseDownloaderMiddleware:
     @classmethod
@@ -134,6 +133,7 @@ class WeverseDownloaderMiddleware:
 
     def process_exception(self, request, exception, spider):
         pass
+
 
 class CrowdtangleDownloaderMiddleware:
     @classmethod

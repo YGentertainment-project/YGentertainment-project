@@ -4,6 +4,7 @@ import scrapy
 
 from crawlerprojecct.items import YoutubeItem
 
+
 class YoutubeSpider(scrapy.Spider):
     name = 'youtube'
     allowed_domains = ['www.socialblade.com']
@@ -17,7 +18,7 @@ class YoutubeSpider(scrapy.Spider):
         with open(filepath, 'r') as file:
             channels = file.readlines()
         for channel in channels:
-            if( re.search('socialblade', channel) ):
+            if(re.search('socialblade', channel)):
                 yield scrapy.Request(channel, callback=self.socialblade_parse)
             else:
                 yield scrapy.Request(channel, callback=self.youtube_parse)
@@ -28,8 +29,8 @@ class YoutubeSpider(scrapy.Spider):
         views = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[4]/span[2]/text()').get()
         date = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[7]/span[2]/text()').get()
         upload = response.xpath('//*[@id="YouTubeUserTopInfoBlock"]/div[2]/span[2]/text()').get()
-        if( sub[-1] == 'M' ): sub = float(sub[:-1])*1000
-        elif( sub[-1] == 'K' ): sub = sub[:-1]
+        if(sub[-1] == 'M'): sub = float(sub[:-1])*1000
+        elif(sub[-1] == 'K'): sub = sub[:-1]
         item = YoutubeItem()
         item['artist'] = artist
         item['subscriber_num'] = int(sub)
@@ -45,4 +46,3 @@ class YoutubeSpider(scrapy.Spider):
         item['artist'] = artist
         item['total_view_num'] = views[4:-1].replace(',', '')
         yield item
-

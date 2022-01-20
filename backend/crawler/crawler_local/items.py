@@ -5,12 +5,14 @@
 
 import scrapy
 
+
 class YoutubeItem(scrapy.Item):
     artist = scrapy.Field()
     account_create_dt = scrapy.Field()
     subscriber_num = scrapy.Field()
     upload_num = scrapy.Field()
     total_view_num = scrapy.Field()
+
 
 class VliveItem(scrapy.Item):
     artist = scrapy.Field()
@@ -19,16 +21,19 @@ class VliveItem(scrapy.Item):
     upload_num = scrapy.Field()
     total_view_num = scrapy.Field()
 
+
 class MelonItem(scrapy.Item):
     artist = scrapy.Field()
     listener_num = scrapy.Field()
     streaming_num = scrapy.Field()
     fan_num = scrapy.Field()
 
+
 class SpotifyItem(scrapy.Item):
     artist = scrapy.Field()
     monthly_listener_num = scrapy.Field()
     follower_num = scrapy.Field()
+
 
 class TwitterItem(scrapy.Item):
     artist = scrapy.Field()
@@ -36,19 +41,23 @@ class TwitterItem(scrapy.Item):
     follower_num = scrapy.Field()
     upload_num = scrapy.Field()
 
+
 class TikTokItem(scrapy.Item):
     artist = scrapy.Field()
     follower_num = scrapy.Field()
     upload_num = scrapy.Field()
     like_num = scrapy.Field()
 
+
 class WeverseItem(scrapy.Item):
     artist = scrapy.Field()
     follower_num = scrapy.Field()
 
+
 class FacebookItem(scrapy.Item):
     artist = scrapy.Field()
     follower_num = scrapy.Field()
+
 
 class InstagramItem(scrapy.Item):
     artist = scrapy.Field()

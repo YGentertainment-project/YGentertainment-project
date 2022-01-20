@@ -1,4 +1,3 @@
-from urllib import parse
 
 import scrapy
 from ..items import MelonItem
@@ -6,6 +5,7 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 from django.db.models import Q
+
 
 class MelonSpider(scrapy.Spider):
     name = 'melon'

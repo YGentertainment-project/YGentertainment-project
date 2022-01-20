@@ -1,12 +1,10 @@
-import json
-import math
 import re
-from time import sleep
 
 import scrapy
 from bs4 import BeautifulSoup
 
 from crawlerprojecct.items import VliveItem
+
 
 class VliveSpider(scrapy.Spider):
     name = 'vlive'
@@ -37,4 +35,3 @@ class VliveSpider(scrapy.Spider):
         item['total_view_num'] = total_view_num[:-1]
         item['upload_num'] = upload_num[:-1]
         yield item
-

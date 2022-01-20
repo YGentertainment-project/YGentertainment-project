@@ -1,4 +1,3 @@
-from time import sleep
 import json
 import scrapy
 from bs4 import BeautifulSoup
@@ -8,6 +7,7 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 from django.db.models import Q
+
 
 class SpotifySpider(scrapy.Spider):
     name = 'spotify'

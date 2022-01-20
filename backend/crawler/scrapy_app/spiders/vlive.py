@@ -2,7 +2,6 @@ import json
 
 import scrapy
 from bs4 import BeautifulSoup
-import re
 
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
@@ -33,7 +32,7 @@ class VliveSpider(scrapy.Spider):
         artist = response.meta['artist']
         soup = BeautifulSoup(response.text, 'html.parser')
         script = soup.find('script').get_text()
-        json_object = json.loads( script[27:-308] )
+        json_object = json.loads(script[27:-308])
         members = json_object['channel']['channel']['memberCount']
         videoplay = json_object['channel']['channel']['videoPlayCountOfStar']
         videocount = json_object['channel']['channel']['videoCountOfStar']

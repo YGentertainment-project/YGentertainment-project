@@ -8,6 +8,7 @@ from dataprocess.models import Platform
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 
+
 class TiktokSpider(scrapy.Spider):
     name = 'tiktok'
     custom_settings = {

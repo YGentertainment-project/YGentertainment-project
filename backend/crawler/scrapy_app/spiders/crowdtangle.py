@@ -5,6 +5,7 @@ from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 
+
 class CrowdTangleSpider(scrapy.Spider):
     name = 'crowdtangle'
     custom_settings = {
@@ -47,4 +48,3 @@ class CrowdTangleSpider(scrapy.Spider):
             item['followers'] = int(follower_num.replace(',', ''))
             item['url'] = response.url
             yield item
-

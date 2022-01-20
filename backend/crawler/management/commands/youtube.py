@@ -1,12 +1,11 @@
-import os
 from django.core.management.base import BaseCommand
-from scrapy.crawler import CrawlerProcess, CrawlerRunner
-from scrapy.utils.project import get_project_settings
+from scrapy.crawler import CrawlerProcess
 from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
 
 # settings_file_path = 'crawler.'
 
 # required arguments : spider, taskid
+
 
 class Command(BaseCommand):
     name = 'youtube'

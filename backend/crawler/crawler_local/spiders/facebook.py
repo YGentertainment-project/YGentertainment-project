@@ -1,5 +1,4 @@
 import scrapy
-from bs4 import BeautifulSoup
 
 from crawlerprojecct.items import FacebookItem
 
@@ -14,7 +13,7 @@ class FacebookSpider(scrapy.Spider):
         start_urls.append(channel)
 
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES' : {
+        'DOWNLOADER_MIDDLEWARES': {
             'crawlerprojecct.middlewares.CrowdtangleDownloaderMiddleware': 100
         }
     }
@@ -26,4 +25,3 @@ class FacebookSpider(scrapy.Spider):
         item['artist'] = artist
         item['follower_num'] = follower_num
         yield item
-

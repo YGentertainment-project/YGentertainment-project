@@ -9,6 +9,7 @@ from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 
 logger = logging.getLogger("")
 
+
 class APIError(Exception):
     def __init__(self, msg, err=None):
         self.err = err

@@ -8,7 +8,6 @@ from urllib import parse
 from django.utils import timezone
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
-from datetime import datetime
 
 DataModels = {
     "youtube": SocialbladeYoutube,

@@ -1,7 +1,5 @@
-from time import sleep
 
 import scrapy
-from scrapy.utils.python import to_bytes
 
 from crawlerprojecct.items import MelonItem
 

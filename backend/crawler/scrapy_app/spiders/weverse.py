@@ -4,10 +4,11 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 
+
 class WeverseSpider(scrapy.Spider):
     name = 'weverse'
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES':{
+        'DOWNLOADER_MIDDLEWARES': {
             'crawler.scrapy_app.middlewares.LoginDownloaderMiddleware': 100
         },
     }

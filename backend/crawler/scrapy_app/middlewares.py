@@ -5,7 +5,6 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-import time
 
 from scrapy import signals
 from scrapy.http import HtmlResponse
@@ -13,18 +12,15 @@ from scrapy.utils.python import to_bytes
 from urllib.parse import urlparse
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver import ActionChains
 
 from utils.shortcuts import get_env
 
@@ -69,7 +65,6 @@ class ScrapyAppSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-
 
 
 def driver_setting(proxy_idx=None):
@@ -124,7 +119,7 @@ def driver_setting(proxy_idx=None):
         s = Service(ChromeDriverManager().install())
     # driver = webdriver.Chrome(executable_path=executable_path, options=chrome_options)
     driver = webdriver.Chrome(service=s, options=chrome_options)
-    return driver   
+    return driver
 
 
 class NoLoginDownloaderMiddleware:

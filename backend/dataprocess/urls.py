@@ -1,7 +1,6 @@
 from django.urls.conf import path
 from dataprocess.views import base
 from django.urls import path
-from django.conf.urls import url
 from dataprocess.views import *
 from dataprocess import views
 from django.views.decorators.csrf import csrf_exempt
@@ -9,14 +8,14 @@ from django.views.decorators.csrf import csrf_exempt
 app_name = 'dataprocess'
 
 urlpatterns = [
-    path('', base ,name='base'),
-    path('daily/', daily,name='daily'),
-    path('platform/',platform,name='platform'),
+    path('', base, name='base'),
+    path('daily/', daily, name='daily'),
+    path('platform/', platform, name='platform'),
     # path('excel/',csrf_exempt(views.excel),name='excel'),
-    path('artist/',artist,name='artist'),
-    path('artist/add/',artist_add,name='artist_add'),
-    path('monitering/',monitering,name='monitering'),
-    path('login/',login,name='login'),
+    path('artist/', artist, name='artist'),
+    path('artist/add/', artist_add, name='artist_add'),
+    path('monitering/', monitering, name='monitering'),
+    path('login/', login, name='login'),
 
     path('api/platform_info/', csrf_exempt(views.platform_info), name='platform_info'),
     path('api/daily/', csrf_exempt(views.DataReportAPI.as_view()), name='datareport_api'),

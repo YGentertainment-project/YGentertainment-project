@@ -1,5 +1,4 @@
 import scrapy
-from scrapy.utils.python import to_bytes
 
 from crawlerprojecct.items import SpotifyItem
 
@@ -21,4 +20,3 @@ class SpotifySpider(scrapy.Spider):
         item['artist'] = artist
         item['monthly_listener_num'] = sub
         yield item
-
