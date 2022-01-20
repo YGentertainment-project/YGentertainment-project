@@ -7,8 +7,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
-from pathlib import Path
 from utils.shortcuts import get_env
+from datetime import datetime
 
 production_env = get_env("YG_ENV", "dev") == "production"
 if production_env:
@@ -140,8 +140,8 @@ RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 
 LOG_PATH = os.path.join(DATA_DIR, "log")
 
-LOGGING_HANDLERS = ['file']
-HTTP_HANDLERS = ['httpfile']
+LOGGING_HANDLERS = ['serverfile']
+HTTP_HANDLERS = ['userfile']
 
 REQUEST_LOGGING_ENABLE_COLORIZE=False
 LOGGING = {
@@ -154,27 +154,33 @@ LOGGING = {
         }
     },
     'handlers': {
-        'file': {
+        'serverfile': {
             'level': 'DEBUG',
             'encoding': 'utf-8',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_PATH, "Django.log"),
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 10,
+            'filename': os.path.join(LOG_PATH, "server", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
             'formatter': 'standard',
         },
-        'httpfile': {
+        'userfile': {
             'level': 'DEBUG',
             'encoding': 'utf-8',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_PATH, "User.log"),
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'D',
+            'interval': 1,
+            'backupCount': 10,
+            'filename': os.path.join(LOG_PATH, "user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
             'formatter': 'standard',
         }
     },
     'loggers': {
-        'django.request': {
-            'handlers': HTTP_HANDLERS,
-            'level': 'INFO',
-            'propagate': True,
-        },
+        # 'django.request': {
+        #     'handlers': HTTP_HANDLERS,
+        #     'level': 'INFO',
+        #     'propagate': True,
+        # },
         'django.db.backends': {
             'handlers': LOGGING_HANDLERS,
             'level': 'ERROR',

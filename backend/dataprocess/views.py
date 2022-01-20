@@ -1,22 +1,20 @@
 import logging
+import os
 from django.contrib import auth
-from django.contrib.auth.models import Permission
-from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.shortcuts import render
 from account.models import User
+from backend.yg.dev_settings import DEBUG
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from crawler.models import *
 from config.models import PlatformTargetItem
 from config.serializers import PlatformTargetItemSerializer
 from config.serializers import CollectTargetItemSerializer
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 from django.shortcuts import render
 from django.http import HttpResponse
 
 import datetime
-from tablib import Dataset
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 from .resources import *
@@ -24,7 +22,19 @@ from .models import *
 
 import logging
 
-logger = logging.getLogger(__name__)
+formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
+serverlogger = logging.getLogger(__name__)
+userlogger = logging.getLogger("HTTP-Method")
+
+trfh = logging.handlers.TimedRotatingFileHandler(
+    filename = os.path.join("/data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    when = "midnight",
+    interval=1,
+    encoding="utf-8",
+)
+trfh.setFormatter(formatter)
+trfh.setLevel(logging.DEBUG)
+userlogger.addHandler(trfh)
 
 DataModels = {
         "youtube": SocialbladeYoutube,
@@ -209,7 +219,6 @@ class PlatformAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
-            logger.error("Error to read platforms")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -246,7 +255,6 @@ class PlatformAPI(APIView):
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
         except:
-            logger.error("Error to create platform")
             return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
@@ -269,7 +277,6 @@ class PlatformAPI(APIView):
                         platform_serializer.save()
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
-            logger.error("Error to update platform")
             return JsonResponse(data={'success': False}, status=400)
 
 class ArtistAPI(APIView):
@@ -289,7 +296,6 @@ class ArtistAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
-            logger.error("Error to read artists")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -324,7 +330,6 @@ class ArtistAPI(APIView):
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:
-            logger.error("Error to create artist")
             return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
@@ -343,7 +348,6 @@ class ArtistAPI(APIView):
                     return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
-            logger.error("Error to add/modify artist")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -377,7 +381,6 @@ class PlatformOfArtistAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
-            logger.error("Error to read platform of artist")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -394,7 +397,6 @@ class PlatformOfArtistAPI(APIView):
                      CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
-            logger.error("Error to update platform of artist")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -425,7 +427,6 @@ class CollectTargetItemAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
-            logger.error("Error to read collect target items")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -444,7 +445,6 @@ class CollectTargetItemAPI(APIView):
                     return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
-            logger.error("Error to update collect target item")
             return JsonResponse(data={'success': False}, status=400)
 
 #platform collect target API 
@@ -472,7 +472,6 @@ class PlatformTargetItemAPI(APIView):
             else:
                 return JsonResponse(data={'success': True, 'data': []})
         except:
-            logger.error("Error to read platform target items")
             return JsonResponse(status=400, data={'success': False})
 
     # @login_required
@@ -488,11 +487,9 @@ class PlatformTargetItemAPI(APIView):
                 if collecttargetitem_serializer.is_valid():
                     collecttargetitem_serializer.save()
                 else:
-                    logger.error("collect target item serializer is invalid")
                     return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
-            logger.error("Error to update platform target item")
             return JsonResponse(data={'success': False}, status=400)
 
 
@@ -591,7 +588,6 @@ class DataReportAPI(APIView):
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
         except:
-            logger.error("Error to read data for data report")
             return JsonResponse(status=400, data={'success': False})
     
     def post(self, request):
