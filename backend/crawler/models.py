@@ -101,7 +101,7 @@ class CrowdtangleInstagram(models.Model):
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null=True)ain
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
 
     class Meta:
