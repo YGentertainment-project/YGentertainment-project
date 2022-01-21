@@ -30,13 +30,11 @@ class MelonSpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta["artist"]
-        mainwrapper = "main-wrapper"
+        mainwrapper = '\"main-wrapper\"'
         listener = response.xpath(
-            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[
-            2].replace(",", "")
+            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[2].replace(",", "")
         streaming = response.xpath(
-            f"//*[@id={mainwrapper}]/div/div[2]/div[2]cd/div/div/div/ul/li[4]/text()").extract()[
-            2].replace(",", "")
+            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[4]/text()").extract()[2].replace(",", "")
         url1 = response.url
         yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
                              meta={"artist": artist,
@@ -46,7 +44,7 @@ class MelonSpider(scrapy.Spider):
 
     def parse_melon(self, response):
         item = MelonItem()
-        d_like_count = "d_like_count"
+        d_like_count = '\"d_like_count\"'
         fans = response.xpath(
             f"//span[@id={d_like_count}]/text()").get().replace(",", "")
         item["artist"] = response.meta["artist"]
