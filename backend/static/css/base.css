@@ -53,6 +53,7 @@ input{
     justify-content: flex-start;
     width: 25%;
     margin-right: 1em;
+    white-space: nowrap;
 }
 
 .header-element *{
@@ -302,4 +303,8 @@ input{
 .input-btn:hover{
     background-color: #1F2937 !important;
     color: white;
+}
+
+.tmp-hidden{
+    display: none;
 }

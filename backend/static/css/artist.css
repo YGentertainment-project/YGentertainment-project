@@ -278,7 +278,7 @@
     border: 0.0625rem solid transparent;
 }
 
-#artist_open{
+#artist_open, #platform_open{
     padding: 3px;
     background-color: white;
     border-radius: 100px;
@@ -288,7 +288,7 @@
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-#artist_open:hover{
+#artist_open:hover, #platform_open:hover{
     background-color: #1F2937 !important;
     color: white;
 }

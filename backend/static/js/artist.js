@@ -151,9 +151,9 @@ $('input[name=artist-name]').click(function(){
                     let dataCol;
                     if(key==='active'){
                         if(data[key]==true){
-                            dataCol = $('<td><input checked type="checkbox"></input></td>'); 
+                            dataCol = $('<td class="platform_hidden"><input checked type="checkbox"></input></td>'); 
                         }else{
-                            dataCol = $('<td><input type="checkbox"></input></td>'); 
+                            dataCol = $('<td class="platform_hidden"><input type="checkbox"></input></td>'); 
                         }
                     } else if(key === 'name'){
                         dataCol = document.createElement('td');
@@ -167,6 +167,7 @@ $('input[name=artist-name]').click(function(){
                         dataCol = document.createElement('td');
                         if(key === 'artist_id' || key==='id' || key==='platform_id')
                             dataCol.setAttribute('class', 'hidden');
+                        dataCol.classList.add("platform_hidden");
                         dataCol.innerHTML = `
                         <td>
                             <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
@@ -271,6 +272,7 @@ function add_new_collect_target_item(item_num){
 }
 
 //show collect target of platform
+//플랫폼 클릭시
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
@@ -286,6 +288,8 @@ $(document).on('click','.platform-names',function(){
         data : {'platform': platform, 'artist': artist_name},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            //플랫폼창 작게 만들기
+            make_platform_hidden();
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
             console.log(data_list);
@@ -381,15 +385,12 @@ function append_schedule_row(){
     const tableRow = $('<tr></tr>');
     for(var i=0;i<4;i++){
         let dataCol = document.createElement('td');
-        if(i===0){
-            dataCol.innerHTML = `
-            <td></td>`;
-        }else if(i==1){
+        if(i==0){
             dataCol.innerHTML = `
             <td>
                스케줄
             </td>`;
-        }else if(i==2){
+        }else if(i==1){
             dataCol.innerHTML = `
             <td>
                 <div class="dropdown">
@@ -540,7 +541,7 @@ function make_artist_hidden(){
     var artist_hiddens = document.getElementsByClassName("artist_hidden");
     for(var i=0;i<artist_hiddens.length;i++){
         let ii = i;
-        artist_hiddens[ii].classList.add("hidden");
+        artist_hiddens[ii].classList.add("tmp-hidden");
     }
     document.getElementById("artist_open").classList.add("fa-chevron-right");
     document.getElementById("artist_open").classList.remove("fa-chevron-left");;
@@ -552,7 +553,7 @@ function make_artist_visible(){
     var artist_hiddens = document.getElementsByClassName("artist_hidden");
     for(var i=0;i<artist_hiddens.length;i++){
         let ii = i;
-        artist_hiddens[ii].classList.remove("hidden");
+        artist_hiddens[ii].classList.remove("tmp-hidden");
     }
     document.getElementById("artist_open").classList.remove("fa-chevron-right");
     document.getElementById("artist_open").classList.add("fa-chevron-left")
@@ -563,5 +564,37 @@ $("#artist_open_btn").click(function (){
         make_artist_hidden();
     }else{
         make_artist_visible();
+    }
+});
+
+function make_platform_hidden(){
+    //플랫폼 표 작게 처리
+    platform_open = false;
+    var platform_hiddens = document.getElementsByClassName("platform_hidden");
+    for(var i=0;i<platform_hiddens.length;i++){
+        let ii = i;
+        platform_hiddens[ii].classList.add("tmp-hidden");
+    }
+    document.getElementById("platform_open").classList.add("fa-chevron-right");
+    document.getElementById("platform_open").classList.remove("fa-chevron-left");;
+}
+
+function make_platform_visible(){
+    //플랫폼 표 다보이게 처리
+    platform_open = true;
+    var platform_hiddens = document.getElementsByClassName("platform_hidden");
+    for(var i=0;i<platform_hiddens.length;i++){
+        let ii = i;
+        platform_hiddens[ii].classList.remove("tmp-hidden");
+    }
+    document.getElementById("platform_open").classList.remove("fa-chevron-right");
+    document.getElementById("platform_open").classList.add("fa-chevron-left")
+}
+
+$("#platform_open_btn").click(function (){
+    if(platform_open==true){
+        make_platform_hidden();
+    }else{
+        make_platform_visible();
     }
 });
