@@ -56,7 +56,7 @@ input{
 }
 
 .header-element *{
-    font-weight: bold;
+    font-weight: bold !important;
     margin-right: 4px;
 }
 

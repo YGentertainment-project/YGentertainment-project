@@ -125,6 +125,7 @@ $('#save-artists').click(function(){
 })
 
 //show platforms per artist
+//아티스트 클릭시
 $('input[name=artist-name]').click(function(){
     var artist = $(this).val();
 
@@ -137,6 +138,9 @@ $('input[name=artist-name]').click(function(){
         data : {'artist':artist},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            //아티스트 표 작게 처리
+            make_artist_hidden();
+
             document.getElementById("artist-subtitle").innerHTML = artist+" 플랫폼";
             const data_list = res.data;
             $('#artist-body-platform').empty();
@@ -526,11 +530,38 @@ $(document).on('click','#artist_attr_add_button',function(){
     append_schedule_row();
 })
 
-//수집항목 -버튼
-// $(document).on('click','#artist_attr_delete_button',function(){
-//     var item_tr = $('#artist-body-list').find('tr');
-//     let len = item_tr.length;
-//     if(len > 2)
-//         //스케줄 삭제
-//         item_tr[len-2].remove();
-// })
+var artist_open = true;
+var platform_open = true;
+var item_open = true;
+
+function make_artist_hidden(){
+    //아티스트 표 작게 처리
+    artist_open = false;
+    var artist_hiddens = document.getElementsByClassName("artist_hidden");
+    for(var i=0;i<artist_hiddens.length;i++){
+        let ii = i;
+        artist_hiddens[ii].classList.add("hidden");
+    }
+    document.getElementById("artist_open").classList.add("fa-chevron-right");
+    document.getElementById("artist_open").classList.remove("fa-chevron-left");;
+}
+
+function make_artist_visible(){
+    //아티스트 표 다보이게 처리
+    artist_open = true;
+    var artist_hiddens = document.getElementsByClassName("artist_hidden");
+    for(var i=0;i<artist_hiddens.length;i++){
+        let ii = i;
+        artist_hiddens[ii].classList.remove("hidden");
+    }
+    document.getElementById("artist_open").classList.remove("fa-chevron-right");
+    document.getElementById("artist_open").classList.add("fa-chevron-left")
+}
+
+$("#artist_open_btn").click(function (){
+    if(artist_open==true){
+        make_artist_hidden();
+    }else{
+        make_artist_visible();
+    }
+});

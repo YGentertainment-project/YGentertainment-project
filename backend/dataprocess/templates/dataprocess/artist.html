@@ -28,14 +28,14 @@
                                  <thead id="artist-header" class="thead-dark">
                                      <tr>
                                          <td class="hidden">id</td>
-                                         <td>아티스트 이름</td>
-                                         <td>구분</td>
-                                         <td>성별</td>
-                                         <td>맴버 수</td>
-                                         <td>국적</td>
-                                         <td>기획사</td>
-                                         <td>데뷔</td>
-                                         <td>사용</td>
+                                         <td>ARTIST</td>
+                                         <td class="artist_hidden">구분</td>
+                                         <td class="artist_hidden">성별</td>
+                                         <td class="artist_hidden">맴버 수</td>
+                                         <td class="artist_hidden">국적</td>
+                                         <td class="artist_hidden">기획사</td>
+                                         <td class="artist_hidden">데뷔</td>
+                                         <td class="artist_hidden">사용</td>
                                      </tr>
                                  </thead>
                                  <tbody id="artist-body">
@@ -47,16 +47,28 @@
                                              <input type="button" name="artist-name" title="{{artist.name}}" 
                                              value="{{artist.name}}" class="input-btn"> </input>
                                         </td>
-                                         <td><input type="text" style="width:100%" title={{artist.level}} value={{artist.level}}></input></td>
-                                         <td><input type="text" style="width:100%" title={{artist.gender}} value={{artist.gender}}></input></td>
-                                         <td><input type="text" style="width:100%" title={{artist.member_num}} value={{artist.member_num}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.member_nationality}}" value={{artist.member_nationality}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.agency}}" value={{artist.agency}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.debut_date|date:"Y-m-d"}}" value={{artist.debut_date|date:"Y-m-d"}}></input></td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.level}} value={{artist.level}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.gender}} value={{artist.gender}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.member_num}} value={{artist.member_num}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.member_nationality}}" value={{artist.member_nationality}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.agency}}" value={{artist.agency}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.debut_date|date:"Y-m-d"}}" value={{artist.debut_date|date:"Y-m-d"}}></input>
+                                        </td>
                                          {% if artist.active %}
-                                             <td><input checked type="checkbox"></input></td>
+                                             <td class="artist_hidden"><input checked type="checkbox"></input></td>
                                          {% else %}
-                                             <td><input type="checkbox"></input></td>
+                                             <td class="artist_hidden"><input type="checkbox"></input></td>
                                          {% endif %}
                                      </tr>
                                      {% endfor %}
@@ -64,6 +76,9 @@
                                      {% endif %}
                                  </tbody>
                              </table>
+                             <button class="border-0 expand" id="artist_open_btn">
+                                 <i class="fas fa-chevron-left" id="artist_open"></i>
+                            </button>
                          </div>
                     </th>
 
