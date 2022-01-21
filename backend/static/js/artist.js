@@ -253,15 +253,17 @@ function add_new_collect_target_item(item_num){
                 </td>
                 `;
         }else if(i==4){//xpath
+            dataCol.setAttribute('class', 'item_hidden');
             dataCol.innerHTML = `
             <td>
                 <textarea style="width:100%"></textarea>
             </td>
             `;
         }else if(i==5){//delete button
+            dataCol.setAttribute('class', 'item_hidden');
             dataCol.innerHTML = `
                 <td>
-                    <button class="btn btn-danger border-0" 
+                    <button class="btn btn-danger"
                     onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
@@ -290,6 +292,9 @@ $(document).on('click','.platform-names',function(){
         success: res => {
             //플랫폼창 작게 만들기
             make_platform_hidden();
+            item_open = true;
+            document.getElementById("item_open").classList.remove("fa-chevron-right");
+            document.getElementById("item_open").classList.add("fa-chevron-left");
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
             console.log(data_list);
@@ -335,19 +340,22 @@ $(document).on('click','.platform-names',function(){
                         }else if(key==='xpath'){
                             let len2 = len-1;
                             dataCol = document.createElement('td');
+                            dataCol.classList.add("item_hidden");
                             dataCol.innerHTML = `
-                            <td>
+                            <t>
                                 <textarea style="width:100%">${data[key]}</textarea>
                             </td>
                             `;
                             tableRow.append(dataCol);
                             //삭제 버튼 붙이기
                             let dataCol2 = document.createElement('td');
+                            dataCol2.classList.add("item_hidden");
                             let dataCol2Btn = document.createElement('button');
                             dataCol2Btn.onclick = function(){
                                 delete_collect_target_item(data["id"], len2);
                             };
                             dataCol2Btn.setAttribute('class', 'btn-danger');
+                            dataCol2Btn.classList.add("btn");
                             dataCol2Btn.innerHTML = "삭제";
                             dataCol2.append(dataCol2Btn);
                             tableRow.append(dataCol2);
@@ -596,5 +604,38 @@ $("#platform_open_btn").click(function (){
         make_platform_hidden();
     }else{
         make_platform_visible();
+    }
+});
+
+
+function make_item_hidden(){
+    //조사항목 표 작게 처리
+    item_open = false;
+    var item_hiddens = document.getElementsByClassName("item_hidden");
+    for(var i=0;i<item_hiddens.length;i++){
+        let ii = i;
+        item_hiddens[ii].classList.add("tmp-hidden");
+    }
+    document.getElementById("item_open").classList.add("fa-chevron-right");
+    document.getElementById("item_open").classList.remove("fa-chevron-left");
+}
+
+function make_item_visible(){
+    //조사항목 표 다보이게 처리
+    item_open = true;
+    var item_hiddens = document.getElementsByClassName("item_hidden");
+    for(var i=0;i<item_hiddens.length;i++){
+        let ii = i;
+        item_hiddens[ii].classList.remove("tmp-hidden");
+    }
+    document.getElementById("item_open").classList.remove("fa-chevron-right");
+    document.getElementById("item_open").classList.add("fa-chevron-left");
+}
+
+$("#item_open_btn").click(function (){
+    if(item_open==true){
+        make_item_hidden();
+    }else{
+        make_item_visible();
     }
 });
