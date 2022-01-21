@@ -90,7 +90,7 @@ input[type='checkbox']:checked:after {
 }
 
 .button_layout{
-    width: 100%;
+    width: 95%;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
