@@ -857,7 +857,7 @@ class DataReportAPI(APIView):
             for index,artist in enumerate(artists):
                 obj = DataModels[platform].objects.filter(artist=artist,reserved_date__year=start_date_dateobject.year,
                 reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
-
+                print(artist)
                 if obj: #처음부터 크롤링 잘 된 경우
                     if platform == 'youtube':
                         obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])

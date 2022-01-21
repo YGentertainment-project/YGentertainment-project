@@ -14,6 +14,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
 //sidebar toggle 
 $(".data-report").click(function(){
    if(!$('.data-report-in').hasClass("show")){
@@ -74,11 +75,13 @@ $(function(){
             $side.stop(true).animate({left:'0px'}, duration);
             $header.stop(true).animate({left:'250px',width:'85%'}, duration);
             $dataform.stop(true).animate({left:'300px',width:'80%'}, duration);
+            $sidebt.stop(true).animate({left:'220px'}, duration);
             $sidebt.find('span').html('<i class="fas fa-chevron-left"></i>');
         }else{
-            $side.stop(true).animate({left:'-250px'}, duration);
+            $side.stop(true).animate({left:'-220px'}, duration);
             $header.stop(true).animate({left:'50px',width:'90%'}, duration);
             $dataform.stop(true).animate({left:'50px',width:'90%'}, duration);
+            $sidebt.stop(true).animate({left:'0px'}, duration);
             $sidebt.find('span').html('<i class="fas fa-chevron-right"></i>');
         };
     });
