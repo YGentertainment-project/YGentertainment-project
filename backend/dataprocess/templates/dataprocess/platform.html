@@ -6,20 +6,25 @@
 
     <div class="forms">
         <div class="button_layout">
-            <button id="openform_button">신규</button>
-            <button id="update_button">저장</button>
+            <button id="openform_button" class="btn btn-primary border-0" style="font-size: 0.7em; font-weight: bold;">
+                신규
+            </button>
+            <button id="update_button" class="btn btn-primary border-0" style="font-size: 0.7em; font-weight: bold;">
+                저장
+            </button>
         </div>
         
         <div class="contents">
             <div id="result-table">
-                <table id="platform-table">
-                    <thead id="platform-header">
+                <table id="platform-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                    <thead id="platform-header" class="thead-dark" style="text-align: center !important;
+                    font-weight: bold;">
                         <tr>
                             <td class="hidden">id</td>
-                            <td>플랫폼 이름</td>
-                            <td>Main URL</td>
-                            <td>비고</td>
-                            <td>사용</td>
+                            <td class="border-0 rounded-start">PLATFORM</td>
+                            <td class="border-0">Main URL</td>
+                            <td class="border-0">비고</td>
+                            <td class="border-0 rounded-end">사용</td>
                         </tr>
                     </thead>
                     <tbody id="platform-body"></tbody>
@@ -56,16 +61,16 @@
 
     <div class="create_form" id="create_form">
         <div class="button_layout">
-            <button id="close_button">취소</button>
-            <button id="create_button">저장</button>
+            <button id="close_button" class="btn btn-primary border-0" style="font-size: 0.7em; font-weight: bold;">취소</button>
+            <button id="create_button" class="btn btn-primary border-0" style="font-size: 0.7em;  font-weight: bold;">저장</button>
         </div>
         
         <div class="table_layout">
-            <table>
-                <thead>
+            <table class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                <thead class="thead-dark" >
                     <tr>
-                        <td>항목</td>
-                        <td>내용</td>
+                        <td class="border-0 rounded-start">항목</td>
+                        <td class="border-0 rounded-end">내용</td>
                     </tr>
                 </thead>
                 <tbody id="platform_attribute">
@@ -84,12 +89,12 @@
                 </tbody>
             </table>
             
-            <table>
-                <thead>
+            <table class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                <thead class="thead-dark">
                     <tr>
-                        <td>조사항목</td>
-                        <td>내용</td>
-                        <td>xpath</td>
+                        <td class="border-0 rounded-start">조사항목</td>
+                        <td class="border-0">내용</td>
+                        <td class="border-0 rounded-end">xpath</td>
                     </tr>
                 </thead>
                 <tbody id="crawling_attribute">

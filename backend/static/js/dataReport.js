@@ -1096,6 +1096,8 @@ document.getElementById('excel-btn3').onclick = function(){
 // default 누적 & today 설정
 document.getElementById('excel_import_date').valueAsDate = new Date();
 document.getElementById('excel_export_start_date').valueAsDate = new Date();
+document.getElementById('start_date').valueAsDate = new Date();
+document.getElementById('end_date').valueAsDate = new Date();
 document.getElementById('excel_export_date_text').style.display = "none";
 document.getElementById('excel_export_end_date').style.display = "none";
 document.getElementById('excel_export_days1').onclick = function(){
