@@ -192,7 +192,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }

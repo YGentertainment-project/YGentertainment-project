@@ -74,7 +74,7 @@ $(function(){
         if($side.hasClass('open')) {
             $side.stop(true).animate({left:'0px'}, duration);
             $header.stop(true).animate({left:'250px',width:'85%'}, duration);
-            $dataform.stop(true).animate({left:'300px',width:'80%'}, duration);
+            $dataform.stop(true).animate({left:'250px',width:'80%'}, duration);
             $sidebt.stop(true).animate({left:'220px'}, duration);
             $sidebt.find('span').html('<i class="fas fa-chevron-left"></i>');
         }else{
