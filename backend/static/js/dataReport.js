@@ -1,4 +1,13 @@
-
+//default checked
+$(document).ready(function(){
+    var type = $("input:radio[name='view_days']:checked"). val( );
+    if(type === "누적"){
+        $('input[name=end_date]').hide()
+        $('input[name=day]').hide()
+        $('input[name=week]').hide()
+        $('input[name=month]').hide()
+    }
+})
 
 //number format
 function numToString(number) {
@@ -115,13 +124,13 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                 if(type === '누적'){
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end;"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
                         } else{
-                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
                         }
                     }
                     else{
-                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                     }
                 } else{ //기간별일 때는 수정 불가능
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
@@ -153,7 +162,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -174,7 +183,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             for(let j =0; j<platform_list.length; j++){
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
                 let dataCol;
-                dataCol = $('<td><input type="text" value="'+'" style="width:100%"></input></td>')
+                dataCol = $('<td><input type="text" value="'+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
                 tableRow.append(dataCol)
             }
         } else{
@@ -242,7 +251,7 @@ $(document).on('change','input[name=view_days]',function(){
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
-    var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
@@ -334,7 +343,7 @@ $(document).on('change','#end_date',function(){
         refresh();
         return;
     }
-    var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
     console.log(platform);
     if(!platform){
         return false;
@@ -495,7 +504,7 @@ $(document).on('click','.platform-name',function(){
 //update crawled data
 $('#update-data').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
-    var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    var platform_name = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
     trs_value = trs_value.slice(3)
@@ -508,7 +517,6 @@ $('#update-data').click(function(){
         }
     }
 
-
     //youtube
     if(platform_name === 'youtube'){
         var artists = [];
@@ -520,7 +528,6 @@ $('#update-data').click(function(){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=4){
-            console.log(trs_value[i].value);
             uploads.push(uncomma(trs_value[i].value))
         }
         for(var i = 1 ; i < trs_value.length ; i+=4){

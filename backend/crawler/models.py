@@ -97,6 +97,7 @@ class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -112,6 +113,7 @@ class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -130,6 +132,7 @@ class Vlive(models.Model):
     likes = models.BigIntegerField(null=True)
     plays = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url = models.TextField(null=True)
     class Meta:
@@ -147,6 +150,7 @@ class Melon(models.Model):
     streams = models.BigIntegerField(null=True)
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
@@ -164,6 +168,7 @@ class Spotify(models.Model):
     monthly_listens = models.BigIntegerField(null=True)
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
+    reserved_date = models.DateField(default=now)
     updated_at = models.DateField(null = True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
