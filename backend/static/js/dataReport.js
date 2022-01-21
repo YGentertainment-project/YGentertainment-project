@@ -1,3 +1,5 @@
+
+
 //number format
 function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -36,7 +38,7 @@ function refresh(){
 
 $(document).on('click','input[name=refresh]',function(){
     refresh();
- })
+})
  
 
  $(document).on('click','input[name=day]',function(){
@@ -85,11 +87,13 @@ const createTableHeader = (platform_header) => {
 
     let c = $('<th></th>', {
         text:'artist',
+        class:"border-0"
     })
     tableHeader.append(c)
     for(let i = 0; i< platform_header.length; i++){
         let col = $('<th></th>', {
             text: platform_header[i],
+            class:"border-0"
         })
         tableHeader.append(col)
     }
@@ -109,27 +113,37 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             for(let j =0; j<platform_list.length; j++){
                 let dataCol;
                 if(type === '누적'){
-                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end;"></input></td>')
                         } else{
-                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
                         }
                     }
                     else{
-                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
                     }
                 } else{ //기간별일 때는 수정 불가능
-                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%" disabled></input></td>')
+                            if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] >0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] < 0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else{
+                                dataCol = $('<td></td>',{
+                                    text: numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])
+                                })
+                            }
                         } else{
-                            dataCol = $('<td><input type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%" disabled></input></td>')
+                            dataCol = $('<td></td>',{
+                                text: datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]
+                            })
                         }
                     }
                     else{
-                        dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
-                    }
+                        dataCol = $('<td></td>')
+                    } 
                 }
                 tableRow.append(dataCol)
             }
@@ -139,7 +153,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                let dataCol = $('<td></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -169,7 +183,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td> <input type="text" value="" style="width:100%; background-color:lightgray" disabled></input></td>')
+                let dataCol = $('<td></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -181,24 +195,24 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
 
 //show crawled data
 const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
-    $('#board').append(createTableHeader(platform_list));
+    $('.thead-light').append(createTableHeader(platform_list));
     createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
 }
 
 
 //show empty table (when data is none)
 const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
-    $('#board').append(createTableHeader(platform_list));
+    $('.thead-light').append(createTableHeader(platform_list));
     createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
 
 //change color of button when clicking platform
 $('option').click(function(){
-    if($(this).hasClass("platform-selected")){
-      $(this).removeClass("platform-selected");
+    if($(this).hasClass("btn-gray-800")){
+      $(this).removeClass("btn-gray-800");
     }else{
-      $(this).addClass("platform-selected");  
-      $('option').not($(this)).removeClass("platform-selected");  
+      $(this).addClass("btn-gray-800");  
+      $('option').not($(this)).removeClass("btn-gray-800");  
     }
 });
 
@@ -217,6 +231,14 @@ $(document).on('change','input[type=radio]',function(){
         $('input[name=month]').show()
     }
 })
+
+$(document).on('change','input[name=view_days]',function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type === '누적'){
+        refresh();
+    }
+})
+
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
@@ -280,6 +302,7 @@ $(document).on('change','#start_date',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -364,6 +387,7 @@ $(document).on('change','#end_date',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -404,7 +428,6 @@ $(document).on('click','.platform-name',function(){
         return;
     }
 
-
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
@@ -442,6 +465,7 @@ $(document).on('click','.platform-name',function(){
 
             console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -462,6 +486,9 @@ $(document).on('click','.platform-name',function(){
             $('#result-table').eq(0).empty();
         },
     })
+
+
+    
 })
 
 
@@ -476,11 +503,11 @@ $('#update-data').click(function(){
     var start_date = $('input[name=start_date]').val();
 
     for(var i = 0; i<trs_value.length; i++){
-        if(isEmpty(trs_value[i].value)){
-            alert('아티스트들에 대한 모든 인풋 값을 넣어주세요.');
-            return;
+        if(trs_value[i].value === ""){
+            trs_value[i].value = 0; //안채워진 값들은 0 으로 간주
         }
     }
+
 
     //youtube
     if(platform_name === 'youtube'){
@@ -505,7 +532,14 @@ $('#update-data').click(function(){
         for(var i = 3 ; i < trs_value.length ; i+=4){
             user_creation.push(trs_value[i].value)
         }
-
+        console.log({'platform_name':platform_name,
+        'artists[]':artists,
+        'uploads[]' : uploads, 
+        'subscribers[]': subscribers, 
+        'views[]': views, 
+        'user_creation[]': user_creation, 
+        'start_date':start_date
+        })
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
@@ -539,7 +573,7 @@ $('#update-data').click(function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -581,7 +615,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -604,7 +638,7 @@ $('#update-data').click(function(){
                 db_artist_list.push(artist_list[i]);
             }
 
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -647,7 +681,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -665,8 +699,7 @@ $('#update-data').click(function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
-
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -718,7 +751,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -735,7 +768,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -770,7 +804,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -788,7 +822,7 @@ $('#update-data').click(function(){
                     db_artist_list.push(artist_list[i]);
                 }
 
-    
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -833,7 +867,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 data_list = res.data //필터링 데이터
@@ -849,7 +883,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -896,7 +931,7 @@ $('#update-data').click(function(){
             },
            url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 let data_list = [];
                 let artist_list = [];
                 let platform_list = [];
@@ -915,7 +950,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -951,7 +987,7 @@ $('#update-data').click(function(){
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
+                alert("저장되었습니다.");
                 console.log(res.success);
                 let data_list = [];
                 let artist_list = [];
@@ -968,7 +1004,8 @@ $('#update-data').click(function(){
                 for (let i = 0; i<artist_list.length; i++){
                     db_artist_list.push(artist_list[i]);
                 }
-    
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
                 if(type === '누적'){
                     $('#update-data').show();
@@ -1065,3 +1102,8 @@ document.getElementById('excel_export_days2').onclick = function(){
     document.getElementById('excel_export_date_text').style.display = "block";
     document.getElementById('excel_export_end_date').style.display = "block";
 }
+//default 누적 & end_date 안보이게
+$('input[name=end_date]').hide()
+$('input[name=day]').hide()
+$('input[name=week]').hide()
+$('input[name=month]').hide()

@@ -5,8 +5,8 @@ from django.shortcuts import render
 from account.models import User
 from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
                             Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
-from config.models import PlatformTargetItem, CollectTargetItem
-from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer
+from config.models import PlatformTargetItem, CollectTargetItem, Schedule
+from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -105,10 +105,10 @@ def daily(request):
             import_datareport(worksheet, excel_import_date)
             platforms = Platform.objects.all()  # get all platform info from db
             values = {
-                "first_depth": "데이터 리포트",
-                "second_depth": "일별 리포트",
-                "platforms": platforms,
-                "alert": "Successfully save to DB!"
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트',
+                'platforms': platforms,
+                'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
             return render(request, "dataprocess/daily.html", values)
@@ -136,10 +136,10 @@ def daily(request):
             import_total(worksheet)
             platforms = Platform.objects.all()  # get all platform info from db
             values = {
-                "first_depth": "데이터 리포트",
-                "second_depth": "일별 리포트",
-                "platforms": platforms,
-                "alert": "Successfully save to DB!"
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트',
+                'platforms': platforms,
+                'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
             return render(request, "dataprocess/daily.html", values)
@@ -266,9 +266,20 @@ class PlatformAPI(APIView):
                         artist_id=artist_objects_value["id"]
                         )
                     collecttarget.save()
-                    # 3. 만든 collect target에 대해 수집항목들 생성
-                    collecttarget_object = CollectTarget.objects.filter(platform=platform_serializer.data["id"],
-                            artist=artist_objects_value["id"])
+                    #3. 해당 collecttarget에 대한 schedule 생성
+                    schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
+                    schedule_data = {
+                            "collect_target": collecttarget.id,
+                            "period": "daily",
+                            "active": True,
+                            "excute_time": datetime.time(9,0,0)
+                        }
+                    schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
+                    #4. 만든 collect target에 대해 수집항목들 생성
+                    collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
+                            artist = artist_objects_value['id'])
                     collecttarget_object = collecttarget_object.values()[0]
                     for collect_item in platform_object["collect_items"]:
                         collect_item = CollectTargetItem(
@@ -372,11 +383,23 @@ class ArtistAPI(APIView):
                         target_url_2=target_url_2
                     )
                     collecttarget.save()
-
-                return JsonResponse(data={"success": True, "data": artist_serializer.data}, status=status.HTTP_201_CREATED)
-            return JsonResponse(data={"success": False, "data": artist_serializer.errors}, status=400)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+                    #3. 해당 collecttarget에 대한 schedule 생성
+                    schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
+                    schedule_data = {
+                            "collect_target": collecttarget.id,
+                            "period": "daily",
+                            "active": True,
+                            "excute_time": datetime.time(9,0,0)
+                        }
+                    schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
+                
+    
+                return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
+            return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
     def put(self, request):
@@ -481,11 +504,17 @@ class CollectTargetItemAPI(APIView):
                 collecttargetitmes_values = collecttargetitmes_objects.values()
                 for collecttargetitmes_value in collecttargetitmes_values:
                     collecttargetitems_datas.append(collecttargetitmes_value)
-                return JsonResponse(data={"success": True, "data": collecttargetitems_datas})
+                # schedule 확인
+                schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_objects_value["id"])
+                if schedule_object.exists():
+                    period = schedule_object.values()[0]["period"]
+                else:
+                    period = "daily"
+                return JsonResponse(data={'success': True, 'data': {"items":collecttargetitems_datas, "period": period}})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': {"items":[],"period":"daily"}})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
     # @login_required
     def put(self, request):
@@ -497,41 +526,48 @@ class CollectTargetItemAPI(APIView):
             artist = collecttargetitem["artist"]
             platform = collecttargetitem["platform"]
             period = collecttargetitem["period"]
+
             collecttargetitem_list = collecttargetitem["items"]
+            artist_object = Artist.objects.filter(name = artist)
+            artist_object = artist_object.values()[0]
+            platform_object = Platform.objects.filter(name = platform)
+            platform_object = platform_object.values()[0]
+            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id=platform_object['id'])
+            collecttarget_object = collecttarget_object.values()[0]
+            
             for collecttargetitem_object in collecttargetitem_list:
                 # 여기 수정!!!!
-                collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object["id"],
-                                                                          target_name=collecttargetitem_object["target_name"], xpath=collecttargetitem_object["xpath"]).first()
+                data = CollectTargetItem.objects.filter(id=collecttargetitem_object["id"],
+                                                        target_name=collecttargetitem_object["target_name"],
+                                                        xpath=collecttargetitem_object["xpath"]).first()
                 # 없으면 새로 저장
-                if collecttargetitem_data is None:
-                    artist_object = Artist.objects.filter(name=collecttargetitem["artist"])
-                    artist_object = artist_object.values()[0]
-                    platform_object = Platform.objects.filter(name=collecttargetitem["platform"])
-                    platform_object = platform_object.values()[0]
-                    collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object["id"], platform_id=platform_object["id"])
-                    collecttarget_object = collecttarget_object.values()[0]
-                    target_item_serializer = CollectTargetItemSerializer(data={
-                        "collect_target": collecttarget_object["id"],
-                        "target_name": collecttargetitem_object["target_name"],
-                        "xpath": collecttargetitem_object["xpath"]
+                if data is None:
+                    collecttargetitem_serializer = CollectTargetItemSerializer(data={
+                        'collect_target': collecttarget_object['id'],
+                        'target_name': collecttargetitem_object['target_name'],
+                        'xpath': collecttargetitem_object['xpath']
                     })
-                    if target_item_serializer.is_valid():
-                        target_item_serializer.save()
+                    if collecttargetitem_serializer.is_valid():
+                        collecttargetitem_serializer.save()
                     else:
                         # return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
                         return JsonResponse(data={"success": False}, status=400)
                 # 있으면 업데이트
                 else:
                     
-                    collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
+                    collecttargetitem_serializer = CollectTargetItemSerializer(data, data=collecttargetitem_object)
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
                         userlogger.debug(f"{artist} - {platform} - {period}: ")
                     else:
-                        return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
-            return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+                        return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+            Schedule.objects.filter(collect_target_id = collecttarget_object['id']).update(
+                period = collecttargetitem["period"])
+                
+                
+            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
     def delete(self, request):
         """
@@ -817,23 +853,23 @@ class DataReportAPI(APIView):
                 obj = DataModels[platform].objects.filter(artist=artist, reserved_date__year=start_date_dateobject.year,
                 reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
 
-                if obj:  # 처음부터 크롤링 잘 된 경우
-                    if platform == "youtube":
-                        obj.update(uploads=uploads[index], subscribers=subscribers[index], views=views[index], user_created=user_creation[index])
-                    elif platform == "vlive":
-                        obj.update(members=members[index], videos=videos[index], likes=likes[index], plays=plays[index])
-                    elif platform == "instagram" or platform == "facebook":
-                        obj.update(followers=followers[index])
-                    elif platform == "twitter" or platform == "twitter2":
-                        obj.update(followers=followers[index], twits=twits[index], user_created=user_creation[index])
-                    elif platform == "tiktok":
-                        obj.update(followers=followers[index], uploads=uploads[index], likes=likes[index])
-                    elif platform == "weverse":
-                        obj.update(weverses=weverses[index])
-                    elif platform == "spotify":
-                        obj.update(monthly_listens=listens[index], followers=followers[index])
-                    elif platform == "melon":
-                        obj.update(listeners=listens[index], streams=streams[index])
+                if obj: #처음부터 크롤링 잘 된 경우
+                    if platform == 'youtube':
+                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
+                    elif platform == 'vlive':
+                        obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+                    elif platform == 'instagram' or platform=='facebook':
+                        obj.update(followers = followers[index])
+                    elif platform == 'twitter' or platform=='twitter2':
+                        obj.update(followers = followers[index],twits=twits[index],user_created=user_creation[index])
+                    elif platform == 'tiktok':
+                        obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+                    elif platform == 'weverse':
+                        obj.update(weverses= weverses[index])
+                    elif platform == 'spotify':
+                        obj.update(monthly_listens = listens[index],followers=followers[index])
+                    elif platform == 'melon':
+                        obj.update(listeners = listens[index],streams=streams[index])
                 else:
                     if artist in a_list:
                         if platform == "youtube":
