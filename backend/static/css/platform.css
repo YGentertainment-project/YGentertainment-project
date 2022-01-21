@@ -97,8 +97,20 @@ input[type='checkbox']:checked:after {
     justify-content: flex-end;
 }
 
+.no-margin-button-layout{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.no-margin-button-layout > button{
+    margin-right: 5px;
+}
+
 /* 거의 모든 버튼 형태 */
-.popup_button_layout>button, .excel-btn, .add-submit{
+.popup_button_layout>button, .excel-btn{
     font-weight: bold;
     font-size: 1rem;
     border: 1px solid black;

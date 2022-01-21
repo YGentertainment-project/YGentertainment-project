@@ -12,7 +12,7 @@ const isEmpty =
 
 
 //artist create function
-$('.add-submit').click(function(e){
+$('#add-submit').click(function(e){
     var trs_value = $('input[type=text]');  //artist info
     var urls_tr = $('.add-table').find('#artist-urls').find('tr')
     var datas = [];
