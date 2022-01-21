@@ -32,12 +32,16 @@ def process_itemsave(spider_name, item):
         dayfilter_obj = DataModels[model_name].objects.filter(artist=item["artist"],
                                                               recorded_date__year=nowdate.year,
                                                               recorded_date__month=nowdate.month,
-                                                              recorded_date__day=nowdate.day)
+                                                              recorded_date__day=nowdate.day,
+                                                              recorded_date__hour=nowdate.hour
+                                                              )
     else:
         dayfilter_obj = DataModels[spider_name].objects.filter(artist=item["artist"],
                                                                recorded_date__year=nowdate.year,
                                                                recorded_date__month=nowdate.month,
-                                                               recorded_date__day=nowdate.day)
+                                                               recorded_date__day=nowdate.day,
+                                                               recorded_date__hour=nowdate.hour
+                                                               )
     # 오늘일자로 이미 저장된 아티스트 정보가 있는 경우 => 데이터를 최신버전으로 수정
     if dayfilter_obj.exists():
         if spider_name == "youtube":
@@ -67,7 +71,8 @@ def update_youtube(item):
     existingItem = SocialbladeYoutube.objects.get(artist=item["artist"],
                                                   recorded_date__year=nowdate.year,
                                                   recorded_date__month=nowdate.month,
-                                                  recorded_date__day=nowdate.day)
+                                                  recorded_date__day=nowdate.day,
+                                                  recorded_date__hour=nowdate.hour)
     existingItem.uploads = item.get("uploads")
     existingItem.subscribers = item.get("subscribers")
     existingItem.views = item.get("views")
@@ -80,7 +85,8 @@ def update_tiktok(item):
     existingItem = SocialbladeTiktok.objects.get(artist=item.get("artist"),
                                                  recorded_date__year=nowdate.year,
                                                  recorded_date__month=nowdate.month,
-                                                 recorded_date__day=nowdate.day)
+                                                 recorded_date__day=nowdate.day,
+                                                 recorded_date__hour=nowdate.hour)
     existingItem.followers = item.get("followers")
     existingItem.uploads = item.get("uploads")
     existingItem.likes = item.get("likes")
@@ -93,7 +99,8 @@ def update_twitter(item, name):
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                                 recorded_date__year=nowdate.year,
                                                 recorded_date__month=nowdate.month,
-                                                recorded_date__day=nowdate.day)
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour)
     existingItem.followers = item.get("followers")
     existingItem.twits = item.get("twits")
     existingItem.recorded_date = nowdate
@@ -105,7 +112,8 @@ def update_weverse(item):
     existingItem = Weverse.objects.get(artist=item.get("artist"),
                                        recorded_date__year=nowdate.year,
                                        recorded_date__month=nowdate.month,
-                                       recorded_date__day=nowdate.day
+                                       recorded_date__day=nowdate.day,
+                                       recorded_date__hour=nowdate.hour
                                        )
     existingItem.weverses = item.get("weverses")
     existingItem.recorded_date = nowdate
@@ -117,7 +125,8 @@ def update_vlive(item):
     existingItem = Vlive.objects.get(artist=item.get("artist"),
                                      recorded_date__year=nowdate.year,
                                      recorded_date__month=nowdate.month,
-                                     recorded_date__day=nowdate.day
+                                     recorded_date__day=nowdate.day,
+                                     recorded_date__hour=nowdate.hour
                                      )
     existingItem.members = item.get("members")
     existingItem.videos = item.get("videos")
@@ -132,7 +141,8 @@ def update_melon(item):
     existingItem = Melon.objects.get(artist=item.get("artist"),
                                      recorded_date__year=nowdate.year,
                                      recorded_date__month=nowdate.month,
-                                     recorded_date__day=nowdate.day
+                                     recorded_date__day=nowdate.day,
+                                     recorded_date__hour=nowdate.hour
                                      )
     existingItem.listeners = item.get("listeners")
     existingItem.streams = item.get("streams")
@@ -145,7 +155,8 @@ def update_spotify(item):
     existingItem = Spotify.objects.get(artist=item.get("artist"),
                                        recorded_date__year=nowdate.year,
                                        recorded_date__month=nowdate.month,
-                                       recorded_date__day=nowdate.day
+                                       recorded_date__day=nowdate.day,
+                                       recorded_date__hour=nowdate.hour
                                        )
     existingItem.monthly_listens = item.get("monthly_listens")
     existingItem.followers = item.get("followers")
@@ -158,7 +169,8 @@ def update_crowdtangle(item, name):
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                                 recorded_date__year=nowdate.year,
                                                 recorded_date__month=nowdate.month,
-                                                recorded_date__day=nowdate.day
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour
                                                 )
     existingItem.followers = item.get("followers")
     existingItem.recorded_date = nowdate
