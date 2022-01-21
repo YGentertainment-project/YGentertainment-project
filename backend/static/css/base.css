@@ -264,17 +264,12 @@ input{
     border-radius: 10px;
     padding: 20px;
     margin-left: 10px;
+    background-color: rgb(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5)
 }
 
 #table{
    margin: auto;
-}
-
-.result-header{
-    color: black;
-    background-color: white;
-    border: 1px solid lightslategray;
-    text-align: center;
 }
 
 #board th{
