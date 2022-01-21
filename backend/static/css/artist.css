@@ -9,19 +9,21 @@
     margin-left: 10px;
     display: flex;
     flex-direction: column;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.2), 0 1px 2px rgba(17, 24, 39,0.2);
 }
 
 #second-table{
     justify-content: center;
     text-align: center;
     width:30%;
-    min-width: 300px;
+    /* min-width: 300px; */
     height: 650px;
     overflow-y: scroll;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding: 20px;
     margin-left: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
 }
 
 
@@ -46,17 +48,16 @@
 
 
 #artist-header{
-    color: white;
-    background-color: black !important;
-    font-size: small;
-}
-
-#artist-header td{
-    color: white;
-    background-color: black !important;
+    color: black;
     text-align: center;
     font-weight: bold;
 }
+
+/* #artist-header td{
+    color: black;
+    text-align: center;
+    font-weight: bold;
+} */
 
 
 
@@ -208,10 +209,10 @@
   font-family : 'Material Icons';
 }
 .dropbtn{
-  border : 1px solid rgb(37, 37, 37);
-  background-color: white;
+  /* border : 1px solid rgb(37, 37, 37); */
+  background-color: transparent;
   font-weight: 400;
-  color : rgb(114, 110, 110);
+  color : black;
   /* padding : 9px; */
   width : 50px;
   text-align: left;
@@ -227,7 +228,8 @@
   background-color: #f9f9f9;
   min-width : 80px;
   height: 15px;
-  font-size: 0.65em;
+  font-size: 0.7em;
+  cursor: pointer;
 }
 
 .dropdown-content > div{

@@ -47,7 +47,7 @@ input[type='checkbox']:checked:after {
     color: black;
 }
 
-
+/* 
 #platform-table{
     text-align: center;
     width: 90%;
@@ -73,7 +73,7 @@ input[type='checkbox']:checked:after {
 
 #platform-body td{
     text-align: center;
-}
+} */
 
 .popup_button_layout{
     height: 100%;
@@ -90,7 +90,7 @@ input[type='checkbox']:checked:after {
 }
 
 .button_layout{
-    width: 90%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
@@ -131,7 +131,7 @@ input[type='checkbox']:checked:after {
     font-size : 1.2rem;
 }
 
-.button_layout > button:hover,.popup_button_layout > button:hover, .excel-btn:hover{
+.popup_button_layout > button:hover, .excel-btn:hover{
     top: -2px;
     border: 2px solid black;
     box-shadow: 0px 0px 10px grey;
@@ -147,6 +147,8 @@ input[type='checkbox']:checked:after {
 .create_form, .excel_form{
     padding-top: 20px;
     padding-bottom: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
     display: none;
     position: absolute;
     top: 150px;
@@ -157,10 +159,10 @@ input[type='checkbox']:checked:after {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 60%;
+    width: 800px;
     background-color: white;
-    border: 3px solid LightSlateGrey;
-    z-index: 10;
+    border: 3px solid black;
+    z-index: 100;
     box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -185,7 +187,7 @@ input[type='checkbox']:checked:after {
     text-align: center;
 }
 
-.table_layout td{
+/* .table_layout td{
     font-weight: bold;
     text-align: center;
     border: 1px solid grey !important;
@@ -194,19 +196,19 @@ input[type='checkbox']:checked:after {
 
 .table_layout input{
     width: 100%;
-}
+} */
 
 .table_layout table>tbody td:nth-child(1){
-    background-color: lightgrey;
-    font-size : 1rem;
-    font-weight: 700;
+    /* background-color: rgb(202, 200, 200, 0.5);
+    font-size : 0.8rem; */
+    font-weight: bold;
 }
 
 .table_layout table>thead{
     color: black;
-    background-color: LightSteelBlue !important;
+    background-color: rgba(0, 0, 0, 0.1);
     font-size : 1.2rem;
-    font-weight: normal;
+    font-weight: bold;
 }
 
 .attr_button_layout{
@@ -218,13 +220,14 @@ input[type='checkbox']:checked:after {
 
 #attr_add_button, #attr_delete_button{
     text-align: center;
-    border: 1px solid rgb(107, 110, 112);
+    border: 1px solid black;
     border-radius: 50px;
     width: 26px;
     height: 26px;
     margin: 0;
     align-items: flex-end;
     justify-self: flex-end;
+    margin-bottom: 5px;
 }
 
 /* excel popup */

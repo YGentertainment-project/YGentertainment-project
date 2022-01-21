@@ -155,7 +155,7 @@ $('input[name=artist-name]').click(function(){
                         dataCol = document.createElement('td');
                         dataCol.innerHTML = `
                         <td>
-                            <span class="platform-names" style="width:100%; cursor:pointer;">${data[key]}</span>
+                            <span class="platform-names input-btn">${data[key]}</span>
                         </td>
                         `;
                     } 
@@ -256,7 +256,8 @@ function add_new_collect_target_item(item_num){
         }else if(i==5){//delete button
             dataCol.innerHTML = `
                 <td>
-                    <button class="btn-danger" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
+                    <button class="btn btn-danger border-0" 
+                    onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
         }
@@ -355,13 +356,12 @@ $(document).on('click','.platform-names',function(){
             //맨 뒤에 스케줄 관련 row 붙이기
             append_schedule_row();
             var period = res.data["period"];
-                                if(period=="hour"){
-                                    period = "시간별";
-                                }else if(period=="daily"){
-                                    period = "일별";
-                                }
-                                console.log(period);
-                                document.getElementById("dropTitle").innerHTML = period;
+            if(period=="hour"){
+                period = "시간별";
+            }else if(period=="daily"){
+                period = "일별";
+            }
+            document.getElementById("dropTitle").innerHTML = period;
         },
         error: e => {
             alert(e.responseText);
