@@ -98,8 +98,7 @@ input[type='checkbox']:checked:after {
 }
 
 /* 거의 모든 버튼 형태 */
-.popup_button_layout>button, .excel-btn, .add-submit{
-    background-color: rgb(226, 226, 226) !important;
+.button_layout > button, .popup_button_layout>button, .excel-btn, .add-submit{
     font-weight: bold;
     font-size: 1rem;
     border: 1px solid black;
