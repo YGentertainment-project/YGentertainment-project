@@ -4698,6 +4698,7 @@ textarea.form-control-lg {
 }
 
 .btn {
+    padding: 5px 15px 5px 15px !important;
     display: inline-block;
     font-weight: 500;
     line-height: 1.5;

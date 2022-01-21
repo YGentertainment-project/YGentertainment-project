@@ -50,9 +50,13 @@ input{
 .header-element{
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    width: 20%;
+    justify-content: flex-start;
+    width: 25%;
     margin-right: 1em;
+}
+
+.header-element *{
+    margin-right: 4px;
 }
 
 
@@ -91,6 +95,7 @@ input{
 .first-depth, .second-depth, .third-depth{
     font-size: 1rem;
     font-weight: normal;
+    white-space: nowrap;
 }
 
 
@@ -260,4 +265,8 @@ input{
 
 #board th{
     font-weight: bold !important;
+}
+
+.padding-3{
+    padding: 100px;
 }
