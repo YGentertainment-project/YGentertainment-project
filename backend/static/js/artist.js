@@ -256,7 +256,7 @@ function add_new_collect_target_item(item_num){
         }else if(i==5){//delete button
             dataCol.innerHTML = `
                 <td>
-                    <button class="collect_target_delete" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
+                    <button class="btn-danger" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
         }
@@ -338,7 +338,7 @@ $(document).on('click','.platform-names',function(){
                             dataCol2Btn.onclick = function(){
                                 delete_collect_target_item(data["id"], len2);
                             };
-                            dataCol2Btn.setAttribute('class', 'collect_target_delete');
+                            dataCol2Btn.setAttribute('class', 'btn-danger');
                             dataCol2Btn.innerHTML = "삭제";
                             dataCol2.append(dataCol2Btn);
                             tableRow.append(dataCol2);

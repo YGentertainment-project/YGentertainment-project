@@ -1,10 +1,5 @@
-from django.contrib.auth.models import AbstractBaseUser
-from django.conf import settings
 from django.db import models
-from django.db.models import JSONField
-from django.db.models.fields import NullBooleanField
-from django.db.utils import DEFAULT_DB_ALIAS
-from django.utils.translation import deactivate
+
 
 class Platform(models.Model):
     name = models.TextField(unique=True)
@@ -25,6 +20,7 @@ class ArtistProfile(models.Model):
     class Meta:
         db_table = "artist_profile"
 
+
 class Artist(models.Model):
     name = models.TextField(unique=True, max_length=100)
     level = models.TextField(max_length=10, default="S")
@@ -44,7 +40,7 @@ class Artist(models.Model):
 
 
 class CollectTarget(models.Model):
-    artist = models.ForeignKey(Artist, on_delete=models.CASCADE) # if Artist is deleted, all of his/her data is removed
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)  # if Artist is deleted, all of his/her data is removed
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     target_url = models.TextField(default="")
     target_url_2 = models.TextField(default="")
@@ -56,6 +52,7 @@ class CollectTarget(models.Model):
 
     class Meta:
         db_table = "collect_target"
+
 
 class CollectData(models.Model):
     collect_target = models.ForeignKey(CollectTarget, on_delete=models.CASCADE)

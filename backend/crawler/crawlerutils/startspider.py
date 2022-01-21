@@ -1,6 +1,4 @@
-import os
-from multiprocessing import Process
-from scrapy.crawler import CrawlerProcess, CrawlerRunner
+from scrapy.crawler import CrawlerRunner
 from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
 from twisted.internet import reactor
 
@@ -10,6 +8,7 @@ from twisted.internet import reactor
 spiders = {
     "youtube": YoutubeSpider,
 }
+
 
 def create_task(taskid, platforms):
     log_path = "crawler/logs/tasks/{}.txt".format(taskid)

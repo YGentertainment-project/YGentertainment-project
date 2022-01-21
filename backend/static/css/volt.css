@@ -4960,6 +4960,8 @@ textarea.form-control-lg {
 }
 
 .btn-danger {
+    white-space: nowrap;
+    font-size: 0.65em;
     color: #ffffff;
     background-color: #E11D48;
     border-color: #E11D48;

@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.db import models
-from django.db.models import JSONField
 
 
 class AdminType(object):
@@ -29,6 +28,6 @@ class User(AbstractBaseUser):
 
     def is_admin_role(self):
         return self.admin_type in [AdminType.ADMIN, AdminType.SUPER_ADMIN]
-    
+
     class Meta:
         db_table = "user"

@@ -1,10 +1,8 @@
-import logging
 import os
 from billiard.context import Process
 
 from .celery import app
 
-import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
 from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
@@ -18,28 +16,28 @@ from crawler.scrapy_app.spiders.melon import MelonSpider
 from crawler.scrapy_app.spiders.spotify import SpotifySpider
 
 settings = Settings()
-os.environ['SCRAPY_SETTINGS_MODULE'] = 'crawler.scrapy_app.settings'
-settings_module_path = os.environ['SCRAPY_SETTINGS_MODULE']
-settings.setmodule(settings_module_path, priority='project')
+os.environ["SCRAPY_SETTINGS_MODULE"] = "crawler.scrapy_app.settings"
+settings_module_path = os.environ["SCRAPY_SETTINGS_MODULE"]
+settings.setmodule(settings_module_path, priority="project")
 
 # TODO: DB에서 참조하도록 수정
 spiders = {
-    'youtube': YoutubeSpider,
-    'twitter': TwitterSpider,
-    'twitter2': Twitter2Spider,
-    'tiktok': TiktokSpider,
-    'weverse': WeverseSpider,
-    'crowdtangle': CrowdTangleSpider,
-    'vlive': VliveSpider,
-    'melon': MelonSpider,
-    'spotify': SpotifySpider,
+    "youtube": YoutubeSpider,
+    "twitter": TwitterSpider,
+    "twitter2": Twitter2Spider,
+    "tiktok": TiktokSpider,
+    "weverse": WeverseSpider,
+    "crowdtangle": CrowdTangleSpider,
+    "vlive": VliveSpider,
+    "melon": MelonSpider,
+    "spotify": SpotifySpider,
 }
 
 
 def crawling_start(platform, task_id):
     process = CrawlerProcess(settings)
     # log_path = "crawler/logs/tasks/{}.log".format(task_id)
-    # settings.set('LOG_FILE', log_path)
+    # settings.set("LOG_FILE", log_path)
     process.crawl(spiders[platform])
     process.start()
 
@@ -50,9 +48,10 @@ def direct_crawling_platform(self, platform):
         proc = Process(target=crawling_start, args=[platform, self.request.id])
         proc.start()
         proc.join()
-    except:
+    except Exception as e:
         direct_crawling_platform.retry()
-        print(f'Error with Crawling task')
+        print(e)    
+        print("Error with Crawling task")
 
 
 def crawling(platform, request_id):
@@ -64,85 +63,79 @@ def crawling(platform, request_id):
 @app.task(name="youtube_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def youtube_schedule_crawling(self):
     try:
-        crawling('youtube', self.request.id)
-    except:
+        crawling("youtube", self.request.id)
+    except Exception:
         youtube_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="twitter_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def twitter_schedule_crawling(self):
     try:
-        crawling('twitter', self.request.id)
-    except:
+        crawling("twitter", self.request.id)
+    except Exception:
         twitter_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def twitter2_schedule_crawling(self):
     try:
-        crawling('twitter2', self.request.id)
-    except:
+        crawling("twitter2", self.request.id)
+    except Exception:
         twitter2_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def tiktok_schedule_crawling(self):
     try:
-        crawling('tiktok', self.request.id)
-    except:
+        crawling("tiktok", self.request.id)
+    except Exception:
         tiktok_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="weverse_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def weverse_schedule_crawling(self):
     try:
-        crawling('weverse', self.request.id)
-    except:
+        crawling("weverse", self.request.id)
+    except Exception:
         weverse_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def crowdtangle_schedule_crawling(self):
     try:
-        crawling('crowdtangle', self.request.id)
-    except:
+        crawling("crowdtangle", self.request.id)
+    except Exception:
         crowdtangle_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        print("Error with Crawling task")
 
 
 @app.task(name="vlive_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def vlive_schedule_crawling(self):
     try:
-        crawling('vlive', self.request.id)
-    except:
+        crawling("vlive", self.request.id)
+    except Exception:
         vlive_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        print("Error with Crawling task")
 
 
 @app.task(name="spotify_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def spotify_schedule_crawling(self):
     try:
-        crawling('spotify', self.request.id)
-    except:
+        crawling("spotify", self.request.id)
+    except Exception:
         spotify_schedule_crawling.retry()
-        print(f'Error with Crawling task')
-
+        print("Error with Crawling task")
 
 
 @app.task(name="melon_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
 def melon_schedule_crawling(self):
     try:
-        crawling('melon', self.request.id)
-    except:
+        crawling("melon", self.request.id)
+    except Exception:
         melon_schedule_crawling.retry()
-        print(f'Error with Crawling task')
+        print("Error with Crawling task")

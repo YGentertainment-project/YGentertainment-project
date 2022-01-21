@@ -1,5 +1,3 @@
-import json
-from re import T
 from django.db import models
 from django.utils.timezone import now
 
@@ -12,8 +10,9 @@ class SocialbladeYoutube(models.Model):
     user_created = models.TextField(null=True)  # 계정 생성일
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -30,8 +29,9 @@ class SocialbladeTiktok(models.Model):
     likes = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -48,8 +48,9 @@ class SocialbladeTwitter(models.Model):
     user_created = models.TextField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -66,8 +67,9 @@ class SocialbladeTwitter2(models.Model):
     user_created = models.TextField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -82,8 +84,9 @@ class Weverse(models.Model):
     weverses = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -98,8 +101,9 @@ class CrowdtangleInstagram(models.Model):
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -114,8 +118,9 @@ class CrowdtangleFacebook(models.Model):
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -133,8 +138,9 @@ class Vlive(models.Model):
     plays = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -151,9 +157,10 @@ class Melon(models.Model):
     fans = models.IntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -169,9 +176,10 @@ class Spotify(models.Model):
     followers = models.BigIntegerField(null=True)
     recorded_date = models.DateTimeField(auto_now_add=True)
     reserved_date = models.DateField(default=now)
-    updated_at = models.DateField(null = True)
+    updated_at = models.DateField(null=True)
     url1 = models.TextField(null=True)
     url2 = models.TextField(null=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
