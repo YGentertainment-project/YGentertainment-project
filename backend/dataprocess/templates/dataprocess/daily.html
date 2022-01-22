@@ -74,7 +74,7 @@
    </div>
   
 
-   <div class="forms">
+   <div class="forms modal-open">
     <div>
         <div style="display: flex; flex-direction: row;">
             <div class="select-days card border-0 shadow">
@@ -128,6 +128,7 @@
             </div>
             <hr>
             <div id="result-table" class="card-body">
+                {% include 'dataprocess/update_confirm.html' %}
                 <label id="platform-title" style="margin-bottom: 5px; font-weight: bold;"></label>
                 <table id="table" class="table table-centered table-nowrap mb-0 rounded">
                     <thead class="thead-light"> 
@@ -137,7 +138,7 @@
                     </tbody>
                 </table>
                 <div class="button_layout">
-                    <label id="update-data" style="display: none; margin: 10px">
+                    <label class="btn btn-primary btn-shadow border-0" id="update-data" style="display: none; margin: 10px">
                         저장
                     </label>
                 </div>
