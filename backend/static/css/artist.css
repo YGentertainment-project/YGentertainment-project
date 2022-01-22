@@ -85,7 +85,7 @@
 .add-table{
     width: 70%;
     height: 100%;
-    margin: 30px;
+    margin-left: 10px;
 }
 
 .title-th{
@@ -173,7 +173,7 @@
 #url_add_button, #url_delete_button{
     cursor: pointer;
     text-align: center;
-    border: 1px solid LightSlateGrey;
+    border: 1px solid black;
     border-radius: 50px;
     width: 26px;
     height: 26px;
@@ -291,4 +291,8 @@
 #artist_open:hover, #platform_open:hover, #item_open:hover{
     background-color: #1F2937 !important;
     color: white;
+}
+
+.left-bold > tbody > tr > th, .left-bold>tbody>tr>td:nth-child(1){
+    font-weight: bold;
 }
