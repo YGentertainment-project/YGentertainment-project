@@ -1,5 +1,6 @@
 from django.contrib import auth
 from django.shortcuts import render
+from h11 import Data
 from account.models import User
 from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
                             Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
@@ -747,23 +748,9 @@ class DataReportAPI(APIView):
         """
         Data-Report update api
         """
-        platform = request.POST.get("platform_name", None)
-        artists = request.POST.getlist("artists[]")
-        uploads = request.POST.getlist("uploads[]")
-        subscribers = request.POST.getlist("subscribers[]")
-        views = request.POST.getlist("views[]")
-        members = request.POST.getlist("members[]")
-        videos = request.POST.getlist("videos[]")
-        likes = request.POST.getlist("likes[]")
-        plays = request.POST.getlist("plays[]")
-        followers = request.POST.getlist("followers[]")
-        twits = request.POST.getlist("twits[]")
-        weverses = request.POST.getlist("weverses[]")
-        user_creation = request.POST.getlist("user_creation[]")
-        listens = request.POST.getlist("listens[]")
-        streams = request.POST.getlist("streams[]")
-        # fans =  request.POST.getlist("fans[]")
-        start_date = request.POST.get("start_date", None)
+        update_data_object = JSONParser().parse(request)
+        start_date = update_data_object[len(update_data_object)-1]['start_date']
+        platform = update_data_object[len(update_data_object)-1]['platform_name']
 
         # artist name
         artist_objects = Artist.objects.filter(active=1)
@@ -809,53 +796,128 @@ class DataReportAPI(APIView):
 
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-            for index, artist in enumerate(artists):
-                obj = DataModels[platform].objects.filter(artist=artist, reserved_date__year=start_date_dateobject.year,
-                reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
-                print(artist)
-                if obj: #처음부터 크롤링 잘 된 경우
+            for index, element in enumerate(update_data_object):
+                if index == len(update_data_object)-1:
+                    break
+                obj = DataModels[platform].objects.filter(artist=element['artist'], reserved_date = start_date)
+                print(element['artist'])
+                if obj:
                     if platform == 'youtube':
-                        obj.update(uploads=uploads[index],subscribers=subscribers[index],views=views[index],user_created=user_creation[index])
+                        if element['target'] == 'uploads':
+                            obj.update(uploads=element['current'])
+                        elif element['target'] == 'subscribers':
+                            obj.update(subscribers=element['current'])
+                        elif element['target'] == 'views':
+                            obj.update(views=element['current'])
+                        else:
+                            obj.update(user_created=element['current'])
                     elif platform == 'vlive':
-                        obj.update(members=members[index],videos=videos[index],likes=likes[index],plays=plays[index])
+                        if element['target'] == 'members':
+                            obj.update(members=element['current'])
+                        elif element['target'] == 'videos':
+                            obj.update(videos=element['current'])
+                        elif element['target'] == 'likes':
+                            obj.update(likes=element['current'])
+                        else:
+                            obj.update(plays=element['current'])
+    
                     elif platform == 'instagram' or platform=='facebook':
-                        obj.update(followers = followers[index])
+                        obj.update(followers = element['current'])
                     elif platform == 'twitter' or platform=='twitter2':
-                        obj.update(followers = followers[index],twits=twits[index],user_created=user_creation[index])
+                        if element['target'] == 'followers':
+                            obj.update(followers=element['current'])
+                        elif element['target'] == 'twits':
+                            obj.update(twits=element['current'])
+                        else:
+                            obj.update(user_created=element['current'])
                     elif platform == 'tiktok':
-                        obj.update(followers = followers[index],uploads=uploads[index],likes=likes[index])
+                        if element['target'] == 'followers':
+                            obj.update(followers=element['current'])
+                        elif element['target'] == 'uploads':
+                            obj.update(uploads=element['current'])
+                        else:
+                            obj.update(likes=element['current'])
                     elif platform == 'weverse':
-                        obj.update(weverses= weverses[index])
+                        obj.update(weverses= element['current'])
                     elif platform == 'spotify':
-                        obj.update(monthly_listens = listens[index],followers=followers[index])
+                        if element['target'] == 'monthly_listens':
+                            obj.update(monthly_listens=element['current'])
+                        else:
+                            obj.update(followers=element['current'])
                     elif platform == 'melon':
-                        obj.update(listeners = listens[index],streams=streams[index])
+                        if element['target'] == 'listeners':
+                            obj.update(listeners=element['current'])
+                        else:
+                            obj.update(streams=element['current'])
                 else:
-                    if artist in a_list:
-                        if platform == "youtube":
-                            instance = DataModels[platform](artist=artist, uploads=uploads[index], subscribers=subscribers[index], views=views[index], user_created=user_creation[index], reserved_date=start_date)
+                    if element['artist'] in a_list:
+                        if platform == 'youtube':
+                            if element['target'] == 'uploads':
+                                instance = DataModels[platform](uploads=element['current'],reserved_date = start_date)
+                                instance.save()
+                            elif element['target'] == 'subscribers':
+                                instance = DataModels[platform](subscribers=element['current'],reserved_date=start_date)
+                                instance.save()
+                            elif element['target'] == 'views':
+                                instance = DataModels[platform](views=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](user_created=element['current'])
+                                instance.save()
+                        elif platform == 'vlive':
+                            if element['target'] == 'members':
+                                instance = DataModels[platform](members=element['current'],reserved_date = start_date)
+                                instance.save()
+                            elif element['target'] == 'videos':
+                                instance = DataModels[platform](videos=element['current'],reserved_date = start_date)
+                                instance.save()
+                            elif element['target'] == 'likes':
+                                instance = DataModels[platform](likes=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](plays=element['current'],reserved_date = start_date)
+                                instance.save()
+    
+                        elif platform == 'instagram' or platform=='facebook':
+                            instance = DataModels[platform](followers = element['current'],reserved_date = start_date)
                             instance.save()
-                        elif platform == "vlive":
-                            instance = DataModels[platform](artist=artist, members=members[index], videos=videos[index], likes=likes[index], plays=plays[index], reserved_date=start_date)
+                        elif platform == 'twitter' or platform=='twitter2':
+                            if element['target'] == 'followers':
+                                instance = DataModels[platform](followers=element['current'],reserved_date = start_date)
+                                instance.save()
+                            elif element['target'] == 'twits':
+                                instance = DataModels[platform](twits=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](user_created=element['current'],reserved_date = start_date)
+                                instance.save()
+                        elif platform == 'tiktok':
+                            if element['target'] == 'followers':
+                                instance = DataModels[platform](followers=element['current'],reserved_date = start_date)
+                                instance.save()
+                            elif element['target'] == 'uploads':
+                                instance = DataModels[platform](uploads=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](likes=element['current'],reserved_date = start_date)
+                                instance.save()
+                        elif platform == 'weverse':
+                            instance = DataModels[platform](weverses= element['current'],reserved_date = start_date)
                             instance.save()
-                        elif platform == "instagram" or platform == "facebook":
-                            instance = DataModels[platform](artist=artist, followers=followers[index], reserved_date=start_date)
-                            instance.save()
-                        elif platform == "twitter" or platform == "twitter2":
-                            instance = DataModels[platform](artist=artist, followers=followers[index], twits=twits[index], user_created=user_creation[index], reserved_date=start_date)
-                            instance.save()
-                        elif platform == "tiktok":
-                            instance = DataModels[platform](artist=artist, followers=followers[index], uploads=uploads[index], likes=likes[index], reserved_date=start_date)
-                            instance.save()
-                        elif platform == "weverse":
-                            instance = DataModels[platform](artist=artist, weverses=weverses[index], reserved_date=start_date)
-                            instance.save()
-                        elif platform == "spotify":
-                            instance = DataModels[platform](artist=artist, monthly_listens=listens[index], followers=followers[index], reserved_date=start_date)
-                            instance.save()
-                        elif platform == "melon":
-                            instance = DataModels[platform](artist=artist, listeners=listens[index], streams=streams[index], reserved_date=start_date)
-                            instance.save()
+                        elif platform == 'spotify':
+                            if element['target'] == 'monthly_listens':
+                                instance = DataModels[platform](monthly_listens=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](followers=element['current'],reserved_date = start_date)
+                                instance.save()
+                        elif platform == 'melon':
+                            if element['target'] == 'listeners':
+                                instance = DataModels[platform](listeners=element['current'],reserved_date = start_date)
+                                instance.save()
+                            else:
+                                instance = DataModels[platform](streams=element['current'],reserved_date = start_date)
+                                instance.save()
                     else:
                         pass
             filter_objects = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
