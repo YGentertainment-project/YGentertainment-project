@@ -12,7 +12,7 @@ const isEmpty =
 
 
 //artist create function
-$('.add-submit').click(function(e){
+$('#add-submit').click(function(e){
     var trs_value = $('input[type=text]');  //artist info
     var urls_tr = $('.add-table').find('#artist-urls').find('tr')
     var datas = [];
@@ -125,6 +125,7 @@ $('#save-artists').click(function(){
 })
 
 //show platforms per artist
+//아티스트 클릭시
 $('input[name=artist-name]').click(function(){
     var artist = $(this).val();
 
@@ -137,6 +138,9 @@ $('input[name=artist-name]').click(function(){
         data : {'artist':artist},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            //아티스트 표 작게 처리
+            make_artist_hidden();
+
             document.getElementById("artist-subtitle").innerHTML = artist+" 플랫폼";
             const data_list = res.data;
             $('#artist-body-platform').empty();
@@ -147,15 +151,15 @@ $('input[name=artist-name]').click(function(){
                     let dataCol;
                     if(key==='active'){
                         if(data[key]==true){
-                            dataCol = $('<td><input checked type="checkbox"></input></td>'); 
+                            dataCol = $('<td class="platform_hidden"><input checked type="checkbox"></input></td>'); 
                         }else{
-                            dataCol = $('<td><input type="checkbox"></input></td>'); 
+                            dataCol = $('<td class="platform_hidden"><input type="checkbox"></input></td>'); 
                         }
                     } else if(key === 'name'){
                         dataCol = document.createElement('td');
                         dataCol.innerHTML = `
                         <td>
-                            <span class="platform-names" style="width:100%; cursor:pointer;">${data[key]}</span>
+                            <span class="platform-names input-btn">${data[key]}</span>
                         </td>
                         `;
                     } 
@@ -163,6 +167,7 @@ $('input[name=artist-name]').click(function(){
                         dataCol = document.createElement('td');
                         if(key === 'artist_id' || key==='id' || key==='platform_id')
                             dataCol.setAttribute('class', 'hidden');
+                        dataCol.classList.add("platform_hidden");
                         dataCol.innerHTML = `
                         <td>
                             <input title=${data[key]} type="text" value="${data[key]}" style="width:100%"></input>
@@ -248,15 +253,18 @@ function add_new_collect_target_item(item_num){
                 </td>
                 `;
         }else if(i==4){//xpath
+            dataCol.setAttribute('class', 'item_hidden');
             dataCol.innerHTML = `
             <td>
                 <textarea style="width:100%"></textarea>
             </td>
             `;
         }else if(i==5){//delete button
+            dataCol.setAttribute('class', 'item_hidden');
             dataCol.innerHTML = `
                 <td>
-                    <button class="btn-danger" onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
+                    <button class="btn btn-danger"
+                    onclick=delete_collect_target_item_notindb(${item_num-1})>삭제</button>
                 </td>
             `;
         }
@@ -266,6 +274,7 @@ function add_new_collect_target_item(item_num){
 }
 
 //show collect target of platform
+//플랫폼 클릭시
 $(document).on('click','.platform-names',function(){
     //console.log('clicked');
 
@@ -281,6 +290,11 @@ $(document).on('click','.platform-names',function(){
         data : {'platform': platform, 'artist': artist_name},
         contentType: 'application/json; charset=utf-8',
         success: res => {
+            //플랫폼창 작게 만들기
+            make_platform_hidden();
+            item_open = true;
+            document.getElementById("item_open").classList.remove("fa-chevron-right");
+            document.getElementById("item_open").classList.add("fa-chevron-left");
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
             console.log(data_list);
@@ -326,19 +340,22 @@ $(document).on('click','.platform-names',function(){
                         }else if(key==='xpath'){
                             let len2 = len-1;
                             dataCol = document.createElement('td');
+                            dataCol.classList.add("item_hidden");
                             dataCol.innerHTML = `
-                            <td>
+                            <t>
                                 <textarea style="width:100%">${data[key]}</textarea>
                             </td>
                             `;
                             tableRow.append(dataCol);
                             //삭제 버튼 붙이기
                             let dataCol2 = document.createElement('td');
+                            dataCol2.classList.add("item_hidden");
                             let dataCol2Btn = document.createElement('button');
                             dataCol2Btn.onclick = function(){
                                 delete_collect_target_item(data["id"], len2);
                             };
                             dataCol2Btn.setAttribute('class', 'btn-danger');
+                            dataCol2Btn.classList.add("btn");
                             dataCol2Btn.innerHTML = "삭제";
                             dataCol2.append(dataCol2Btn);
                             tableRow.append(dataCol2);
@@ -355,13 +372,12 @@ $(document).on('click','.platform-names',function(){
             //맨 뒤에 스케줄 관련 row 붙이기
             append_schedule_row();
             var period = res.data["period"];
-                                if(period=="hour"){
-                                    period = "시간별";
-                                }else if(period=="daily"){
-                                    period = "일별";
-                                }
-                                console.log(period);
-                                document.getElementById("dropTitle").innerHTML = period;
+            if(period=="hour"){
+                period = "시간별";
+            }else if(period=="daily"){
+                period = "일별";
+            }
+            document.getElementById("dropTitle").innerHTML = period;
         },
         error: e => {
             alert(e.responseText);
@@ -377,15 +393,12 @@ function append_schedule_row(){
     const tableRow = $('<tr></tr>');
     for(var i=0;i<4;i++){
         let dataCol = document.createElement('td');
-        if(i===0){
-            dataCol.innerHTML = `
-            <td></td>`;
-        }else if(i==1){
+        if(i==0){
             dataCol.innerHTML = `
             <td>
                스케줄
             </td>`;
-        }else if(i==2){
+        }else if(i==1){
             dataCol.innerHTML = `
             <td>
                 <div class="dropdown">
@@ -526,11 +539,103 @@ $(document).on('click','#artist_attr_add_button',function(){
     append_schedule_row();
 })
 
-//수집항목 -버튼
-// $(document).on('click','#artist_attr_delete_button',function(){
-//     var item_tr = $('#artist-body-list').find('tr');
-//     let len = item_tr.length;
-//     if(len > 2)
-//         //스케줄 삭제
-//         item_tr[len-2].remove();
-// })
+var artist_open = true;
+var platform_open = true;
+var item_open = true;
+
+function make_artist_hidden(){
+    //아티스트 표 작게 처리
+    artist_open = false;
+    var artist_hiddens = document.getElementsByClassName("artist_hidden");
+    for(var i=0;i<artist_hiddens.length;i++){
+        let ii = i;
+        artist_hiddens[ii].classList.add("tmp-hidden");
+    }
+    document.getElementById("artist_open").classList.add("fa-chevron-right");
+    document.getElementById("artist_open").classList.remove("fa-chevron-left");;
+}
+
+function make_artist_visible(){
+    //아티스트 표 다보이게 처리
+    artist_open = true;
+    var artist_hiddens = document.getElementsByClassName("artist_hidden");
+    for(var i=0;i<artist_hiddens.length;i++){
+        let ii = i;
+        artist_hiddens[ii].classList.remove("tmp-hidden");
+    }
+    document.getElementById("artist_open").classList.remove("fa-chevron-right");
+    document.getElementById("artist_open").classList.add("fa-chevron-left")
+}
+
+$("#artist_open_btn").click(function (){
+    if(artist_open==true){
+        make_artist_hidden();
+    }else{
+        make_artist_visible();
+    }
+});
+
+function make_platform_hidden(){
+    //플랫폼 표 작게 처리
+    platform_open = false;
+    var platform_hiddens = document.getElementsByClassName("platform_hidden");
+    for(var i=0;i<platform_hiddens.length;i++){
+        let ii = i;
+        platform_hiddens[ii].classList.add("tmp-hidden");
+    }
+    document.getElementById("platform_open").classList.add("fa-chevron-right");
+    document.getElementById("platform_open").classList.remove("fa-chevron-left");;
+}
+
+function make_platform_visible(){
+    //플랫폼 표 다보이게 처리
+    platform_open = true;
+    var platform_hiddens = document.getElementsByClassName("platform_hidden");
+    for(var i=0;i<platform_hiddens.length;i++){
+        let ii = i;
+        platform_hiddens[ii].classList.remove("tmp-hidden");
+    }
+    document.getElementById("platform_open").classList.remove("fa-chevron-right");
+    document.getElementById("platform_open").classList.add("fa-chevron-left")
+}
+
+$("#platform_open_btn").click(function (){
+    if(platform_open==true){
+        make_platform_hidden();
+    }else{
+        make_platform_visible();
+    }
+});
+
+
+function make_item_hidden(){
+    //조사항목 표 작게 처리
+    item_open = false;
+    var item_hiddens = document.getElementsByClassName("item_hidden");
+    for(var i=0;i<item_hiddens.length;i++){
+        let ii = i;
+        item_hiddens[ii].classList.add("tmp-hidden");
+    }
+    document.getElementById("item_open").classList.add("fa-chevron-right");
+    document.getElementById("item_open").classList.remove("fa-chevron-left");
+}
+
+function make_item_visible(){
+    //조사항목 표 다보이게 처리
+    item_open = true;
+    var item_hiddens = document.getElementsByClassName("item_hidden");
+    for(var i=0;i<item_hiddens.length;i++){
+        let ii = i;
+        item_hiddens[ii].classList.remove("tmp-hidden");
+    }
+    document.getElementById("item_open").classList.remove("fa-chevron-right");
+    document.getElementById("item_open").classList.add("fa-chevron-left");
+}
+
+$("#item_open_btn").click(function (){
+    if(item_open==true){
+        make_item_hidden();
+    }else{
+        make_item_visible();
+    }
+});

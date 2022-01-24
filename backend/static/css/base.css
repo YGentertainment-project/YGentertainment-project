@@ -1,5 +1,5 @@
 *{
-    font-family: 'Nanum Gothic', sans-serif;
+    font-family: 'Nanum Gothic', sans-serif !important;
     box-sizing: border-box;
 }
 
@@ -12,26 +12,7 @@ button{
     border: none;
 }
 
-th{
-    width: 200px;
-    background-color: lightgray;
-    border: 1px solid lightslategray;
-    text-align: center;
-    font-family: 'Nanum Gothic', sans-serif;
-    font-size: 1.2rem;
-    font-weight: normal;
-}
 
-tr{
-    border: 1px solid lightslategray;
-}
-
-td{
-    border: 1px solid lightslategray;
-    text-align: end;
-    padding-right: 5px;
-    font-family: 'Nanum Gothic', sans-serif;
-}
 
 li{
     list-style: none;
@@ -58,19 +39,26 @@ input{
     width: 85%;
     display: flex;
     height: 2.5rem;
-    padding: 5px 5px;
+    padding: 5px 10px;
     margin: 10px;
-    background-color: lightgray;
     color: black;
     justify-content: space-between;
+    border: 1px solid #1F2937;
+    border-radius: 20px;
 }
 
 .header-element{
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
-    width: 20%;
+    justify-content: flex-start;
+    width: 25%;
     margin-right: 1em;
+    white-space: nowrap;
+}
+
+.header-element *{
+    font-weight: bold !important;
+    margin-right: 4px;
 }
 
 
@@ -109,6 +97,7 @@ input{
 .first-depth, .second-depth, .third-depth{
     font-size: 1rem;
     font-weight: normal;
+    cursor: pointer;
 }
 
 
@@ -132,40 +121,12 @@ input{
 
 .sidebar-btn{
     position: absolute;
-    left: 250px;
-    top:30%;
+    left: 220px;
+    top:300px;
     padding: 15px 5px;
-    background-color: lightgray;
+    border-radius: 2px;
 }
 
-.sidebar-items{
-    display: flex;
-    flex-direction: column;
-    padding-top: 50px;
-    padding-right: 15px;
-    height: 100%;
-    border: 1px solid darkgray;
-}
-
-.sidebar-item{
-    color: black;
-    text-decoration: none;
-    text-align: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 250ms ease-in;
-    margin: 10px 20px;
-    font-weight: bold;
-}
-
-.sidebar-item-in{
-   display: flex;
-   flex-direction: column;
-   flex-wrap: wrap;
-   justify-content: center;
-   text-align: center;
-}
 
 .hide{
     display:none;
@@ -175,35 +136,22 @@ input{
     display: flex;
 }
 
-.sidebar-description{
-    text-align: center;
-    justify-content: center;
-    color: darkgray;
-    font-size: 0.8rem;
-    text-decoration: none;
-    cursor: pointer;
-    font-weight: normal;
-}
-
-.sidebar-item:hover{
-    cursor: pointer;
-    color: black;
-}
-
-.sidebar-description:hover{
-    cursor: pointer;
-    color: black;
-}
-
 
 .forms{
     position: absolute;
     width: 80%;
-    left : 300px;
-    margin-top: 60px;
+    left : 250px;
+    margin-top: 80px;
     font-size: 1.2rem;
     display: flex;
     flex-direction: column;
+}
+
+.flexmiddle_layout{
+    align-items: center !important;
+    justify-content: center !important;
+    width: 30%;
+    padding: 5px 0;
 }
 
 .button_forms{
@@ -216,7 +164,12 @@ input{
 }
 
 .select-days{
-    margin-left: 18px;
+    margin-left: 0px;
+    margin-right: 10px;
+    padding:10px;
+    width: 65%;
+    text-align: center;
+    justify-content: center;
 }
 
 .select-days-day{
@@ -241,7 +194,7 @@ input{
     justify-content: center;
     text-align: center;
     width: 15%;
-    height: 100%;
+    height: 600px;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
@@ -304,26 +257,53 @@ input{
 #result-table{
     justify-content: center;
     text-align: center;
-    height: 585px;
     overflow-y: scroll;
-    width: 85%;
+    width: 95%;
+    height: 700px;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding: 20px;
     margin-left: 10px;
+    background-color: rgb(255, 255, 255, 0.3);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5)
 }
 
 #table{
    margin: auto;
 }
 
-.result-header{
-    color: black;
-    background-color: white;
-    border: 1px solid lightslategray;
-    text-align: center;
-}
-
 #board th{
     font-weight: bold !important;
+}
+
+.input-transparent input{
+    border: 0;
+    background-color: #f8f9fa;
+}
+
+.input-btn{
+    background-color: white !important;
+    max-width: 120px;
+    padding: 3px 10px 3px 10px !important;
+    cursor:pointer;
+    font-weight: bold;
+    color: black;
+    /* outline: 1.5px solid #1F2937; */
+    border-radius: 10px;
+    border-color: #1F2937 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input-btn:hover{
+    background-color: #1F2937 !important;
+    color: white;
+}
+
+.tmp-hidden{
+    display: none;
+}
+
+.shadow-btn{
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
 }

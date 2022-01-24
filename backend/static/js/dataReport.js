@@ -1,5 +1,3 @@
-
-
 //number format
 function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -115,13 +113,13 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                 if(type === '누적'){
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
-                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end;"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
                         } else{
-                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
                         }
                     }
                     else{
-                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color:lightgray"></input></td>')
+                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                     }
                 } else{ //기간별일 때는 수정 불가능
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
@@ -153,7 +151,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -174,7 +172,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             for(let j =0; j<platform_list.length; j++){
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
                 let dataCol;
-                dataCol = $('<td><input type="text" value="'+'" style="width:100%"></input></td>')
+                dataCol = $('<td><input class="data-input" type="text" value="'+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
                 tableRow.append(dataCol)
             }
         } else{
@@ -183,7 +181,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -242,7 +240,7 @@ $(document).on('change','input[name=view_days]',function(){
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
-    var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
@@ -302,8 +300,8 @@ $(document).on('change','#start_date',function(){
 
             console.log(platform_header);
 
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
             } else{
@@ -318,7 +316,11 @@ $(document).on('change','#start_date',function(){
         },
         error: e => {
             console.log(e);
-            alert(e.responseText);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
         },
     })
 })
@@ -334,7 +336,7 @@ $(document).on('change','#end_date',function(){
         refresh();
         return;
     }
-    var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
     console.log(platform);
     if(!platform){
         return false;
@@ -387,8 +389,8 @@ $(document).on('change','#end_date',function(){
 
             console.log(platform_header);
 
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
             } else{
@@ -399,7 +401,11 @@ $(document).on('change','#end_date',function(){
         },
         error: e => {
             console.log(e);
-            alert(e.responseText);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
         },
     })
 })
@@ -465,8 +471,8 @@ $(document).on('click','.platform-name',function(){
 
             console.log(platform_header);
 
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
             } else{
@@ -481,9 +487,11 @@ $(document).on('click','.platform-name',function(){
         },
         error: e => {
             console.log(e);
-            var result = JSON.parse(e.responseText);
-            alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
-            $('#result-table').eq(0).empty();
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
         },
     })
 
@@ -492,537 +500,311 @@ $(document).on('click','.platform-name',function(){
 })
 
 
-//update crawled data
+//input change detection
+let changedDatas = [];
+$(document).on('focus', '.data-input' ,function(){
+    $(this).data('val', $(this).val());
+});
+
+$(document).on('change','.data-input' ,function(){
+    var thisRow = $(this).closest('tr').find('th');  
+    var colIdx = $(this).closest("td").index();
+    var target = $(`th:eq(${colIdx})`).text();
+    var artist = thisRow[0].innerHTML;
+    var prev = $(this).data('val');
+    var current = $(this).val();
+    console.log("artist name: "+artist);
+    console.log("target: "+target);
+    console.log("Prev value " + prev);
+    console.log("New value " + current);
+
+    //최근 수정 항목만 살리기
+    const itemToFind = changedDatas.find(function(item) {return item.artist === artist && item.target === target})
+    const idx = changedDatas.indexOf(itemToFind)
+    if (idx > -1){
+        changedDatas.splice(idx, 1)
+    }
+
+    //최근 항목만 넣기
+    changedDatas.push({
+        'artist':artist,
+        'target':target,
+        'prev':prev,
+        'current':uncomma(current), //콤마가 찍히지 않은 숫자 
+        'comma_current': current //콤마가 찍힌 숫자(view 용)
+    })
+
+});
+
+
+//update crawled data(confirm button)
 $('#update-data').click(function(){
-    var type = $(':radio[name="view_days"]:checked').val();
-    var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
-    var th = $('#board').find('th');
-    var trs_value = $('input[type=text]');    
-    trs_value = trs_value.slice(3)
-    var type = $(':radio[name="view_days"]:checked').val();
-    var start_date = $('input[name=start_date]').val();
-
-    for(var i = 0; i<trs_value.length; i++){
-        if(trs_value[i].value === ""){
-            trs_value[i].value = 0; //안채워진 값들은 0 으로 간주
-        }
+    //modal find
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } else{
+        modal.addClass('show');
+        modal.css('display','block');
     }
 
-
-    //youtube
-    if(platform_name === 'youtube'){
-        var artists = [];
-        var uploads = [];
-        var subscribers = [];
-        var views = [];
-        var user_creation = [];
-        for(var i = 5; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=4){
-            console.log(trs_value[i].value);
-            uploads.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=4){
-            subscribers.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 2 ; i < trs_value.length ; i+=4){
-            views.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 3 ; i < trs_value.length ; i+=4){
-            user_creation.push(trs_value[i].value)
-        }
-        console.log({'platform_name':platform_name,
-        'artists[]':artists,
-        'uploads[]' : uploads, 
-        'subscribers[]': subscribers, 
-        'views[]': views, 
-        'user_creation[]': user_creation, 
-        'start_date':start_date
-        })
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'uploads[]' : uploads, 
-            'subscribers[]': subscribers, 
-            'views[]': views, 
-            'user_creation[]': user_creation, 
-            'start_date':start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("Successfully save!");
-                let data_list = [];
-                let artist_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-
-
-                console.log(platform_header);
-
-
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            for (let i = 0; i<data_list.length; i++){
-                crawling_artist_list.push(data_list[i]['artist']);
+    changedDatas.forEach(data => {
+        const tableRow = $('<tr></tr>')
+        for(key in data) {
+            if(key === 'current'){
+                continue;
             }
+            let dataCol;
 
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (e){
-                console.log(e);
-                alert(e.responseText);
-            }
-          });
-    }
+            dataCol = $('<td></td>', {
+                text: data[key],
+            })
 
-    //spotify 
-     if(platform_name === 'spotify'){
-        var artists = [];
-        var listens = [];
-        var followers = [];
-        for(var i = 3; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
+            tableRow.append(dataCol)
         }
-        for(var i = 0 ; i < trs_value.length ; i+=2){
-            listens.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=2){
-            followers.push(uncomma(trs_value[i].value))
-        }
+        $('#changed-data-list').append(tableRow);
+    })
 
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'listens[]' : listens, 
-            'followers[]': followers, 
-            'start_date': start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                let platform_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-
-
-                console.log(data_list);
-
-
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            for (let i = 0; i<data_list.length; i++){
-                crawling_artist_list.push(data_list[i]['artist']);
-            }
-
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (e){
-                console.log(e);
-                alert(e.responseText);
-            }
-          });
-    }
-
-
-     //melon
-     if(platform_name === 'melon'){
-        var artists = [];
-        var listens = [];
-        var streams = [];
-        for(var i = 3; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=2){
-            listens.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=2){
-            streams.push(uncomma(trs_value[i].value))
-        }
-        
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'listens[]' : listens, 
-            'streams[]': streams, 
-            'start_date': start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                let platform_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            for (let i = 0; i<data_list.length; i++){
-                crawling_artist_list.push(data_list[i]['artist']);
-            }
-
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-            $('thead').eq(0).empty();
-            $('tbody').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform_name+' 리포트');
-            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (e){
-                console.log(e);
-                alert(e.responseText);
-            }
-          });
-    }
-
-    //vlive
-    if(platform_name === 'vlive'){
-        var artists = [];
-        var members = [];
-        var videos = [];
-        var likes = [];
-        var plays = [];
-        for(var i = 5; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=4){
-            members.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=4){
-            videos.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 2 ; i < trs_value.length ; i+=4){
-            likes.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 3 ; i < trs_value.length ; i+=4){
-            plays.push(uncomma(trs_value[i].value))
-        }
-
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'members[]' : members, 
-            'videos[]': videos, 
-            'likes[]': likes,
-            'plays[]':plays, 
-            'start_date':start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                let platform_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header= res.platform //수집 항목
-    
-                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-    
-                let db_artist_list = [] //DB 에 있는 아티스트 리스트
-                for (let i = 0; i<artist_list.length; i++){
-                    db_artist_list.push(artist_list[i]);
-                }
-
-                $('thead').eq(0).empty();
-                $('tbody').eq(0).empty();
-                if(type === '누적'){
-                    $('#update-data').show();
-                } else{
-                    $('#update-data').hide();
-                }
-                $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (){
-            }
-          });
-    }
-
-    //instagram & facebook
-    if(platform_name === 'instagram' || platform_name==='facebook'){
-        var artists = [];
-        var followers = [];
-        for(var i = 2; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=1){
-            followers.push(uncomma(trs_value[i].value))
-        }
-
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'followers[]' : followers,  
-            'start_date':start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                let platform_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-    
-                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-    
-                let db_artist_list = [] //DB 에 있는 아티스트 리스트
-                for (let i = 0; i<artist_list.length; i++){
-                    db_artist_list.push(artist_list[i]);
-                }
-
-                $('thead').eq(0).empty();
-                $('tbody').eq(0).empty();
-                if(type === '누적'){
-                    $('#update-data').show();
-                } else{
-                    $('#update-data').hide();
-                }
-                $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (){
-            }
-          });
-    }
-
-     //tiktok
-     if(platform_name === 'tiktok'){
-        var artists = [];
-        var followers = [];
-        var uploads = [];
-        var likes = [];
-        for(var i = 4; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=3){
-            followers.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=3){
-            uploads.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 2 ; i < trs_value.length ; i+=3){
-            likes.push(uncomma(trs_value[i].value))
-        }
-
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'uploads[]':uploads,
-            'followers[]' : followers,  
-            'likes[]' : likes,  
-            'start_date':start_date,
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-    
-                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-    
-                let db_artist_list = [] //DB 에 있는 아티스트 리스트
-                for (let i = 0; i<artist_list.length; i++){
-                    db_artist_list.push(artist_list[i]);
-                }
-
-                $('thead').eq(0).empty();
-                $('tbody').eq(0).empty();
-                if(type === '누적'){
-                    $('#update-data').show();
-                } else{
-                    $('#update-data').hide();
-                }
-                $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (){
-            }
-          });
-
-       
-    }
-
-     //twitter 1, 2
-     if(platform_name === 'twitter' || platform_name==='twitter2'){
-        var artists = [];
-        var followers = [];
-        var twits = [];
-        var user_creation = [];
-        for(var i = 4; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=3){
-            followers.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 1 ; i < trs_value.length ; i+=3){
-            twits.push(uncomma(trs_value[i].value))
-        }
-        for(var i = 2 ; i < trs_value.length ; i+=3){
-            user_creation.push(trs_value[i].value)
-        }
-
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'followers[]' : followers,  
-            'twits[]' : twits,  
-            'user_creation[]' : user_creation,  
-            'start_date':start_date
-            },
-           url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                let data_list = [];
-                let artist_list = [];
-                let platform_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header = res.platform //수집 항목
-
-                console.log(res.success);
-    
-                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-    
-                let db_artist_list = [] //DB 에 있는 아티스트 리스트
-                for (let i = 0; i<artist_list.length; i++){
-                    db_artist_list.push(artist_list[i]);
-                }
-
-                $('thead').eq(0).empty();
-                $('tbody').eq(0).empty();
-                if(type === '누적'){
-                    $('#update-data').show();
-                } else{
-                    $('#update-data').hide();
-                }
-                $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (){
-            }
-          });
-    }
-
-
-    //weverse
-    if(platform_name === 'weverse'){
-        var artists = [];
-        var weverses = [];
-        for(var i = 2; i< th.length ; i++){
-            artists.push(th[i].innerHTML);
-        }
-        for(var i = 0 ; i < trs_value.length ; i+=1){
-            weverses.push(uncomma(trs_value[i].value))
-        }
-
-        $.ajax({
-            type: 'POST',
-            data : {'platform_name':platform_name,
-            'artists[]':artists,
-            'weverses[]' : weverses,  
-            'start_date':start_date
-            },
-            url: '/dataprocess/api/daily/',
-            success: res => {
-                alert("저장되었습니다.");
-                console.log(res.success);
-                let data_list = [];
-                let artist_list = [];
-                data_list = res.data //필터링 데이터
-                artist_list = res.artists //DB 아티스트 리스트
-                platform_header= res.platform //수집 항목
-    
-                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-    
-                let db_artist_list = [] //DB 에 있는 아티스트 리스트
-                for (let i = 0; i<artist_list.length; i++){
-                    db_artist_list.push(artist_list[i]);
-                }
-
-                $('thead').eq(0).empty();
-                $('tbody').eq(0).empty();
-                if(type === '누적'){
-                    $('#update-data').show();
-                } else{
-                    $('#update-data').hide();
-                }
-                $('#platform-title').text(platform_name+' 리포트');
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            },
-            error : function (e){
-                console.log(e);
-            }
-          });
-    }
 
 
 })
+
+$('.btn-close').click(function(){
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } 
+    changedDatas = [];
+    $('#changed-data-list').eq(0).empty();
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
+        },
+    })
+
+})
+
+$('.btn-close-2').click(function(){
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } 
+    $('#changed-data-list').eq(0).empty();
+    changedDatas = [];
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
+        },
+    })
+
+})
+
+$('#update').click(function(){
+    var type = $(':radio[name="view_days"]:checked').val(); //type (누적별)
+    var platform_name = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
+    var start_date = $('input[name=start_date]').val(); //date to change data
+
+    //modal 닫기
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } 
+
+    //기본적인 정보를 포함
+    changedDatas.push({
+        "platform_name":platform_name,
+        "start_date":start_date
+    })
+
+    console.log(changedDatas);
+
+
+    //update or create
+    $.ajax({
+        url: '/dataprocess/api/daily/',
+        type: 'POST',
+        datatype:'json',
+        data: JSON.stringify(changedDatas),
+        success: res => {
+            alert("저장되었습니다.");
+            $('#changed-data-list').eq(0).empty();
+            changedDatas = [];
+
+            let data_list = [];
+            let artist_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('.thead-light').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform_name+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
+        },
+    })
+   
+})
+
 
 
 //excel popup
@@ -1040,30 +822,6 @@ $("#excel-form-open3").click(function(){
     document.getElementById("excel_form1").style.display = "none";
     document.getElementById("excel_form2").style.display = "none";
     document.getElementById("excel_form3").style.display = "flex";
-});
-$("#excel-form-open1").on({
-    mouseenter: function () {
-        document.getElementById("excel-form-open-hint1").style.display = "grid";
-    },
-    mouseleave: function () {
-        document.getElementById("excel-form-open-hint1").style.display = "none";
-    }
-});
-$("#excel-form-open2").on({
-    mouseenter: function () {
-        document.getElementById("excel-form-open-hint2").style.display = "grid";
-    },
-    mouseleave: function () {
-        document.getElementById("excel-form-open-hint2").style.display = "none";
-    }
-});
-$("#excel-form-open3").on({
-    mouseenter: function () {
-        document.getElementById("excel-form-open-hint3").style.display = "grid";
-    },
-    mouseleave: function () {
-        document.getElementById("excel-form-open-hint3").style.display = "none";
-    }
 });
 
 document.getElementById('close_button1').onclick = function(){
@@ -1089,6 +847,8 @@ document.getElementById('excel-btn3').onclick = function(){
 // default 누적 & today 설정
 document.getElementById('excel_import_date').valueAsDate = new Date();
 document.getElementById('excel_export_start_date').valueAsDate = new Date();
+document.getElementById('start_date').valueAsDate = new Date();
+document.getElementById('end_date').valueAsDate = new Date();
 document.getElementById('excel_export_date_text').style.display = "none";
 document.getElementById('excel_export_end_date').style.display = "none";
 document.getElementById('excel_export_days1').onclick = function(){

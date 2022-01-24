@@ -1,3 +1,14 @@
+//default checked
+$(document).ready(function(){
+    var type = $("input:radio[name='view_days']:checked"). val( );
+    if(type === "누적"){
+        $('input[name=end_date]').hide()
+        $('input[name=day]').hide()
+        $('input[name=week]').hide()
+        $('input[name=month]').hide()
+    }
+})
+
 //number format
 function numToString(number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -9,6 +20,17 @@ function uncomma(str) {
     return str.replace(/[^\d]+/g, '');
 }
 
+//string check
+function isString(inputText){
+    if(typeof inputText === 'string' || inputText instanceof String){
+        //it is string
+        return true;    
+    }else{
+        //it is not string
+        return false;
+    }
+}
+
 //date setting
 
 function addDays(date, days) { 
@@ -17,35 +39,20 @@ function addDays(date, days) {
     return clone; 
 }
 
-$(document).on('click','input[name=day]',function(){
-   const today = new Date();
-   const next_day = addDays(today,0);
-   var year = next_day.getFullYear();
-   var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-   var day = ("0" + next_day.getDate()).slice(-2);
-   $('input[name=start_date]').val(year+'-'+month+'-'+day);
-   year = today.getFullYear();
-   month = ("0" + (1 + today.getMonth())).slice(-2);
-   day = ("0" + today.getDate()).slice(-2);
-   $('input[name=end_date]').val(year+'-'+month+'-'+day);
+//refresh button
+function refresh(){
+    $('input[name=start_date]').val("");
+    $('input[name=end_date]').val("");
+}
+
+$(document).on('click','input[name=refresh]',function(){
+    refresh();
 })
+ 
 
-$(document).on('click','input[name=week]',function(){
+ $(document).on('click','input[name=day]',function(){
     const today = new Date();
-    const next_day = addDays(today,-6);
-    var year = next_day.getFullYear();
-    var month = ("0" + (1 + next_day.getMonth())).slice(-2);
-    var day = ("0" + next_day.getDate()).slice(-2);
-    $('input[name=start_date]').val(year+'-'+month+'-'+day);
-    year = today.getFullYear();
-   month = ("0" + (1 + today.getMonth())).slice(-2);
-   day = ("0" + today.getDate()).slice(-2);
-   $('input[name=end_date]').val(year+'-'+month+'-'+day);
- })
-
-$(document).on('click','input[name=month]',function(){
-    const today = new Date();
-    const next_day = addDays(today,-30);
+    const next_day = addDays(today,0);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
@@ -53,407 +60,380 @@ $(document).on('click','input[name=month]',function(){
     year = today.getFullYear();
     month = ("0" + (1 + today.getMonth())).slice(-2);
     day = ("0" + today.getDate()).slice(-2);
-    $('input[name=end_date]').val(year+'-'+month+'-'+day); 
- })
-
- //refresh button
- $(document).on('click','input[name=refresh]',function(){
-    $('input[name=start_date]').val("");
-    $('input[name=end_date]').val("");
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
  })
  
+ $(document).on('click','input[name=week]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-6);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+    month = ("0" + (1 + today.getMonth())).slice(-2);
+    day = ("0" + today.getDate()).slice(-2);
+    $('input[name=end_date]').val(year+'-'+month+'-'+day);
+  })
+ 
+ $(document).on('click','input[name=month]',function(){
+     const today = new Date();
+     const next_day = addDays(today,-30);
+     var year = next_day.getFullYear();
+     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
+     var day = ("0" + next_day.getDate()).slice(-2);
+     $('input[name=start_date]').val(year+'-'+month+'-'+day);
+     year = today.getFullYear();
+     month = ("0" + (1 + today.getMonth())).slice(-2);
+     day = ("0" + today.getDate()).slice(-2);
+     $('input[name=end_date]').val(year+'-'+month+'-'+day); 
+  })
 
-//not crawled artist
-const createNotCrawledTableRow = (data) => {
-    const tableRow = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text:data
+
+//create Table header
+const createTableHeader = (platform_header) => {
+    const tableHeader = $('<tr></tr>');
+
+    let c = $('<th></th>', {
+        text:'artist',
+        class:"border-0"
     })
-    //조사 항목 개수만큼 넣기
-    let col2 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col3 = `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col4 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    let col5 =  `
-    <td>
-        <input type="text" value="" style="width:100%; background-color:lightgray"></input>
-    </td>
-    `
-    tableRow.append(col1)
-    tableRow.append(col2)
-    tableRow.append(col3)
-    tableRow.append(col4)
-    tableRow.append(col5)
-    return tableRow;
+    tableHeader.append(c)
+    for(let i = 0; i< platform_header.length; i++){
+        let col = $('<th></th>', {
+            text: platform_header[i],
+            class:"border-0"
+        })
+        tableHeader.append(col)
+    }
+
+    return tableHeader;
 }
 
-const showNotCrawledData = (datas) => {
-    datas.forEach(data => {
-        $('#board').append(createNotCrawledTableRow(data))
-    })
+
+const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_list) => {
+    for(let i = 0; i< db_artist_list.length; i++){
+        const tableRow = $('<tr></tr>')
+        if(crawling_artist_list.includes(db_artist_list[i])){ //db 아티스트가 크롤링 된 아티스트 리스트 안에 있을 때
+            let dataCol = $('<th></th>', {
+                text:db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                let dataCol;
+                if(type === '누적'){
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
+                        if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
+                            dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
+                        } else{
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
+                        }
+                    }
+                    else{
+                        dataCol = $('<td> <input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
+                    }
+                } else{ //기간별일 때는 수정 불가능
+                    if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
+                        if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
+                            if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] >0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] < 0 ){
+                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                            } else{
+                                dataCol = $('<td></td>',{
+                                    text: numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])
+                                })
+                            }
+                        } else{
+                            dataCol = $('<td></td>',{
+                                text: datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]
+                            })
+                        }
+                    }
+                    else{
+                        dataCol = $('<td></td>')
+                    } 
+                }
+                tableRow.append(dataCol)
+            }
+        } else{
+            let dataCol = $('<th></th>', {
+                text: db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
+                tableRow.append(dataCol)
+            }
+        }
+        $('#board').append(tableRow);
+    }
+    
 }
 
-//creat header from data in DB
-//플랫폼 이름을 받아옴
-const createTableHeader = (platform) => {
-    //ajax get
+//create Rows for empty case
+const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
+    for(let i = 0; i< db_artist_list.length; i++){
+        const tableRow = $('<tr></tr>')
+        if(crawling_artist_list.includes(db_artist_list[i])){
+            let dataCol = $('<th></th>', {
+                text:db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
+                let dataCol;
+                dataCol = $('<td><input type="text" value="'+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
+                tableRow.append(dataCol)
+            }
+        } else{
+            let dataCol = $('<th></th>', {
+                text: db_artist_list[i],
+            })
+            tableRow.append(dataCol)
+            for(let j =0; j<platform_list.length; j++){
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
+                tableRow.append(dataCol)
+            }
+        }
+        $('#board').append(tableRow);
+    }
+    
+}
+
+
+//show crawled data
+const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
+    $('.thead-light').append(createTableHeader(platform_list));
+    createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
+}
+
+
+//show empty table (when data is none)
+const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
+    $('.thead-light').append(createTableHeader(platform_list));
+    createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
+}
+
+//change color of button when clicking platform
+$('option').click(function(){
+    if($(this).hasClass("btn-gray-800")){
+      $(this).removeClass("btn-gray-800");
+    }else{
+      $(this).addClass("btn-gray-800");  
+      $('option').not($(this)).removeClass("btn-gray-800");  
+    }
+});
+
+//누적 일 때 다른 버튼 안보이게
+$(document).on('change','input[type=radio]',function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type === '누적'){
+        $('input[name=end_date]').hide()
+        $('input[name=day]').hide()
+        $('input[name=week]').hide()
+        $('input[name=month]').hide()
+    } else{
+        $('input[name=end_date]').show()
+        $('input[name=day]').show()
+        $('input[name=week]').show()
+        $('input[name=month]').show()
+    }
+})
+
+$(document).on('change','input[name=view_days]',function(){
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type === '누적'){
+        refresh();
+    }
+})
+
+
+//when change date(only platform button clicked)
+$(document).on('change','#start_date',function(){
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    if(!platform){
+        return false;
+    } 
+
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && end_date==""){
+        return;
+    }
+
+
     $.ajax({
-        url: '/dataprocess/api/platform_info/?' + $.param({
+        url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
         }),
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            var datas = res.data 
-            const tableHeader = $('<tr></tr>');
-            for(let i = 0; i<datas.length; i++){
-                let col = $('<th></th>', {
-                    text: datas['target_name'][i],
-                })
-                tableHeader.append(col);
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
             }
-            return tableHeader;
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('thead').eq(0).empty();
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
         },
         error: e => {
             console.log(e);
             alert(e.responseText);
         },
     })
-}
+})
 
-// show table header (general)
-const showTableHeader = (platform) => {
-    $('#board').append(createTableHeader(platform));
-}
-
-
-
-//youtube
-//table creation
-const createYoutubeTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '업로드 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '구독자 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '총 조회 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for youtube
-const createYoutubeTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'||key === 'platform' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
+$(document).on('change','#end_date',function(){
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    var date1 = new Date(start_date);
+    var date2 = new Date(end_date);
+    var type = $(':radio[name="view_days"]:checked').val();
+    if(type =="기간별" && date2 < date1){
+        alert('시작 일자를 종료 일자보다 과거로 입력하세요.');
+        refresh();
+        return;
     }
-    return tableRow
-}
+    var platform = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
+    console.log(platform);
+    if(!platform){
+        return false;
+    } 
 
-// show crawled data
-const showYoutubeCrawledData = (datas) => {
-    $('#board').append(createYoutubeTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createYoutubeTableRow(data))
-    })
-}
 
-//vlive
-const createVliveTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '맴버 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '스타 영상 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    let col5 =  $('<th></th>', {
-        text: '재생 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    tableHeader.append(col5)
-    return tableHeader;
-}
-// create rows for youtube
-const createVliveTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            if(isEmpty(data[key])){
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%; background-color:lightgray;"></input></td>')    
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } 
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_list = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
             } else{
-                dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
             }
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
 
-// show crawled data
-const showVliveCrawledData = (datas,platform) => {
-    $('#board').append(createVliveTableHeader());
-    //showTableHeader(platform)
-    datas.forEach(data => {
-        $('#board').append(createVliveTableRow(data))
-    })
-}
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
 
 
-//weverse
-//table creation
-const createWeverseTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: 'Wever 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for youtube
-const createWeverseTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key === 'id'|| key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
+            console.log(platform_header);
 
-// show crawled data
-const showWeverseCrawledData = (datas) => {
-    $('#board').append(createWeverseTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createWeverseTableRow(data))
+            $('thead').eq(0).empty();
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+        },
+        error: e => {
+            console.log(e);
+            alert(e.responseText);
+        },
     })
-}
+})
 
-//twitter 1
-//table creation
-const createTwitter1TableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '트위터 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '트윗 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    return tableHeader;
-}
-// create rows for twitter
-const createTwitter1TableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' || key=='user_created'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
 
-// show crawled data
-const showTwitter1CrawledData = (datas) => {
-    $('#board').append(createTwitter1TableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTwitter1TableRow(data))
-    })
-}
 
-//facebook & insta
-//table creation
-const createCrowdtangleTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트 계정',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    return tableHeader;
-}
-// create rows for twitter
-const createCrowdtangleTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url'){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol =  $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showCrowdtangleCrawledData = (datas) => {
-    $('#board').append(createCrowdtangleTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createCrowdtangleTableRow(data))
-    })
-}
-
-//tik tok
-//table creation
-const createTiktokTableHeader = () => {
-    const tableHeader = $('<tr></tr>');
-    let col1 = $('<th></th>', {
-        text: '아티스트',
-    })
-    let col2 = $('<th></th>', {
-        text: '팔로워 수',
-    }) 
-    let col3 = $('<th></th>', {
-        text: '업로드 수',
-    })
-    let col4 =  $('<th></th>', {
-        text: '좋아요 수',
-    })
-    tableHeader.append(col1)
-    tableHeader.append(col2)
-    tableHeader.append(col3)
-    tableHeader.append(col4)
-    return tableHeader;
-}
-// create rows for tiktok
-const createTiktokTableRow = (data) => {
-    const tableRow = $('<tr></tr>')
-    // 해당 row에 대한 column 데이터들 넣기
-    for(key in data){
-        let dataCol;
-        if(key==='id' || key === 'recorded_date' || key === 'url' ){
-            continue;
-        } else if(key === 'artist'){
-            dataCol = $('<th></th>', {
-                text:data[key],
-            })
-        }
-        else{
-            dataCol = $('<td><input type="text" value="'+numToString(data[key])+'" style="width:100%"></input></td>')
-        }
-        tableRow.append(dataCol)
-    }
-    return tableRow
-}
-
-// show crawled data
-const showTiktokCrawledData = (datas) => {
-    $('#board').append(createTiktokTableHeader());
-    datas.forEach(data => {
-        $('#board').append(createTiktokTableRow(data))
-    })
-}
-
-$('option').click(function(){
-    if($(this).hasClass("platform-selected")){
-      $(this).removeClass("platform-selected");
-    }else{
-      $(this).addClass("platform-selected");  
-      $('option').not($(this)).removeClass("platform-selected");  
-    }
-});
-
+//when clicking platform name
 $(document).on('click','.platform-name',function(){
     var platform = $(this).val();
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
+
+
     if(type == undefined){
-        alert("누적/기간별 중 선택해주세요.");
+        alert('누적/기간별을 설정하세요.')
         return;
     }else if(type=="누적" && start_date==""){
-        alert("시작 날짜를 선택해주세요.");
+        alert('시작 일자를 설정하세요.')
         return;
-    }else if(type=="기간별" && (start_date=="" ||end_date=="" )){
-        alert("시작과 끝 날짜를 선택해주세요.");
+    }else if(type=="기간별" && start_date==""){
+        alert('시작 일자를 설정하세요.')
+        return;
+    }else if(type=="기간별" && start_date && end_date == ""){
+        alert('종료 일자를 설정하세요.')
         return;
     }
 
@@ -468,69 +448,74 @@ $(document).on('click','.platform-name',function(){
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
         success: res => {
-            let table_html = ''
             let data_list = [];
             let artist_list = [];
-            data_list = res.data
-            artist_list = res.artists
-            console.log(data_list[0]['artist']);
+            let platform_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
 
-            let data_artist_list = []; //크롤링 된 데이터에 있는 아티스트 리스트
-            for(let i = 0; i<data_list.length; i++){
-                data_artist_list.push(data_list[i]['artist']);
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
             }
 
-            //let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            //for (let i = 0; i<artist_list.length; i++){
-            //    db_artist_list.push(artist_list[i]['name']);
-            //}
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
 
-            //let not_crawled_artists=[];
-            //for(let i = 0; i<db_artist_list.length; i++){
-            //    if(db_artist_list[i] in data_artist_list){
-            //        continue;
-            //    } else{
-            //        not_crawled_artists.push(db_artist_list[i]);
-            //    }
-            //}
-            
+            console.log(platform_header);
 
+            $('thead').eq(0).empty();
             $('tbody').eq(0).empty();
-            $('#update-data').show();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
             $('#platform-title').text(platform+' 리포트');
-            if(platform === 'youtube'){
-                showYoutubeCrawledData(data_list);
-            } else if(platform === 'vlive'){
-                showVliveCrawledData(data_list);
-            } else if(platform === 'instagram' || platform === 'facebook'){
-                showCrowdtangleCrawledData(data_list);
-            } else if(platform === 'twitter' || platform === 'twitter2'){
-                showTwitter1CrawledData(data_list);
-            } else if(platform === 'tiktok'){
-                showTiktokCrawledData(data_list);
-            } else if(platform === 'weverse'){
-                showWeverseCrawledData(data_list);
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             }
         },
         error: e => {
             console.log(e);
-            alert(e.responseText);
+            var result = JSON.parse(e.responseText);
+            alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            $('#result-table').eq(0).empty();
         },
     })
+
+
+    
 })
+
 
 //update crawled data
 $('#update-data').click(function(){
     var type = $(':radio[name="view_days"]:checked').val();
-    console.log(type);
-    if(type=="기간별"){
-        alert("기간별 데이터는 수정할 수 없습니다.");
-        return;
-    }
-    var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
+    var platform_name = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
     var th = $('#board').find('th');
     var trs_value = $('input[type=text]');    
     trs_value = trs_value.slice(3)
+    var type = $(':radio[name="view_days"]:checked').val();
+    var start_date = $('input[name=start_date]').val();
+
+    for(var i = 0; i<trs_value.length; i++){
+        if(trs_value[i].value === ""){
+            trs_value[i].value = 0; //안채워진 값들은 0 으로 간주
+        }
+    }
 
     //youtube
     if(platform_name === 'youtube'){
@@ -538,20 +523,30 @@ $('#update-data').click(function(){
         var uploads = [];
         var subscribers = [];
         var views = [];
-        for(var i = 4; i< th.length ; i++){
+        var user_creation = [];
+        for(var i = 5; i< th.length ; i++){
             artists.push(th[i].innerHTML);
         }
-        for(var i = 0 ; i < trs_value.length ; i+=3){
+        for(var i = 0 ; i < trs_value.length ; i+=4){
             uploads.push(uncomma(trs_value[i].value))
         }
-        for(var i = 1 ; i < trs_value.length ; i+=3){
+        for(var i = 1 ; i < trs_value.length ; i+=4){
             subscribers.push(uncomma(trs_value[i].value))
         }
-        for(var i = 2 ; i < trs_value.length ; i+=3){
+        for(var i = 2 ; i < trs_value.length ; i+=4){
             views.push(uncomma(trs_value[i].value))
         }
-
-
+        for(var i = 3 ; i < trs_value.length ; i+=4){
+            user_creation.push(trs_value[i].value)
+        }
+        console.log({'platform_name':platform_name,
+        'artists[]':artists,
+        'uploads[]' : uploads, 
+        'subscribers[]': subscribers, 
+        'views[]': views, 
+        'user_creation[]': user_creation, 
+        'start_date':start_date
+        })
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
@@ -559,16 +554,171 @@ $('#update-data').click(function(){
             'uploads[]' : uploads, 
             'subscribers[]': subscribers, 
             'views[]': views, 
+            'user_creation[]': user_creation, 
+            'start_date':start_date
             },
             url: '/dataprocess/api/daily/',
             success: res => {
                 alert("Successfully save!");
-                let table_html = ''
-                const data_list = res.data;
-                $('tbody').eq(0).empty();
-                showYoutubeCrawledData(data_list); // Data들을 화면상에 표시
+                let data_list = [];
+                let artist_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+
+
+                console.log(platform_header);
+
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+            $('thead').eq(0).empty();
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform_name+' 리포트');
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
-            error : function (){
+            error : function (e){
+                console.log(e);
+                alert(e.responseText);
+            }
+          });
+    }
+
+    //spotify 
+     if(platform_name === 'spotify'){
+        var artists = [];
+        var listens = [];
+        var followers = [];
+        for(var i = 3; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=2){
+            listens.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=2){
+            followers.push(uncomma(trs_value[i].value))
+        }
+
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'listens[]' : listens, 
+            'followers[]': followers, 
+            'start_date': start_date
+            },
+            url: '/dataprocess/api/daily/',
+            success: res => {
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+
+
+                console.log(data_list);
+
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            $('thead').eq(0).empty();
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform_name+' 리포트');
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            },
+            error : function (e){
+                console.log(e);
+                alert(e.responseText);
+            }
+          });
+    }
+
+
+     //melon
+     if(platform_name === 'melon'){
+        var artists = [];
+        var listens = [];
+        var streams = [];
+        for(var i = 3; i< th.length ; i++){
+            artists.push(th[i].innerHTML);
+        }
+        for(var i = 0 ; i < trs_value.length ; i+=2){
+            listens.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 1 ; i < trs_value.length ; i+=2){
+            streams.push(uncomma(trs_value[i].value))
+        }
+        
+        $.ajax({
+            type: 'POST',
+            data : {'platform_name':platform_name,
+            'artists[]':artists,
+            'listens[]' : listens, 
+            'streams[]': streams, 
+            'start_date': start_date
+            },
+            url: '/dataprocess/api/daily/',
+            success: res => {
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            for (let i = 0; i<data_list.length; i++){
+                crawling_artist_list.push(data_list[i]['artist']);
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+            $('thead').eq(0).empty();
+            $('tbody').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform_name+' 리포트');
+            showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            },
+            error : function (e){
+                console.log(e);
+                alert(e.responseText);
             }
           });
     }
@@ -596,8 +746,6 @@ $('#update-data').click(function(){
             plays.push(uncomma(trs_value[i].value))
         }
 
-        console.log(trs_value);
-
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
@@ -606,15 +754,37 @@ $('#update-data').click(function(){
             'videos[]': videos, 
             'likes[]': likes,
             'plays[]':plays, 
+            'start_date':start_date
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
-                console.log('success');
-                let table_html = '';
-                const data_list = res.data;
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header= res.platform //수집 항목
+    
+                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+    
+                let db_artist_list = [] //DB 에 있는 아티스트 리스트
+                for (let i = 0; i<artist_list.length; i++){
+                    db_artist_list.push(artist_list[i]);
+                }
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
-                showVliveCrawledData(data_list); // Data들을 화면상에 표시
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
+                $('#platform-title').text(platform_name+' 리포트');
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -637,15 +807,37 @@ $('#update-data').click(function(){
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'followers[]' : followers,  
+            'start_date':start_date
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
-                console.log('success');
-                let table_html = '';
-                const data_list = res.data;
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+    
+                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+    
+                let db_artist_list = [] //DB 에 있는 아티스트 리스트
+                for (let i = 0; i<artist_list.length; i++){
+                    db_artist_list.push(artist_list[i]);
+                }
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
-                showCrowdtangleCrawledData(data_list); // Data들을 화면상에 표시
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
+                $('#platform-title').text(platform_name+' 리포트');
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -655,17 +847,17 @@ $('#update-data').click(function(){
      //tiktok
      if(platform_name === 'tiktok'){
         var artists = [];
-        var uploads = [];
         var followers = [];
+        var uploads = [];
         var likes = [];
         for(var i = 4; i< th.length ; i++){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=3){
-            uploads.push(uncomma(trs_value[i].value))
+            followers.push(uncomma(trs_value[i].value))
         }
         for(var i = 1 ; i < trs_value.length ; i+=3){
-            followers.push(uncomma(trs_value[i].value))
+            uploads.push(uncomma(trs_value[i].value))
         }
         for(var i = 2 ; i < trs_value.length ; i+=3){
             likes.push(uncomma(trs_value[i].value))
@@ -678,19 +870,42 @@ $('#update-data').click(function(){
             'uploads[]':uploads,
             'followers[]' : followers,  
             'likes[]' : likes,  
+            'start_date':start_date,
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
-                console.log('success');
-                let table_html = '';
-                const data_list = res.data;
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+    
+                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+    
+                let db_artist_list = [] //DB 에 있는 아티스트 리스트
+                for (let i = 0; i<artist_list.length; i++){
+                    db_artist_list.push(artist_list[i]);
+                }
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
-                showTiktokCrawledData(data_list); // Data들을 화면상에 표시
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
+                $('#platform-title').text(platform_name+' 리포트');
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
           });
+
+       
     }
 
      //twitter 1, 2
@@ -698,14 +913,18 @@ $('#update-data').click(function(){
         var artists = [];
         var followers = [];
         var twits = [];
-        for(var i = 3; i< th.length ; i++){
+        var user_creation = [];
+        for(var i = 4; i< th.length ; i++){
             artists.push(th[i].innerHTML);
         }
-        for(var i = 0 ; i < trs_value.length ; i+=2){
+        for(var i = 0 ; i < trs_value.length ; i+=3){
             followers.push(uncomma(trs_value[i].value))
         }
-        for(var i = 1 ; i < trs_value.length ; i+=2){
+        for(var i = 1 ; i < trs_value.length ; i+=3){
             twits.push(uncomma(trs_value[i].value))
+        }
+        for(var i = 2 ; i < trs_value.length ; i+=3){
+            user_creation.push(trs_value[i].value)
         }
 
         $.ajax({
@@ -714,15 +933,40 @@ $('#update-data').click(function(){
             'artists[]':artists,
             'followers[]' : followers,  
             'twits[]' : twits,  
+            'user_creation[]' : user_creation,  
+            'start_date':start_date
             },
            url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
-                console.log('success');
-                let table_html = '';
-                const data_list = res.data;
+                alert("저장되었습니다.");
+                let data_list = [];
+                let artist_list = [];
+                let platform_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header = res.platform //수집 항목
+
+                console.log(res.success);
+    
+                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+    
+                let db_artist_list = [] //DB 에 있는 아티스트 리스트
+                for (let i = 0; i<artist_list.length; i++){
+                    db_artist_list.push(artist_list[i]);
+                }
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
-                showTwitter1CrawledData(data_list); // Data들을 화면상에 표시
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
+                $('#platform-title').text(platform_name+' 리포트');
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
             error : function (){
             }
@@ -738,31 +982,55 @@ $('#update-data').click(function(){
             artists.push(th[i].innerHTML);
         }
         for(var i = 0 ; i < trs_value.length ; i+=1){
-            weverses.push(parseInt(uncomma(trs_value[i].value)))
+            weverses.push(uncomma(trs_value[i].value))
         }
-
-        console.log(trs_value);
 
         $.ajax({
             type: 'POST',
             data : {'platform_name':platform_name,
             'artists[]':artists,
             'weverses[]' : weverses,  
+            'start_date':start_date
             },
             url: '/dataprocess/api/daily/',
             success: res => {
-                alert("Successfully save!");
-                console.log('success');
-                const data_list = res.data;
+                alert("저장되었습니다.");
+                console.log(res.success);
+                let data_list = [];
+                let artist_list = [];
+                data_list = res.data //필터링 데이터
+                artist_list = res.artists //DB 아티스트 리스트
+                platform_header= res.platform //수집 항목
+    
+                let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+    
+                let db_artist_list = [] //DB 에 있는 아티스트 리스트
+                for (let i = 0; i<artist_list.length; i++){
+                    db_artist_list.push(artist_list[i]);
+                }
+
+                $('thead').eq(0).empty();
                 $('tbody').eq(0).empty();
-                showWeverseCrawledData(data_list); // Data들을 화면상에 표시
+                if(type === '누적'){
+                    $('#update-data').show();
+                } else{
+                    $('#update-data').hide();
+                }
+                $('#platform-title').text(platform_name+' 리포트');
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
             },
-            error : function (){
+            error : function (e){
+                console.log(e);
             }
           });
     }
 
+
 })
+
 
 //excel popup
 $("#excel-form-open1").click(function(){
@@ -822,6 +1090,29 @@ document.getElementById('excel-btn2').onclick = function(){
     document.getElementById('progress-bar__bar2').classList.add('active');
 }
 document.getElementById('excel-btn3').onclick = function(){
-    console.log("33");
     document.getElementById('progress-bar__bar3').classList.add('active');
 }
+
+// default 누적 & today 설정
+document.getElementById('excel_import_date').valueAsDate = new Date();
+document.getElementById('excel_export_start_date').valueAsDate = new Date();
+document.getElementById('start_date').valueAsDate = new Date();
+document.getElementById('end_date').valueAsDate = new Date();
+document.getElementById('excel_export_date_text').style.display = "none";
+document.getElementById('excel_export_end_date').style.display = "none";
+document.getElementById('excel_export_days1').onclick = function(){
+    //excel form - 누적 선택
+    document.getElementById('excel_export_date_text').style.display = "none";
+    document.getElementById('excel_export_end_date').style.display = "none";
+}
+document.getElementById('excel_export_days2').onclick = function(){
+    //excel form - 기간별 선택
+    document.getElementById('excel_export_end_date').valueAsDate = new Date();
+    document.getElementById('excel_export_date_text').style.display = "block";
+    document.getElementById('excel_export_end_date').style.display = "block";
+}
+//default 누적 & end_date 안보이게
+$('input[name=end_date]').hide()
+$('input[name=day]').hide()
+$('input[name=week]').hide()
+$('input[name=month]').hide()

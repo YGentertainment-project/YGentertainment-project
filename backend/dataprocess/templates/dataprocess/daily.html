@@ -5,14 +5,10 @@
 
    {% block content %}
 
-   {% if alert %}
-    <span id="alert" class="hidden">{{alert}}</span>
-   {% endif %}
-
    <div class="excel_form" id="excel_form1">
         <div class="popup_button_layout">
             <span>Excel파일로부터 크롤링데이터 DB에 저장하기</span>
-            <button id="close_button1">닫기</button>
+            <button class="btn btn-gray-200 border-0 shadow-btn" id="close_button1" style="font-size: 0.7em; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
          <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" class="column_layout">
@@ -25,7 +21,7 @@
             <input type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
             <div style="height: 10px;"></div>
-            <button class="excel-btn black-btn2" id="excel-btn1" type="submit">Import</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn1" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
         </form>
         <div class="progress-bar">
             <div class="progress-bar__bar" id="progress-bar__bar1"></div>
@@ -35,7 +31,7 @@
    <div class="excel_form" id="excel_form2">
         <div class="popup_button_layout">
             <span>Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
-            <button id="close_button2">닫기</button>
+            <button class="btn btn-gray-200 border-0 shadow-btn" id="close_button2">닫기</button>
         </div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -53,7 +49,7 @@
             </div>
             <div style="height: 25px;"></div>
             <input type="text" name="type" value="export" style="display:none;">
-            <button class="excel-btn black-btn2" id="excel-btn2" type="submit">Export</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn2" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Export</button>
         </form>
         <div class="progress-bar">
             <div class="progress-bar__bar" id="progress-bar__bar2"></div>
@@ -63,14 +59,14 @@
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
             <span>Excel파일로부터 수집정보 DB에 저장하기</span>
-            <button id="close_button3">닫기</button>
+            <button  class="btn btn-gray-200 border-0 shadow-btn" id="close_button3">닫기</button>
         </div>
         <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file" name="importData2">
             <input type="text" name="type" value="import2" style="display:none;">
-            <button class="excel-btn black-btn2" id="excel-btn3" type="submit">Import</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
         </form>
         <div class="progress-bar">
             <div class="progress-bar__bar" id="progress-bar__bar3"></div>
@@ -78,43 +74,45 @@
    </div>
   
 
-   <div class="forms">
-    <div class="column_layout flexend_layout">
-        <span style="font-size: 1.3rem; font-weight:bold;">크롤링데이터 관련</span>
-        <div class="row_layout">
-            <span class="excel-form-open-hint" id="excel-form-open-hint1">Excel파일로부터 크롤링데이터 DB에 저장하기</span>
-            <button class="excel-btn excel-form-open" id="excel-form-open1">Excel파일 Import</button>
-        </div>
-
-        <div class="row_layout">
-            <span class="excel-form-open-hint" id="excel-form-open-hint2">Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
-            <button class="excel-btn excel-form-open" id="excel-form-open2">Excel파일 Export</button>
-        </div>
-
-        <span style="font-size: 1.3rem; font-weight:bold;">수집정보 관련</span>
-        <div class="row_layout">
-            <span class="excel-form-open-hint" id="excel-form-open-hint3">Excel파일로부터 수집정보 DB에 저장하기</span>
-            <button class="excel-btn excel-form-open" id="excel-form-open3">Excel파일 Import</button>
-        </div>
-        
-        
-        
-        
-    </div>
-       
-    <form method="get">
-        <div class="select-days">
-            <div class="select-days-day">
-                <label>조회 일자</label>
-                <input type="radio" name="view_days" value="누적" checked/> <label>누적</label>
-                <input type="radio" name="view_days" value="기간별" /> <label>기간별</label>
+   <div class="forms modal-open">
+    <div>
+        <div style="display: flex; flex-direction: row;">
+            <div class="select-days card border-0 shadow">
+                <div class="select-days-day">
+                    <label>조회 일자</label>
+                    <input class="form-check-input" type="radio" name="view_days" value="누적" checked/> <label>누적</label>
+                    <input class="form-check-input" type="radio" name="view_days" value="기간별" /> <label>기간별</label>
+                </div>
+                <div class="select-days-date">
+                    <input type="date" name="start_date" id="start_date"/> ~ <input type="date" name="end_date" id="end_date" /> <input class="btn btn-gray-200" type="button" name="refresh" style="margin: 3px; " value="날짜 초기화"></input>
+                    <input class="btn btn-gray-200" type="button" name="day" style="margin: 3px;" value="1일"></input>
+                    <input class="btn btn-gray-200" type="button" name="week" style="margin: 3px;" value="1주"></input>
+                    <input class="btn btn-gray-200" type="button" name="month" style="margin: 3px;" value="1개월"></input>
+                </div>
             </div>
-            <div class="select-days-date">
-                <input type="date" name="start_date" id="start_date"/> ~ <input type="date" name="end_date" id="end_date" /> <input type="button" name="refresh" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="날짜 초기화"></input>
-                <input type="button" name="day" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1일"></input>
-                <input type="button" name="week" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1주"></input>
-                <input type="button" name="month" style="border: 1px solid black; margin: 3px; border-radius: 4px;" value="1개월"></input>
+            <div style="display: flex; flex-direction: row;" class="row_layout flexmiddle_layout card border-0 shadow">
+               <div style="margin-right: 2.5px;">
+                <span style="font-size: 1.0rem; font-weight:bold;">크롤링데이터 관련</span>
+                <div class="row_layout">
+                    <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-form-open" id="excel-form-open1">Excel파일 Import</button>
+                </div>
+        
+                <div class="row_layout">
+                    <button title="Excel파일로 크롤링데이터 추출(다운로드 경로)" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open2">Excel파일 Export</button>
+                </div>
+               </div>
+               <hr>
+                <div style="margin-left: 2.5px;">
+                    <span style="font-size: 1.0rem; font-weight:bold;">수집정보 관련</span>
+                    <div class="row_layout">
+                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open3">Excel파일 Import</button>
+                    </div>
+                    <div class="row_layout"> <!--칸 위치 맞추기용-->
+                        <button style="visibility : hidden;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open3">Excel파일 Import</button>
+                    </div>
+                </div>
             </div>
+
         </div>
         <div class="contents">
             <div class="contents-platforms">
@@ -130,6 +128,7 @@
             </div>
             <hr>
             <div id="result-table" class="card-body">
+                {% include 'dataprocess/update_confirm.html' %}
                 <label id="platform-title" style="margin-bottom: 5px; font-weight: bold;"></label>
                 <table id="table" class="table table-centered table-nowrap mb-0 rounded">
                     <thead class="thead-light"> 
@@ -139,13 +138,13 @@
                     </tbody>
                 </table>
                 <div class="button_layout">
-                    <label id="update-data" style="display: none; margin: 10px">
+                    <label class="btn btn-primary btn-shadow border-0" id="update-data" style="display: none; margin: 10px">
                         저장
                     </label>
                 </div>
             </div>
         </div>
-        </form>
+    </div>
    </div>
     
 

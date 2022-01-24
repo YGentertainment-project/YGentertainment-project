@@ -1,0 +1,28 @@
+<div class="modal fade" id="modal-default" tabindex="-1" aria-labelledby="modal-default" aria-modal="true" role="dialog" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="h6 modal-title">저장할 사항들을 확인하세요</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-centered table-nowrap mb-0 rounded">
+                    <thead>
+                        <tr>
+                            <td>아티스트명</td>
+                            <td>수정 항목</td>
+                            <td>수정 전</td>
+                            <td>수정 후</td>
+                        </tr>
+                    </thead>
+                    <tbody style="overflow-y: scroll;" id="changed-data-list">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button id="update" type="button" class="btn btn-secondary">저장</button>
+                <button type="button" class="btn-close-2 btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>

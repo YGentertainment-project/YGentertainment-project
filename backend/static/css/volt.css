@@ -1352,7 +1352,8 @@ select,
 optgroup,
 textarea {
     margin: 0;
-    font-family: inherit;
+    /* font 수정 */
+    font-family: 'Nanum Gothic', sans-serif !important;
     font-size: inherit;
     line-height: inherit;
 }
@@ -4697,6 +4698,7 @@ textarea.form-control-lg {
 }
 
 .btn {
+    padding: 5px 15px 5px 15px !important;
     display: inline-block;
     font-weight: 500;
     line-height: 1.5;
@@ -28760,3 +28762,7 @@ article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
     z-index: 9999;
 }
 /*# sourceMappingURL=volt.css.map */
+
+*{
+    font-family: 'Nanum Gothic', sans-serif !important;
+}

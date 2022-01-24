@@ -18,22 +18,24 @@
                 <tr class="resizeable">
                     <th class="resizeable">
                         <div class="resiazable_column">
-                            <div class="button_layout">
-                             <button onclick=go_to_artist_add()>추가</button>
-                             <button id="save-artists">저장</button>
+                            <div class="no-margin-button-layout">
+                                <button onclick=go_to_artist_add() class="btn btn-primary border-0"
+                                     style="font-size: 0.7em; font-weight: bold;">추가</button>
+                                <button id="save-artists" class="btn btn-primary border-0"
+                                    style="font-size: 0.7em; font-weight: bold;">저장</button>
                             </div>
-                             <table id="artist-table">
-                                 <thead id="artist-header">
+                             <table id="artist-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                                 <thead id="artist-header" class="thead-dark">
                                      <tr>
                                          <td class="hidden">id</td>
-                                         <td>아티스트 이름</td>
-                                         <td>구분</td>
-                                         <td>성별</td>
-                                         <td>맴버 수</td>
-                                         <td>국적</td>
-                                         <td>기획사</td>
-                                         <td>데뷔</td>
-                                         <td>사용</td>
+                                         <td>ARTIST</td>
+                                         <td class="artist_hidden">구분</td>
+                                         <td class="artist_hidden">성별</td>
+                                         <td class="artist_hidden">맴버 수</td>
+                                         <td class="artist_hidden">국적</td>
+                                         <td class="artist_hidden">기획사</td>
+                                         <td class="artist_hidden">데뷔</td>
+                                         <td class="artist_hidden">사용</td>
                                      </tr>
                                  </thead>
                                  <tbody id="artist-body">
@@ -41,17 +43,32 @@
                                      {% for artist in artists %}
                                      <tr>
                                          <td class="hidden"><input type="text" value={{artist.id}}></input></td>
-                                         <td><input type="button" name="artist-name" title="{{artist.name}}" style="width:120px" value="{{artist.name}}"></input></td>
-                                         <td><input type="text" style="width:100%" title={{artist.level}} value={{artist.level}}></input></td>
-                                         <td><input type="text" style="width:100%" title={{artist.gender}} value={{artist.gender}}></input></td>
-                                         <td><input type="text" style="width:100%" title={{artist.member_num}} value={{artist.member_num}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.member_nationality}}" value={{artist.member_nationality}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.agency}}" value={{artist.agency}}></input></td>
-                                         <td><input type="text" style="width:100%" title="{{artist.debut_date|date:"Y-m-d"}}" value={{artist.debut_date|date:"Y-m-d"}}></input></td>
+                                         <td>
+                                             <input type="button" name="artist-name" title="{{artist.name}}" 
+                                             value="{{artist.name}}" class="input-btn"> </input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.level}} value={{artist.level}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.gender}} value={{artist.gender}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title={{artist.member_num}} value={{artist.member_num}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.member_nationality}}" value={{artist.member_nationality}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.agency}}" value={{artist.agency}}></input>
+                                        </td>
+                                         <td class="artist_hidden">
+                                             <input type="text" style="width:100%" title="{{artist.debut_date|date:"Y-m-d"}}" value={{artist.debut_date|date:"Y-m-d"}}></input>
+                                        </td>
                                          {% if artist.active %}
-                                             <td><input checked type="checkbox"></input></td>
+                                             <td class="artist_hidden"><input checked type="checkbox"></input></td>
                                          {% else %}
-                                             <td><input type="checkbox"></input></td>
+                                             <td class="artist_hidden"><input type="checkbox"></input></td>
                                          {% endif %}
                                      </tr>
                                      {% endfor %}
@@ -59,54 +76,65 @@
                                      {% endif %}
                                  </tbody>
                              </table>
+                             <button class="border-0 expand" id="artist_open_btn">
+                                 <i class="fas fa-chevron-left" id="artist_open"></i>
+                            </button>
                          </div>
                     </th>
 
                     <th class="resizeable">
                         <div class="resiazable_column">
-                            <div class="button_layout">
-                                <button id="save-artists-platform">저장</button>
+                            <div class="no-margin-button-layout">
+                                <button id="save-artists-platform" class="btn btn-primary border-0"
+                                style="font-size: 0.7em; font-weight: bold;">저장</button>
                             </div>
                             <span class="artist-title" id="artist-subtitle"></span>
-                            <table id="artist-table">
-                                <thead id="artist-header">
+                            <table id="artist-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                                <thead id="artist-header" class="thead-dark">
                                     <tr>
                                         <td class="hidden">artist_id</td>
                                         <td class="hidden">platform_id</td>
                                         <td class="hidden">id</td>
-                                        <td>플랫폼</td>
-                                        <td>URL 1</td>
-                                        <td>URL 2</td>
+                                        <td>PLATFORM</td>
+                                        <td class="platform_hidden">URL 1</td>
+                                        <td class="platform_hidden">URL 2</td>
                                     </tr>
                                 </thead>
                                 <tbody id="artist-body-platform"></tbody>
                             </table>
+                            <button class="border-0 expand" id="platform_open_btn">
+                                <i class="fas fa-chevron-left" id="platform_open"></i>
+                           </button>
                         </div>
                     </th>
 
                     <th class="resizeable">
                         <div class="resiazable_column">
-                            <div class="button_layout">
-                                <button id="save-list">저장</button>
+                            <div class="no-margin-button-layout">
+                                <button id="save-list" class="btn btn-primary border-0"
+                                style="font-size: 0.7em; font-weight: bold;">저장</button>
                             </div>
                             <span class="artist-title" id="platform-subtitle"></span>
                             <div class="artist_attr_button_layout">
                                 <button id="artist_attr_add_button"> + </button>
                             </div>
-                            <table id="artist-table">
-                                <thead id="artist-header">
+                            <table id="artist-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
+                                <thead id="artist-header" class="thead-dark">
                                     <tr>
                                         <td class="hidden">id</td>
                                         <td>조사항목</td>
                                         <td>내용</td>
-                                        <td>xpath</td>
-                                        <td>삭제</td>
+                                        <td class="item_hidden">xpath</td>
+                                        <td class="item_hidden">삭제</td>
                                     </tr>
                                 </thead>
                                 <tbody id="artist-body-list">
 
                                 </tbody>
                             </table>
+                            <button class="border-0 expand" id="item_open_btn">
+                                <i class="fas fa-chevron-left" id="item_open"></i>
+                           </button>
                         </div>
                     </th>
                 </tr>
