@@ -27,7 +27,7 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
     SECRET_KEY = f.read()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -138,10 +138,9 @@ RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'ygenter')
 RABBITMQ_QUEUE_EXPIRES = 300.0  # seconds
 RABBITMQ_MESSAGE_EXPIRES = RABBITMQ_QUEUE_EXPIRES
 
-LOG_PATH = os.path.join(DATA_DIR, "log")
+LOG_PATH = os.path.join(DATA_DIR, "log", "server")
 
 LOGGING_HANDLERS = ['serverfile']
-HTTP_HANDLERS = ['userfile']
 
 REQUEST_LOGGING_ENABLE_COLORIZE=False
 LOGGING = {
@@ -158,22 +157,21 @@ LOGGING = {
             'level': 'DEBUG',
             'encoding': 'utf-8',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'when': 'D',
+            'filename': os.path.join(LOG_PATH, f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+            'when': "midnight",
             'interval': 1,
-            'backupCount': 10,
-            'filename': os.path.join(LOG_PATH, "server", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
             'formatter': 'standard',
         },
-        'userfile': {
-            'level': 'DEBUG',
-            'encoding': 'utf-8',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'when': 'D',
-            'interval': 1,
-            'backupCount': 10,
-            'filename': os.path.join(LOG_PATH, "user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
-            'formatter': 'standard',
-        }
+        # 'userfile': {
+        #     'level': 'DEBUG',
+        #     'encoding': 'utf-8',
+        #     'class': 'logging.handlers.TimedRotatingFileHandler',
+        #     'when': 'D',
+        #     'interval': 1,
+        #     'backupCount': 10,
+        #     'filename': os.path.join(LOG_PATH, "user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+        #     'formatter': 'standard',
+        # }
     },
     'loggers': {
         # 'django.request': {
