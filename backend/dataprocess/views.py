@@ -6,6 +6,7 @@ from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTw
                             Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
+from dataprocess.models import CollectData
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
@@ -620,7 +621,6 @@ class DataReportAPI(APIView):
                     continue
                 platform_list.add(p["target_name"])
         platform_list = list(platform_list)
-
         # 플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = DataModels[platform].objects.all()
@@ -637,102 +637,95 @@ class DataReportAPI(APIView):
                 platform_header.append(key)
             else:
                 continue
-
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-                filter_objects = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
-                                                                     reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
-                if filter_objects.exists():
-                    filter_objects_values = filter_objects.values()
-                    filter_datas = []
-                    for filter_value in filter_objects_values:
-                        filter_datas.append(filter_value)
+                check = False
+                filter_datas = []
+                for artist in artist_list:
+                    filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+                        collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                    if filter_objects.exists():
+                        check = True
+                        # 같은 날짜에 여러개 있을 때 가장 앞의 것 가져오기
+                        filter_value = filter_objects.values()[0]
+                        filter_datas.append(filter_value["collect_items"])
+                # 해당날짜에 데이터가 하나라도 있을 때
+                if check:
                     return JsonResponse(data={"success": True, "data": filter_datas, "artists": artist_list, "platform": platform_header})
+                # 해당날짜에 데이터가 하나도 없을 때
                 else:
                     crawling_artist_list = []
-                    objects = DataModels[platform].objects.all()
+                    objects = CollectData.objects.filter(collect_items__platform=platform)
                     objects_value = objects.values()
                     for val in objects_value:
-                        crawling_artist_list.append(val["artist"])
-                    # datename = "%s-%s-%s"%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
+                        crawling_artist_list.append(val["collect_items"]["artist"])
                     return JsonResponse(status=200, data={"success": True, "data": "no data", "artists": artist_list, "platform": platform_header,
-                                                          "crawling_artist_list": crawling_artist_list})
+                                                        "crawling_artist_list": crawling_artist_list})
+
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
                 end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
-                filter_objects_start = DataModels[platform].objects.filter(reserved_date__year=start_date_dateobject.year,
-                                                                           reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
-                filter_objects_end = DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
-                                                                         reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
+                check = False
                 filter_datas_total = []
-                # 둘 다 존재할 때
-                if filter_objects_start.exists() and filter_objects_end.exists():
-                    filter_objects_start_values = filter_objects_start.values()
-                    model_fields = DataModels[platform]._meta.fields
-                    model_fields_name = []
-                    artist_datas = set()
-                    for model_field in model_fields:
-                        model_fields_name.append(model_field.name)
-                    values_len = len(filter_objects_start_values)
-                    for i in range(values_len):
-                        # 이미 넣은 데이터면 pass
-                        if filter_objects_start_values[i]["artist"] in artist_datas:
-                            continue
-                        artist_datas.add(filter_objects_start_values[i]["artist"])
+                for artist in artist_list:
+                    filter_objects_start = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+                            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                    filter_objects_end = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+                            collect_items__reserved_date = f'{end_date_dateobject.year}-{end_date_dateobject.month}-{end_date_dateobject.day}')
+                    # 둘 다 존재할 때
+                    if filter_objects_start.exists() and filter_objects_end.exists():
+                        check = True
+                        filter_objects_start_value = filter_objects_start.values()[0]
+                        filter_objects_start_value = filter_objects_start_value["collect_items"]
+                        # TODO
+                        model_fields = DataModels[platform]._meta.fields
+                        model_fields_name = []
+                        for model_field in model_fields:
+                            model_fields_name.append(model_field.name)
                         # id랑 artist, date 빼고 보내주기
                         data_json = {}
-                        # 현재 보고 있는 거랑 맞는 끝 날짜를 가져오기
-                        filter_artist_end = DataModels[platform].objects.filter(reserved_date__year=end_date_dateobject.year,
-                                                                                reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day,
-                                                                                artist=filter_objects_start_values[i]["artist"])
-                        filter_artist_end = filter_artist_end.values()
-                        if not filter_artist_end.exists():
-                            continue
-                        filter_artist_end = filter_artist_end[0]
-                        for field_name in model_fields_name:
-                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url":
-                                if filter_artist_end[field_name] is not None and filter_objects_start_values[i][field_name] is not None:
-                                    data_json[field_name] = filter_artist_end[field_name] - filter_objects_start_values[i][field_name]
-                                elif filter_artist_end[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
-                                    data_json[field_name] = filter_artist_end[field_name]
-                                else:
+                        filter_objects_end_value = filter_objects_end.values()[0]
+                        filter_objects_end_value = filter_objects_end_value["collect_items"]
+                        for field_name in filter_objects_start_value.keys():
+                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name!="artist" and field_name != "url" and field_name != "reserved_date" and field_name != "updated_dt":
+                                if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
+                                    data_json[field_name] = filter_objects_end_value[field_name] - filter_objects_start_value[field_name]
+                                elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
+                                    data_json[field_name] = filter_objects_end_value[field_name]
+                                else: # 앞의 날짜가 없다면 0으로 보내기
                                     data_json[field_name] = 0
-                            else:  # 숫자 아닌 다른 정보들
-                                data_json[field_name] = filter_objects_start_values[i][field_name]
+                            else:  # 숫자 아닌 다른 정보들(user_created 등)
+                                data_json[field_name] = filter_objects_start_value[field_name]
                         filter_datas_total.append(data_json)
+                    elif not filter_objects_start.exists() and filter_objects_end.exists():
+                        # 시작날짜의 데이터가 존재하지 않고 끝날짜의 데이터만 존재할 때
+                        # 시작날짜: 0으로 해서 계산 -> 끝날짜 데이터 자체를 보냄
+                        check = True
+                        filter_objects_end_value = filter_objects_end.values()[0]
+                        filter_objects_end_value = filter_objects_end_value["collect_items"]
+                        # model_fields = DataModels[platform]._meta.fields
+                        # model_fields_name = []
+                        # for model_field in model_fields:
+                        #     model_fields_name.append(model_field.name)
+                        # data_json = {}
+                        # for field_name in model_fields_name:
+                        #     if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url":
+                        #         # None때문에 오류나면 비워놓고 보내기
+                        #         if filter_objects_end_value[field_name] is not None:
+                        #             data_json[field_name] = filter_objects_end_value[field_name]
+                        #     else:  # 숫자 아닌 다른 정보들(user_created 등)
+                        #         data_json[field_name] = filter_objects_end_value[field_name]
+                        # filter_datas_total.append(data_json)
+                        filter_datas_total.append(filter_objects_end_value)
+                if check: # 양끝 모두 존재 or 끝날짜만 존재
                     return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header})
-                elif not filter_objects_start.exists() and filter_objects_end.exists():
-                    # 시작날짜의 데이터가 존재하지 않고 끝날짜의 데이터만 존재할 때
-                    # 0으로 해서 계산
-                    filter_objects_end_values = filter_objects_end.values()
-                    model_fields = DataModels[platform]._meta.fields
-                    model_fields_name = []
-                    artist_datas = set()
-                    for model_field in model_fields:
-                        model_fields_name.append(model_field.name)
-                    values_len = len(filter_objects_end_values)
-                    for i in range(values_len):
-                        # 이미 넣은 데이터면 pass
-                        if filter_objects_end_values[i]["artist"] in artist_datas:
-                            continue
-                        artist_datas.add(filter_objects_end_values[i]["artist"])
-                        data_json = {}
-                        for field_name in model_fields_name:
-                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url":
-                                # None때문에 오류나면 비워놓고 보내기
-                                if filter_objects_end_values[i][field_name] is not None:
-                                    data_json[field_name] = filter_objects_end_values[i][field_name]
-                            else:
-                                data_json[field_name] = filter_objects_end_values[i][field_name]
-                        filter_datas_total.append(data_json)
-                    return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header})
-                # 끝날짜의 데이터가 아예 존재하지 않을 때
-                else:
+                else: # 끝날짜의 데이터가 아예 존재하지 않을 때
                     datename = "%s-%s-%s"%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
                     return JsonResponse(status=400, data={"success": False, "data": datename})
             else:
+                # TODO
                 if DataModels[platform].objects.exists():
                     platform_queryset_values = DataModels[platform].objects.values()
                     platform_datas = []
@@ -799,6 +792,8 @@ class DataReportAPI(APIView):
             for index, element in enumerate(update_data_object):
                 if index == len(update_data_object)-1:
                     break
+                # obj = CollectData.objects.filter(collect_items__artist=element['artist'], collect_items__platform=platform,
+                #     collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
                 obj = DataModels[platform].objects.filter(artist=element['artist'], reserved_date = start_date)
                 print(element['artist'])
                 if obj:
