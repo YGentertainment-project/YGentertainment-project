@@ -125,13 +125,11 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                     if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] || datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]]===0){
                         if(!isString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])){
                             if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] >0 ){
-                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                                dataCol = $('<td style="color:#10B981; font-weight:bold;"><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
                             } else if(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]] < 0 ){
-                                dataCol = $('<td><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
+                                dataCol = $('<td style="color:#E11D48; font-weight:bold;"><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])+'</td>')
                             } else{
-                                dataCol = $('<td></td>',{
-                                    text: numToString(datas[crawling_artist_list.indexOf(db_artist_list[i])][platform_list[j]])
-                                })
+                                dataCol = $('<td>-</td>')
                             }
                         } else{
                             dataCol = $('<td></td>',{

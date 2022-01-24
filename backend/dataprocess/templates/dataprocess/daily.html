@@ -18,7 +18,7 @@
                 <input type="date" name="excel_import_date" id="excel_import_date"/>
              </div>
              <div style="height: 10px;"></div>
-            <input type="file" name="importData">
+            <input class="form-control" type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
             <div style="height: 10px;"></div>
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn1" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
@@ -64,9 +64,9 @@
         <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="importData2">
+            <input class="form-control" type="file" name="importData2">
             <input type="text" name="type" value="import2" style="display:none;">
-            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
+            <button style="margin-top: 8px;" class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
         </form>
         <div class="progress-bar">
             <div class="progress-bar__bar" id="progress-bar__bar3"></div>
@@ -145,6 +145,7 @@
             </div>
         </div>
     </div>
+    
    </div>
     
 
