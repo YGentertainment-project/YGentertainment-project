@@ -867,3 +867,7 @@ $('input[name=end_date]').hide()
 $('input[name=day]').hide()
 $('input[name=week]').hide()
 $('input[name=month]').hide()
+
+if(document.getElementById('alert') != null){
+    alert(ocument.getElementById('alert').innerHTML);
+}

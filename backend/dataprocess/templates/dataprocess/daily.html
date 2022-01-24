@@ -5,6 +5,10 @@
 
    {% block content %}
 
+   {% if alert %}
+    <span id="alert" class="hidden">{{alert}}</span>
+   {% endif %}
+
    <div class="excel_form" id="excel_form1">
         <div class="popup_button_layout">
             <span>Excel파일로부터 크롤링데이터 DB에 저장하기</span>
