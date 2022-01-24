@@ -810,7 +810,7 @@ class DataReportAPI(APIView):
                         elif element['target'] == 'views':
                             obj.update(views=element['current'])
                         else:
-                            obj.update(user_created=element['current'])
+                            obj.update(user_created=element['comma_current'])
                     elif platform == 'vlive':
                         if element['target'] == 'members':
                             obj.update(members=element['current'])
@@ -829,7 +829,7 @@ class DataReportAPI(APIView):
                         elif element['target'] == 'twits':
                             obj.update(twits=element['current'])
                         else:
-                            obj.update(user_created=element['current'])
+                            obj.update(user_created=element['comma_current'])
                     elif platform == 'tiktok':
                         if element['target'] == 'followers':
                             obj.update(followers=element['current'])
@@ -862,7 +862,7 @@ class DataReportAPI(APIView):
                                 instance = DataModels[platform](views=element['current'],reserved_date = start_date)
                                 instance.save()
                             else:
-                                instance = DataModels[platform](user_created=element['current'])
+                                instance = DataModels[platform](user_created=element['comma_current'])
                                 instance.save()
                         elif platform == 'vlive':
                             if element['target'] == 'members':
@@ -889,7 +889,7 @@ class DataReportAPI(APIView):
                                 instance = DataModels[platform](twits=element['current'],reserved_date = start_date)
                                 instance.save()
                             else:
-                                instance = DataModels[platform](user_created=element['current'],reserved_date = start_date)
+                                instance = DataModels[platform](user_created=element['comma_current'],reserved_date = start_date)
                                 instance.save()
                         elif platform == 'tiktok':
                             if element['target'] == 'followers':

@@ -320,6 +320,7 @@ $(document).on('change','#start_date',function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
+            location.reload();
         },
     })
 })
@@ -404,6 +405,7 @@ $(document).on('change','#end_date',function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
+            location.reload();
         },
     })
 })
@@ -489,7 +491,7 @@ $(document).on('click','.platform-name',function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
-            $('#result-table').eq(0).empty();
+            location.reload();
         },
     })
 
@@ -639,7 +641,7 @@ $('.btn-close').click(function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
-            $('#result-table').eq(0).empty();
+            location.reload();
         },
     })
 
@@ -715,7 +717,7 @@ $('.btn-close-2').click(function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
-            $('#result-table').eq(0).empty();
+            location.reload();
         },
     })
 
@@ -797,7 +799,7 @@ $('#update').click(function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
-            $('#result-table').eq(0).empty();
+            location.reload();
         },
     })
    
