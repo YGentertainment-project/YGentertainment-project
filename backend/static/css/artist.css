@@ -90,8 +90,8 @@
 
 .title-th{
     font-weight: bold;
-    background-color: lightblue;
     color: white;
+    font-size : 1rem !important;
 }
 
 .artist-add-table th, .artist-add-table td{
