@@ -117,15 +117,15 @@ def schedules(request):
                 timezone="Asia/Seoul",
             )
             # 존재하는 task는 상태 및 interval만 업데이트
-            if PeriodicTask.objects.filter(name="{}_schedule_crawling".format(platform)).exists():
-                task = PeriodicTask.objects.get(name="{}_schedule_crawling".format(platform))
+            if PeriodicTask.objects.filter(name="{}_{}_schedule_crawling".format(platform, hour)).exists():
+                task = PeriodicTask.objects.get(name="{}_{}_schedule_crawling".format(platform, hour))
                 task.enabled = True
                 task.crontab = schedule
                 task.save()
             else:
                 PeriodicTask.objects.create(
                     crontab=schedule,
-                    name="{}_schedule_crawling".format(platform),
+                    name="{}_{}_schedule_crawling".format(platform, hour),
                     task="{}_schedule_crawling".format(platform),
                     # args=json.dumps((platform,)),
                 )

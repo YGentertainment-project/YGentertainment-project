@@ -42,7 +42,7 @@ class TiktokSpider(scrapy.Spider):
                 pass
             else:
                 artist = response.request.meta["artist"]
-                youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+                youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
                 uploads = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
                 followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
                 likes = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()

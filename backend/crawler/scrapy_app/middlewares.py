@@ -144,7 +144,7 @@ class NoLoginDownloaderMiddleware:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located(
-                            (By.ID, "YouTubeUserTopInfoWrap")
+                            (By.ID, "YouTubeUserTopInfoBlock")
                         )
                     )
                 except TimeoutException:

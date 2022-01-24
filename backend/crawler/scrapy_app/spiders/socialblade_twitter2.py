@@ -42,7 +42,7 @@ class Twitter2Spider(scrapy.Spider):
                 pass
             else:
                 artist = response.request.meta["artist"]
-                youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+                youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
                 followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
                 twits = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
                 user_created = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[6]/span[2]/text()").get()
