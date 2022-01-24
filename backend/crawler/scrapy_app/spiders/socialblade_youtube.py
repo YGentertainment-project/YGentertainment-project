@@ -5,6 +5,7 @@ from ..items import SocialbladeYoutubeItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
@@ -61,7 +62,7 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             artist = response.request.meta["artist"]
-            youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+            youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
             uploads = response.xpath(
                 f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
             uploads = self.parse_comma_text(uploads)
@@ -79,7 +80,7 @@ class YoutubeSpider(scrapy.Spider):
             item["subscribers"] = subscribers
             item["views"] = views
             item["user_created"] = user_created
-            # item["platform"] = self.name
+            item["reserved_date"] = datetime.now().date()
             item["url"] = response.url
             yield item
 
@@ -88,7 +89,7 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             artist = response.request.meta["artist"]
-            rightcolumn = "right-column"
+            rightcolumn = '\"right-column\"'
             view_text = response.xpath(
                 f"//*[@id={rightcolumn}]/yt-formatted-string[3]/text()").get()
             # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
@@ -101,4 +102,5 @@ class YoutubeSpider(scrapy.Spider):
             item["views"] = views
             item["user_created"] = user_created
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item

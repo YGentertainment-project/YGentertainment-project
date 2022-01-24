@@ -1,10 +1,9 @@
-
 import scrapy
 from ..items import MelonItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
-from django.db.models import Q
+from datetime import datetime
 
 
 class MelonSpider(scrapy.Spider):
@@ -18,19 +17,17 @@ class MelonSpider(scrapy.Spider):
     def start_requests(self):
         crawl_url = {}
         melon_platform_id = Platform.objects.get(name="melon").id
-        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=melon_platform_id) & Q(target_url__istartswith="https://xn--o39an51b2re.com"))
+        CrawlingTarget = CollectTarget.objects.filter(platform_id=melon_platform_id)
         for row in CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
-            crawl_url[artist_name] = artist_url
+            artist_urls = [row.target_url, row.target_url_2]
+            crawl_url[artist_name] = artist_urls
 
-        for artist, url in crawl_url.items():
+        for artist, urls in crawl_url.items():
             print("artist : {}, url : {}, url_len: {}".format(
-                artist, url, len(url)))
-            if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
-            else:
-                continue
+                artist, urls[0], len(urls[0])))
+            yield scrapy.Request(url=urls[0], callback=self.parse, encoding="utf-8", meta={"artist": artist,
+                                                                                           "next": urls[1]})
 
     def parse(self, response):
         artist = response.meta["artist"]
@@ -46,6 +43,7 @@ class MelonSpider(scrapy.Spider):
                                    "streams": streaming,
                                    "url1": url1})
 
+    def parse_melon(self, response):
         item = MelonItem()
         d_like_count = '\"d_like_count\"'
         fans = response.xpath(
@@ -56,4 +54,5 @@ class MelonSpider(scrapy.Spider):
         item["fans"] = fans
         item["url1"] = response.meta["url1"]
         item["url2"] = response.url
+        item["reserved_date"] = datetime.now().date()
         yield item

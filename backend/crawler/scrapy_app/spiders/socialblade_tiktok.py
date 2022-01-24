@@ -4,6 +4,7 @@ from ..items import SocialbladeTiktokItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
@@ -42,7 +43,7 @@ class TiktokSpider(scrapy.Spider):
                 pass
             else:
                 artist = response.request.meta["artist"]
-                youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+                youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
                 uploads = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
                 followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
                 likes = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
@@ -55,4 +56,5 @@ class TiktokSpider(scrapy.Spider):
             item["followers"] = 0 if not followers else followers.replace(",", "")
             item["likes"] = 0 if not likes else likes.replace(",", "")
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item
