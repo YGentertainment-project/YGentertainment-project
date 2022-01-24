@@ -4,6 +4,7 @@ from ..items import SocialbladeTwitter2Item
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
@@ -42,7 +43,7 @@ class Twitter2Spider(scrapy.Spider):
                 pass
             else:
                 artist = response.request.meta["artist"]
-                youtubeusertopinfoblock = "YouTubeUserTopInfoBlock"
+                youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
                 followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
                 twits = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
                 user_created = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[6]/span[2]/text()").get()
@@ -56,4 +57,5 @@ class Twitter2Spider(scrapy.Spider):
             item["twits"] = twits.replace(",", "")
             item["user_created"] = user_created
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item

@@ -3,6 +3,7 @@ from ..items import WeverseItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 
 class WeverseSpider(scrapy.Spider):
@@ -38,4 +39,5 @@ class WeverseSpider(scrapy.Spider):
         item["artist"] = artist
         item["weverses"] = 0 if not sub else int(sub[0][:-6].replace(",", ""))
         item["url"] = response.url
+        item["reserved_date"] = datetime.now().date()
         yield item

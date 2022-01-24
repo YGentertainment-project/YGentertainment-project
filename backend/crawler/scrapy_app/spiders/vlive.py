@@ -7,6 +7,7 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 from ..items import VliveItem
+from datetime import datetime
 
 
 class VliveSpider(scrapy.Spider):
@@ -45,4 +46,5 @@ class VliveSpider(scrapy.Spider):
         item["plays"] = videoplay
         item["videos"] = videocount
         item["url"] = response.url
+        item["reserved_date"] = datetime.now().date()
         yield item
