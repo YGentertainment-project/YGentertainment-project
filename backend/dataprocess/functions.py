@@ -1,55 +1,16 @@
 import datetime
+from gc import collect
 from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule
-from dataprocess.models import Platform, Artist, CollectTarget
-from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
-                            Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
+from dataprocess.models import Platform, Artist, CollectTarget, CollectData
 
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.serializers import ArtistSerializer, PlatformSerializer, CollectTargetSerializer
-from crawler.serializers import (SocialbladeYoutubeSerializer, SocialbladeTiktokSerializer, SocialbladeTwitterSerializer,
-                                SocialbladeTwitter2Serializer, WeverseSerializer, CrowdtangleInstagramSerializer,
-                                CrowdtangleFacebookSerializer, VliveSerializer, MelonSerializer, SpotifySerializer)
-
-DataModels = {
-            "youtube": SocialbladeYoutube,
-            "tiktok": SocialbladeTiktok,
-            "twitter": SocialbladeTwitter,
-            "twitter2": SocialbladeTwitter2,
-            "weverse": Weverse,
-            "instagram": CrowdtangleInstagram,
-            "facebook": CrowdtangleFacebook,
-            "vlive": Vlive,
-            "melon": Melon,
-            "spotify": Spotify,
-        }
-
-DataSerializers = {
-            "youtube": SocialbladeYoutubeSerializer,
-            "tiktok": SocialbladeTiktokSerializer,
-            "twitter": SocialbladeTwitterSerializer,
-            "twitter2": SocialbladeTwitter2Serializer,
-            "weverse": WeverseSerializer,
-            "instagram": CrowdtangleInstagramSerializer,
-            "facebook": CrowdtangleFacebookSerializer,
-            "vlive": VliveSerializer,
-            "melon": MelonSerializer,
-            "spotify": SpotifySerializer,
-        }
-
 
 def get_platform_data(artist, platform, type, start_date, end_date, collect_item_list):
-    # 각각 이용하는 걸로 수정
-    if not platform in DataModels:
-        return []
-    model_fields = DataModels[platform]._meta.fields
-    model_fields_name = []
-    for model_field in model_fields:
-        model_fields_name.append(model_field.name)
-
     filter_datas = []
     # 길이 초기화
     for i in collect_item_list:
@@ -59,14 +20,13 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     if type == "누적":
         # today_date = datetime.datetime.today()
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-        filter_objects = DataModels[platform].objects.filter(
-            artist=artist,
-            reserved_date__year=start_date_dateobject.year,
-            reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
+        filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
         if filter_objects.exists():
             filter_value = filter_objects.values().first()
+            filter_value = filter_value["collect_items"]
             # 숫자필드값+user_created만 보내주기
-            for field_name in model_fields_name:
+            for field_name in filter_value.keys():
                 if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name != "fans":
                     # 싱크 맞춰서 넣기
                     filter_datas[collect_item_list.index(field_name)] = filter_value[field_name]
@@ -76,20 +36,20 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     elif type == "기간별":
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
         end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
-        filter_start_objects = DataModels[platform].objects.filter(
-            artist=artist,
-            reserved_date__year=start_date_dateobject.year,
-           reserved_date__month=start_date_dateobject.month, reserved_date__day=start_date_dateobject.day)
-        filter_end_objects = DataModels[platform].objects.filter(
-            artist=artist,
-            reserved_date__year=end_date_dateobject.year,
-            reserved_date__month=end_date_dateobject.month, reserved_date__day=end_date_dateobject.day)
+        filter_start_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+        filter_end_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
+            collect_items__reserved_date = f'{end_date_dateobject.year}-{end_date_dateobject.month}-{end_date_dateobject.day}')
         if filter_start_objects.exists() and filter_end_objects.exists():
             filter_start_value = filter_start_objects.values().first()
             filter_end_value = filter_end_objects.values().first()
+            filter_start_value = filter_start_value["collect_items"]
+            filter_end_value = filter_end_value["collect_items"]
             # 숫자필드값+user_created만 보내주기
-            for field_name in model_fields_name:
-                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name != "fans":
+            for field_name in filter_start_value.keys():
+                if field_name == "user_created":
+                    filter_datas[collect_item_list.index(field_name)] = filter_start_value[field_name]
+                elif field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name != "fans":
                     if filter_end_value[field_name] is not None and filter_start_value[field_name] is not None:
                         filter_datas[collect_item_list.index(field_name)] = filter_end_value[field_name]-filter_start_value[field_name]
                         # 둘 중 하나라도 field값이 없으면 NULL로 들어감
@@ -203,6 +163,12 @@ def import_datareport(worksheet, excel_import_date):
     platform_data_list = []
     row_num = 0
 
+    if excel_import_date is None:
+        target_date = datetime.datetime.today()
+    else:
+        target_date = datetime.datetime.strptime(excel_import_date, "%Y-%m-%d")
+    target_date = datetime.date(target_date.year, target_date.month, target_date.day)
+
     for row in worksheet.iter_rows():
         # 플랫폼 정보 나열
         if row_num == 0:
@@ -274,8 +240,7 @@ def import_datareport(worksheet, excel_import_date):
                     if current_index >= platform_data_list[platform_index]["item_num"]:
                         # 데이터 저장
                         data_json["artist"] = artist_name
-                        # turn_off_auto_now_add(DataModels[platform_name], "recorded_date")
-                        save_collect_data_target(data_json, platform_name, excel_import_date)
+                        save_collect_data_target(data_json, platform_name, target_date)
                         platform_index += 1
                         current_index = 0
                         data_json = {}
@@ -476,53 +441,27 @@ def import_total(worksheet):
         save_collect_target_item(collect_target_item_data)
 
 
-def turn_off_auto_now(ModelClass, field_name):
-    def auto_now_off(field):
-        field.auto_now = False
-    do_to_model(ModelClass, field_name, auto_now_off)
-
-
-def turn_off_auto_now_add(ModelClass, field_name):
-    def auto_now_add_off(field):
-        field.auto_now_add = False
-    do_to_model(ModelClass, field_name, auto_now_add_off)
-
-
-def do_to_model(ModelClass, field_name, func):
-    model_fields = ModelClass._meta.fields
-    for model_field in model_fields:
-        if model_field.name == field_name:
-            break
-    func(model_field)
-
-
-def save_collect_data_target(data_json, platform, excel_import_date):
+def save_collect_data_target(data_json, platform, target_date):
     """
     수집(크롤링) 데이터 저장
     """
-    if excel_import_date is None:
-        target_date = datetime.datetime.today()
-    else:
-        target_date = datetime.datetime.strptime(excel_import_date, "%Y-%m-%d")
-
-    obj = DataModels[platform].objects.filter(artist=data_json["artist"], reserved_date__year=target_date.year,
-                reserved_date__month=target_date.month, reserved_date__day=target_date.day).first()
-    target_date = datetime.date(target_date.year, target_date.month, target_date.day)
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        # datefield 저장
-        data_json["reserved_date"] = target_date
-        platform_serializer = DataSerializers[platform](data=data_json)
-        if platform_serializer.is_valid():
-            # platform_serializer.recorded_date = recorded_date
-            platform_serializer.save()
-    # 있는 건 업데이트
-    else:
-        data_json["reserved_date"] = target_date
-        platform_serializer = DataSerializers[platform](obj, data=data_json)
-        if platform_serializer.is_valid():
-            platform_serializer.save()
-    # artist 이외 값이 없으면 저장 안됨
+    if len(data_json.keys())==1:
+        return
+    # collectdata 저장
+    data_json["reserved_date"] = f'{target_date.year}-{target_date.month}-{target_date.day}'
+    data_json["platform"] = platform
+    artist_object = Artist.objects.filter(name=data_json["artist"])
+    artist_object = artist_object.values()[0]
+    platform_object = Platform.objects.filter(name=platform)
+    platform_object = platform_object.values()[0]
+    collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object["id"],
+                            artist_id = artist_object["id"])
+    collecttarget_object = collecttarget_object.values()[0]
+    CollectData.objects.update_or_create(
+        collect_target_id = collecttarget_object['id'],
+        collect_items__reserved_date = f'{target_date.year}-{target_date.month}-{target_date.day}',
+        defaults = {"collect_items": data_json}
+    )
 
 
 def save_platform(data_json):

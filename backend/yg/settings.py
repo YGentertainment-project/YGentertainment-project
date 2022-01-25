@@ -27,7 +27,7 @@ with open(os.path.join(DATA_DIR, "config", "secret.key"), "r") as f:
     SECRET_KEY = f.read()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
