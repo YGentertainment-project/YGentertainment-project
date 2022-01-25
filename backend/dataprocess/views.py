@@ -882,11 +882,11 @@ class DataReportAPI(APIView):
                             obj.update(uploads=element['current'])
                         elif element['target'] == 'subscribers':
                             if past_subscribers != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_subscribers}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s subscribers of {platform} [{past_subscribers}-> {element['current']}]")
                             obj.update(subscribers=element['current'])
                         elif element['target'] == 'views':
                             if past_views != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_views}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s views of {platform} [{past_views}-> {element['current']}]")
                             obj.update(views=element['current'])
                         else:
                             obj.update(user_created=element['comma_current'])
@@ -896,15 +896,15 @@ class DataReportAPI(APIView):
                             obj.update(members=element['current'])
                         elif element['target'] == 'videos':
                             if past_videos != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_videos}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s videos of {platform} [{past_videos}-> {element['current']}]")
                             obj.update(videos=element['current'])
                         elif element['target'] == 'likes':
                             if past_likes != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_likes}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s likes of {platform} [{past_likes}-> {element['current']}]")
                             obj.update(likes=element['current'])
                         else:
                             if past_plays != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_plays}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s plays of {platform} [{past_plays}-> {element['current']}]")
                             obj.update(plays=element['current'])
     
                     elif platform == 'instagram' or platform=='facebook':
@@ -915,11 +915,11 @@ class DataReportAPI(APIView):
                     elif platform == 'twitter' or platform=='twitter2':
                         if element['target'] == 'followers':
                             if past_followers != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_followers}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s followers of {platform} [{past_followers}-> {element['current']}]")
                             obj.update(followers=element['current'])
                         elif element['target'] == 'twits':
                             if past_twits != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_twits}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s twits of {platform} [{past_twits}-> {element['current']}]")
                             obj.update(twits=element['current'])
                         else:
                             obj.update(user_created=element['comma_current'])
@@ -927,7 +927,7 @@ class DataReportAPI(APIView):
                     elif platform == 'tiktok':
                         if element['target'] == 'followers':
                             if past_followers != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_followers}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s followers of {platform} [{past_followers}-> {element['current']}]")
                             obj.update(followers=element['current'])
                         elif element['target'] == 'uploads':
                             if past_uploads != element['current']:
@@ -935,7 +935,7 @@ class DataReportAPI(APIView):
                             obj.update(uploads=element['current'])
                         else:
                             if past_likes != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_likes}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s likes of {platform} [{past_likes}-> {element['current']}]")
                             obj.update(likes=element['current'])
 
                     elif platform == 'weverse':
@@ -946,21 +946,21 @@ class DataReportAPI(APIView):
                     elif platform == 'spotify':
                         if element['target'] == 'monthly_listens':
                             if past_listens != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_listens}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s listens of {platform} [{past_listens}-> {element['current']}]")
                             obj.update(monthly_listens=element['current'])
                         else:
                             if past_followers != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_followers}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s followers of {platform} [{past_followers}-> {element['current']}]")
                             obj.update(followers=element['current'])
                     
                     elif platform == 'melon':
                         if element['target'] == 'listeners':
                             if past_listeners != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_listeners}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s listeners of {platform} [{past_listeners}-> {element['current']}]")
                             obj.update(listeners=element['current'])
                         else:
                             if past_streams != element['current']:
-                                userlogger.info(f"[CHANGE]: {artist}'s uploads of {platform} [{past_streams}-> {element['current']}]")
+                                userlogger.info(f"[CHANGE]: {artist}'s streams of {platform} [{past_streams}-> {element['current']}]")
                             obj.update(streams=element['current'])
                 else:
                     if element['artist'] in a_list:
