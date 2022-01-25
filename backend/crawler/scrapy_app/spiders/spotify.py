@@ -12,22 +12,16 @@ from datetime import datetime
 
 class SpotifySpider(scrapy.Spider):
     name = "spotify"
+    spotify_platform_id = Platform.objects.get(name="spotify").id
+    CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id) & Q(target_url__istartswith="https://open.spotify.com"))
 
     def start_requests(self):
-        crawl_url = {}
-        spotify_platform_id = Platform.objects.get(name="spotify").id
-        CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id) & Q(target_url__istartswith="https://open.spotify.com"))
-        for row in CrawlingTarget:
+        for row in self.CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
             artist_url = row.target_url
-            crawl_url[artist_name] = artist_url
-        for artist, url in crawl_url.items():
             print("artist : {}, url : {}, url_len: {}".format(
-                artist, url, len(url)))
-            if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
-            else:
-                continue
+                artist_name, artist_url, len(artist_url)))
+            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name})
 
     def parse(self, response):
         artist = response.meta["artist"]
