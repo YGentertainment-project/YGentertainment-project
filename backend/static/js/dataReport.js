@@ -191,14 +191,14 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
 
 //show crawled data
 const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
-    $('.thead-light').append(createTableHeader(platform_list));
+    $('#data-report-headers').append(createTableHeader(platform_list));
     createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
 }
 
 
 //show empty table (when data is none)
 const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
-    $('.thead-light').append(createTableHeader(platform_list));
+    $('#data-report-headers').append(createTableHeader(platform_list));
     createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
 
@@ -259,6 +259,8 @@ $(document).on('change','#start_date',function(){
         return;
     }
 
+    changedDatas = [];
+
 
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
@@ -298,7 +300,7 @@ $(document).on('change','#start_date',function(){
 
             console.log(platform_header);
 
-            $('.thead-light').eq(0).empty();
+            $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -339,6 +341,8 @@ $(document).on('change','#end_date',function(){
     if(!platform){
         return false;
     } 
+
+    changedDatas = [];
 
 
     if(type == undefined){
@@ -387,7 +391,7 @@ $(document).on('change','#end_date',function(){
 
             console.log(platform_header);
 
-            $('.thead-light').eq(0).empty();
+            $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -432,6 +436,8 @@ $(document).on('click','.platform-name',function(){
         return;
     }
 
+    changedDatas = [];
+
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
@@ -469,7 +475,7 @@ $(document).on('click','.platform-name',function(){
 
             console.log(platform_header);
 
-            $('.thead-light').eq(0).empty();
+            $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -511,10 +517,8 @@ $(document).on('change','.data-input' ,function(){
     var artist = thisRow[0].innerHTML;
     var prev = $(this).data('val');
     var current = $(this).val();
-    console.log("artist name: "+artist);
-    console.log("target: "+target);
-    console.log("Prev value " + prev);
-    console.log("New value " + current);
+
+
 
     //최근 수정 항목만 살리기
     const itemToFind = changedDatas.find(function(item) {return item.artist === artist && item.target === target})
@@ -529,8 +533,9 @@ $(document).on('change','.data-input' ,function(){
         'target':target,
         'prev':prev,
         'current':uncomma(current), //콤마가 찍히지 않은 숫자 
-        'comma_current': current //콤마가 찍힌 숫자(view 용)
+        'comma_current': current, //콤마가 찍힌 숫자(view 용)
     })
+
 
 });
 
@@ -619,7 +624,7 @@ $('.btn-close').click(function(){
 
             console.log(platform_header);
 
-            $('.thead-light').eq(0).empty();
+            $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -695,7 +700,7 @@ $('.btn-close-2').click(function(){
 
             console.log(platform_header);
 
-            $('.thead-light').eq(0).empty();
+            $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
                 $('#update-data').show();
@@ -725,6 +730,39 @@ $('#update').click(function(){
     var type = $(':radio[name="view_days"]:checked').val(); //type (누적별)
     var platform_name = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
     var start_date = $('input[name=start_date]').val(); //date to change data
+    var allArtists= $('#board').find('th'); //all artist list
+    var th = $('#data-report-headers').find('tr').children();
+    var targets = [];
+
+    for(var i = 1; i< th.length; i++){ //target 이름
+        targets.push(th[i].innerHTML);
+    } 
+
+    var changedDatasArtists = []; //바뀐 값이 있는 아티스트
+    changedDatas.forEach(data => {
+        changedDatasArtists.push(data['artist'])
+    })
+
+    let jsonFieldDatas = []; //보낼 데이터
+    for(var i = 0; i<allArtists.length; i++){
+        if(changedDatasArtists.includes(allArtists[i].innerHTML)){
+            var element = {};
+            element['artist'] = allArtists[i].innerHTML;
+            element['reserved_date'] = start_date;
+            element['platform'] = platform_name;
+            for (var j=0; j<targets.length; j++){
+                if(targets[j] !== 'user_created'){
+                    element[targets[j]] =  uncomma($('#board').find(`tr:eq(${i})`).find(`td:eq(${j})`).find('input.data-input').val())
+                } else{
+                    element[targets[j]] = $('#board').find(`tr:eq(${i})`).find(`td:eq(${j})`).find('input.data-input').val()
+                }
+            }
+            jsonFieldDatas.push(element)
+        }
+    }
+
+    console.log(jsonFieldDatas);
+
 
     //modal 닫기
     var modal = $('div').find('.modal')
@@ -733,73 +771,7 @@ $('#update').click(function(){
         modal.css('display','none');
     } 
 
-    //기본적인 정보를 포함
-    changedDatas.push({
-        "platform_name":platform_name,
-        "start_date":start_date
-    })
-
-    console.log(changedDatas);
-
-
-    //update or create
-    $.ajax({
-        url: '/dataprocess/api/daily/',
-        type: 'POST',
-        datatype:'json',
-        data: JSON.stringify(changedDatas),
-        success: res => {
-            alert("저장되었습니다.");
-            $('#changed-data-list').eq(0).empty();
-            changedDatas = [];
-
-            let data_list = [];
-            let artist_list = [];
-            data_list = res.data //필터링 데이터
-            artist_list = res.artists //DB 아티스트 리스트
-            platform_header = res.platform //수집 항목
-
-            console.log(data_list);
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            if(res.data === 'no data'){
-                crawling_artist_list = res.crawling_artist_list
-            } else{
-                for (let i = 0; i<data_list.length; i++){
-                    crawling_artist_list.push(data_list[i]['artist']);
-                }
-            }
-
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-
-            console.log(platform_header);
-
-            $('.thead-light').eq(0).empty();
-            $('#board').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform_name+' 리포트');
-            if(res.data === 'no data'){
-                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
-            } else{
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            }
-        },
-        error: e => {
-            console.log(e);
-            if(type === '기간별'){
-                var result = JSON.parse(e.responseText);
-                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
-            }
-            location.reload();
-        },
-    })
+   
    
 })
 

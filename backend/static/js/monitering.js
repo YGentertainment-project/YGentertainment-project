@@ -1,4 +1,23 @@
-//플랫폼별 스케줄러
+//task info
+function getTaskinfo(){
+    $.ajax({
+        url: '/crawler/api/taskinfos/',
+        type: 'GET',
+        datatype: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+          const taskinfos = res.taskinfos;
+          return taskinfos
+        },
+        error: e => {
+            console.log(e);
+            const taskinfos = [];
+            return taskinfos
+        },
+    })
+}
+
+//플랫폼별 스케줄러 시간 로딩 및 크롤러 상태 로딩
 $(document).ready(function(){
     $.ajax({
         url: '/crawler/api/schedules/',
@@ -11,17 +30,10 @@ $(document).ready(function(){
                 var name = schedule.name
                 var splitResult = name.split('_');
 
-                console.log(splitResult[0]);
-                console.log(schedule.hour);
-                console.log(schedule.minute);
-
                 var tr = $('#scheduler-body').find('tr')
 
                 for(var r=0;r<tr.length;r++){
                     var cells = tr[r].getElementsByTagName("td");
-                    console.log(cells[0].innerHTML);
-                    console.log(cells[1].firstElementChild.value);
-                    console.log(cells[2].firstElementChild.value);
 
                     if(splitResult[0] === cells[0].innerHTML){
                         cells[1].firstElementChild.value = schedule.hour;
@@ -38,6 +50,17 @@ $(document).ready(function(){
             alert('Failed to listup schedules')
         },
     })
+
+
+    //crawler status
+    let success = 0;
+    let error = 0;
+    let running = 0;
+
+
+    $('.state-description-success').text('정상 '+success+'건');
+    $('.state-description-error').text('오류 '+error+'건');
+    $('.state-description-running').text('실행 중 ' +running+'건');
 })
 
 
@@ -78,29 +101,5 @@ $(document).on('click','#save-schedule',function(){
 })
 
 
-function getTaskinfo(){
-    $.ajax({
-        url: api_domain + 'taskinfos/',
-        type: 'GET',
-        datatype: 'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-          const taskinfos = res.taskinfos;
-          return taskinfos
-        },
-        error: e => {
-            const taskinfos = [];
-            return taskinfos
-        },
-    })
-}
 
-$(document).ready(function(){
-    let success = 0;
-    let error = 0;
-    let running = 0;
 
-    $('.state-description-success').text('정상 '+success+'건');
-    $('.state-description-error').text('오류 '+error+'건');
-    $('.state-description-running').text('실행 중 ' +running+'건');
-})

@@ -276,6 +276,11 @@ input{
     font-weight: bold !important;
 }
 
+#data-report-headers{
+    position: sticky;
+    top:0;
+}
+
 .input-transparent input{
     border: 0;
     background-color: #f8f9fa;
