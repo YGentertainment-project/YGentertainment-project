@@ -459,6 +459,7 @@ def save_collect_data_target(data_json, platform, target_date):
     collecttarget_object = collecttarget_object.values()[0]
     CollectData.objects.update_or_create(
         collect_target_id = collecttarget_object['id'],
+        collect_items__reserved_date = f'{target_date.year}-{target_date.month}-{target_date.day}',
         collect_items = data_json,
         defaults = {"collect_items": data_json}
     )
