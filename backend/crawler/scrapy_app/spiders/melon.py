@@ -31,8 +31,8 @@ class MelonSpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta["artist"]
-        listener_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="listeners")).xpath
-        streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath
+        listener_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="listeners")).xpath + "/text()"
+        streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath + "/text()"
 
         listener = response.xpath(listener_xpath).extract()[2].replace(",", "")
         streaming = response.xpath(streaming_xpath).extract()[2].replace(",", "")
@@ -46,7 +46,7 @@ class MelonSpider(scrapy.Spider):
 
     def parse_melon(self, response):
         item = MelonItem()
-        fans_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="fans")).xpath
+        fans_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="fans")).xpath + "/text()"
         fans = response.xpath(fans_xpath).get().replace(",", "")
         item["artist"] = response.meta["artist"]
         item["listeners"] = response.meta["listeners"]
