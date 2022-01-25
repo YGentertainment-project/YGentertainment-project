@@ -5,6 +5,7 @@ from ..items import SocialbladeYoutubeItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
@@ -79,7 +80,7 @@ class YoutubeSpider(scrapy.Spider):
             item["subscribers"] = subscribers
             item["views"] = views
             item["user_created"] = user_created
-            # item["platform"] = self.name
+            item["reserved_date"] = datetime.now().date()
             item["url"] = response.url
             yield item
 
@@ -101,4 +102,5 @@ class YoutubeSpider(scrapy.Spider):
             item["views"] = views
             item["user_created"] = user_created
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item

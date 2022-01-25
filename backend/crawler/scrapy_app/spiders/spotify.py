@@ -7,6 +7,7 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 from django.db.models import Q
+from datetime import datetime
 
 
 class SpotifySpider(scrapy.Spider):
@@ -49,4 +50,5 @@ class SpotifySpider(scrapy.Spider):
         item["followers"] = follow
         item["url1"] = response.url
         item["url2"] = None
+        item["reserved_date"] = datetime.now().date()
         yield item

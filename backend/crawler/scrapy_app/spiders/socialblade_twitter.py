@@ -4,6 +4,7 @@ from ..items import SocialbladeTwitterItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
@@ -56,4 +57,5 @@ class TwitterSpider(scrapy.Spider):
             item["twits"] = twits.replace(",", "")
             item["user_created"] = user_created
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item

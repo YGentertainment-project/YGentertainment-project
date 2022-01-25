@@ -3,6 +3,7 @@ from ..items import MelonItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
 
 
 class MelonSpider(scrapy.Spider):
@@ -53,4 +54,5 @@ class MelonSpider(scrapy.Spider):
         item["fans"] = fans
         item["url1"] = response.meta["url1"]
         item["url2"] = response.url
+        item["reserved_date"] = datetime.now().date()
         yield item

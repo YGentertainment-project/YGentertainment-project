@@ -4,6 +4,7 @@ import scrapy
 from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
+from datetime import datetime
 
 
 class CrowdTangleSpider(scrapy.Spider):
@@ -41,10 +42,12 @@ class CrowdTangleSpider(scrapy.Spider):
             item["artist"] = artist
             item["followers"] = int(follower_num.replace(",", ""))
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item
         else:
             item = CrowdtangleInstagramItem()
             item["artist"] = artist
             item["followers"] = int(follower_num.replace(",", ""))
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item

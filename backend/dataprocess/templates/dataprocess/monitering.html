@@ -7,12 +7,14 @@
     <div class="forms">
 
         <div class="contents">
-            <div class="contents-scheduler">
+            <div class="contents-scheduler" style="overflow-y: scroll;">
                 <label style="text-align: start; margin-bottom: 5px; font-weight: bold;">스케줄링 정책</label>
-                <table id="scheduler-table">
-                    <thead id="scheduler-header">
+                <table id="scheduler-table" class="table table-centered table-nowrap mb-0 rounded">
+                    <thead id="scheduler-header"  class="thead-dark">
                         <td>플랫폼</td>
-                        <td>크롤링 스케줄</td>
+                        <td>크롤링 스케줄 (시)</td>
+                        <td>크롤링 스케줄 (분)</td>
+                        <td></td>
                     </thead>
                     <tbody id="scheduler-body">
                         {% if platforms %}
@@ -20,17 +22,17 @@
                         <tr>
                             <td style="text-align: center;">{{platform.name}}</td>
                             <td style="text-align: start;">
-                                <select style="width:35%; margin:2px;" name="hour" id="hour-select">
-                                    <option value="00">00</option>
-                                    <option value="01">01</option>
-                                    <option value="02">02</option>
-                                    <option value="03">03</option>
-                                    <option value="04">04</option>
-                                    <option value="05">05</option>
-                                    <option value="06">06</option>
-                                    <option value="07">07</option>
-                                    <option value="08">08</option>
-                                    <option value="09">09</option>
+                                <select style="margin:2px;" name="hour" id="hour-select" class="form-select">
+                                    <option value="0">00</option>
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
                                     <option value="10">10</option>
                                     <option value="11">11</option>
                                     <option value="12">12</option>
@@ -46,18 +48,20 @@
                                     <option value="22">22</option>
                                     <option value="23">23</option>
                                 </select>
-                                시
-                                <select style="width:35%; margin:2px;" name="minute" id="minute-select">
-                                    <option value="00">00</option>
-                                    <option value="01">01</option>
-                                    <option value="02">02</option>
-                                    <option value="03">03</option>
-                                    <option value="04">04</option>
-                                    <option value="05">05</option>
-                                    <option value="06">06</option>
-                                    <option value="07">07</option>
-                                    <option value="08">08</option>
-                                    <option value="09">09</option>
+                                
+                            </td> 
+                            <td>
+                                <select style="margin:2px;" name="minute" id="minute-select" class="form-select">
+                                    <option value="0">00</option>
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
                                     <option value="10">10</option>
                                     <option value="11">11</option>
                                     <option value="12">12</option>
@@ -109,8 +113,13 @@
                                     <option value="58">58</option>
                                     <option value="59">59</option>
                                 </select>
-                                분
-                            </td>           
+                                
+                            </td>
+                            <td>
+                                <label class="btn btn-primary btn-shadow border-0" id="save-schedule" style="margin: 10px">
+                                    저장
+                                </label>
+                            </td>          
                         </tr>
                         {% endfor %}
                         {% else %}
