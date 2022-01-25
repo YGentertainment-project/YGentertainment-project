@@ -780,12 +780,13 @@ class DataReportAPI(APIView):
                 # obj = CollectData.objects.filter(collect_items__artist=element['artist'], collect_items__platform=platform,
                 #             collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
                 CollectData.objects.update_or_create(
-                    collect_target_id = collecttarget_object['id'],
-                    collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}',
-                    # collect_items = element,
-                    # 바뀌는 값
-                    defaults = {"collect_items": element}
+                        collect_target_id = collecttarget_object['id'],
+                        collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}',
+                        # collect_items = element,
+                        # 바뀌는 값
+                        defaults = {"collect_items": element}
                 )
+                    
             artist_set = set()
             filter_objects = CollectData.objects.filter(collect_items__platform=platform,
                             collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')

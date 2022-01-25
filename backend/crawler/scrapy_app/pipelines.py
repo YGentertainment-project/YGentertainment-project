@@ -238,6 +238,6 @@ def datasave(spider_name, item):
 class CrawlerPipeline(object):
     def process_item(self, item, spider):
         spider_name = spider.name  # spider의 이름을 추출 => 동적으로 spider에 따라 다른 pipeline 적용
-        item["recorded_date"] = timezone.now()  # 업데이트 시간 기록
+        item["recorded_date"] = timezone.localtime()  # 업데이트 시간 기록
         process_itemsave(spider_name, item)
         datasave(spider_name, item)

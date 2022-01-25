@@ -761,6 +761,11 @@ $('#update').click(function(){
         }
     }
 
+    jsonFieldDatas.push({
+        'platform_name':platform_name,
+        'start_date':start_date
+    })
+
     console.log(jsonFieldDatas);
 
 
@@ -771,6 +776,65 @@ $('#update').click(function(){
         modal.css('display','none');
     } 
 
+
+    //update or create
+    $.ajax({
+        url: '/dataprocess/api/daily/',
+        type: 'POST',
+        datatype:'json',
+        data: JSON.stringify(jsonFieldDatas),
+        success: res => {
+            alert("저장되었습니다.");
+            $('#changed-data-list').eq(0).empty();
+            changedDatas = [];
+
+            let data_list = [];
+            let artist_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+            console.log(data_list);
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            if(res.data === 'no data'){
+                crawling_artist_list = res.crawling_artist_list
+            } else{
+                for (let i = 0; i<data_list.length; i++){
+                    crawling_artist_list.push(data_list[i]['artist']);
+                }
+            }
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+
+            $('#data-report-headers').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform_name+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+            }
+            location.reload();
+        },
+    })
    
    
 })
