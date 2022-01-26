@@ -43,17 +43,27 @@ class Twitter2Spider(scrapy.Spider):
             else:
                 artist = response.request.meta["artist"]
                 youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
-                followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
-                twits = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
-                user_created = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[6]/span[2]/text()").get()
+                try:
+                    followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
+                    twits = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
+                    user_created = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[6]/span[2]/text()").get()
+                except ValueError:
+                    pass
+                    # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
-            item = SocialbladeTwitter2Item()
-            item["artist"] = artist
-            item["followers"] = followers.replace(",", "")
-            item["twits"] = twits.replace(",", "")
-            item["user_created"] = user_created
-            item["url"] = response.url
-            yield item
+            if twits is None or followers is None or user_created is None:
+                pass
+                # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+                # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+                # 오류일 경우 item을 yield 하지 않아야 합니다.
+            else:
+                item = SocialbladeTwitter2Item()
+                item["artist"] = artist
+                item["followers"] = followers.replace(",", "")
+                item["twits"] = twits.replace(",", "")
+                item["user_created"] = user_created
+                item["url"] = response.url
+                yield item

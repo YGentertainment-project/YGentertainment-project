@@ -32,10 +32,21 @@ class WeverseSpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta["artist"]
-        sub = response.xpath("/html/body/div[1]/div/section/aside/div/div[1]/text()").extract()
-        # WINNER의 경우, 페이지는 있으나 구독자 수가 공개되어 있지 않으므로 0으로 처리했습니다.
-        item = WeverseItem()
-        item["artist"] = artist
-        item["weverses"] = 0 if not sub else int(sub[0][:-6].replace(",", ""))
-        item["url"] = response.url
-        yield item
+        sub = None
+        try:
+            sub = response.xpath("/html/body/div[1]/div/section/aside/div/div[1]/text()").get()
+        except ValueError:
+            pass
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+        if sub is None:
+            pass
+            # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+            # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+            # 오류일 경우 item을 yield 하지 않아야 합니다.
+        else:
+            item = WeverseItem()
+            item["artist"] = artist
+            item["weverses"] = int(sub[:-6].replace(",", ""))
+            item["url"] = response.url
+            yield item
