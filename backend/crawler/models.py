@@ -14,6 +14,7 @@ class SocialbladeYoutube(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'youtube'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -33,6 +34,7 @@ class SocialbladeTiktok(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'tiktok'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -52,6 +54,7 @@ class SocialbladeTwitter(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'twitter'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -71,6 +74,7 @@ class SocialbladeTwitter2(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'twitter2'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -88,6 +92,7 @@ class Weverse(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'weverse'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -105,6 +110,7 @@ class CrowdtangleInstagram(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'instagram'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -122,6 +128,7 @@ class CrowdtangleFacebook(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'facebook'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -142,6 +149,7 @@ class Vlive(models.Model):
     url = models.TextField(null=True)
 
     class Meta:
+        db_table = 'vlive'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -162,6 +170,7 @@ class Melon(models.Model):
     url2 = models.TextField(null=True)
 
     class Meta:
+        db_table = 'melon'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
@@ -181,6 +190,7 @@ class Spotify(models.Model):
     url2 = models.TextField(null=True)
 
     class Meta:
+        db_table = 'spotify'
         constraints = [
             models.UniqueConstraint(
                 fields=["artist", "recorded_date"],
