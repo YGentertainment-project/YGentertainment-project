@@ -1,3 +1,4 @@
+import os
 from scrapy import signals
 from scrapy.http import HtmlResponse
 from scrapy.utils.python import to_bytes
@@ -11,6 +12,22 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from utils.shortcuts import get_env
+from datetime import datetime
+import logging
+
+formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
+crawlinglogger = logging.getLogger("CRAWLING-LOG")
+
+trfh = logging.handlers.TimedRotatingFileHandler(
+    filename = os.path.join("../backend/data/log/crawler", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    when = "midnight",
+    interval=1,
+    encoding="utf-8",
+)
+trfh.setFormatter(formatter)
+trfh.setLevel(logging.INFO)
+crawlinglogger.addHandler(trfh)
+crawlinglogger.setLevel(logging.DEBUG)
 
 production_env = (get_env("YG_ENV", "dev") == "production")
 
@@ -137,6 +154,7 @@ class NoLoginDownloaderMiddleware:
         self.driver.get(request.url)
         domain = urlparse(request.url).netloc
         print("crawling url : {}".format(request.url))
+        artist_name = request.meta["artist"]
 
         # Socialblade Case
         if domain == SOCIALBLADE_DOMAIN:
@@ -148,10 +166,10 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    pass
+                    crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
                 except NoSuchElementException:
-                    pass
+                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
 
         # Youtube Channel Case
@@ -164,10 +182,10 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    pass
+                    crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
                 except NoSuchElementException:
-                    pass
+                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
 
         # 가이섬 Channel Case
@@ -180,10 +198,10 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    pass
+                    crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
                 except NoSuchElementException:
-                    pass
+                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
         elif domain == MELON_DOMAIN:
             if request.url != MELON_ROBOT:
@@ -227,13 +245,13 @@ class LoginDownloaderMiddleware:
                 self.driver.get("https://www.weverse.io")
                 self.driver.implicitly_wait(time_to_wait=5)
             except WebDriverException:
-                pass
+                crawlinglogger.error("[400] loginpage - weverse - https://www.weverse.io")
                 # 로그인을 진행할 첫 페이지의 URL이 잘못된 형식일 경우 발생합니다.
 
             try:
                 self.driver.find_element(By.CLASS_NAME, "sc-AxjAm.dhTrPj").click()
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginbutton - weverse - https://www.weverse.io")
                 # 로그인 버튼이 클릭되지 않을 때 발생합니다.
                 # 로그인 페이지가 아닌 다른 페이지가 로딩 됐거나 로그인 버튼에 대한 locator가 변경됐을 때 발생합니다.
             self.driver.switch_to.window(self.driver.window_handles[1])
@@ -242,12 +260,12 @@ class LoginDownloaderMiddleware:
                 self.driver.find_element(By.NAME, "username").send_keys(WEVERSE_ID)
                 self.driver.find_element(By.NAME, "password").send_keys(WEVERSE_PW)
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] logininput - weverse - https://www.weverse.io")
                 # ID와 PW를 입력하는 input box에 대한 locator가 변경됐을 때 발생합니다.
             try:
                 self.driver.find_element(By.CLASS_NAME, "sc-Axmtr.hwYQYk.gtm-login-button").click()
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginbutton - weverse - https://www.weverse.io")
                 # 확인 버튼에 대한 locator가 변경됐을 때 발생합니다.
             self.driver.switch_to.window(self.driver.window_handles[0])
 
@@ -256,22 +274,22 @@ class LoginDownloaderMiddleware:
                     EC.presence_of_element_located((By.CLASS_NAME, "sc-pjHjD.CNlcm"))
                 )
             except TimeoutException:
-                pass
+                crawlinglogger.error("[400] afterloginpage - weverse - https://www.weverse.io")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginchecker - weverse - https://www.weverse.io")
                 # 로그인이 정상적으로 진행됐는 지 확인하는 특정 element의 locator가 변경됐을 때 발생합니다.
         else:
             try:
                 self.driver.get("https://apps.crowdtangle.com")
                 self.driver.implicitly_wait(time_to_wait=5)
             except WebDriverException:
-                pass
+                crawlinglogger.error("[400] loginpage - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인을 진행할 첫 페이지의 URL이 잘못된 형식일 경우 발생합니다.
             try:
                 self.driver.find_element(By.CLASS_NAME, "facebookLoginButton__authButton--lof0c").click()
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginbutton - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인 버튼이 클릭되지 않을 때 발생합니다.
                 # 로그인 페이지가 아닌 다른 페이지가 로딩 됐거나 로그인 버튼에 대한 locator가 변경됐을 때 발생합니다.
             self.driver.switch_to.window(self.driver.window_handles[1])
@@ -280,12 +298,12 @@ class LoginDownloaderMiddleware:
                 self.driver.find_element(By.ID, "email").send_keys(CROWDTANGLE_ID)
                 self.driver.find_element(By.ID, "pass").send_keys(CROWDTANGLE_PW)
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] logininput - crowdtangle - https://apps.crowdtangle.com")
                 # ID와 PW를 입력하는 input box에 대한 locator가 변경됐을 때 발생합니다.
             try:
                 self.driver.find_element(By.ID, "loginbutton").click()
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginbutton - crowdtangle - https://apps.crowdtangle.com")
                 # 확인 버튼에 대한 locator가 변경됐을 때 발생합니다.
             self.driver.switch_to.window(self.driver.window_handles[0])
             try:
@@ -293,10 +311,10 @@ class LoginDownloaderMiddleware:
                     EC.presence_of_element_located((By.CLASS_NAME, "app-container"))
                 )
             except TimeoutException:
-                pass
+                crawlinglogger.error("[400] afterloginpage - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
             except NoSuchElementException:
-                pass
+                crawlinglogger.error("[401] loginchecker - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인이 정상적으로 진행됐는 지 확인하는 특정 element의 locator가 변경됐을 때 발생합니다.
 
     def spider_closed(self, spider):
@@ -306,6 +324,7 @@ class LoginDownloaderMiddleware:
 
     def process_request(self, request, spider):
         self.driver.get(request.url)
+        artist_name = request.meta["artist"]
         print("crawling url : {}".format(request.url))
 
         if spider.name == "weverse":
@@ -315,9 +334,9 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOc"))
                     )
                 except TimeoutException:
-                    print("Can not load the page")
+                    crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                 except NoSuchElementException:
-                    print("Please check the CLASS NAME of element")
+                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
         else:
             if request.url != CROWDTANGLE_ROBOT:
                 try:
@@ -325,10 +344,10 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "report-top-level-metrics"))
                     )
                 except TimeoutException:
-                    pass
+                    crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
                 except NoSuchElementException:
-                    pass
+                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
