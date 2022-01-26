@@ -630,22 +630,16 @@ class DataReportAPI(APIView):
         # 플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = CollectData.objects.filter(collect_items__platform=platform)
-        
         objects_values = objects.values()
-        obj_datas = []
-        for v in objects_values:
-            obj_datas.append(v["collect_items"])
-
-        if len(obj_datas) > 0:
-            key_list = list(obj_datas[0].keys())
+        if len(objects_values) > 0:
+            key_list = list(objects_values[0]["collect_items"].keys())
+            for key in key_list:
+                if key in platform_list:
+                    platform_header.append(key)
+                else:
+                    continue
         else:
-            key_list = []
-        for key in key_list:
-            if key in platform_list:
-                platform_header.append(key)
-            else:
-                continue
-        
+            platform_header = platform_list
 
         try:
             if type == "누적":
@@ -773,18 +767,16 @@ class DataReportAPI(APIView):
         # 플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = CollectData.objects.filter(collect_items__platform=platform)
-    
         objects_values = objects.values()
-        obj_datas = []
-        for v in objects_values:
-            obj_datas.append(v["collect_items"])
-        key_list = list(obj_datas[0].keys())
-
-        for key in key_list:
-            if key in platform_list:
-                platform_header.append(key)
-            else:
-                continue
+        if len(objects_values) > 0:
+            key_list = list(objects_values[0]["collect_items"].keys())
+            for key in key_list:
+                if key in platform_list:
+                    platform_header.append(key)
+                else:
+                    continue
+        else:
+            platform_header = platform_list
 
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")

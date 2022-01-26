@@ -81,9 +81,22 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                         continue
                     collect_item.add(p["target_name"])
             collect_item = list(collect_item)
+
+            platform_header = []
+            objects = CollectData.objects.filter(collect_items__platform=platform_value["name"])
+            objects_values = objects.values()
+            if len(objects_values) > 0:
+                key_list = list(objects_values[0]["collect_items"].keys())
+                for key in key_list:
+                    if key in collect_item:
+                        platform_header.append(key)
+                    else:
+                        continue
+            else:
+                platform_header = collect_item
             db_platform_datas.append({
                 "platform": platform_value["name"],
-                "collect_item": collect_item
+                "collect_item": platform_header
             })
 
     # DB에서 artist 가져오기
