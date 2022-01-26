@@ -10,20 +10,22 @@
             location.href = "{% url 'dataprocess:base' %}";
         }
     </script>
-    <div class="column_layout">
-        <img class="logo-img" alt="logo" style="width:50%;"
-        src="https://news.imaeil.com/photos/2019/06/13/2019061316005257069_l.jpg" />
-
-        <div class="row_layout">
-            <button class="btn excel-btn" style="padding:10px; width:150px; margin-right: 50px; font-size: 20px;"
-            onclick= go_to_crawler()>
-                crawler
-            </button>
-    
-            <button class="btn excel-btn" style="padding:10px; width:150px; font-size: 20px;"
-            onclick= go_to_dataprocess()>
-                dataprocess
-            </button>
+    <div style="height: 100vh; background-color: white;">
+        <div class="column_layout">
+            <img class="logo-img" alt="logo" style="width:35%;"
+            src="https://news.imaeil.com/photos/2019/06/13/2019061316005257069_l.jpg" />
+            <div class="row_layout">
+                <button class="btn btn-primary border-0" style="padding:10px; margin-right: 50px; font-size: 1.1em;
+                font-weight: bold;"
+                onclick= go_to_crawler()>
+                    CRAWLER
+                </button>
+        
+                <button class="btn btn-primary border-0" style="padding:10px; font-size: 1.1em; font-weight: bold;"
+                onclick= go_to_dataprocess()>
+                    DATAPROCESS
+                </button>
+            </div>
         </div>
     </div>
 

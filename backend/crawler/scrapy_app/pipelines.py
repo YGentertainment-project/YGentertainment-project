@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Define your item pipelines here
 #
 # Don"t forget to add your pipeline to the ITEM_PIPELINES setting
@@ -8,6 +6,8 @@ from urllib import parse
 from django.utils import timezone
 from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
     Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
+
+from dataprocess.models import CollectData, CollectTarget
 
 DataModels = {
     "youtube": SocialbladeYoutube,
@@ -177,8 +177,67 @@ def update_crowdtangle(item, name):
     existingItem.save()
 
 
+def datasave(spider_name, item):
+    Target_row = CollectData()
+    json_obj = {
+        "artist": item.get("artist"),
+        "recorded_date": str(item.get("recorded_date")),
+        "reserved_date": str(item.get("reserved_date")),
+    }
+    if spider_name == "youtube":
+        json_obj["uploads"] = item.get("uploads")
+        json_obj["subscribers"] = item.get("subscribers")
+        json_obj["views"] = item.get("views")
+        json_obj["user_created"] = item.get("user_created")
+        json_obj["url"] = item.get("url")
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+    elif spider_name == "tiktok":
+        json_obj["uploads"] = item.get("uploads")
+        json_obj["followers"] = item.get("followers")
+        json_obj["likes"] = item.get("likes")
+        json_obj["url"] = item.get("url")
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+    elif spider_name == "twitter" or spider_name == "twitter2":
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+        json_obj["followers"] = item.get("followers")
+        json_obj["twits"] = item.get("twits")
+        json_obj["user_created"] = item.get("user_created")
+    elif spider_name == "weverse":
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+        json_obj["weverses"] = item.get("weverses")
+        json_obj["url"] = item.get("url")
+    elif spider_name == "vlive":
+        json_obj["members"] = item.get("members")
+        json_obj["videos"] = item.get("videos")
+        json_obj["likes"] = item.get("likes")
+        json_obj["plays"] = item.get("plays")
+        json_obj["url"] = item.get("url")
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+    elif spider_name == "crowdtangle":
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
+        json_obj["followers"] = item.get("followers")
+        json_obj["url"] = item.get("url")
+    elif spider_name == "spotify":
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url1"))
+        json_obj["monthly_listens"] = item.get("monthly_listens")
+        json_obj["followers"] = item.get("followers")
+        json_obj["url1"] = item.get("url1")
+        json_obj["url2"] = item.get("url2")
+    elif spider_name == "melon":
+        json_obj["listeners"] = item.get("listeners")
+        json_obj["streams"] = item.get("streams")
+        json_obj["fans"] = item.get("fans")
+        json_obj["url1"] = item.get("url1")
+        json_obj["url2"] = item.get("url2")
+        target_foreign_key = CollectTarget.objects.get(target_url=item.get("url1"))
+    Target_row.collect_target = target_foreign_key
+    Target_row.collect_items = json_obj
+    Target_row.save()
+
+
 class CrawlerPipeline(object):
     def process_item(self, item, spider):
         spider_name = spider.name  # spider의 이름을 추출 => 동적으로 spider에 따라 다른 pipeline 적용
-        item["recorded_date"] = timezone.now()  # 업데이트 시간 기록
+        item["recorded_date"] = timezone.localtime()  # 업데이트 시간 기록
         process_itemsave(spider_name, item)
+        datasave(spider_name, item)

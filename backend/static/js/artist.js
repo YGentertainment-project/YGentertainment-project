@@ -396,7 +396,9 @@ function append_schedule_row(){
         if(i==0){
             dataCol.innerHTML = `
             <td>
-               스케줄
+                <span style="color: rgb(247, 78, 78);">
+                스케줄
+                </span>
             </td>`;
         }else if(i==1){
             dataCol.innerHTML = `

@@ -46,6 +46,7 @@ function platform_read_function(){
 };
 
 function platform_update_function(){
+    document.getElementById("loading_form").style.display = "flex";
     var datas=[];
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
@@ -69,9 +70,11 @@ function platform_update_function(){
         data: JSON.stringify(datas),
         success: res => {
             alert("저장되었습니다.");
+            document.getElementById("loading_form").style.display = "none";
         },
         error: e => {
             alert(e.responseText);
+            document.getElementById("loading_form").style.display = "none";
         },
     })
 };
@@ -100,6 +103,7 @@ function platform_create_function(){
         alert("필수값을 모두 입력하세요.");
         return;
     }
+    document.getElementById("loading_form").style.display = "flex";
     var data = {
         "name":created_platform_tr[0].getElementsByTagName("td")[1].firstElementChild.value,
         "url":created_platform_tr[1].getElementsByTagName("td")[1].firstElementChild.value,
@@ -115,12 +119,14 @@ function platform_create_function(){
         success: res => {
             console.log(res);
             alert("저장되었습니다.");
+            document.getElementById("loading_form").style.display = "none";
             //reload-page
             location.reload();
         },
         error: e => {
             console.log(e);
             alert(e.responseText);
+            document.getElementById("loading_form").style.display = "none";
         },
     });
     close_form_function();

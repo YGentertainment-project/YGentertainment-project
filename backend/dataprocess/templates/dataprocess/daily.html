@@ -5,6 +5,10 @@
 
    {% block content %}
 
+   {% if alert %}
+    <span id="alert" class="hidden">{{alert}}</span>
+   {% endif %}
+
    <div class="excel_form" id="excel_form1">
         <div class="popup_button_layout">
             <span>Excel파일로부터 크롤링데이터 DB에 저장하기</span>
@@ -18,13 +22,14 @@
                 <input type="date" name="excel_import_date" id="excel_import_date"/>
              </div>
              <div style="height: 10px;"></div>
-            <input type="file" name="importData">
+            <input class="form-control" type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
             <div style="height: 10px;"></div>
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn1" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
         </form>
-        <div class="progress-bar">
-            <div class="progress-bar__bar" id="progress-bar__bar1"></div>
+        <div style="height: 10px;"></div>
+        <div class="loading-box hidden" id="excel_loading1">
+            <div class="loader"></div>
         </div>
    </div>
 
@@ -51,9 +56,6 @@
             <input type="text" name="type" value="export" style="display:none;">
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn2" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Export</button>
         </form>
-        <div class="progress-bar">
-            <div class="progress-bar__bar" id="progress-bar__bar2"></div>
-        </div>
     </div>
 
     <div class="excel_form" id="excel_form3">
@@ -64,12 +66,13 @@
         <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="file" name="importData2">
+            <input class="form-control" type="file" name="importData2">
             <input type="text" name="type" value="import2" style="display:none;">
-            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
+            <button style="margin-top: 8px;" class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
         </form>
-        <div class="progress-bar">
-            <div class="progress-bar__bar" id="progress-bar__bar3"></div>
+        <div style="height: 10px;"></div>
+        <div class="loading-box hidden" id="excel_loading3">
+            <div class="loader"></div>
         </div>
    </div>
   
@@ -131,7 +134,7 @@
                 {% include 'dataprocess/update_confirm.html' %}
                 <label id="platform-title" style="margin-bottom: 5px; font-weight: bold;"></label>
                 <table id="table" class="table table-centered table-nowrap mb-0 rounded">
-                    <thead class="thead-light"> 
+                    <thead id="data-report-headers" class="thead-dark"> 
 
                     </thead>
                     <tbody id="board">
@@ -145,6 +148,7 @@
             </div>
         </div>
     </div>
+    
    </div>
     
 
