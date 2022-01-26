@@ -236,7 +236,7 @@ class LoginDownloaderMiddleware:
                 self.driver.get("https://www.weverse.io")
                 self.driver.implicitly_wait(time_to_wait=5)
             except WebDriverException:
-                crawlinglogger.error("[400] loginpage - weverse - https://www.weverse.io")
+                crawlinglogger.error("[401] loginpage - weverse - https://www.weverse.io")
                 # 로그인을 진행할 첫 페이지의 URL이 잘못된 형식일 경우 발생합니다.
 
             try:
@@ -265,14 +265,14 @@ class LoginDownloaderMiddleware:
                     EC.presence_of_element_located((By.CLASS_NAME, "sc-pjHjD.CNlcm"))
                 )
             except TimeoutException:
-                crawlinglogger.error("[400] afterloginpage - weverse - https://www.weverse.io")
+                crawlinglogger.error("[401] afterloginpage - weverse - https://www.weverse.io")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
         else:
             try:
                 self.driver.get("https://apps.crowdtangle.com")
                 self.driver.implicitly_wait(time_to_wait=5)
             except WebDriverException:
-                crawlinglogger.error("[400] loginpage - crowdtangle - https://apps.crowdtangle.com")
+                crawlinglogger.error("[401] loginpage - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인을 진행할 첫 페이지의 URL이 잘못된 형식일 경우 발생합니다.
             try:
                 self.driver.find_element(By.CLASS_NAME, "facebookLoginButton__authButton--lof0c").click()
@@ -299,7 +299,7 @@ class LoginDownloaderMiddleware:
                     EC.presence_of_element_located((By.CLASS_NAME, "app-container"))
                 )
             except TimeoutException:
-                crawlinglogger.error("[400] afterloginpage - crowdtangle - https://apps.crowdtangle.com")
+                crawlinglogger.error("[401] afterloginpage - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
 
     def spider_closed(self, spider):
