@@ -168,9 +168,6 @@ class NoLoginDownloaderMiddleware:
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
-                except NoSuchElementException:
-                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
-                    # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
 
         # Youtube Channel Case
         elif domain == YOUTUBE_DOMAIN:
@@ -184,9 +181,6 @@ class NoLoginDownloaderMiddleware:
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
-                except NoSuchElementException:
-                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
-                    # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
 
         # 가이섬 Channel Case
         elif domain == GUYSOME_DOMAIN:
@@ -200,9 +194,6 @@ class NoLoginDownloaderMiddleware:
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
-                except NoSuchElementException:
-                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
-                    # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
         elif domain == MELON_DOMAIN:
             if request.url != MELON_ROBOT:
                 WebDriverWait(self.driver, 10).until(
@@ -276,9 +267,6 @@ class LoginDownloaderMiddleware:
             except TimeoutException:
                 crawlinglogger.error("[400] afterloginpage - weverse - https://www.weverse.io")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
-            except NoSuchElementException:
-                crawlinglogger.error("[401] loginchecker - weverse - https://www.weverse.io")
-                # 로그인이 정상적으로 진행됐는 지 확인하는 특정 element의 locator가 변경됐을 때 발생합니다.
         else:
             try:
                 self.driver.get("https://apps.crowdtangle.com")
@@ -313,9 +301,6 @@ class LoginDownloaderMiddleware:
             except TimeoutException:
                 crawlinglogger.error("[400] afterloginpage - crowdtangle - https://apps.crowdtangle.com")
                 # 로그인이 정상적으로 진행된 후 로드되는 다음 페이지가 로드되지 않을 때 발생합니다.
-            except NoSuchElementException:
-                crawlinglogger.error("[401] loginchecker - crowdtangle - https://apps.crowdtangle.com")
-                # 로그인이 정상적으로 진행됐는 지 확인하는 특정 element의 locator가 변경됐을 때 발생합니다.
 
     def spider_closed(self, spider):
         self.driver.close()
@@ -331,12 +316,10 @@ class LoginDownloaderMiddleware:
             if request.url != WEVERSE_ROBOT:
                 try:
                     WebDriverWait(self.driver, 30).until(
-                        EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOc"))
+                        EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOcasdfadsf"))
                     )
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
-                except NoSuchElementException:
-                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
         else:
             if request.url != CROWDTANGLE_ROBOT:
                 try:
@@ -345,10 +328,6 @@ class LoginDownloaderMiddleware:
                     )
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
-                    # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
-                except NoSuchElementException:
-                    crawlinglogger.error(f"[401] {artist_name} - {spider.name} - {request.url}")
-                    # 크롤링할 element에 대한 locator가 변경됐을 때 발생합니다.
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
 
