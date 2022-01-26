@@ -646,10 +646,9 @@ class DataReportAPI(APIView):
         else:
             platform_header = platform_list
 
-
         try:
             if type == "누적":
-                start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                start_date_dateobject = datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 check = False
                 crawling_artist_list = []
@@ -681,8 +680,8 @@ class DataReportAPI(APIView):
 
             elif type == "기간별":
                 # 전날 값을 구함
-                start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
-                end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+                start_date_dateobject = datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
+                end_date_dateobject = datetime.strptime(end_date, "%Y-%m-%d").date()
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
                 check = False
@@ -731,7 +730,7 @@ class DataReportAPI(APIView):
                     datename = "%s-%s-%s"%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
                     return JsonResponse(status=400, data={"success": False, "data": datename})
             else:
-                start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                start_date_dateobject = datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 crawling_artist_list = []
                 objects = CollectData.objects.filter(collect_items__platform=platform)
@@ -802,7 +801,7 @@ class DataReportAPI(APIView):
             platform_header = platform_list
 
         try:
-            start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            start_date_dateobject = datetime.strptime(start_date, "%Y-%m-%d")
             start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
             for index, element in enumerate(update_data_object):
                 if index == len(update_data_object)-1:

@@ -442,7 +442,6 @@ $(document).on('click','.platform-name',function(){
     }
 
     changedDatas = [];
-
     $.ajax({
         url: '/dataprocess/api/daily/?' + $.param({
             platform: platform,
@@ -490,7 +489,6 @@ $(document).on('click','.platform-name',function(){
             }
         },
         error: e => {
-            console.log(e);
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
