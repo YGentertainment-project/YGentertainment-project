@@ -309,14 +309,25 @@ class PlatformAPI(APIView):
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object['id']).first()
+                past_data = platform_data
                 if platform_data is None:
                     # 원래 없는 건 새로 저장
                     platform_serializer = PlatformSerializer(data=platform_object)
                     if platform_serializer.is_valid():
                         platform_serializer.save()
                 else:
+                    data = PlatformSerializer(platform_data).data
+                    print(data)
+                    past_name = data["name"]
+                    past_url = data["url"]
+                    cur_name = platform_object["name"]
+                    cur_url = platform_object["url"]
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
+                        if past_name != cur_name:
+                            userlogger.info(f"[CHANGE]: {past_name} -> {cur_name}")
+                        if past_url != cur_url:
+                            userlogger.info(f"[CHANGE]: {past_url} -> {cur_url}")
                         platform_serializer.save()
                 collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_serializer.data['id'])
                 if collecttarget_objects.exists():
@@ -404,9 +415,23 @@ class ArtistAPI(APIView):
         try:
             artist_list = JSONParser().parse(request)
             for artist_object in artist_list:
-                artist_data = Artist.objects.get(pk=artist_object['id'])
+                artist_data = Artist.objects.get(id=artist_object["id"])
+                data = ArtistSerializer(artist_data).data
+                print(data)
+                past_name = data["name"]
+                past_num = data["member_num"]
+                past_agency = data["agency"]
+                cur_name = artist_object["name"]
+                cur_num = artist_object["member_num"]
+                cur_agnecy = artist_object["agnecy"]
                 artist_serializer = ArtistSerializer(artist_data, data=artist_object)
                 if artist_serializer.is_valid():
+                    if past_name != cur_name:
+                        userlogger.info(f"[CHANGE]: {past_name} -> {cur_name}")
+                    if past_num != cur_num:
+                        userlogger.info(f"[CHANGE]: {past_num} -> {cur_num}")
+                    if past_agency != cur_agnecy:
+                        userlogger.info(f"[CHANGE]: {past_agency} -> {cur_agnecy}")
                     artist_serializer.save()
                 else:
                     return JsonResponse(data={'success': False, 'data': artist_serializer.errors}, status=400)
@@ -505,6 +530,9 @@ class CollectTargetItemAPI(APIView):
         '''
         try:
             collecttargetitem = JSONParser().parse(request)
+            artist = collecttargetitem["artist"]
+            platform = collecttargetitem["platform"]
+            period = collecttargetitem["period"]
             collecttargetitem_list = collecttargetitem['items']
             artist_object = Artist.objects.filter(name = collecttargetitem['artist'])
             artist_object = artist_object.values()[0]
@@ -533,6 +561,7 @@ class CollectTargetItemAPI(APIView):
                     collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
+                        userlogger.debug(f"{artist} - {platform} - {period}: ")
                     else:
                         return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             Schedule.objects.filter(collect_target_id = collecttarget_object['id']).update(
