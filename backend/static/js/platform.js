@@ -46,6 +46,7 @@ function platform_read_function(){
 };
 
 function platform_update_function(){
+    document.getElementById("loading_form").style.display = "flex";
     var datas=[];
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
@@ -69,6 +70,7 @@ function platform_update_function(){
         data: JSON.stringify(datas),
         success: res => {
             alert("저장되었습니다.");
+            document.getElementById("loading_form").style.display = "none";
         },
         error: e => {
             alert(e.responseText);
