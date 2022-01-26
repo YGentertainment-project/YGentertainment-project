@@ -16,8 +16,11 @@ SPIDER_MODULES = ['crawler.scrapy_app.spiders']
 # NEWSPIDER_MODULE = 'spiders'
 
 LOG_ENABLED = True
-LOG_FILE = './data/log/Crawler.log'
-LOG_LEVEL = 'INFO'
+# LOG_FILE = './data/log/Crawler.log'
+LOG_LEVEL = 'ERROR'
+LOG_STDOUT = True
+LOG_ENCODING = 'utf-8'
+
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
