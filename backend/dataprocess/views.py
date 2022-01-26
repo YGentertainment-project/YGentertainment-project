@@ -1,33 +1,54 @@
+import os
 from django.contrib import auth
 from django.shortcuts import render
 from h11 import Data
 from account.models import User
-from crawler.models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
-                            Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
+
+from dataprocess.models import CollectData
+from crawler.models import *
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
-from dataprocess.models import CollectData
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
+
+from .serializers import *
+from .models import *
+from django.http.response import JsonResponse
+from rest_framework.parsers import JSONParser 
+from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
+from utils.decorators import login_required
+from utils.api import APIView, validate_serializer
+
+from django.shortcuts import render
 from django.http import HttpResponse
 
-import datetime
+from datetime import datetime
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
-from .models import Platform, Artist, CollectTarget
-from .serializers import (PlatformSerializer, ArtistSerializer)
+from .resources import *
+from .models import *
+import logging
 
-from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser
-from rest_framework import status
-from utils.api import APIView
+formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
+serverlogger = logging.getLogger(__name__)
+userlogger = logging.getLogger("HTTP-Method")
+
+trfh = logging.handlers.TimedRotatingFileHandler(
+    filename = os.path.join("../backend/data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    when = "midnight",
+    interval=1,
+    encoding="utf-8",
+)
+trfh.setFormatter(formatter)
+trfh.setLevel(logging.INFO)
+userlogger.addHandler(trfh)
+userlogger.setLevel(logging.DEBUG)
 
 # login check using cookie
-
-
 def logincheck(request):
     # 로그인 정보를 받기 위해 cookie사용
-    username = request.COOKIES.get("username")
+    username = request.COOKIES.get('username')
     if username is not None:
         if User.objects.filter(username=username).exists():
             # 이미 존재하는 username일때만 로그인
@@ -36,36 +57,33 @@ def logincheck(request):
     return request
 
 # Create your views here.
-
-
 def base(request):
     values = {
-      "first_depth": "데이터 리포트",
+      'first_depth' : '데이터 리포트',
     }
     request = logincheck(request)
-    return render(request, "dataprocess/main.html", values)
-
+    return render(request, 'dataprocess/main.html',values)
 
 @csrf_exempt
 def daily(request):
-    if request.method == "GET":
-        """
+    if request.method == 'GET':
+        '''
         general page
-        """
-        platforms = Platform.objects.all()  # get all platform info from db
+        '''
+        platforms = Platform.objects.all() #get all platform info from db
         values = {
-            "first_depth": "데이터 리포트",
-            "second_depth": "일별 리포트",
-            "platforms": platforms
+            'first_depth' : '데이터 리포트',
+            'second_depth': '일별 리포트',
+            'platforms': platforms
         }
         request = logincheck(request)
-        return render(request, "dataprocess/daily.html", values)
+        return render(request, 'dataprocess/daily.html',values)
     else:
-        type = request.POST["type"]
-        if type == "import":
-            """
+        type = request.POST['type']
+        if type == 'import':
+            '''
             import from excel
-            """
+            '''
             platforms = Platform.objects.all()  # get all platform info from db
             if not "importData" in request.FILES:
                 values = {
@@ -91,14 +109,14 @@ def daily(request):
                 'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
-            return render(request, "dataprocess/daily.html", values)
-        elif type == "export":
-            """
+            return render(request, 'dataprocess/daily.html',values)
+        elif type == 'export':
+            '''
             export to excel
-            """
-            excel_export_type = request.POST.get("excel_export_days", None)  # 누적 or 기간별
-            excel_export_start_date = request.POST.get("excel_export_start_date", None)  # 0000-0-0 형태
-            excel_export_end_date = request.POST.get("excel_export_end_date", None)  # 0000-0-0 형태
+            '''
+            excel_export_type = request.POST.get('excel_export_days', None) # 누적 or 기간별
+            excel_export_start_date = request.POST.get('excel_export_start_date', None) # 0000-0-0 형태
+            excel_export_end_date = request.POST.get('excel_export_end_date', None) # 0000-0-0 형태
             book = export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date)
             if excel_export_type == "누적":
                 filename = "datareport %s.xlsx" % (excel_export_start_date)
@@ -107,10 +125,10 @@ def daily(request):
             response = HttpResponse(content=save_virtual_workbook(book), content_type="application/vnd.ms-excel")
             response["Content-Disposition"] = "attachment; filename="+filename
             return response
-        elif type == "import2":
-            """
+        elif type == 'import2':
+            '''
             import2 from excel
-            """
+            '''
             platforms = Platform.objects.all()  # get all platform info from db
             if not "importData2" in request.FILES:
                 values = {
@@ -133,49 +151,46 @@ def daily(request):
                 'alert': '저장되었습니다.'
                 }
             request = logincheck(request)
-            return render(request, "dataprocess/daily.html", values)
-
-
+            return render(request, 'dataprocess/daily.html',values)
+    
 def platform(request):
-    """
-    general page
-    """
-    values = {
-        "first_depth": "플랫폼 관리",
-        "second_depth": "플랫폼 관리"
+     '''
+     general page
+     '''
+     values = {
+        'first_depth' : '플랫폼 관리',
+        'second_depth': '플랫폼 관리'
     }
-    request = logincheck(request)
-    return render(request, "dataprocess/platform.html", values)
+     request = logincheck(request)
+     return render(request, 'dataprocess/platform.html',values)
 
 def artist(request):
     artists = Artist.objects.all()
     values = {
-      "first_depth": "아티스트 관리",
-      "second_depth": "데이터 URL 관리",
-      "artists": artists
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'artists': artists
     }
     request = logincheck(request)
-    return render(request, "dataprocess/artist.html", values)
-
+    return render(request, 'dataprocess/artist.html',values)
 
 @csrf_exempt
 def artist_add(request):
     platforms = Platform.objects.all()
     values = {
-      "first_depth": "아티스트 관리",
-      "second_depth": "데이터 URL 관리",
-      "platforms": platforms
+      'first_depth' : '아티스트 관리',
+      'second_depth': '데이터 URL 관리',
+      'platforms' : platforms
     }
     request = logincheck(request)
-    return render(request, "dataprocess/artist_add.html", values)
-
+    return render(request, 'dataprocess/artist_add.html',values)
 
 def monitering(request):
     platforms = Platform.objects.all()
     values = {
-      "first_depth": "모니터링 관리",
-      "second_depth": "모니터링",
-      "platforms": platforms
+      'first_depth' : '모니터링 관리',
+      'second_depth': '모니터링',
+      'platforms' : platforms
     }
     request = logincheck(request)
     return render(request, "dataprocess/monitering.html", values)
@@ -183,38 +198,37 @@ def monitering(request):
 
 def login(request):
     values = {
-      "first_depth": "로그인"
+      'first_depth' : '로그인'
     }
     request = logincheck(request)
-    return render(request, "dataprocess/login.html", values)
-
+    return render(request, 'dataprocess/login.html',values)
 
 def platform_info(request):
-    if request.method == "GET":
-        platform = request.GET.get("platform", None)
+    if request.method == 'GET':
+        platform = request.GET.get('platform', None)
         try:
-            platform_objects = Platform.objects.get(name=platform)
-
+            platform_objects = Platform.objects.get(name = platform)
+            
             if platform_objects.exists():
                 platform_objects_values = platform_objects.values()
-                platform_id = platform_objects_values["id"]
-                collecttargets = CollectTarget.objects.filter(platform=platform_id)
+                platform_id = platform_objects_values['id']
+                collecttargets = CollectTarget.objects.filter(platform = platform_id)
                 collecttargets = collecttargets.values()
                 platform_set = set()
                 platform_list = []
                 for collecttarget in collecttargets:
-                    platform_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget["id"])
+                    platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
                     platform_objects_values = platform_objects.values()
                     for p in platform_objects_values:
                         if p["target_name"] in platform_set:
                             continue
                         platform_set.add(p["target_name"])
                         platform_list.append(p)
-                return JsonResponse(data={"success": True, "data": platform_list})
+                return JsonResponse(data={'success': True, 'data': platform_list})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
 
 class PlatformAPI(APIView):
@@ -230,11 +244,11 @@ class PlatformAPI(APIView):
                 platform_datas = []
                 for platform_value in platform_objects_values:
                     platform_datas.append(platform_value)
-                return JsonResponse(data={"success": True, "data": platform_datas})
+                return JsonResponse(data={'success': True, 'data': platform_datas})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
     # @login_required
     def post(self, request):
@@ -248,14 +262,14 @@ class PlatformAPI(APIView):
                 # 1. platform 생성
                 platform_serializer.save()
 
-                # 특정 아티스트 전용 collect_target 생성 시 사용할 코드
+                #특정 아티스트 전용 collect_target 생성 시 사용할 코드
                 # 2. 현재 존재하는 모든 artist에 대해 collect_target 생성 -> platform과 연결
                 artist_objects = Artist.objects.all()
                 artist_objects_values = artist_objects.values()
                 for artist_objects_value in artist_objects_values:
                     collecttarget = CollectTarget(
-                        platform_id=platform_serializer.data["id"],
-                        artist_id=artist_objects_value["id"]
+                        platform_id = platform_serializer.data['id'],
+                        artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
                     #3. 해당 collecttarget에 대한 schedule 생성
@@ -281,19 +295,10 @@ class PlatformAPI(APIView):
                         )
                         collect_item.save()
 
-                # 3. 플랫폼에 대한 platform target 생성
-                # for collect_item in platform_object["collect_items"]:
-                #     collect_item = PlatformTargetItem(
-                #         platform_id = platform_serializer.data["id"],
-                #         target_name = collect_item["target_name"],
-                #         xpath = collect_item["xpath"]
-                #     )
-                #     collect_item.save()
-
-                return JsonResponse(data={"success": True, "data": platform_serializer.data}, status=status.HTTP_201_CREATED)
-            return JsonResponse(data={"success": False, "data": platform_serializer.errors}, status=400)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+                return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
+            return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
     # @login_required
     def put(self, request):
@@ -344,11 +349,11 @@ class ArtistAPI(APIView):
                 artist_datas = []
                 for artist_value in artist_objects_values:
                     artist_datas.append(artist_value)
-                return JsonResponse(status=200, data={"success": True, "data": artist_datas})
+                return JsonResponse(status=200,data={'success': True, 'data': artist_datas})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
     # @login_required
     def post(self, request):
@@ -385,7 +390,6 @@ class ArtistAPI(APIView):
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
                         schedule_serializer.save()
-                
     
                 return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
@@ -418,30 +422,30 @@ class PlatformOfArtistAPI(APIView):
         Platform of Artist read api
         """
         try:
-            artist = request.GET.get("artist", None)
+            artist = request.GET.get('artist', None)
             # 해당 artist 찾기
-            artist_object = Artist.objects.filter(name=artist)
+            artist_object = Artist.objects.filter(name = artist)
             artist_object = artist_object.values()[0]
             # 해당 artist를 가지는 collect_target들 가져오기
-            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object["id"])
+            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'])
             if collecttarget_objects.exists():
                 collecttarget_objects_values = collecttarget_objects.values()
                 platform_datas = []
                 for collecttarget_value in collecttarget_objects_values:
-                    platform_object = Platform.objects.get(pk=collecttarget_value["platform_id"])
-                    platform_datas.append({
-                        "artist_id": artist_object["id"],
-                        "platform_id": collecttarget_value["platform_id"],
-                        "id": collecttarget_value["id"],
-                        "name": platform_object.name,
-                        "target_url": collecttarget_value["target_url"],
-                        "target_url_2": collecttarget_value["target_url_2"]
+                    platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
+                    platform_datas.append({  
+                        'artist_id':artist_object['id'],
+                        'platform_id' : collecttarget_value['platform_id'],
+                        'id': collecttarget_value['id'],
+                        'name': platform_object.name,
+                        'target_url':collecttarget_value['target_url'],
+                        'target_url_2': collecttarget_value['target_url_2']
                     })
-                return JsonResponse(data={"success": True, "data": platform_datas})
+                return JsonResponse(data={'success': True, 'data': platform_datas})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
     # @login_required
     def put(self, request):
@@ -455,8 +459,8 @@ class PlatformOfArtistAPI(APIView):
                 if collecttarget_object["target_url_2"]:
                     CollectTarget.objects.filter(pk=collecttarget_object["id"]).update(target_url_2=collecttarget_object["target_url_2"])
             return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
 
 class CollectTargetItemAPI(APIView):
@@ -545,15 +549,13 @@ class CollectTargetItemAPI(APIView):
         """
         try:
             delete_id = JSONParser().parse(request)["id"]
-            obj = CollectTargetItem.objects.filter(id=delete_id)
+            obj = CollectTargetItem.objects.filter(id = delete_id)
             obj.delete()
-            return JsonResponse(data={"success": True}, status=status.HTTP_200_OK)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+            return JsonResponse(data={'success': True}, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
-# platform collect target API
-
-
+#platform collect target API 
 class PlatformTargetItemAPI(APIView):
     # @login_required
     def get(self, request):
@@ -561,24 +563,24 @@ class PlatformTargetItemAPI(APIView):
         PlatformTargetItem read api
         """
         try:
-            platform = request.GET.get("platform", None)
+            platform = request.GET.get('platform', None)
             # 해당 platform 찾기
-            platform_object = Platform.objects.filter(name=platform)
+            platform_object = Platform.objects.filter(name = platform)
             platform_object = platform_object.values()[0]
             # 해당 platform을 가지는 platform_target 가져오기
-            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id=platform_object["id"])
+            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object['id'])
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
                 collecttarget_objects_value = collecttarget_objects.values()[0]
-                collecttargetitmes_objects = PlatformTargetItem.objects.filter(platform_id=collecttarget_objects_value["platform_id"])
+                collecttargetitmes_objects = PlatformTargetItem.objects.filter(platform_id=collecttarget_objects_value['platform_id'])
                 collecttargetitmes_values = collecttargetitmes_objects.values()
                 for collecttargetitmes_value in collecttargetitmes_values:
                     collecttargetitems_datas.append(collecttargetitmes_value)
-                return JsonResponse(data={"success": True, "data": collecttargetitems_datas, "platform_id": collecttarget_objects_value["platform_id"]})
+                return JsonResponse(data={'success': True, 'data': collecttargetitems_datas,'platform_id':collecttarget_objects_value['platform_id']})
             else:
-                return JsonResponse(data={"success": True, "data": []})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
+                return JsonResponse(data={'success': True, 'data': []})
+        except:
+            return JsonResponse(status=400, data={'success': False})
 
     # @login_required
     def put(self, request):
@@ -587,16 +589,17 @@ class PlatformTargetItemAPI(APIView):
         """
         try:
             collecttargetitem_list = JSONParser().parse(request)
-            for i, collecttargetitem_object in enumerate(collecttargetitem_list):
+            for i,collecttargetitem_object in enumerate(collecttargetitem_list):
+
                 collecttargetitem_data = PlatformTargetItem.objects.filter(platform_id=collecttargetitem_object["platform"])[i]
                 collecttargetitem_serializer = PlatformTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                 if collecttargetitem_serializer.is_valid():
                     collecttargetitem_serializer.save()
                 else:
-                    return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
-            return JsonResponse(data={"success": True}, status=status.HTTP_201_CREATED)
-        except Exception:
-            return JsonResponse(data={"success": False}, status=400)
+                    return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)
 
 
 class DataReportAPI(APIView):
@@ -604,32 +607,32 @@ class DataReportAPI(APIView):
         """
         Data-Report read api
         """
-        platform = request.GET.get("platform", None)
-        type = request.GET.get("type", None)
-        start_date = request.GET.get("start_date", None)
-        end_date = request.GET.get("end_date", None)
+        platform = request.GET.get('platform', None)
+        type = request.GET.get('type', None)
+        start_date = request.GET.get('start_date', None)
+        end_date = request.GET.get('end_date', None)
 
-        # artist name
+        #artist name
         artist_objects = Artist.objects.filter(active=1)
         artist_objects_values = artist_objects.values()
         artist_list = []
         for a in artist_objects_values:
-            artist_list.append(a["name"])
+            artist_list.append(a['name'])
 
-        # platform target names
-        platform_id = Platform.objects.get(name=platform).id
-        collecttargets = CollectTarget.objects.filter(platform=platform_id)
+        #platform target names
+        platform_id = Platform.objects.get(name = platform).id
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
         collecttargets = collecttargets.values()
         platform_list = set()
         for collecttarget in collecttargets:
-            platform_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget["id"])
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
             platform_objects_values = platform_objects.values()
             for p in platform_objects_values:
                 if p["target_name"] in platform_list:
                     continue
                 platform_list.add(p["target_name"])
         platform_list = list(platform_list)
-        # 플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
+        #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = CollectData.objects.filter(collect_items__platform=platform)
         objects_values = objects.values()
@@ -642,6 +645,7 @@ class DataReportAPI(APIView):
                     continue
         else:
             platform_header = platform_list
+
 
         try:
             if type == "누적":
@@ -728,10 +732,10 @@ class DataReportAPI(APIView):
                         platform_datas.append(queryset_value["collect_items"])
                     return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header})
                 else:
-                    return JsonResponse(status=400, data={"success": False, "data": "there is no data"})
-        except Exception:
-            return JsonResponse(status=400, data={"success": False})
-
+                    return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+    
     def post(self, request):
         """
         Data-Report update api
@@ -741,10 +745,11 @@ class DataReportAPI(APIView):
         platform = update_data_object[len(update_data_object)-1]['platform_name']
         # artist name
         artist_objects = Artist.objects.filter(active=1)
+
         artist_objects_values = artist_objects.values()
         artist_list = []
         for a in artist_objects_values:
-            artist_list.append(a["name"])
+            artist_list.append(a['name'])
 
         # crawled artist list
         a_objects = CollectData.objects.filter(collect_items__platform=platform)
@@ -753,20 +758,21 @@ class DataReportAPI(APIView):
         for val in a_objects_values:
             a_list.append(val["collect_items"]["artist"])
 
-        # platform target names
-        platform_id = Platform.objects.get(name=platform).id
-        collecttargets = CollectTarget.objects.filter(platform=platform_id)
+        #platform target names
+        platform_id = Platform.objects.get(name = platform).id
+        collecttargets = CollectTarget.objects.filter(platform = platform_id)
         collecttargets = collecttargets.values()
         platform_list = set()
         for collecttarget in collecttargets:
-            platform_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget["id"])
+            platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
             platform_objects_values = platform_objects.values()
             for p in platform_objects_values:
                 if p["target_name"] in platform_list:
                     continue
                 platform_list.add(p["target_name"])
         platform_list = list(platform_list)
-        # 플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
+
+        #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
         objects = CollectData.objects.filter(collect_items__platform=platform)
         objects_values = objects.values()
@@ -805,8 +811,8 @@ class DataReportAPI(APIView):
             filter_objects = CollectData.objects.filter(collect_items__platform=platform,
                             collect_items__reserved_date = start_date_string)
             if filter_objects.exists():
-                filter_objects_values = filter_objects.values()
-                filter_datas = []
+                filter_objects_values=filter_objects.values()
+                filter_datas=[]
 
                 crawling_artist_list = set()
                 objects_value = filter_objects.values()
@@ -817,14 +823,13 @@ class DataReportAPI(APIView):
                         continue
                     crawling_artist_list.add(val["artist"])
                 crawling_artist_list = list(crawling_artist_list)
-
                 for filter_value in filter_objects_values:
                     filter_value = filter_value["collect_items"]
                     # 각 아티스트당 하나의 데이터만 들어가도록
                     if filter_value["artist"] in artist_set:
                         continue
                     filter_datas.append(filter_value)
-                return JsonResponse(data={"success": True, "data": filter_datas, "artists": artist_list, "platform": platform_header, "crawling_artist_list": crawling_artist_list})
+                return JsonResponse(data={'success': True, 'data': filter_datas,'artists':artist_list,'platform':platform_header,'crawling_artist_list':crawling_artist_list})
             else:
                 # 존재하지 않을 때 -> 플랫폼 전체 데이터를 보자
                 filter_objects = CollectData.objects.filter(collect_items__platform=platform)
@@ -839,5 +844,5 @@ class DataReportAPI(APIView):
                 crawling_artist_list = list(crawling_artist_list)
                 # datename = "%s-%s-%s"%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
                 return JsonResponse(status=200, data={"success": True, "data": "no data", "artists": artist_list, "platform": platform_header, "crawling_artist_list": crawling_artist_list})
-        except Exception:
+        except:
             return JsonResponse(status=400, data={"success": False})
