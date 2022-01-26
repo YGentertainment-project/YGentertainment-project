@@ -737,7 +737,7 @@ $('#update').click(function(){
             element['platform'] = platform_name;
             for (var j=0; j<targets.length; j++){
                 if(targets[j] !== 'user_created'){
-                    element[targets[j]] =  uncomma($('#board').find(`tr:eq(${i})`).find(`td:eq(${j})`).find('input.data-input').val())
+                    element[targets[j]] =  Number(uncomma($('#board').find(`tr:eq(${i})`).find(`td:eq(${j})`).find('input.data-input').val()))
                 } else{
                     element[targets[j]] = $('#board').find(`tr:eq(${i})`).find(`td:eq(${j})`).find('input.data-input').val()
                 }
