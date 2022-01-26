@@ -1,130 +1,60 @@
-import os
-from billiard.context import Process
+import os, sys
+import traceback
 
 from .celery import app
 
+from scrapy import spiderloader
 from scrapy.crawler import CrawlerProcess
 from scrapy.settings import Settings
-from crawler.scrapy_app.spiders.socialblade_youtube import YoutubeSpider
-from crawler.scrapy_app.spiders.socialblade_twitter import TwitterSpider
-from crawler.scrapy_app.spiders.socialblade_twitter2 import Twitter2Spider
-from crawler.scrapy_app.spiders.socialblade_tiktok import TiktokSpider
-from crawler.scrapy_app.spiders.crowdtangle import CrowdTangleSpider
-from crawler.scrapy_app.spiders.vlive import VliveSpider
-from crawler.scrapy_app.spiders.weverse import WeverseSpider
-from crawler.scrapy_app.spiders.melon import MelonSpider
-from crawler.scrapy_app.spiders.spotify import SpotifySpider
+from django.utils import timezone
+from billiard.context import Process
 
 settings = Settings()
 os.environ["SCRAPY_SETTINGS_MODULE"] = "crawler.scrapy_app.settings"
 settings_module_path = os.environ["SCRAPY_SETTINGS_MODULE"]
 settings.setmodule(settings_module_path, priority="project")
 
-# TODO: DB에서 참조하도록 수정
-spiders = {
-    "youtube": YoutubeSpider,
-    "twitter": TwitterSpider,
-    "twitter2": Twitter2Spider,
-    "tiktok": TiktokSpider,
-    "weverse": WeverseSpider,
-    "crowdtangle": CrowdTangleSpider,
-    "vlive": VliveSpider,
-    "melon": MelonSpider,
-    "spotify": SpotifySpider,
-}
+spider_loader = spiderloader.SpiderLoader.from_settings(settings)
+
+# crawling_start에서 경로 설정을 위해 절대경로 변경
+sys.path.append(os.path.dirname(os.path.abspath('.')))
 
 
 def crawling_start(platform, task_id):
     process = CrawlerProcess(settings)
-    # log_path = "crawler/logs/tasks/{}.log".format(task_id)
-    # settings.set("LOG_FILE", log_path)
-    process.crawl(spiders[platform])
+    date_str = timezone.localdate().strftime('%Y-%m-%d')
+    crawler_dir = "./data/log/crawler"
+    if os.path.isdir(crawler_dir) is False:
+        os.mkdir(crawler_dir)
+    platform_dir = "./data/log/crawler/{}".format(platform)
+    if os.path.isdir(platform_dir) is False:
+        os.mkdir(platform_dir)
+    log_dir = "./data/log/crawler/{}/{}".format(platform, date_str)
+    if os.path.isdir(log_dir) is False:
+        os.mkdir(log_dir)
+    log_path = "./data/log/crawler/{}/{}/{}.log".format(platform, date_str, task_id)
+    settings.set("LOG_FILE", log_path)
+    process.crawl(spider_loader.load(platform))
     process.start()
 
 
-@app.task(name="direct_crawling_platform", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def direct_crawling_platform(self, platform):
+@app.task(name="direct_crawling", bind=True, default_retry_delay=30, max_retries=2)
+def direct_crawling(self, platform):
     try:
-        proc = Process(target=crawling_start, args=[platform, self.request.id])
-        proc.start()
-        proc.join()
+        process = Process(target=crawling_start, args=[platform, self.request.id])
+        process.start()
+        process.join()
     except Exception as e:
-        print('Error with direct crawling {} {}'.format(platform, e))    
+        traceback.print_exc()
+        print('Error with direct {} crawling {}'.format(platform, e))
 
 
-def crawling(platform, request_id):
-    proc = Process(target=crawling_start, args=[platform, request_id])
-    proc.start()
-    proc.join()
-
-
-@app.task(name="youtube_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def youtube_schedule_crawling(self):
+@app.task(name="schedule_crawling", bind=True, default_retry_delay=30, max_retries=2)
+def schedule_crawling(self, platform):
     try:
-        crawling("youtube", self.request.id)
+        process = Process(target=crawling_start, args=[platform, self.request.id])
+        process.start()
+        process.join()
     except Exception as e:
-        print("Error with scheduled youtube task : {}".format(e))
-
-
-@app.task(name="twitter_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def twitter_schedule_crawling(self):
-    try:
-        crawling("twitter", self.request.id)
-    except Exception as e:
-        print("Error with scheduled twitter task : {}".format(e))
-
-
-@app.task(name="twitter2_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def twitter2_schedule_crawling(self):
-    try:
-        crawling("twitter2", self.request.id)
-    except Exception as e:
-        print("Error with scheduled twitter2 task : {}".format(e))
-
-
-@app.task(name="tiktok_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def tiktok_schedule_crawling(self):
-    try:
-        crawling("tiktok", self.request.id)
-    except Exception as e:
-        print("Error with scheduled tiktok task : {}".format(e))
-
-
-@app.task(name="weverse_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def weverse_schedule_crawling(self):
-    try:
-        crawling("weverse", self.request.id)
-    except Exception as e:
-        print("Error with scheduled weverse task : {}".format(e))
-
-
-@app.task(name="crowdtangle_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def crowdtangle_schedule_crawling(self):
-    try:
-        crawling("crowdtangle", self.request.id)
-    except Exception as e:
-        print("Error with scheduled crowdtangle task : {}".format(e))
-
-
-@app.task(name="vlive_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def vlive_schedule_crawling(self):
-    try:
-        crawling("vlive", self.request.id)
-    except Exception as e:
-        print("Error with Crawling task : {}".format(e))
-
-
-@app.task(name="spotify_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def spotify_schedule_crawling(self):
-    try:
-        crawling("spotify", self.request.id)
-    except Exception as e:
-        print("Error with scheduled spotify task : {}".format(e))
-
-
-@app.task(name="melon_schedule_crawling", bind=True, default_retry_delay=30, max_retries=2, time_limit=500)
-def melon_schedule_crawling(self):
-    try:
-        crawling("melon", self.request.id)
-    except Exception as e:
-        print("Error with scheduled melon task : {}".format(e))
+        traceback.print_exc()
+        print("Error with scheduled {} crawling : {}".format(platform, e))
