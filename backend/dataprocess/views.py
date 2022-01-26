@@ -121,7 +121,7 @@ def daily(request):
             excel_export_end_date = request.POST.get('excel_export_end_date', None) # 0000-0-0 형태
             book = export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date)
             today_date = datetime.datetime.today()
-            filename = 'datareport%s-%s-%s.xlsx'%(today_date.year, today_date.month, today_date.day)
+            filename = 'datareport%s %s-%s-%s.xlsx'%excel_export_type, (today_date.year, today_date.month, today_date.day)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
             return response

@@ -118,9 +118,24 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                         continue
                     collect_item.add(p["target_name"])
             collect_item = list(collect_item)
+            platform_header = []
+            objects = DataModels[platform_value["name"]].objects.all()
+            objects_values = objects.values()
+            obj_datas = []
+            for v in objects_values:
+                obj_datas.append(v)
+            if len(obj_datas) > 0:
+                key_list = list(obj_datas[0].keys())
+            else:
+                key_list = []
+            for key in key_list:
+                if key in collect_item:
+                    platform_header.append(key)
+                else:
+                    continue
             db_platform_datas.append({
                 "platform": platform_value["name"],
-                "collect_item": collect_item
+                "collect_item": platform_header
             })
 
     # DB에서 artist 가져오기
