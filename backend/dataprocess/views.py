@@ -66,15 +66,24 @@ def daily(request):
             """
             import from excel
             """
-            import_file = request.FILES["importData"]
-            # platform = request.GET.get("platform", None)
+            platforms = Platform.objects.all()  # get all platform info from db
+            if not "importData" in request.FILES:
+                values = {
+                    'first_depth' : '데이터 리포트',
+                    'second_depth': '일별 리포트',
+                    'platforms': platforms,
+                    'alert': '파일을 첨부해주세요.'
+                    }
+                request = logincheck(request)
+                return render(request, "dataprocess/daily.html", values)
+            import_file = request.FILES["importData"]            
             excel_import_date = request.POST.get("excel_import_date", None)  # 0000-0-0 형태
 
             wb = openpyxl.load_workbook(import_file)
             sheets = wb.sheetnames
             worksheet = wb[sheets[0]]
             import_datareport(worksheet, excel_import_date)
-            platforms = Platform.objects.all()  # get all platform info from db
+
             values = {
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
@@ -100,12 +109,21 @@ def daily(request):
             """
             import2 from excel
             """
+            platforms = Platform.objects.all()  # get all platform info from db
+            if not "importData2" in request.FILES:
+                values = {
+                    'first_depth' : '데이터 리포트',
+                    'second_depth': '일별 리포트',
+                    'platforms': platforms,
+                    'alert': '파일을 첨부해주세요.'
+                    }
+                request = logincheck(request)
+                return render(request, "dataprocess/daily.html", values)
             import_file = request.FILES["importData2"]
             wb = openpyxl.load_workbook(import_file)
             sheets = wb.sheetnames
             worksheet = wb[sheets[0]]
             import_total(worksheet)
-            platforms = Platform.objects.all()  # get all platform info from db
             values = {
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
@@ -157,6 +175,7 @@ def monitering(request):
       "second_depth": "모니터링",
       "platforms": platforms
     }
+    request = logincheck(request)
     return render(request, "dataprocess/monitering.html", values)
 
 
@@ -724,7 +743,6 @@ class DataReportAPI(APIView):
         update_data_object = JSONParser().parse(request)
         start_date = update_data_object[len(update_data_object)-1]['start_date']
         platform = update_data_object[len(update_data_object)-1]['platform_name']
-        print(platform)
         # artist name
         artist_objects = Artist.objects.filter(active=1)
         artist_objects_values = artist_objects.values()
@@ -760,7 +778,6 @@ class DataReportAPI(APIView):
         obj_datas = []
         for v in objects_values:
             obj_datas.append(v["collect_items"])
-        print(obj_datas)
         key_list = list(obj_datas[0].keys())
 
         for key in key_list:
@@ -772,7 +789,6 @@ class DataReportAPI(APIView):
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
             start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
-            print(start_date_string)
             for index, element in enumerate(update_data_object):
                 if index == len(update_data_object)-1:
                     break

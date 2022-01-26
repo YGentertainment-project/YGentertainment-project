@@ -249,31 +249,36 @@ input[type='checkbox']:checked:after {
     margin-bottom: 5px;
 }
 
-/* excel popup */
-.progress-bar {
-    background-color: rgb(59, 59, 59);
-    border-radius: 4px;
-    box-shadow: inset 0 0.5em 0.5em rgba(0,0,0,0.05);
-    height: 5px;
-    margin: 2rem 0 2rem 0;
-    overflow: hidden;
+/* loading bar */
+.loading-box{
+    margin-bottom: 5px;
     position: relative;
-    transform: translateZ(0);
+    width: 400px;
+    height: 25px;
+    border-radius: 50px;
+    border: 2px solid #ededed;
+    overflow: hidden;
+}
+
+.loader{
     width: 100%;
-}
-
-.progress-bar__bar {
-    background-color: #ececec;
-    box-shadow: inset 0 0.5em 0.5em rgba(94, 49, 49, 0.05);
-    bottom: 0;
-    left: 0;
+    height: 100%;
     position: absolute;
-    right: 0;
-    top: 0;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #383838, #a1a0a0);
+    left: 0%;
 }
 
-.progress-bar__bar.active {
-    transition: all 5000ms ease-out;
-    transform: translateX(100%);
-    -webkit-transform: translateX(100%)
+.loader{
+    left: -100%;
+    animation: load 3s linear infinite;
+}
+
+@keyframes load{
+    0%{
+        left: -100%;
+    }
+    100%{
+        left: 100%;
+    }
 }
