@@ -3,6 +3,9 @@ from ..items import WeverseItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from config.models import CollectTargetItem
+from datetime import datetime
+from django.db.models import Q
 
 
 class WeverseSpider(scrapy.Spider):
@@ -12,29 +15,25 @@ class WeverseSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.LoginDownloaderMiddleware": 100
         },
     }
+    weverse_platform_id = Platform.objects.get(name="weverse").id
+    crawlingtarget = CollectTarget.objects.filter(platform_id=weverse_platform_id)
 
     def start_requests(self):
-        crawl_url = {}
-        weverse_platform_id = Platform.objects.get(name="weverse").id
-        CrawlingTarget = CollectTarget.objects.filter(platform_id=weverse_platform_id)
-        for row in CrawlingTarget:
+        for row in self.crawlingtarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
             artist_url = row.target_url
-            crawl_url[artist_name] = artist_url
-
-        for artist, url in crawl_url.items():
+            target_id = row.id
             print("artist : {}, url : {}, url_len: {}".format(
-                artist, url, len(url)))
-            if len(url) > 0:
-                yield scrapy.Request(url=url, callback=self.parse, encoding="utf-8", meta={"artist": artist})
-            else:
-                continue
+                artist_name, artist_url, len(artist_url)))
+            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name,
+                                                                                              "target_id": target_id})
 
     def parse(self, response):
         artist = response.meta["artist"]
+        sub_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="weverses")).xpath + "/text()"
         sub = None
         try:
-            sub = response.xpath("/html/body/div[1]/div/section/aside/div/div[1]/text()").get()
+            sub = response.xpath(sub_xpath).get()
         except ValueError:
             pass
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
@@ -49,4 +48,6 @@ class WeverseSpider(scrapy.Spider):
             item["artist"] = artist
             item["weverses"] = int(sub[:-6].replace(",", ""))
             item["url"] = response.url
+            item["reserved_date"] = datetime.now().date()
             yield item
+

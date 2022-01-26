@@ -31,18 +31,12 @@ crawlinglogger.setLevel(logging.ERROR)
 
 production_env = (get_env("YG_ENV", "dev") == "production")
 
+ROBOTS_TXT = "robots.txt"
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
 GUYSOME_DOMAIN = "xn--o39an51b2re.com"
 MELON_DOMAIN = "melon.com"
-
-YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
-GUYSOME_ROBOT = "https://xn--o39an51b2re.com/robots.txt"
-MELON_ROBOT = "https://www.melon.com/robots.txt"
-SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
-WEVERSE_ROBOT = "https://www.weverse.io/robots.txt"
-CROWDTANGLE_ROBOT = "https://apps.crowdtangle.com/robots.txt"
 
 WEVERSE_ID = "sunrinkingh2160@gmail.com"
 WEVERSE_PW = "!eogksalsrnr123"
@@ -134,7 +128,6 @@ def driver_setting():
     if production_env == "production":
         executable_path = "/usr/local/bin/chromedriver"
         s = Service(executable_path=executable_path)
-        print('This is using production env')
     else:
         s = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=s, options=chrome_options)
@@ -158,7 +151,7 @@ class NoLoginDownloaderMiddleware:
 
         # Socialblade Case
         if domain == SOCIALBLADE_DOMAIN:
-            if request.url != SOCIALBLADE_ROBOT:
+            if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located(
@@ -171,7 +164,7 @@ class NoLoginDownloaderMiddleware:
 
         # Youtube Channel Case
         elif domain == YOUTUBE_DOMAIN:
-            if request.url != YOUTUBE_ROBOT:
+            if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located(
@@ -184,7 +177,7 @@ class NoLoginDownloaderMiddleware:
 
         # 가이섬 Channel Case
         elif domain == GUYSOME_DOMAIN:
-            if request.url != GUYSOME_ROBOT:
+            if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located(
@@ -195,10 +188,15 @@ class NoLoginDownloaderMiddleware:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
                     # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
         elif domain == MELON_DOMAIN:
-            if request.url != MELON_ROBOT:
-                WebDriverWait(self.driver, 10).until(
-                    MelonElementIsPositive((By.ID, "d_like_count"))
-                )
+            if ROBOTS_TXT not in request.url:
+                try:
+                    WebDriverWait(self.driver, 10).until(
+                        MelonElementIsPositive((By.ID, "d_like_count"))
+                    )
+                except TimeoutException:
+                    print("Can not load the page")
+                except NoSuchElementException:
+                    print("Please check the CLASS NAME of element")
         body = to_bytes(text=self.driver.page_source)
         return HtmlResponse(url=request.url, body=body, encoding="utf-8", request=request)
 
@@ -313,7 +311,7 @@ class LoginDownloaderMiddleware:
         print("crawling url : {}".format(request.url))
 
         if spider.name == "weverse":
-            if request.url != WEVERSE_ROBOT:
+            if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOcasdfadsf"))
@@ -321,7 +319,7 @@ class LoginDownloaderMiddleware:
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
         else:
-            if request.url != CROWDTANGLE_ROBOT:
+            if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
                         EC.presence_of_element_located((By.CLASS_NAME, "report-top-level-metrics"))

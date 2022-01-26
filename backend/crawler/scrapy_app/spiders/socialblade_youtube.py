@@ -5,6 +5,9 @@ from ..items import SocialbladeYoutubeItem
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from datetime import datetime
+from config.models import CollectTargetItem
+from django.db.models import Q
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
@@ -19,26 +22,22 @@ class YoutubeSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
+    youtube_platform_id = Platform.objects.get(name="youtube").id
+    CrawlingTarget = CollectTarget.objects.filter(platform_id=youtube_platform_id)
 
     def start_requests(self):
-        crawl_url = {}
-        youtube_platform_id = Platform.objects.get(name="youtube").id
-        CrawlingTarget = CollectTarget.objects.filter(platform_id=youtube_platform_id)
-        for row in CrawlingTarget:
+        for row in self.CrawlingTarget:
             artist_name = Artist.objects.get(id=row.artist_id).name
             artist_url = row.target_url
-            crawl_url[artist_name] = artist_url
-
-        for artist, url in crawl_url.items():
+            target_id = row.id
             print("artist : {}, url : {}, url_len: {}".format(
-                artist, url, len(url)))
-            if len(url) > 0:
-                if urlparse(url).netloc == SOCIALBLADE_DOMAIN:
-                    yield scrapy.Request(url=url, callback=self.parse_social, encoding="utf-8", meta={"artist": artist})
-                else:
-                    yield scrapy.Request(url=url, callback=self.parse_youtube, encoding="utf-8", meta={"artist": artist})
+                artist_name, artist_url, len(artist_url)))
+            if urlparse(artist_url).netloc == SOCIALBLADE_DOMAIN:
+                yield scrapy.Request(url=artist_url, callback=self.parse_social, encoding="utf-8", meta={"artist": artist_name,
+                                                                                                         "target_id": target_id})
             else:
-                continue
+                yield scrapy.Request(url=artist_url, callback=self.parse_youtube, encoding="utf-8", meta={"artist": artist_name,
+                                                                                                          "target_id": target_id})
 
     # 구독자 문자열을 정수형 숫자로 반환
     def parse_subscribers(self, subs_text):
@@ -62,17 +61,20 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             artist = response.request.meta["artist"]
-            youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
+            sub_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="subscribers")).xpath + "/text()"
+            views_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
+            uploads_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath + "/text()"
+            user_created_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             try:
-                uploads = response.xpath(
-                    f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
-                subscribers = response.xpath(
-                    f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
-                view_text = response.xpath(
-                    f"//*[@id={youtubeusertopinfoblock}]/div[4]/span[2]/text()").get()
-                user_created = response.xpath(
-                    f"//*[@id={youtubeusertopinfoblock}]/div[7]/span[2]/text()").get()
+                uploads = response.xpath(uploads_xpath).get()
+                subscribers = response.xpath(sub_xpath).get()
+                view_text = response.xpath(views_xpath).get()
+                user_created = response.xpath(user_created_xpath).get()
             except ValueError:
                 pass
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
@@ -93,6 +95,7 @@ class YoutubeSpider(scrapy.Spider):
                 item["subscribers"] = subscribers
                 item["views"] = views
                 item["user_created"] = user_created
+                item["reserved_date"] = datetime.now().date()
                 # item["platform"] = self.name
                 item["url"] = response.url
                 yield item
@@ -102,14 +105,14 @@ class YoutubeSpider(scrapy.Spider):
         if response.request.url == YOUTUBE_ROBOT:
             pass
         else:
+            views_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
+            user_created_xpath = CollectTargetItem.objects.get(
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
             artist = response.request.meta["artist"]
-            rightcolumn = '\"right-column\"'
-
             try:
-                view_text = response.xpath(
-                    f"//*[@id={rightcolumn}]/yt-formatted-string[3]/text()").get()
-                user_created = response.xpath(
-                    f"//*[@id={rightcolumn}]/yt-formatted-string[2]/span[2]/text()").get()
+                view_text = response.xpath(views_xpath).get()
+                user_created = response.xpath(user_created_xpath).get()
             except ValueError:
                 pass
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
@@ -129,4 +132,5 @@ class YoutubeSpider(scrapy.Spider):
                 item["views"] = views
                 item["user_created"] = user_created
                 item["url"] = response.url
+                item["reserved_date"] = datetime.now().date()
                 yield item
