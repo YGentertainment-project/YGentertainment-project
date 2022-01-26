@@ -99,7 +99,3 @@ $(document).on('click','#save-schedule',function(){
         alert('스케줄 시간 입력이 잘못되었습니다.');
     }
 })
-
-
-
-

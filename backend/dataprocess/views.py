@@ -646,6 +646,11 @@ class DataReportAPI(APIView):
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 check = False
+                crawling_artist_list = []
+                objects = CollectData.objects.filter(collect_items__platform=platform)
+                objects_value = objects.values()
+                for val in objects_value:
+                    crawling_artist_list.append(val["collect_items"]["artist"])
                 filter_datas = []
                 for artist in artist_list:
                     filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
@@ -657,7 +662,7 @@ class DataReportAPI(APIView):
                         filter_datas.append(filter_value["collect_items"])
                 # 해당날짜에 데이터가 하나라도 있을 때
                 if check:
-                    return JsonResponse(data={"success": True, "data": filter_datas, "artists": artist_list, "platform": platform_header})
+                    return JsonResponse(data={"success": True, "data": filter_datas, "artists": artist_list, "platform": platform_header,"crawling_artist_list": crawling_artist_list})
                 # 해당날짜에 데이터가 하나도 없을 때
                 else:
                     crawling_artist_list = []
@@ -675,6 +680,11 @@ class DataReportAPI(APIView):
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
                 check = False
+                crawling_artist_list = []
+                objects = CollectData.objects.filter(collect_items__platform=platform)
+                objects_value = objects.values()
+                for val in objects_value:
+                    crawling_artist_list.append(val["collect_items"]["artist"])
                 filter_datas_total = []
                 for artist in artist_list:
                     filter_objects_start = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
@@ -710,13 +720,18 @@ class DataReportAPI(APIView):
                         filter_objects_end_value = filter_objects_end_value["collect_items"]
                         filter_datas_total.append(filter_objects_end_value)
                 if check: # 양끝 모두 존재 or 끝날짜만 존재
-                    return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header})
+                    return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
                     datename = "%s-%s-%s"%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
                     return JsonResponse(status=400, data={"success": False, "data": datename})
             else:
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
+                crawling_artist_list = []
+                objects = CollectData.objects.filter(collect_items__platform=platform)
+                objects_value = objects.values()
+                for val in objects_value:
+                    crawling_artist_list.append(val["collect_items"]["artist"])
                 objects = CollectData.objects.filter(collect_items__platform=platform,
                             collect_items__reserved_date = start_date_string)
                 if objects.exists():
@@ -724,7 +739,7 @@ class DataReportAPI(APIView):
                     platform_datas = []
                     for queryset_value in platform_queryset_values:
                         platform_datas.append(queryset_value["collect_items"])
-                    return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header})
+                    return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
                 else:
                     return JsonResponse(status=400, data={"success": False, "data": "there is no data"})
         except Exception:
@@ -807,7 +822,8 @@ class DataReportAPI(APIView):
                 filter_datas = []
 
                 crawling_artist_list = set()
-                objects_value = filter_objects.values()
+                platform_filter_objects = CollectData.objects.filter(collect_items__platform=platform)
+                objects_value = platform_filter_objects.values()
                 for val in objects_value:
                     val = val["collect_items"]
                     # 각 아티스트가 한번만 들어가도록
