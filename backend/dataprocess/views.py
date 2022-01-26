@@ -11,6 +11,7 @@ from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSe
 from dataprocess.functions import export_datareport, import_datareport, import_total
 from django.views.decorators.csrf import csrf_exempt
 
+from .resources import *
 from .serializers import *
 from .models import *
 from django.http.response import JsonResponse
@@ -26,8 +27,6 @@ from django.http import HttpResponse
 import datetime
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
-from .resources import *
-from .models import *
 import logging
 
 formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
@@ -681,7 +680,7 @@ class DataReportAPI(APIView):
             elif type == "기간별":
                 # 전날 값을 구함
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
-                end_date_dateobject = datetime.strptime(end_date, "%Y-%m-%d").date()
+                end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
                 check = False
@@ -707,7 +706,7 @@ class DataReportAPI(APIView):
                         filter_objects_end_value = filter_objects_end.values()[0]
                         filter_objects_end_value = filter_objects_end_value["collect_items"]
                         for field_name in filter_objects_start_value.keys():
-                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name!="artist" and field_name != "url" and field_name != "reserved_date" and field_name != "updated_dt":
+                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "reserved_date" and field_name != "updated_dt":
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
                                     data_json[field_name] = filter_objects_end_value[field_name] - filter_objects_start_value[field_name]
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
@@ -727,8 +726,7 @@ class DataReportAPI(APIView):
                 if check: # 양끝 모두 존재 or 끝날짜만 존재
                     return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
-                    datename = "%s-%s-%s"%(end_date_dateobject.year, end_date_dateobject.month, end_date_dateobject.day)
-                    return JsonResponse(status=400, data={"success": False, "data": datename})
+                    return JsonResponse(status=400, data={"success": False, "data": end_date})
             else:
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
@@ -746,7 +744,7 @@ class DataReportAPI(APIView):
                         platform_datas.append(queryset_value["collect_items"])
                     return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
                 else:
-                    return JsonResponse(status=400, data={'success': False, 'data': 'there is no data'})
+                    return JsonResponse(status=400, data={'success': False, 'data': start_date})
         except:
             return JsonResponse(status=400, data={'success': False})
     
