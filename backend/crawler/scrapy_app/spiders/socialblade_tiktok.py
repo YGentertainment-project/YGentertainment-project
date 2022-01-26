@@ -43,16 +43,26 @@ class TiktokSpider(scrapy.Spider):
             else:
                 artist = response.request.meta["artist"]
                 youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
-                uploads = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
-                followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
-                likes = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
+                try:
+                    uploads = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
+                    followers = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
+                    likes = response.xpath(f"//*[@id={youtubeusertopinfoblock}]/div[5]/span[2]/text()").get()
+                except ValueError:
+                    pass
+                    # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
-            item = SocialbladeTiktokItem()
-            item["artist"] = artist
-            item["uploads"] = 0 if not uploads else uploads.replace(",", "")
-            item["followers"] = 0 if not followers else followers.replace(",", "")
-            item["likes"] = 0 if not likes else likes.replace(",", "")
-            item["url"] = response.url
-            yield item
+            if uploads is None or followers is None or likes is None:
+                pass
+                # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+                # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+                # 오류일 경우 item을 yield 하지 않아야 합니다.
+            else:
+                item = SocialbladeTiktokItem()
+                item["artist"] = artist
+                item["uploads"] = uploads.replace(",", "")
+                item["followers"] = followers.replace(",", "")
+                item["likes"] = likes.replace(",", "")
+                item["url"] = response.url
+                yield item

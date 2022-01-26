@@ -57,48 +57,76 @@ class YoutubeSpider(scrapy.Spider):
         return int(result)
 
     def parse_social(self, response):
+        artist = uploads = subscribers = view_text = user_created = None
         if response.request.url == SOCIALBLADE_ROBOT:
             pass
         else:
             artist = response.request.meta["artist"]
             youtubeusertopinfoblock = '\"YouTubeUserTopInfoBlock\"'
-            uploads = response.xpath(
-                f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
-            uploads = self.parse_comma_text(uploads)
-            subscribers = response.xpath(
-                f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
-            subscribers = self.parse_subscribers(subscribers)
-            view_text = response.xpath(
-                f"//*[@id={youtubeusertopinfoblock}]/div[4]/span[2]/text()").get()
-            views = self.parse_comma_text(view_text)
-            user_created = response.xpath(
-                f"//*[@id={youtubeusertopinfoblock}]/div[7]/span[2]/text()").get()
-            item = SocialbladeYoutubeItem()
-            item["artist"] = artist
-            item["uploads"] = uploads
-            item["subscribers"] = subscribers
-            item["views"] = views
-            item["user_created"] = user_created
-            # item["platform"] = self.name
-            item["url"] = response.url
-            yield item
+
+            try:
+                uploads = response.xpath(
+                    f"//*[@id={youtubeusertopinfoblock}]/div[2]/span[2]/text()").get()
+                subscribers = response.xpath(
+                    f"//*[@id={youtubeusertopinfoblock}]/div[3]/span[2]/text()").get()
+                view_text = response.xpath(
+                    f"//*[@id={youtubeusertopinfoblock}]/div[4]/span[2]/text()").get()
+                user_created = response.xpath(
+                    f"//*[@id={youtubeusertopinfoblock}]/div[7]/span[2]/text()").get()
+            except ValueError:
+                pass
+                # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+            if uploads is None or view_text is None or subscribers is None or user_created is None:
+                pass
+                # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+                # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+                # 오류일 경우 item을 yield 하지 않아야 합니다.
+            else:
+                subscribers = self.parse_subscribers(subscribers)
+                views = self.parse_comma_text(view_text)
+                uploads = self.parse_comma_text(uploads)
+
+                item = SocialbladeYoutubeItem()
+                item["artist"] = artist
+                item["uploads"] = uploads
+                item["subscribers"] = subscribers
+                item["views"] = views
+                item["user_created"] = user_created
+                # item["platform"] = self.name
+                item["url"] = response.url
+                yield item
 
     def parse_youtube(self, response):
+        artist = view_text = user_created = None
         if response.request.url == YOUTUBE_ROBOT:
             pass
         else:
             artist = response.request.meta["artist"]
             rightcolumn = '\"right-column\"'
-            view_text = response.xpath(
-                f"//*[@id={rightcolumn}]/yt-formatted-string[3]/text()").get()
-            # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
-            view_text = view_text[:-5].strip()
-            views = self.parse_comma_text(view_text)
-            user_created = response.xpath(
-                f"//*[@id={rightcolumn}]/yt-formatted-string[2]/span[2]/text()").get()
-            item = SocialbladeYoutubeItem()
-            item["artist"] = artist
-            item["views"] = views
-            item["user_created"] = user_created
-            item["url"] = response.url
-            yield item
+
+            try:
+                view_text = response.xpath(
+                    f"//*[@id={rightcolumn}]/yt-formatted-string[3]/text()").get()
+                user_created = response.xpath(
+                    f"//*[@id={rightcolumn}]/yt-formatted-string[2]/span[2]/text()").get()
+            except ValueError:
+                pass
+                # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+            if view_text is None or user_created is None:
+                pass
+                # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+                # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+                # 오류일 경우 item을 yield 하지 않아야 합니다.
+            else:
+                # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
+                view_text = view_text[:-5].strip()
+                views = self.parse_comma_text(view_text)
+
+                item = SocialbladeYoutubeItem()
+                item["artist"] = artist
+                item["views"] = views
+                item["user_created"] = user_created
+                item["url"] = response.url
+                yield item

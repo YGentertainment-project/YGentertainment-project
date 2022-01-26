@@ -31,26 +31,52 @@ class MelonSpider(scrapy.Spider):
     def parse(self, response):
         artist = response.meta["artist"]
         mainwrapper = '\"main-wrapper\"'
-        listener = response.xpath(
-            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[2].replace(",", "")
-        streaming = response.xpath(
-            f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[4]/text()").extract()[2].replace(",", "")
-        url1 = response.url
-        yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
-                             meta={"artist": artist,
-                                   "listeners": listener,
-                                   "streams": streaming,
-                                   "url1": url1})
+        listener_target = streaming_target = None
+        try:
+            listener_target = response.xpath(
+                f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[3]/text()").extract()[2]
+            streaming_target = response.xpath(
+                f"//*[@id={mainwrapper}]/div/div[2]/div[2]/div/div/div/ul/li[4]/text()").extract()[2]
+        except ValueError:
+            pass
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+        if listener_target is None or streaming_target is None:
+            pass
+            # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+            # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+            # 오류일 경우 item을 yield 하지 않아야 합니다.
+        else:
+            listener = listener_target.replace(",", "")
+            streaming = streaming_target.replace(",", "")
+            url1 = response.url
+            yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
+                                 meta={"artist": artist,
+                                       "listeners": listener,
+                                       "streams": streaming,
+                                       "url1": url1})
 
     def parse_melon(self, response):
-        item = MelonItem()
+        fans_target = None
         d_like_count = '\"d_like_count\"'
-        fans = response.xpath(
-            f"//span[@id={d_like_count}]/text()").get().replace(",", "")
-        item["artist"] = response.meta["artist"]
-        item["listeners"] = response.meta["listeners"]
-        item["streams"] = response.meta["streams"]
-        item["fans"] = fans
-        item["url1"] = response.meta["url1"]
-        item["url2"] = response.url
-        yield item
+        try:
+            fans_target = response.xpath(f"//span[@id={d_like_count}]/text()").get()
+        except ValueError:
+            pass
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+        if fans_target is None:
+            pass
+            # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+            # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+            # 오류일 경우 item을 yield 하지 않아야 합니다.
+        else:
+            item = MelonItem()
+            fans = fans_target.replace(",", "")
+            item["artist"] = response.meta["artist"]
+            item["listeners"] = response.meta["listeners"]
+            item["streams"] = response.meta["streams"]
+            item["fans"] = fans
+            item["url1"] = response.meta["url1"]
+            item["url2"] = response.url
+            yield item
