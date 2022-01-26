@@ -845,4 +845,4 @@ class DataReportAPI(APIView):
                 # datename = "%s-%s-%s"%(start_date_dateobject.year, start_date_dateobject.month, start_date_dateobject.day)
                 return JsonResponse(status=200, data={'success': True, 'data': 'no data', 'artists': artist_list, 'platform': platform_header, 'crawling_artist_list': crawling_artist_list})
         except:
-            return JsonResponse(status=400, data={"'success': False})
+            return JsonResponse(status=400, data={'success': False})
