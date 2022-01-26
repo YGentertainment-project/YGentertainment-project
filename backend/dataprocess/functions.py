@@ -20,8 +20,9 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     if type == "누적":
         # today_date = datetime.datetime.today()
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+        start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
         filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+            collect_items__reserved_date = start_date_string)
         if filter_objects.exists():
             filter_value = filter_objects.values().first()
             filter_value = filter_value["collect_items"]
@@ -36,10 +37,12 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     elif type == "기간별":
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
         end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+        start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
+        end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
         filter_start_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+            collect_items__reserved_date = start_date_string)
         filter_end_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-            collect_items__reserved_date = f'{end_date_dateobject.year}-{end_date_dateobject.month}-{end_date_dateobject.day}')
+            collect_items__reserved_date = end_date_string)
         if filter_start_objects.exists() and filter_end_objects.exists():
             filter_start_value = filter_start_objects.values().first()
             filter_end_value = filter_end_objects.values().first()
@@ -168,7 +171,7 @@ def import_datareport(worksheet, excel_import_date):
     else:
         target_date = datetime.datetime.strptime(excel_import_date, "%Y-%m-%d")
     target_date = datetime.date(target_date.year, target_date.month, target_date.day)
-
+    target_date_string = target_date.strftime("%Y-%m-%d")
     for row in worksheet.iter_rows():
         # 플랫폼 정보 나열
         if row_num == 0:
@@ -240,7 +243,7 @@ def import_datareport(worksheet, excel_import_date):
                     if current_index >= platform_data_list[platform_index]["item_num"]:
                         # 데이터 저장
                         data_json["artist"] = artist_name
-                        save_collect_data_target(data_json, platform_name, target_date)
+                        save_collect_data_target(data_json, platform_name, target_date_string)
                         platform_index += 1
                         current_index = 0
                         data_json = {}
@@ -441,14 +444,14 @@ def import_total(worksheet):
         save_collect_target_item(collect_target_item_data)
 
 
-def save_collect_data_target(data_json, platform, target_date):
+def save_collect_data_target(data_json, platform, target_date_string):
     """
     수집(크롤링) 데이터 저장
     """
     if len(data_json.keys())==1:
         return
     # collectdata 저장
-    data_json["reserved_date"] = f'{target_date.year}-{target_date.month}-{target_date.day}'
+    data_json["reserved_date"] = target_date_string
     data_json["platform"] = platform
     artist_object = Artist.objects.filter(name=data_json["artist"])
     artist_object = artist_object.values()[0]
@@ -459,7 +462,7 @@ def save_collect_data_target(data_json, platform, target_date):
     collecttarget_object = collecttarget_object.values()[0]
     CollectData.objects.update_or_create(
         collect_target_id = collecttarget_object['id'],
-        collect_items__reserved_date = f'{target_date.year}-{target_date.month}-{target_date.day}',
+        collect_items__reserved_date = target_date_string,
         defaults = {"collect_items": data_json}
     )
 

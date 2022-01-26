@@ -631,11 +631,12 @@ class DataReportAPI(APIView):
         try:
             if type == "누적":
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 check = False
                 filter_datas = []
                 for artist in artist_list:
                     filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                        collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                        collect_items__reserved_date = start_date_string)
                     if filter_objects.exists():
                         check = True
                         # 같은 날짜에 여러개 있을 때 가장 앞의 것 가져오기
@@ -658,13 +659,15 @@ class DataReportAPI(APIView):
                 # 전날 값을 구함
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
                 end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+                start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
+                end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
                 check = False
                 filter_datas_total = []
                 for artist in artist_list:
                     filter_objects_start = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                            collect_items__reserved_date = start_date_string)
                     filter_objects_end = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                            collect_items__reserved_date = f'{end_date_dateobject.year}-{end_date_dateobject.month}-{end_date_dateobject.day}')
+                            collect_items__reserved_date = end_date_string)
                     # 둘 다 존재할 때
                     if filter_objects_start.exists() and filter_objects_end.exists():
                         check = True
@@ -700,8 +703,9 @@ class DataReportAPI(APIView):
                     return JsonResponse(status=400, data={"success": False, "data": datename})
             else:
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+                start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 objects = CollectData.objects.filter(collect_items__platform=platform,
-                            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                            collect_items__reserved_date = start_date_string)
                 if objects.exists():
                     platform_queryset_values = objects.values()
                     platform_datas = []
@@ -720,7 +724,7 @@ class DataReportAPI(APIView):
         update_data_object = JSONParser().parse(request)
         start_date = update_data_object[len(update_data_object)-1]['start_date']
         platform = update_data_object[len(update_data_object)-1]['platform_name']
-
+        print(platform)
         # artist name
         artist_objects = Artist.objects.filter(active=1)
         artist_objects_values = artist_objects.values()
@@ -756,7 +760,7 @@ class DataReportAPI(APIView):
         obj_datas = []
         for v in objects_values:
             obj_datas.append(v["collect_items"])
-
+        print(obj_datas)
         key_list = list(obj_datas[0].keys())
 
         for key in key_list:
@@ -767,6 +771,8 @@ class DataReportAPI(APIView):
 
         try:
             start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+            start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
+            print(start_date_string)
             for index, element in enumerate(update_data_object):
                 if index == len(update_data_object)-1:
                     break
@@ -777,11 +783,9 @@ class DataReportAPI(APIView):
                 collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object["id"],
                                         artist_id = artist_object["id"])
                 collecttarget_object = collecttarget_object.values()[0]
-                # obj = CollectData.objects.filter(collect_items__artist=element['artist'], collect_items__platform=platform,
-                #             collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
                 CollectData.objects.update_or_create(
                         collect_target_id = collecttarget_object['id'],
-                        collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}',
+                        collect_items__reserved_date = start_date_string,
                         # collect_items = element,
                         # 바뀌는 값
                         defaults = {"collect_items": element}
@@ -789,7 +793,7 @@ class DataReportAPI(APIView):
                     
             artist_set = set()
             filter_objects = CollectData.objects.filter(collect_items__platform=platform,
-                            collect_items__reserved_date = f'{start_date_dateobject.year}-{start_date_dateobject.month}-{start_date_dateobject.day}')
+                            collect_items__reserved_date = start_date_string)
             if filter_objects.exists():
                 filter_objects_values = filter_objects.values()
                 filter_datas = []
