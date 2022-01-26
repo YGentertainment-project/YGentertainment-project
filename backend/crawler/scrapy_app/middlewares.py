@@ -27,7 +27,7 @@ trfh = logging.handlers.TimedRotatingFileHandler(
 trfh.setFormatter(formatter)
 trfh.setLevel(logging.INFO)
 crawlinglogger.addHandler(trfh)
-crawlinglogger.setLevel(logging.DEBUG)
+crawlinglogger.setLevel(logging.ERROR)
 
 production_env = (get_env("YG_ENV", "dev") == "production")
 
