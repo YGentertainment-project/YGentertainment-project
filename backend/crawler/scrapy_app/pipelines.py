@@ -4,22 +4,13 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from urllib import parse
 from django.utils import timezone
-from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
-    Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
-
 from dataprocess.models import CollectData, CollectTarget
+from django.apps import apps
+
+# DataModels = { "youtube": SocialbladeYoutube, "twitter" : SocialbladeTwitter, ... }
 
 DataModels = {
-    "youtube": SocialbladeYoutube,
-    "tiktok": SocialbladeTiktok,
-    "twitter": SocialbladeTwitter,
-    "twitter2": SocialbladeTwitter2,
-    "weverse": Weverse,
-    "instagram": CrowdtangleInstagram,
-    "facebook": CrowdtangleFacebook,
-    "vlive": Vlive,
-    "melon": Melon,
-    "spotify": Spotify,
+    model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
 }
 
 
@@ -45,30 +36,30 @@ def process_itemsave(spider_name, item):
     # 오늘일자로 이미 저장된 아티스트 정보가 있는 경우 => 데이터를 최신버전으로 수정
     if dayfilter_obj.exists():
         if spider_name == "youtube":
-            return update_youtube(item)
+            return update_youtube(item, spider_name)
         elif spider_name == "tiktok":
-            return update_tiktok(item)
+            return update_tiktok(item, spider_name)
         elif spider_name == "twitter" or spider_name == "twitter2":
             return update_twitter(item, spider_name)
         elif spider_name == "weverse":
-            return update_weverse(item)
+            return update_weverse(item, spider_name)
         elif spider_name == "vlive":
-            return update_vlive(item)
+            return update_vlive(item, spider_name)
         elif spider_name == "crowdtangle":
             return update_crowdtangle(item, model_name)
         elif spider_name == "spotify":
-            return update_spotify(item)
+            return update_spotify(item, spider_name)
         elif spider_name == "melon":
-            return update_melon(item)
+            return update_melon(item, spider_name)
     # 오늘일자로 저장된 데이터가 없는 경우 => 새로 생성
     else:
         item.save()
     return item
 
 
-def update_youtube(item):
+def update_youtube(item, name):
     nowdate = item["recorded_date"]
-    existingItem = SocialbladeYoutube.objects.get(artist=item["artist"],
+    existingItem = DataModels[name].objects.get(artist=item["artist"],
                                                   recorded_date__year=nowdate.year,
                                                   recorded_date__month=nowdate.month,
                                                   recorded_date__day=nowdate.day,
@@ -80,9 +71,9 @@ def update_youtube(item):
     existingItem.save()
 
 
-def update_tiktok(item):
+def update_tiktok(item, name):
     nowdate = item["recorded_date"]
-    existingItem = SocialbladeTiktok.objects.get(artist=item.get("artist"),
+    existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                                  recorded_date__year=nowdate.year,
                                                  recorded_date__month=nowdate.month,
                                                  recorded_date__day=nowdate.day,
@@ -107,9 +98,9 @@ def update_twitter(item, name):
     existingItem.save()
 
 
-def update_weverse(item):
+def update_weverse(item, name):
     nowdate = item["recorded_date"]
-    existingItem = Weverse.objects.get(artist=item.get("artist"),
+    existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                        recorded_date__year=nowdate.year,
                                        recorded_date__month=nowdate.month,
                                        recorded_date__day=nowdate.day,
@@ -120,9 +111,9 @@ def update_weverse(item):
     existingItem.save()
 
 
-def update_vlive(item):
+def update_vlive(item, name):
     nowdate = item["recorded_date"]
-    existingItem = Vlive.objects.get(artist=item.get("artist"),
+    existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                      recorded_date__year=nowdate.year,
                                      recorded_date__month=nowdate.month,
                                      recorded_date__day=nowdate.day,
@@ -136,9 +127,9 @@ def update_vlive(item):
     existingItem.save()
 
 
-def update_melon(item):
+def update_melon(item, name):
     nowdate = item["recorded_date"]
-    existingItem = Melon.objects.get(artist=item.get("artist"),
+    existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                      recorded_date__year=nowdate.year,
                                      recorded_date__month=nowdate.month,
                                      recorded_date__day=nowdate.day,
@@ -150,9 +141,9 @@ def update_melon(item):
     existingItem.save()
 
 
-def update_spotify(item):
+def update_spotify(item, name):
     nowdate = item["recorded_date"]
-    existingItem = Spotify.objects.get(artist=item.get("artist"),
+    existingItem = DataModels[name].objects.get(artist=item.get("artist"),
                                        recorded_date__year=nowdate.year,
                                        recorded_date__month=nowdate.month,
                                        recorded_date__day=nowdate.day,

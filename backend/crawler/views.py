@@ -7,34 +7,26 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from utils.shortcuts import get_env
-
-# crawler models
-from crawler.models import SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2, \
-    Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify
+from dataprocess.models import CollectTarget
+from dataprocess.models import Artist
+from dataprocess.models import Platform
+from django.db.models import Q
 
 # django_celery_beat models
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
+# load crawler models
+from django.apps import apps
+DataModels = {
+    model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+}
 
 # celery
-from .tasks import direct_crawling_platform
+from .tasks import direct_crawling
 from .celery import app
 from celery.result import AsyncResult
-from .logparser import LogWatcher
 
-# data models
-DataModels = {
-    "youtube": SocialbladeYoutube,
-    "tiktok": SocialbladeTiktok,
-    "twitter": SocialbladeTwitter,
-    "twitter2": SocialbladeTwitter2,
-    "weverse": Weverse,
-    "instagram": CrowdtangleInstagram,
-    "facebook": CrowdtangleFacebook,
-    "vlive": Vlive,
-    "melon": Melon,
-    "spotify": Spotify,
-}
+# flower domain config
 flower_domain = ""
 production_env = get_env("YG_ENV", "dev") == "production"
 if production_env:
@@ -44,29 +36,18 @@ else:
 
 
 @csrf_exempt
-@require_http_methods(["POST", "GET"])  # only get and post
+@require_http_methods(["POST"])  # only post
 def crawl(request):
     # 새로운 Task를 생성하는 POST 요청
     if request.method == "POST":
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
+        platform_id = Platform.objects.get(name=platform).id
 
-        task = direct_crawling_platform.apply_async(args=[platform])
+
+        task = direct_crawling.apply_async(args=[platform])
         return JsonResponse({"task_id": task.id, "status": "started"})
-
-    # Task 상태를 체크하는 GET 요청
-    elif request.method == "GET":
-        task_id = request.GET.get("task_id", None)
-        if not task_id:
-            return JsonResponse(status=400, data={"error": "Missing args"})
-        result = AsyncResult(id=task_id, app=app)
-        status = result.state
-        try:
-            return JsonResponse({"status": status})
-        except Exception as e:
-            return JsonResponse(status=400, data={"error": str(e)})
-
 
 @csrf_exempt
 @require_http_methods(["GET"])  # only get and post
@@ -126,8 +107,8 @@ def schedules(request):
                 PeriodicTask.objects.create(
                     crontab=schedule,
                     name="{}_{}_schedule_crawling".format(platform, hour),
-                    task="{}_schedule_crawling".format(platform),
-                    # args=json.dumps((platform,)),
+                    task="schedule_crawling",
+                    args=json.dumps((platform,)),
                 )
             return JsonResponse(data={"success": True})
         except Exception as e:
@@ -157,7 +138,6 @@ def schedules(request):
 
 def get_all_tasks():
     flower_url = flower_domain + "api/tasks"
-    print("flower_url : {}".format(flower_url))
     response = requests.get(flower_domain + "api/tasks")
     tasks_json = json.loads(response.content.decode("utf-8"))
     return tasks_json

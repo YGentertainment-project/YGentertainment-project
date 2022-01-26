@@ -61,13 +61,13 @@ class YoutubeSpider(scrapy.Spider):
         else:
             artist = response.request.meta["artist"]
             sub_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="subscribers")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="subscribers")).xpath + "/text()"
             views_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
             uploads_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath + "/text()"
             user_created_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             uploads = response.xpath(uploads_xpath).get()
             uploads = self.parse_comma_text(uploads)
@@ -91,9 +91,9 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             views_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
             user_created_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             artist = response.request.meta["artist"]
             view_text = response.xpath(views_xpath).get()
