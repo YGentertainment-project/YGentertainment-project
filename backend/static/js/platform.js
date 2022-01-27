@@ -1,5 +1,6 @@
 function render_platform_table(data){//parsing한 데이터 화면에 render
     const tableRow = $('<tr></tr>')
+    console.log(data);
     // 해당 row에 대한 column 데이터들 넣기
     for(key in data){
         let dataCol;
@@ -9,6 +10,13 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
             }else{
                 dataCol = $('<td><input type="checkbox"></input></td>'); 
             }
+        }else if(key=='name'){
+            dataCol = document.createElement('td');
+            dataCol.innerHTML = `
+            <td>
+                <input type="text" value="${data[key]}" style="width:100%; font-weight:bold;"></input>
+            </td>
+            `;
         }
         else{
             dataCol = document.createElement('td');

@@ -127,9 +127,12 @@ $('#save-artists').click(function(){
 //show platforms per artist
 //아티스트 클릭시
 $('input[name=artist-name]').click(function(){
+    $('input[name=artist-name]').removeClass("clicked-input-btn");
     var artist = $(this).val();
+    // $(this).removeClass("input-btn");
+    $(this).addClass("clicked-input-btn");
 
-    console.log(artist);
+    // console.log(artist);
 
     $.ajax({
         url: '/dataprocess/api/platform_of_artist/',
@@ -276,12 +279,11 @@ function add_new_collect_target_item(item_num){
 //show collect target of platform
 //플랫폼 클릭시
 $(document).on('click','.platform-names',function(){
-    //console.log('clicked');
-
+    $('.platform-names').removeClass("clicked-input-btn");
     var artist_name = document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼","");
-    // var artist_id = $('.hidden').find('input').val();
     var platform = $(this).text();
     clicked_platform = platform;
+    $(this).addClass("clicked-input-btn");
 
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
