@@ -246,7 +246,10 @@ def report_crawler_error(request):
                 data_json['error_code'] = log_line[6].split(' ')[1]
                 data_json['artist'] = log_line[6].split(' ')[2]
                 data_json['platform'] = log_line[7].split(' ')[1]
-                data_json['url'] = log_line[8].split(' ')[1]
+                url = log_line[8].split(' ')[1]
+                url = url.strip('\n')
+                data_json['url'] = url
+                print(data_json['url'])
                 artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
                 platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
                 data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
@@ -513,15 +516,14 @@ class PlatformOfArtistAPI(APIView):
                 else:
                     target_obj = CollectTarget.objects.filter(pk=collecttarget_object['id'])
                     target_obj_value = target_obj.values()[0]
+                    data = collecttarget_object['new_target_url']
 
                     if target_obj_value['target_url'] == collecttarget_object['old_target_url']:
                         target_obj.update(target_url = collecttarget_object['new_target_url'])
-                        data = collecttarget_object['new_target_url']
                     elif target_obj_value['target_url_2'] == collecttarget_object['old_target_url']:
                         target_obj.update(target_url_2 = collecttarget_object['new_target_url'])
-                        data = collecttarget_object['new_target_url']
                     else:
-                        continue
+                        data = ''
             
             return JsonResponse(data={'success': True,'data':data}, status=status.HTTP_201_CREATED)
               
