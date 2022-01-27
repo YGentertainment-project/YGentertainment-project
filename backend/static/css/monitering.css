@@ -34,6 +34,23 @@
     margin-bottom: 10px;
 }
 
+.no-page{
+  cursor: pointer;
+}
+
+.no-page:hover{
+  color: #E11D48;
+}
+
+.error-url{
+  cursor: pointer;
+}
+
+.error-url-input{
+  width: 100%;
+  background-color: #f8f9fa;
+  border: 0;
+}
 
 #scheduler-header{
     color: white;

@@ -230,6 +230,32 @@ def platform_info(request):
         except:
             return JsonResponse(status=400, data={'success': False})
 
+#show crawler log in monitering page
+@csrf_exempt
+@require_http_methods(["GET"])
+def report_crawler_error(request):
+    if request.method == 'GET':
+        #상대 경로로 바꾸기, 파일 없을 때 에러 처리
+        filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
+        log_file = open(filename,'r', encoding='utf-8')
+        if log_file:
+            log_info = []
+            for line in log_file:
+                log_line = line.split('-')
+                data_json = {}
+                data_json['error_code'] = log_line[6].split(' ')[1]
+                data_json['artist'] = log_line[6].split(' ')[2]
+                data_json['platform'] = log_line[7].split(' ')[1]
+                data_json['url'] = log_line[8].split(' ')[1]
+                artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
+                platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
+                data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
+                log_info.append(data_json)
+            return JsonResponse(data={'success': False, 'data':log_info})
+
+        else:
+            return JsonResponse(data={'success': False, 'data':'no log'})
+
 class PlatformAPI(APIView):
     # @login_required
     def get(self, request):
@@ -478,11 +504,27 @@ class PlatformOfArtistAPI(APIView):
         '''
         try:
             collecttarget_list = JSONParser().parse(request)
+            data = ''
+            print(collecttarget_list)
             for collecttarget_object in collecttarget_list:
-                CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
-                if collecttarget_object['target_url_2']:
+                if collecttarget_object['type'] == 'artist-platform-update':
+                    CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
                     CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url_2=collecttarget_object['target_url_2'])
-            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+                else:
+                    target_obj = CollectTarget.objects.filter(pk=collecttarget_object['id'])
+                    target_obj_value = target_obj.values()[0]
+
+                    if target_obj_value['target_url'] == collecttarget_object['old_target_url']:
+                        target_obj.update(target_url = collecttarget_object['new_target_url'])
+                        data = collecttarget_object['new_target_url']
+                    elif target_obj_value['target_url_2'] == collecttarget_object['old_target_url']:
+                        target_obj.update(target_url_2 = collecttarget_object['new_target_url'])
+                        data = collecttarget_object['new_target_url']
+                    else:
+                        continue
+            
+            return JsonResponse(data={'success': True,'data':data}, status=status.HTTP_201_CREATED)
+              
         except:
             return JsonResponse(data={'success': False}, status=400)
 

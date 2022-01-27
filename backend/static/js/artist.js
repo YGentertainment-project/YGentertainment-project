@@ -199,6 +199,7 @@ $('#save-artists-platform').click(function(){
 
        
         datas.push({
+            "type": "artist-platform-update",
             "id": cells[2].firstElementChild.value,
             "platform": cells[3].firstElementChild.innerHTML,
             "target_url": cells[4].firstElementChild.value,
