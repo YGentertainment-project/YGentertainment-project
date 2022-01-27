@@ -99,3 +99,50 @@ $(document).on('click','#save-schedule',function(){
         alert('스케줄 시간 입력이 잘못되었습니다.');
     }
 })
+
+
+//시간별 스케줄 테이블
+function get_hourly_schedule(){
+    $.ajax({
+        url: '/dataprocess/api/schedule/?' + $.param({
+            type: '시간별'
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            var datalist = res.data;
+            console.log(datalist);
+            $('#hourly-scheduler-body').eq(0).empty();
+            datalist.forEach(data => {
+                const tableRow = $('<tr></tr>');
+                let dataCol = document.createElement('td');
+                dataCol.innerHTML = `
+                <td style="font-weight: bold;">
+                    ${data['platform']}
+                </td>
+                `;
+                tableRow.append(dataCol);
+
+                let dataCol2 = document.createElement('td');
+                let dataCol2Div = document.createElement('div');
+                data['artists'].forEach(artist_name => {
+                    let dataCol2DivBtn = document.createElement('span');
+                    dataCol2DivBtn.innerHTML = `
+                    <span class="input-btn">${artist_name}</span>
+                    `;
+                    dataCol2Div.append(dataCol2DivBtn);
+                })
+                dataCol2.append(dataCol2Div);
+                tableRow.append(dataCol2);
+                $('#hourly-scheduler-body').append(tableRow);
+            })
+        },
+        error: e => {
+            console.log(e);
+        },
+    })
+}
+
+// $(document).on('click','#tabmenu2', get_hourly_schedule)
+get_hourly_schedule();

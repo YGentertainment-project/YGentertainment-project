@@ -10,7 +10,6 @@ urlpatterns = [
     path("", base, name="base"),
     path("daily/", daily, name="daily"),
     path("platform/", platform, name="platform"),
-    # path("excel/",csrf_exempt(views.excel),name="excel"),
     path("artist/", artist, name="artist"),
     path("artist/add/", artist_add, name="artist_add"),
     path("monitering/", monitering, name="monitering"),
@@ -23,5 +22,6 @@ urlpatterns = [
     path('api/platform_of_artist/', csrf_exempt(views.PlatformOfArtistAPI.as_view()), name='platform_of_artist_api'),
     path('api/collect_target_item/', csrf_exempt(views.CollectTargetItemAPI.as_view()), name='collect_target_item_api'),
     path('api/platform_target_item/', csrf_exempt(views.PlatformTargetItemAPI.as_view()), name='platform_target_item_api'),
+    path('api/schedule/', csrf_exempt(views.ScheduleAPI.as_view()), name='schedule_api'),
     path('api/crawler_error/', csrf_exempt(views.report_crawler_error), name='crawler_error'),
 ]

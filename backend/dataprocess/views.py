@@ -889,3 +889,37 @@ class DataReportAPI(APIView):
                 return JsonResponse(status=200, data={'success': True, 'data': 'no data', 'artists': artist_list, 'platform': platform_header, 'crawling_artist_list': crawling_artist_list})
         except:
             return JsonResponse(status=400, data={'success': False})
+
+
+class ScheduleAPI(APIView):
+    def get(self, request):
+        '''
+        Schedule read api
+        '''
+        type = request.GET.get('type', None) # 시간별 or 일별
+        try:
+            if type == "시간별":
+                # 해당 플랫폼에 시간별인 아티스트들 가져오기
+                platform_objects = Platform.objects.all()
+                platform_objects = platform_objects.values()
+                hourly_list = []
+                for platform_object in platform_objects:
+                    hour_artist_list = []
+                    collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object['id'])
+                    collecttarget_objects = collecttarget_objects.values()
+                    for collecttarget_object in collecttarget_objects:
+                        schedule_objects = Schedule.objects.filter(period = 'hour', collect_target_id = collecttarget_object['id'])
+                        if schedule_objects.exists():
+                            artist = Artist.objects.get(pk = collecttarget_object['artist_id'])
+                            hour_artist_list.append(artist.name)
+                    hourly_list.append({
+                        'platform': platform_object['name'],
+                        'artists': hour_artist_list
+                    })
+                return JsonResponse(data={'success': True, 'data': hourly_list})
+            elif type == "일별":
+                hourly_list = []
+                return JsonResponse(data={'success': True, 'data': hourly_list})
+        except:
+            return JsonResponse(status=400, data={'success': False})
+        
