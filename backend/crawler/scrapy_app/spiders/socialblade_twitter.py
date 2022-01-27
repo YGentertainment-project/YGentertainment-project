@@ -44,9 +44,9 @@ class TwitterSpider(scrapy.Spider):
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             artist = response.request.meta["artist"]
-            followers = response.xpath(followers_xpath).extract()[0]
-            twits = response.xpath(twits_xpath).extract()[0]
-            user_created = response.xpath(user_created_xpath).extract()[0]
+            followers = response.xpath(followers_xpath).get()
+            twits = response.xpath(twits_xpath).get()
+            user_created = response.xpath(user_created_xpath).get()
 
             item = SocialbladeTwitterItem()
             item["artist"] = artist

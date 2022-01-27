@@ -31,11 +31,11 @@ class WeverseSpider(scrapy.Spider):
     def parse(self, response):
         artist = response.meta["artist"]
         sub_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="weverses")).xpath + "/text()"
-        sub = response.xpath(sub_xpath).extract()
+        sub = response.xpath(sub_xpath).get()
         # WINNER의 경우, 페이지는 있으나 구독자 수가 공개되어 있지 않으므로 0으로 처리했습니다.
         item = WeverseItem()
         item["artist"] = artist
-        item["weverses"] = 0 if not sub else int(sub[0][:-6].replace(",", ""))
+        item["weverses"] = int(sub[:-6].replace(",", ""))
         item["url"] = response.url
         item["reserved_date"] = datetime.now().date()
         yield item

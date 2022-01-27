@@ -46,6 +46,7 @@ class Twitter2Spider(scrapy.Spider):
             followers = response.xpath(followers_xpath).get()
             twits = response.xpath(twits_xpath).get()
             user_created = response.xpath(user_created_xpath).get()
+
             item = SocialbladeTwitter2Item()
             item["artist"] = artist
             item["followers"] = followers.replace(",", "")

@@ -26,7 +26,8 @@ class VliveSpider(scrapy.Spider):
     def parse(self, response):
         artist = response.meta["artist"]
         soup = BeautifulSoup(response.text, "html.parser")
-        script = soup.find("script").get_text()
+        script_target = soup.select_one("script")
+        script = script_target.text
         json_object = json.loads(script[27:-308])
         members = json_object["channel"]["channel"]["memberCount"]
         videoplay = json_object["channel"]["channel"]["videoPlayCountOfStar"]

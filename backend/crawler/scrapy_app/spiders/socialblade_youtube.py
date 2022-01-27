@@ -70,12 +70,14 @@ class YoutubeSpider(scrapy.Spider):
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             uploads = response.xpath(uploads_xpath).get()
-            uploads = self.parse_comma_text(uploads)
             subscribers = response.xpath(sub_xpath).get()
-            subscribers = self.parse_subscribers(subscribers)
             view_text = response.xpath(views_xpath).get()
-            views = self.parse_comma_text(view_text)
             user_created = response.xpath(user_created_xpath).get()
+
+            uploads = self.parse_comma_text(uploads)
+            subscribers = self.parse_subscribers(subscribers)
+            views = self.parse_comma_text(view_text)
+
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
             item["uploads"] = uploads
@@ -97,10 +99,11 @@ class YoutubeSpider(scrapy.Spider):
 
             artist = response.request.meta["artist"]
             view_text = response.xpath(views_xpath).get()
+            user_created = response.xpath(user_created_xpath).get()
             # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
             view_text = view_text[:-5].strip()
             views = self.parse_comma_text(view_text)
-            user_created = response.xpath(user_created_xpath).get()
+
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
             item["views"] = views

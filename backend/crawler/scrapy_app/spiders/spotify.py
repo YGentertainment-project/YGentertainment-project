@@ -28,7 +28,9 @@ class SpotifySpider(scrapy.Spider):
         soup = BeautifulSoup(response.text, "html.parser")
         artist_id = response.url[32:]
         initial = "initial-state"
-        result = soup.select_one(f"script[id={initial}]").text
+        result_target = soup.select_one(f"script[id={initial}]")
+
+        result = result_target.text
         json_object = json.loads(result)
         head = "spotify:artist:"
         dummy = json_object["entities"]["items"][head+artist_id]["nodes"]
