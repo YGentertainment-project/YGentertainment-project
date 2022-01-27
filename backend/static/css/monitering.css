@@ -52,17 +52,24 @@
   border: 0;
 }
 
-#scheduler-header{
+#scheduler-header, #hourly-scheduler-header{
     color: white;
     background-color: black !important;
     font-size: small;
 }
 
-#scheduler-header td{
+#scheduler-header td, #hourly-scheduler-header td{
     color: white;
     background-color: black !important;
     text-align: center;
     font-weight: bold;
+}
+
+#hourly-scheduler-body td > div{
+  text-align: left;
+  width: 400px;
+  white-space: normal;
+  word-wrap:break-word;
 }
 
 .state-circles{
@@ -118,3 +125,48 @@
     color: whitesmoke;
     font-size: 15px;
   }
+
+
+ul{list-style:none;}
+
+.tabmenu{ 
+  min-height: 550px;
+  height: 100%;
+  /* margin: 0 auto;  */
+  position: relative; 
+}
+.tabmenu ul li{
+  display: inline-block;
+  width: 33.33%;
+  text-align:center; 
+  background :#f9f9f9;
+  line-height:40px;
+}
+.tabmenu label{
+  font-weight: bold;
+  font-size: 1.0em;
+  cursor: pointer;
+  display: block;
+  width: 100%; 
+  height: 100%;
+  /* line-height:40px; */
+}
+.tabmenu input{display:none;}
+.tabCon{
+  width: 100%;
+  height: 100%;
+  display:none;
+  text-align:left; 
+  position:absolute; 
+  left:0; top:40px;
+  box-sizing: border-box;
+}
+.tabmenu input:checked ~ label{
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  background:rgb(0, 0, 0);
+  color: white;
+}
+.tabmenu input:checked ~ .tabCon{
+  display: block;
+}
