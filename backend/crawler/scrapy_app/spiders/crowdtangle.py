@@ -2,9 +2,6 @@ from urllib import parse
 
 import scrapy
 from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
-from dataprocess.models import CollectTarget
-from dataprocess.models import Artist
-from dataprocess.models import Platform
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
@@ -17,15 +14,12 @@ class CrowdTangleSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.LoginDownloaderMiddleware": 100
         },
     }
-    facebook_id = Platform.objects.get(name="facebook").id
-    instagram_id = Platform.objects.get(name="instagram").id
-    CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
 
     def start_requests(self):
-        for row in self.CrawlingTarget:
-            artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
-            target_id = row.id
+        for target in self.crawl_target:
+            artist_name = target['artist_name']
+            artist_url = target['target_url']
+            target_id = target['id']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
             yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name,

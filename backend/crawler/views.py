@@ -11,20 +11,17 @@ from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
 from django.db.models import Q
+from django.apps import apps
 
 # django_celery_beat models
 from django_celery_beat.models import PeriodicTask, CrontabSchedule
 
-# load crawler models
-from django.apps import apps
+# celery
+from .tasks import direct_crawling
+
 DataModels = {
     model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
 }
-
-# celery
-from .tasks import direct_crawling
-from .celery import app
-from celery.result import AsyncResult
 
 # flower domain config
 flower_domain = ""
@@ -35,6 +32,31 @@ else:
     flower_domain = "http://0.0.0.0:5555/"
 
 
+def extract_target_list(platform):
+    if platform == "crowdtangle":
+        facebook_id = Platform.objects.get("facebook").id
+        instagram_id = Platform.objects.get("instagram").id
+        crawl_infos = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
+    else:
+        platform_id = Platform.objects.get(name=platform).id
+        crawl_infos = CollectTarget.objects.filter(platform_id=platform_id)
+
+    crawl_target = []
+
+    for crawl_info in crawl_infos:
+        crawl_target_row = dict()
+        artist_name = Artist.objects.get(id=crawl_info.artist_id).name
+        target_url = crawl_info.target_url
+        crawl_target_row['id'] = crawl_info.id
+        crawl_target_row['artist_name'] = artist_name
+        crawl_target_row['target_url'] = target_url
+
+        if platform == "melon":
+            crawl_target_row['target_url_2'] = crawl_info.target_url_2
+
+        crawl_target.append(crawl_target_row)
+    return crawl_target
+
 @csrf_exempt
 @require_http_methods(["POST"])  # only post
 def crawl(request):
@@ -43,11 +65,10 @@ def crawl(request):
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
-        platform_id = Platform.objects.get(name=platform).id
-
-
-        task = direct_crawling.apply_async(args=[platform])
+        crawl_target = extract_target_list(platform)
+        task = direct_crawling.apply_async(args=[platform, crawl_target])
         return JsonResponse({"task_id": task.id, "status": "started"})
+
 
 @csrf_exempt
 @require_http_methods(["GET"])  # only get and post
@@ -67,12 +88,13 @@ def get_schedules():
     schedule_list = []
     task_list = PeriodicTask.objects.values()
     for task in task_list:
-        if("crawling" in task["name"]):
+        if "crawling" in task["name"]:
             crontab_id = task["crontab_id"]
             crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
             hour = crontab_info[0]["hour"]
             minute = crontab_info[0]["minute"]
-            schedule_dict = dict(id=task["id"], name=task["name"], hour=hour, minute=minute, last_run=task["last_run_at"],
+            schedule_dict = dict(id=task["id"], name=task["name"], hour=hour, minute=minute,
+                                 last_run=task["last_run_at"],
                                  enabled=task["enabled"])
             schedule_list.append(schedule_dict)
     return schedule_list
@@ -104,15 +126,16 @@ def schedules(request):
                 task.crontab = schedule
                 task.save()
             else:
+                crawl_target = extract_target_list(platform)
                 PeriodicTask.objects.create(
                     crontab=schedule,
                     name="{}_{}_schedule_crawling".format(platform, hour),
                     task="schedule_crawling",
-                    args=json.dumps((platform,)),
+                    args=json.dumps((platform, crawl_target,)),
                 )
             return JsonResponse(data={"success": True})
         except Exception as e:
-            return JsonResponse(status=400,  data={"error": str(e)})
+            return JsonResponse(status=400, data={"error": str(e)})
     # 스케줄 리스트 업
     elif request.method == "GET":
         try:
@@ -148,7 +171,7 @@ def get_all_tasks():
 def taskinfos(request):
     if request.method == "GET":
         schedule_id = request.GET.get("id", None)
-        collect_list = ["uuid", "name", "state", "args", "started", "runtime"]
+        collect_list = ["uuid", "name", "state", "started", "args", "runtime"]
         tasks_json = get_all_tasks()
         if schedule_id is None:
             task_infos = []
@@ -159,6 +182,9 @@ def taskinfos(request):
                         if key == "started":
                             datetimestr = datetime.datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
                             task_info[key] = datetimestr
+                        elif key == "args":
+                            platform = value.split(',')[0].strip('[').strip("'")
+                            task_info['platform'] = platform
                         else:
                             task_info[key] = value
                 task_infos.append(task_info)
