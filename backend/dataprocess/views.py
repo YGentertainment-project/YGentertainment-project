@@ -15,7 +15,8 @@ from .resources import *
 from .serializers import *
 from .models import *
 from django.http.response import JsonResponse
-from rest_framework.parsers import JSONParser 
+from rest_framework.parsers import JSONParser
+from django.views.decorators.http import require_http_methods 
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from utils.decorators import login_required
@@ -228,7 +229,6 @@ def platform_info(request):
                 return JsonResponse(data={'success': True, 'data': []})
         except:
             return JsonResponse(status=400, data={'success': False})
-
 
 class PlatformAPI(APIView):
     # @login_required
