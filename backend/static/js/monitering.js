@@ -117,9 +117,12 @@ function get_hourly_schedule(){
             datalist.forEach(data => {
                 const tableRow = $('<tr></tr>');
                 let dataCol = document.createElement('td');
+                dataCol.onclick = function(){
+                    show_hourly_modal(data['platform']);
+                };
                 dataCol.innerHTML = `
-                <td style="font-weight: bold;">
-                    ${data['platform']}
+                <td>
+                    <span class="input-btn">${data['platform']}</span>
                 </td>
                 `;
                 tableRow.append(dataCol);
@@ -129,7 +132,7 @@ function get_hourly_schedule(){
                 data['artists'].forEach(artist_name => {
                     let dataCol2DivBtn = document.createElement('span');
                     dataCol2DivBtn.innerHTML = `
-                    <span class="input-btn">${artist_name}</span>
+                    <span style="margin-right:10px;">${artist_name}</span>
                     `;
                     dataCol2Div.append(dataCol2DivBtn);
                 })
@@ -144,5 +147,28 @@ function get_hourly_schedule(){
     })
 }
 
-// $(document).on('click','#tabmenu2', get_hourly_schedule)
 get_hourly_schedule();
+
+
+function show_hourly_modal(platform_name){
+    document.getElementById('schedule-modal-title').innerHTML = `${platform_name} 시간별 스케줄`;
+    var modal = $('div').find('.modal');
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } else{
+        modal.addClass('show');
+        modal.css('display','block');
+    }
+}
+
+function close_hourly_modal(){
+    console.log("close");
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } 
+}
+
+$(document).on('click','#schedule-close', close_hourly_modal);

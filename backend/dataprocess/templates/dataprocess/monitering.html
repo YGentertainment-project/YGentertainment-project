@@ -136,6 +136,7 @@
                       </li>
                       <li id="tab2" class="btnCon"><input type="radio" name="tabmenu" id="tabmenu2">
                         <label for="tabmenu2">시간별</label>
+                        {% include 'dataprocess/hourly_schedule.html' %}
                         <div class="tabCon" >
                             <table id="hourly-scheduler-table" class="table table-centered table-nowrap mb-0 rounded" style="text-align: center;">
                                 <thead id="hourly-scheduler-header"  class="thead-dark">

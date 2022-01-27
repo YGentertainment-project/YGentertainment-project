@@ -898,5 +898,5 @@ $('input[name=week]').hide()
 $('input[name=month]').hide()
 
 if(document.getElementById('alert') != null){
-    alert(ocument.getElementById('alert').innerHTML);
+    alert(document.getElementById('alert').innerHTML);
 }
