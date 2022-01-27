@@ -8,7 +8,7 @@ from dataprocess.models import Artist
 from dataprocess.models import Platform
 from ..items import VliveItem
 from datetime import datetime
-
+from ..middlewares import crawlinglogger
 
 class VliveSpider(scrapy.Spider):
     name = "vlive"
@@ -21,14 +21,15 @@ class VliveSpider(scrapy.Spider):
             artist_url = row.target_url
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
-            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name})
+            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name, "url": artist_url})
 
     def parse(self, response):
         artist = response.meta["artist"]
+        url = response.meta["url"]
         soup = BeautifulSoup(response.text, "html.parser")
         script_target = soup.select_one("script")
         if script_target is None:
-            pass
+            crawlinglogger.error(f"[400] {artist} - vlive - {url}")
             # Script Tag 안의 내용이 바뀌어 element를 찾을 수 없는 경우입니다.
             # 혹은, selector의 문법에 문제가 발생한 경우입니다. selector의 형식을 확인 해주세요.
             # 오류일 경우, 더 이상 진행할 수 없습니다.
@@ -41,7 +42,7 @@ class VliveSpider(scrapy.Spider):
                 videocount = json_object["channel"]["channel"]["videoCountOfStar"]
                 videolike = json_object["channel"]["channel"]["videoLikeCountOfStar"]
             except KeyError:
-                pass
+                crawlinglogger.error(f"[400] {artist} - vlive - {url}")
                 # 크롤링 해야할 JSON 부분의 형식이 바뀌어 element를 찾지 못하는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.
             item = VliveItem()
