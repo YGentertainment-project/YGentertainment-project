@@ -1,8 +1,5 @@
 import scrapy
 from ..items import MelonItem
-from dataprocess.models import CollectTarget
-from dataprocess.models import Artist
-from dataprocess.models import Platform
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
@@ -15,14 +12,12 @@ class MelonSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
-    melon_platform_id = Platform.objects.get(name="melon").id
-    CrawlingTarget = CollectTarget.objects.filter(platform_id=melon_platform_id)
 
     def start_requests(self):
-        for row in self.CrawlingTarget:
-            artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_urls = [row.target_url, row.target_url_2]
-            target_id = row.id
+        for target in self.crawl_target:
+            artist_name = target['artist_name']
+            artist_urls = [target['target_url'], target['target_url_2']]
+            target_id = target['id']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_urls[0], len(artist_urls[0])))
             yield scrapy.Request(url=artist_urls[0], callback=self.parse, encoding="utf-8", meta={"artist": artist_name,

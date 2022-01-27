@@ -3,22 +3,16 @@ import scrapy
 from bs4 import BeautifulSoup
 
 from ..items import SpotifyItem
-from dataprocess.models import CollectTarget
-from dataprocess.models import Artist
-from dataprocess.models import Platform
-from django.db.models import Q
 from datetime import datetime
 
 
 class SpotifySpider(scrapy.Spider):
     name = "spotify"
-    spotify_platform_id = Platform.objects.get(name="spotify").id
-    CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id) & Q(target_url__istartswith="https://open.spotify.com"))
 
     def start_requests(self):
-        for row in self.CrawlingTarget:
-            artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
+        for target in self.crawl_target:
+            artist_name = target['artist_name']
+            artist_url = target['target_url']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
             yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name})
