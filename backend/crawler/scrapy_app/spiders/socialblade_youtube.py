@@ -2,9 +2,6 @@ import scrapy
 from urllib.parse import urlparse
 
 from ..items import SocialbladeYoutubeItem
-from dataprocess.models import CollectTarget
-from dataprocess.models import Artist
-from dataprocess.models import Platform
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
@@ -26,10 +23,10 @@ class YoutubeSpider(scrapy.Spider):
     CrawlingTarget = CollectTarget.objects.filter(platform_id=youtube_platform_id)
 
     def start_requests(self):
-        for row in self.CrawlingTarget:
-            artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
-            target_id = row.id
+        for target in self.crawl_target:
+            artist_name = target['artist_name']
+            artist_url = target['target_url']
+            target_id = target['id']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
             if urlparse(artist_url).netloc == SOCIALBLADE_DOMAIN:
@@ -61,13 +58,13 @@ class YoutubeSpider(scrapy.Spider):
         else:
             artist = response.request.meta["artist"]
             sub_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="subscribers")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="subscribers")).xpath + "/text()"
             views_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
             uploads_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath + "/text()"
             user_created_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             uploads = response.xpath(uploads_xpath).get()
             uploads = self.parse_comma_text(uploads)
@@ -91,9 +88,9 @@ class YoutubeSpider(scrapy.Spider):
             pass
         else:
             views_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
             user_created_xpath = CollectTargetItem.objects.get(
-                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath
+                Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             artist = response.request.meta["artist"]
             view_text = response.xpath(views_xpath).get()
