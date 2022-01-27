@@ -231,11 +231,11 @@ const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
 
 //change color of button when clicking platform
 $('option').click(function(){
-    if($(this).hasClass("btn-gray-800")){
-      $(this).removeClass("btn-gray-800");
+    if($(this).hasClass("platform-selected")){
+      $(this).removeClass("platform-selected");
     }else{
-      $(this).addClass("btn-gray-800");  
-      $('option').not($(this)).removeClass("btn-gray-800");  
+      $(this).addClass("platform-selected");
+      $('option').not($(this)).removeClass("platform-selected");  
     }
 });
 

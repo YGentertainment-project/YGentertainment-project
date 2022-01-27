@@ -193,7 +193,7 @@ input{
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    width: 15%;
+    /* width: 15%; */
     height: 600px;
     border: 1px solid lightgray;
     border-radius: 10px;
@@ -201,20 +201,40 @@ input{
 }
 
 .platform-name{
-    margin: 10px;
+    margin: 5px 3px 5px 3px;
     flex-basis: 18%;
+    font-size: 0.9rem;
     background-color: white;
-    border: 1px solid black;
+    max-width: 130px;
+    padding: 3px 10px 3px 10px !important;
     cursor: pointer;
-    font-size: 1rem;
+    font-weight: bold;
+    color: black;
+    /* outline: 1.5px solid #1F2937; */
+    border-radius: 10px;
+    border-color: #1F2937 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .platform-name:hover{
-    background-color: lightgray;
+    background-color: #1F2937 !important;
+    color: white;
 }
 
 .platform-selected{
-    background-color: lightgray;
+    font-size: 0.9rem;
+    background-color: #1F2937 !important;
+    max-width: 130px;
+    padding: 3px 10px 3px 10px !important;
+    cursor:pointer;
+    font-weight: bold;
+    color: white !important;
+    /* outline: 1.5px solid #1F2937; */
+    border-radius: 10px;
+    border-color: #1F2937 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .background{
