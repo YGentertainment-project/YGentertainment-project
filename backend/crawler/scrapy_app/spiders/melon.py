@@ -12,8 +12,6 @@ class MelonSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
-    melon_platform_id = Platform.objects.get(name="melon").id
-    CrawlingTarget = CollectTarget.objects.filter(platform_id=melon_platform_id)
 
     def start_requests(self):
         for target in self.crawl_target:

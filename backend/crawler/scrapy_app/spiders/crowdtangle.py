@@ -14,9 +14,6 @@ class CrowdTangleSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.LoginDownloaderMiddleware": 100
         },
     }
-    facebook_id = Platform.objects.get(name="facebook").id
-    instagram_id = Platform.objects.get(name="instagram").id
-    CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
 
     def start_requests(self):
         for target in self.crawl_target:

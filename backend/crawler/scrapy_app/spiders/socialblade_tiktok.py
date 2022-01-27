@@ -15,8 +15,6 @@ class TiktokSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
-    tiktok_platform_id = Platform.objects.get(name="tiktok").id
-    CrawlingTarget = CollectTarget.objects.filter(platform_id=tiktok_platform_id)
 
     def start_requests(self):
         for target in self.crawl_target:

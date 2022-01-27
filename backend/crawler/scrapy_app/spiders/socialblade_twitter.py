@@ -16,8 +16,6 @@ class TwitterSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
-    twitter_platform_id = Platform.objects.get(name="twitter").id
-    CrawlingTarget = CollectTarget.objects.filter(platform_id=twitter_platform_id)
 
     def start_requests(self):
         for target in self.crawl_target:
