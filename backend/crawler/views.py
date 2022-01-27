@@ -51,7 +51,7 @@ def extract_target_list(platform):
         crawl_target_row['artist_name'] = artist_name
         crawl_target_row['target_url'] = target_url
 
-        if platform == "melon":
+        if platform == "melon" or platform == "spotify":
             crawl_target_row['target_url_2'] = crawl_info.target_url_2
 
         crawl_target.append(crawl_target_row)
