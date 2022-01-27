@@ -70,10 +70,6 @@ $(document).on('click','#save-schedule',function(){
     var hour = td.eq(1).find('#hour-select option:selected').val();
     var minute = td.eq(2).find('#minute-select option:selected').val();
 
-    console.log(platform);
-    console.log(hour);
-    console.log(minute);
-
     if(platform === 'instagram' || platform === 'facebook'){
         platform = 'crowdtangle'
     }
@@ -87,7 +83,7 @@ $(document).on('click','#save-schedule',function(){
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                alert('저장 되었습니다.');
+                alert('저장되었습니다.');
                 location.reload(); // 데이터 불러오기
             },
             error: e => {
@@ -102,6 +98,7 @@ $(document).on('click','#save-schedule',function(){
 
 
 //시간별 스케줄 테이블
+var hourly_schedule_list = [];
 function get_hourly_schedule(){
     $.ajax({
         url: '/dataprocess/api/schedule/?' + $.param({
@@ -114,11 +111,16 @@ function get_hourly_schedule(){
             var datalist = res.data;
             console.log(datalist);
             $('#hourly-scheduler-body').eq(0).empty();
+            hourly_schedule_list = datalist;
+            console.log(hourly_schedule_list);
+            var index = 0;
             datalist.forEach(data => {
                 const tableRow = $('<tr></tr>');
                 let dataCol = document.createElement('td');
+                let platform = data['platform'];
+                let tmp_index = index;
                 dataCol.onclick = function(){
-                    show_hourly_modal(data['platform']);
+                    show_hourly_modal(platform, tmp_index);
                 };
                 dataCol.innerHTML = `
                 <td>
@@ -139,7 +141,33 @@ function get_hourly_schedule(){
                 dataCol2.append(dataCol2Div);
                 tableRow.append(dataCol2);
                 $('#hourly-scheduler-body').append(tableRow);
+                index += 1;
             })
+        },
+        error: e => {
+            console.log(e);
+        },
+    });
+}
+
+function update_platform_schedule(){
+    var platform_name = document.getElementById('schedule-modal-title').innerHTML.replace(" 시간별 스케줄","");
+    var platform_index = document.getElementById('schedule-platform-index').innerHTML;
+    var data = {
+        'platform': platform_name,
+        'period': parseInt($('#schedule-hour-select option:selected').val()),
+        'execute_time_minute':parseInt($('#schedule-minute-select option:selected').val())
+    };
+    $.ajax({
+        url: '/dataprocess/api/schedule/',
+        type: 'PUT',
+        datatype:'json',
+        data: JSON.stringify(data),
+        success: res => {
+            hourly_schedule_list[platform_index]['period'] = `${$('#schedule-hour-select option:selected').val()}:00:00`;
+            hourly_schedule_list[platform_index]['execute_time'] = `00:${$('#schedule-minute-select option:selected').val()}:00`;
+            alert('저장되었습니다.');
+            close_hourly_modal();
         },
         error: e => {
             console.log(e);
@@ -147,11 +175,15 @@ function get_hourly_schedule(){
     })
 }
 
-get_hourly_schedule();
-
-
-function show_hourly_modal(platform_name){
+function show_hourly_modal(platform_name, index){
+    console.log(index);
+    var period = hourly_schedule_list[index]['period'];
+    var execute_time = hourly_schedule_list[index]['execute_time'];
     document.getElementById('schedule-modal-title').innerHTML = `${platform_name} 시간별 스케줄`;
+    var period_time = period.split(':');
+    $('#schedule-hour-select').val(parseInt(period_time[0])).prop('selected',true);
+    execute_time = execute_time.split(':');
+    $('#schedule-minute-select').val(parseInt(execute_time[1])).prop('selected',true);
     var modal = $('div').find('.modal');
     if(modal.hasClass('show')){
         modal.removeClass('show');
@@ -171,4 +203,6 @@ function close_hourly_modal(){
     } 
 }
 
+get_hourly_schedule();
 $(document).on('click','#schedule-close', close_hourly_modal);
+$(document).on('click','#schedule-update', update_platform_schedule);

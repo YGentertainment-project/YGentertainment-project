@@ -374,13 +374,13 @@ $(document).on('click','.platform-names',function(){
             }
             //맨 뒤에 스케줄 관련 row 붙이기
             append_schedule_row();
-            var period = res.data["period"];
-            if(period=="hour"){
-                period = "시간별";
-            }else if(period=="daily"){
-                period = "일별";
+            var schedule_type = res.data["schedule_type"];
+            if(schedule_type=="hour"){
+                schedule_type = "시간별";
+            }else if(schedule_type=="daily"){
+                schedule_type = "일별";
             }
-            document.getElementById("dropTitle").innerHTML = period;
+            document.getElementById("dropTitle").innerHTML = schedule_type;
         },
         error: e => {
             alert(e.responseText);
@@ -388,8 +388,8 @@ $(document).on('click','.platform-names',function(){
     });
 })
 
-function check_schedule(period){
-    document.getElementById("dropTitle").innerHTML = period;
+function check_schedule(schedule_type){
+    document.getElementById("dropTitle").innerHTML = schedule_type;
 }
 
 function append_schedule_row(){
@@ -450,9 +450,9 @@ $(document).on('click','#save-list',function(){
             return;
         }
     }
-    var period = "daily";
+    var schedule_type = "daily";
     if(document.getElementById("dropTitle").innerHTML=="시간별"){
-        period = "hour";
+        schedule_type = "hour";
     }
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
@@ -462,7 +462,7 @@ $(document).on('click','#save-list',function(){
             "artist": document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼",""),
             "platform": clicked_platform,
             "items": bodydatas,
-            "period": period
+            "schedule_type": schedule_type
         }),
         contentType: 'application/json; charset=utf-8',
         success: res => {

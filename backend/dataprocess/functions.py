@@ -586,9 +586,9 @@ def save_schedule(collecttargetid):
     schedule_object = Schedule.objects.filter(collect_target_id = collecttargetid).first()
     schedule_data = {
         "collect_target": collecttargetid,
-        "period": "daily",
+        "schedule_type": "daily",
         "active": True,
-        "excute_time": datetime.time(9,0,0)
+        "execute_time": datetime.time(9,0,0)
     }
     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
     if schedule_serializer.is_valid():

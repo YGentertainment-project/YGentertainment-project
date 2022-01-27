@@ -304,9 +304,9 @@ class PlatformAPI(APIView):
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
                     schedule_data = {
                             'collect_target': collecttarget.id,
-                            'period': 'daily',
+                            'schedule_type': 'daily',
                             'active': True,
-                            'excute_time': datetime.time(9,0,0)
+                            'execute_time': datetime.time(9,0,0)
                         }
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
@@ -364,9 +364,9 @@ class PlatformAPI(APIView):
                         schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_value['id']).first()
                         schedule_data = {
                                 'collect_target': collecttarget_value['id'],
-                                'period': 'daily',
+                                'schedule_type': 'daily',
                                 'active': platform_object['active'],
-                                'excute_time': datetime.time(9,0,0)
+                                'execute_time': datetime.time(9,0,0)
                             }
                         schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                         if schedule_serializer.is_valid():
@@ -422,9 +422,9 @@ class ArtistAPI(APIView):
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
                     schedule_data = {
                             'collect_target': collecttarget.id,
-                            'period': 'daily',
+                            'schedule_type': 'daily',
                             'active': True,
-                            'excute_time': datetime.time(9,0,0)
+                            'execute_time': datetime.time(9,0,0)
                         }
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
@@ -557,12 +557,12 @@ class CollectTargetItemAPI(APIView):
                 # schedule 확인
                 schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_objects_value['id'])
                 if schedule_object.exists():
-                    period = schedule_object.values()[0]['period']
+                    schedule_type = schedule_object.values()[0]['schedule_type']
                 else:
-                    period = 'daily'
-                return JsonResponse(data={'success': True, 'data': {'items':collecttargetitems_datas, 'period': period}})
+                    schedule_type = 'daily'
+                return JsonResponse(data={'success': True, 'data': {'items':collecttargetitems_datas, 'schedule_type': schedule_type}})
             else:
-                return JsonResponse(data={'success': True, 'data': {'items':[],'period':'daily'}})
+                return JsonResponse(data={'success': True, 'data': {'items':[],'schedule_type':'daily'}})
         except:
             return JsonResponse(status=400, data={'success': False})
 
@@ -575,7 +575,7 @@ class CollectTargetItemAPI(APIView):
             collecttargetitem = JSONParser().parse(request)
             artist = collecttargetitem["artist"]
             platform = collecttargetitem["platform"]
-            period = collecttargetitem["period"]
+            schedule_type = collecttargetitem["schedule_type"]
             collecttargetitem_list = collecttargetitem['items']
             artist_object = Artist.objects.filter(name = collecttargetitem['artist'])
             artist_object = artist_object.values()[0]
@@ -604,11 +604,11 @@ class CollectTargetItemAPI(APIView):
                     collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
-                        userlogger.debug(f"{artist} - {platform} - {period}: ")
+                        userlogger.debug(f"{artist} - {platform} - {schedule_type}: ")
                     else:
                         return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
             Schedule.objects.filter(collect_target_id = collecttarget_object['id']).update(
-                period = collecttargetitem['period'])
+                schedule_type = collecttargetitem['schedule_type'])
                 
                 
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
@@ -948,17 +948,26 @@ class ScheduleAPI(APIView):
                 platform_objects = platform_objects.values()
                 hourly_list = []
                 for platform_object in platform_objects:
+                    period = None
+                    execute_time = None
                     hour_artist_list = []
                     collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object['id'])
                     collecttarget_objects = collecttarget_objects.values()
                     for collecttarget_object in collecttarget_objects:
-                        schedule_objects = Schedule.objects.filter(period = 'hour', collect_target_id = collecttarget_object['id'])
+                        schedule_objects = Schedule.objects.filter(schedule_type = 'hour', collect_target_id = collecttarget_object['id'])
                         if schedule_objects.exists():
+                            period = schedule_objects.values()[0]['period']
+                            execute_time = schedule_objects.values()[0]['execute_time']
                             artist = Artist.objects.get(pk = collecttarget_object['artist_id'])
                             hour_artist_list.append(artist.name)
+                    if period is None:
+                        period = datetime.time(3,0,0)
+                        execute_time = datetime.time(0,30,0)
                     hourly_list.append({
                         'platform': platform_object['name'],
-                        'artists': hour_artist_list
+                        'artists': hour_artist_list,
+                        'period': period,
+                        'execute_time': execute_time
                     })
                 return JsonResponse(data={'success': True, 'data': hourly_list})
             elif type == "일별":
@@ -966,4 +975,25 @@ class ScheduleAPI(APIView):
                 return JsonResponse(data={'success': True, 'data': hourly_list})
         except:
             return JsonResponse(status=400, data={'success': False})
-        
+
+    def put(self, request):
+        '''
+        Schedule update api
+        '''
+        try:
+            new_schedule = JSONParser().parse(request)
+            platform_objects = Platform.objects.filter(name = new_schedule['platform'])
+            if platform_objects.exists():
+                collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
+                collecttarget_objects = collecttarget_objects.values()
+                for collecttarget_object in collecttarget_objects:
+                    schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
+                    if schedule_objects.exists():
+                        # for schedule_object in schedule_objects:
+                        #     schedule_object.period = datetime.time(new_schedule['period'],0,0)
+                        #     schedule_object.execute_time = datetime.time(0,new_schedule['execute_time_minute'],0)
+                        #     schedule_object.save
+                        schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
+            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
+        except:
+            return JsonResponse(data={'success': False}, status=400)

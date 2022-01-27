@@ -3,13 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="h6 modal-title" id="schedule-modal-title" style="font-weight: bold;"> 플랫폼의 시간별 스케줄 </h2>
+                <h2 class="hidden" id="schedule-platform-index">0</h2>
             </div>
             <div class="modal-body">
                 <table>
                     <tr>
-                        <td>주기</td>
+                        <td style="width: 70px;">주기</td>
                         <td style="width: 100px;">
-                            <select style="margin:2px;" name="hour" id="hour-select" class="form-select">
+                            <select id="schedule-hour-select" class="form-select">
                                 <option value="0">00</option>
                                 <option value="1">01</option>
                                 <option value="2">02</option>
@@ -38,11 +39,11 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td style="width: 70px;">
                             시작 분
                         </td>
                         <td style="width: 100px;">
-                            <select style="margin:2px;" name="minute" id="minute-select" class="form-select">
+                            <select style="margin:2px;" name="minute" id="schedule-minute-select" class="form-select">
                                 <option value="0">00</option>
                                 <option value="1">01</option>
                                 <option value="2">02</option>
