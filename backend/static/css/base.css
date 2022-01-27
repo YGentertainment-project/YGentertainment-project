@@ -278,7 +278,7 @@ input{
 
 #data-report-headers{
     position: sticky;
-    top:0;
+    top:-20px;
 }
 
 .input-transparent input{
