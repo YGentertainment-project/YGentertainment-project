@@ -13,7 +13,7 @@ from datetime import datetime
 class SpotifySpider(scrapy.Spider):
     name = "spotify"
     spotify_platform_id = Platform.objects.get(name="spotify").id
-    CrawlingTarget = CollectTarget.objects.filter(Q(platform_id=spotify_platform_id) & Q(target_url__istartswith="https://open.spotify.com"))
+    CrawlingTarget = CollectTarget.objects.filter(platform_id=spotify_platform_id)
 
     def start_requests(self):
         for row in self.CrawlingTarget:

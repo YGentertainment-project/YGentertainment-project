@@ -742,6 +742,7 @@ class DataReportAPI(APIView):
                                     data_json[field_name] = filter_objects_end_value[field_name]
                                 else: # 앞의 날짜가 없다면 0으로 보내기
                                     data_json[field_name] = 0
+                                data_json[field_name+'_end'] = filter_objects_end_value[field_name]
                             else:  # 숫자 아닌 다른 정보들(user_created 등)
                                 data_json[field_name] = filter_objects_start_value[field_name]
                         filter_datas_total.append(data_json)

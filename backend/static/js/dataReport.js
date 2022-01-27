@@ -120,7 +120,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                         if(!isString(datas[jsonIdx][platform_list[j]])){
                             dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[jsonIdx][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
                         } else{
-                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
+                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
                         }
                     }
                     else{
@@ -130,9 +130,13 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                     if(datas[jsonIdx][platform_list[j]] || datas[jsonIdx][platform_list[j]]===0){
                         if(!isString(datas[jsonIdx][platform_list[j]])){
                             if(datas[jsonIdx][platform_list[j]] >0 ){
-                                dataCol = $('<td style="color:#10B981; font-weight:bold;"><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[jsonIdx][platform_list[j]])+'</td>')
+                                if(datas[jsonIdx][platform_list[j]+'_end']){
+                                    dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end'])+ ' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                } else{
+                                    dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]])+ ' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                }
                             } else if(datas[jsonIdx][platform_list[j]] < 0 ){
-                                dataCol = $('<td style="color:#E11D48; font-weight:bold;"><svg class="icon icon-xs me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>'+numToString(datas[jsonIdx][platform_list[j]])+'</td>')
+                                dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end'])+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                             } else{
                                 dataCol = $('<td>-</td>')
                             }
@@ -166,7 +170,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td style="background-color:#4B5563;"><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -196,7 +200,7 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td style="background-color: #4B5563;"><input class="data-input" type="text" value="" style="width:100%; background-color: #4B5563; border:0;" disabled></input></td>')
+                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
                 tableRow.append(dataCol)
             }
         }
@@ -208,6 +212,11 @@ const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
 
 //show crawled data
 const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist_list) => {
+    if(type === '누적'){
+        $('#table').css('width','70%');
+    } else{
+        $('#table').css('width','90%');
+    }
     $('#data-report-headers').append(createTableHeader(platform_list));
     createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
 }
@@ -215,6 +224,7 @@ const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist
 
 //show empty table (when data is none)
 const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
+    $('#table').css('width','70%');
     $('#data-report-headers').append(createTableHeader(platform_list));
     createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
