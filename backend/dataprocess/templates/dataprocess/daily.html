@@ -36,7 +36,7 @@
    <div class="excel_form" id="excel_form2">
         <div class="popup_button_layout">
             <span>Excel파일로 크롤링데이터 추출(다운로드 경로)</span>
-            <button class="btn btn-primary border-0 shadow-btn" id="close_button2">닫기</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="close_button2" style="font-size: 0.7em; font-weight: bold;">닫기</button>
         </div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -62,14 +62,15 @@
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
             <span>Excel파일로부터 수집정보 DB에 저장하기</span>
-            <button  class="btn btn-primary border-0 shadow-btn" id="close_button3">닫기</button>
+            <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 0.7em; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input class="form-control" type="file" name="importData2">
             <input type="text" name="type" value="import2" style="display:none;">
-            <button style="margin-top: 8px;" class="btn btn-primary border-0 shadow-btn" id="excel-btn3" type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px;">Import</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" 
+            type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
         </form>
         <div style="height: 10px;"></div>
         <div class="loading-box hidden" id="excel_loading3">

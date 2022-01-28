@@ -191,7 +191,7 @@ input{
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     /* width: 15%; */
     height: 600px;
@@ -202,7 +202,7 @@ input{
 
 .platform-name{
     margin: 5px 3px 5px 3px;
-    flex-basis: 18%;
+    /* flex-basis: 18%; */
     font-size: 0.9rem;
     background-color: white;
     max-width: 130px;
@@ -297,6 +297,7 @@ input{
 }
 
 #data-report-headers{
+    background-color: black !important;
     position: sticky;
     top:-20px;
 }
