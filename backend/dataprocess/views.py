@@ -375,7 +375,6 @@ class PlatformAPI(APIView):
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object['id']).first()
-                past_data = platform_data
                 if platform_data is None:
                     # 원래 없는 건 새로 저장
                     platform_serializer = PlatformSerializer(data=platform_object)
@@ -383,7 +382,6 @@ class PlatformAPI(APIView):
                         platform_serializer.save()
                 else:
                     data = PlatformSerializer(platform_data).data
-                    print(data)
                     past_name = data["name"]
                     past_url = data["url"]
                     cur_name = platform_object["name"]
@@ -399,16 +397,8 @@ class PlatformAPI(APIView):
                 if collecttarget_objects.exists():
                     collecttarget_values = collecttarget_objects.values()
                     for collecttarget_value in collecttarget_values:
-                        schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_value['id']).first()
-                        schedule_data = {
-                                'collect_target': collecttarget_value['id'],
-                                'schedule_type': 'daily',
-                                'active': platform_object['active'],
-                                'execute_time': datetime.time(9,0,0)
-                            }
-                        schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
-                        if schedule_serializer.is_valid():
-                            schedule_serializer.save()
+                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_value['id'])
+                        schedule_objects.update(active = platform_object['active'])
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
@@ -456,13 +446,22 @@ class ArtistAPI(APIView):
                         target_url_2=target_url_2
                     )
                     collecttarget.save()
-                    #3. 해당 collecttarget에 대한 schedule 생성
+                    #3. 해당 collecttarget에 대한 schedule 생성(기존 platform의 daily schedule과 똑같이 하기)
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
+
+                    execute_time = datetime.time(9,0,0)
+                    collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id)
+                    collecttarget_objects = collecttarget_objects.values()
+                    for collecttarget_object in collecttarget_objects:
+                        schedule_objects = Schedule.objects.filter(schedule_type = 'daily', collect_target_id = collecttarget_object['id'])
+                        if schedule_objects.exists():
+                            execute_time = schedule_objects.values()[0]['execute_time']
+                            break
                     schedule_data = {
                             'collect_target': collecttarget.id,
                             'schedule_type': 'daily',
                             'active': True,
-                            'execute_time': datetime.time(9,0,0)
+                            'execute_time': execute_time
                         }
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
@@ -645,8 +644,18 @@ class CollectTargetItemAPI(APIView):
                         userlogger.debug(f"{artist} - {platform} - {schedule_type}: ")
                     else:
                         return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+
+            execute_time = datetime.time(9,0,0) #시작 시간
+            period = datetime.time(3,0,0) #주기
+            collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object['id'])
+            collecttarget_objects = collecttarget_objects.values()
+            for collecttarget_object in collecttarget_objects:
+                schedule_objects = Schedule.objects.filter(schedule_type = collecttargetitem['schedule_type'], collect_target_id = collecttarget_object['id'])
+                if schedule_objects.exists():
+                    execute_time = schedule_objects.values()[0]['execute_time']
+                    break
             Schedule.objects.filter(collect_target_id = collecttarget_object['id']).update(
-                schedule_type = collecttargetitem['schedule_type'])
+                schedule_type = collecttargetitem['schedule_type'], execute_time = execute_time, period = period)
                 
                 
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
@@ -1020,18 +1029,20 @@ class ScheduleAPI(APIView):
         '''
         try:
             new_schedule = JSONParser().parse(request)
+            schedule_type = new_schedule['schedule_type']
             platform_objects = Platform.objects.filter(name = new_schedule['platform'])
             if platform_objects.exists():
                 collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
                 collecttarget_objects = collecttarget_objects.values()
                 for collecttarget_object in collecttarget_objects:
-                    schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
-                    if schedule_objects.exists():
-                        # for schedule_object in schedule_objects:
-                        #     schedule_object.period = datetime.time(new_schedule['period'],0,0)
-                        #     schedule_object.execute_time = datetime.time(0,new_schedule['execute_time_minute'],0)
-                        #     schedule_object.save
-                        schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
+                    if schedule_type == 'hour':
+                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
+                        if schedule_objects.exists():
+                            schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
+                    elif schedule_type == 'daily':
+                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'daily')
+                        if schedule_objects.exists():
+                            schedule_objects.update(execute_time = datetime.time(new_schedule['execute_time_hour'],new_schedule['execute_time_minute'],0))
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)

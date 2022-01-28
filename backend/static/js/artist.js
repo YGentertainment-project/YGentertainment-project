@@ -78,6 +78,7 @@ $('#add-submit').click(function(e){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
+            alert("저장되었습니다.");
             location.href = "/dataprocess/artist/";
         },
         error: e => {

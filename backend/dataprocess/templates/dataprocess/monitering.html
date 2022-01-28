@@ -16,7 +16,7 @@
                         <div class="tabCon" >
                             <table id="scheduler-table" class="table table-centered table-nowrap mb-0 rounded">
                                 <thead id="scheduler-header"  class="thead-dark">
-                                    <td>플랫폼</td>
+                                    <td>PLATFORM</td>
                                     <td>크롤링 스케줄 (시)</td>
                                     <td>크롤링 스케줄 (분)</td>
                                     <td></td>
@@ -25,7 +25,7 @@
                                     {% if platforms %}
                                     {% for platform in platforms %}
                                     <tr>
-                                        <td style="text-align: center;">{{platform.name}}</td>
+                                        <td style="text-align: center; font-weight:bold;">{{platform.name}}</td>
                                         <td style="text-align: start;">
                                             <select style="margin:2px;" name="hour" id="hour-select" class="form-select">
                                                 <option value="0">00</option>

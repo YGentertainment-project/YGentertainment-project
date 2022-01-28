@@ -74,6 +74,22 @@ $(document).on('click','#save-schedule',function(){
         platform = 'crowdtangle'
     }
 
+    // schedule table에 저장
+    $.ajax({
+        url: '/dataprocess/api/schedule/',
+        type: 'PUT',
+        data: JSON.stringify({ "platform": platform, "execute_time_hour": hour, "execute_time_minute": minute, 'schedule_type':'daily' }),
+        datatype: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            console.log(res);
+        },
+        error: e => {
+            console.log(e);
+        },
+    })
+
+
     if (minute>= 0 && minute<= 59 && hour >= 0 && hour <= 23 && !isNaN(hour)) {
         // Schedule 생성 API request 보내기
         $.ajax({
@@ -128,17 +144,6 @@ function get_hourly_schedule(){
                 `;
                 tableRow.append(dataCol);
 
-                // let dataCol2 = document.createElement('td');
-                // let dataCol2Div = document.createElement('div');
-                // data['artists'].forEach(artist_name => {
-                //     let dataCol2DivBtn = document.createElement('span');
-                //     dataCol2DivBtn.innerHTML = `
-                //     <span style="margin-right:10px;">${artist_name}</span>
-                //     `;
-                //     dataCol2Div.append(dataCol2DivBtn);
-                // })
-                // dataCol2.append(dataCol2Div);
-                // tableRow.append(dataCol2);
                 let dataCol2 = document.createElement('td');
                 dataCol2.innerHTML = `<td style="width: 100px;">
                     <select id="schedule-hour-select${tmp_index}" class="form-select">
@@ -240,7 +245,7 @@ function get_hourly_schedule(){
                 tableRow.append(dataCol3);
                 let dataCol4 = document.createElement('td');
                 dataCol4.onclick = function(){
-                    update_platform_schedule(platform, tmp_index);
+                    update_hourly_platform_schedule(platform, tmp_index);
                 };
                 dataCol4.innerHTML = `
                 <label class="btn btn-primary btn-shadow border-0" style="margin: 10px; font-weight: bold;">
@@ -264,11 +269,12 @@ function get_hourly_schedule(){
     });
 }
 
-function update_platform_schedule(platform, platform_index){
+function update_hourly_platform_schedule(platform, platform_index){
     var data = {
         'platform': platform,
         'period': parseInt($(`#schedule-hour-select${platform_index} option:selected`).val()),
-        'execute_time_minute': parseInt($(`#schedule-minute-select${platform_index} option:selected`).val())
+        'execute_time_minute': parseInt($(`#schedule-minute-select${platform_index} option:selected`).val()),
+        'schedule_type': 'hour'
     };
     $.ajax({
         url: '/dataprocess/api/schedule/',
