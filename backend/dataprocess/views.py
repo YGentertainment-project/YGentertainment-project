@@ -35,7 +35,7 @@ serverlogger = logging.getLogger(__name__)
 userlogger = logging.getLogger("HTTP-Method")
 
 trfh = logging.handlers.TimedRotatingFileHandler(
-    filename = os.path.join("../backend/data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    filename = os.path.join("../data/log/user", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
     when = "midnight",
     interval=1,
     encoding="utf-8",
