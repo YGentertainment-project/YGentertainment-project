@@ -9,6 +9,7 @@ from crawler.models import *
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_total
+from dataprocess.pagination import ViewPaginatorMixin
 from django.views.decorators.csrf import csrf_exempt
 
 from .resources import *
@@ -230,34 +231,71 @@ def platform_info(request):
         except:
             return JsonResponse(status=400, data={'success': False})
 
+def get_crawler_log():
+    filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
+    log_file = open(filename,'r', encoding='utf-8')
+    log_info = []
+    if log_file:
+        for line in log_file:
+            log_line = line.split('-')
+            data_json = {}
+            data_json['error_code'] = log_line[6].split(' ')[1]
+            data_json['artist'] = log_line[6].split(' ')[2]
+            data_json['platform'] = log_line[7].split(' ')[1]
+            url = log_line[8].split(' ')[1]
+            url = url.strip('\n')
+            data_json['url'] = url
+            print(data_json['url'])
+            artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
+            platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
+            data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
+            log_info.append(data_json)
+    
+    return log_info
+
+def get_crawler_log_400():
+    filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
+    log_file = open(filename,'r', encoding='utf-8')
+    log_info = []
+    if log_file:
+        for line in log_file:
+            log_line = line.split('-')
+            data_json = {}
+            if log_line[6].split(' ')[1] != '[400]':
+                continue
+            data_json['error_code'] = log_line[6].split(' ')[1]
+            data_json['artist'] = log_line[6].split(' ')[2]
+            data_json['platform'] = log_line[7].split(' ')[1]
+            url = log_line[8].split(' ')[1]
+            url = url.strip('\n')
+            data_json['url'] = url
+            print(data_json['url'])
+            artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
+            platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
+            data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
+            log_info.append(data_json)
+    
+    return log_info
+
 #show crawler log in monitering page
 @csrf_exempt
 @require_http_methods(["GET"])
 def report_crawler_error(request):
     if request.method == 'GET':
         #상대 경로로 바꾸기, 파일 없을 때 에러 처리
-        filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
-        log_file = open(filename,'r', encoding='utf-8')
-        if log_file:
-            log_info = []
-            for line in log_file:
-                log_line = line.split('-')
-                data_json = {}
-                data_json['error_code'] = log_line[6].split(' ')[1]
-                data_json['artist'] = log_line[6].split(' ')[2]
-                data_json['platform'] = log_line[7].split(' ')[1]
-                url = log_line[8].split(' ')[1]
-                url = url.strip('\n')
-                data_json['url'] = url
-                print(data_json['url'])
-                artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
-                platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
-                data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
-                log_info.append(data_json)
-            return JsonResponse(data={'success': False, 'data':log_info})
+        log_info = get_crawler_log()
+        return JsonResponse(data={'success': False, 'data':log_info})
 
-        else:
-            return JsonResponse(data={'success': False, 'data':'no log'})
+    else:
+        return JsonResponse(data={'success': False, 'data':'no log'})
+
+
+class ResultQueryView(ViewPaginatorMixin,APIView):
+    def get(self, request):
+        page = request.GET.get('page',1)
+        limit = 3
+        log_info = get_crawler_log_400()
+        return JsonResponse({"data": self.paginate(log_info, page, limit)})
 
 class PlatformAPI(APIView):
     # @login_required

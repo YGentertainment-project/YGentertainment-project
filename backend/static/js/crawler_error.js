@@ -68,19 +68,29 @@ const creatRowForError = (data) => {
     return tableRow;
 }
 
+function action_add(text_add){
+	var ul_list = $("ul.pagination"); //ul_list선언
+	ul_list.append("<li class='page-item'>"+text_add+"</li>"); //ul_list안쪽에 li추가
+}
 
-$(document).on('click','.no-page',function(){
+function crawler_error_table(page){
     $.ajax({
-        url: '/dataprocess/api/crawler_error',
+        url: '/dataprocess/api/crawler_error_table/?'+ $.param({
+            page:page
+        }),
         type: 'GET',
         datatype: 'json',
         contentType: 'application/json; charset=utf-8',
         success: res => {
-          console.log('clicked');
-          var log_info = res.data
+          var log_info = res.data.data
           var no_page_info = [];
 
+
+          console.log(log_info)
+          console.log(res.data.next_page);
+
           $('#error-report').html('')
+          $("ul.pagination").html('')
 
           for(var i = 0; i<log_info.length; i++){
               if(log_info[i]['error_code'] === '[400]'){
@@ -93,11 +103,30 @@ $(document).on('click','.no-page',function(){
           no_page_info.forEach(data => {
             $('#error-report').append(creatRowForError(data))
           })
+
+          action_add(`<span class="page-link">처음</span>`)
+          for(var i = 0; i<res.data.total_page; i++){
+              action_add(`<span class="page-link">${i+1}</span>`)
+          }
+          
         },
         error: e => {
            console.log(e);
         },
     })
+}
+
+
+$(document).on('click','.no-page',function(){
+    crawler_error_table(1)
+})
+
+$(document).on('click','li.page-item',function(){
+    page = $(this).children().text();
+    if(page === '처음'){
+        page = 1;
+    } 
+    crawler_error_table(page);
 })
 
 
@@ -154,3 +183,4 @@ $(document).on('click','#save-error-url',function(){
 
 
 })
+

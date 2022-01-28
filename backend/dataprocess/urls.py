@@ -24,4 +24,5 @@ urlpatterns = [
     path('api/platform_target_item/', csrf_exempt(views.PlatformTargetItemAPI.as_view()), name='platform_target_item_api'),
     path('api/schedule/', csrf_exempt(views.ScheduleAPI.as_view()), name='schedule_api'),
     path('api/crawler_error/', csrf_exempt(views.report_crawler_error), name='crawler_error'),
+    path('api/crawler_error_table/', csrf_exempt(views.ResultQueryView.as_view()), name='crawler_error_table'),
 ]
