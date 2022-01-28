@@ -80,22 +80,51 @@ $(document).on('click','input[name=refresh]',function(){
 
 
 //create Table header
-const createTableHeader = (platform_header) => {
+const createTableHeader = (type,platform_header) => {
     const tableHeader = $('<tr></tr>');
+   if(type === '누적'){
 
-    let c = $('<th></th>', {
-        text:'artist',
-        class:"border-0"
-    })
-    tableHeader.append(c)
-    for(let i = 0; i< platform_header.length; i++){
-        let col = $('<th></th>', {
-            text: platform_header[i],
+        let c = $('<th></th>', {
+            text:'artist',
             class:"border-0"
         })
-        tableHeader.append(col)
-    }
+        tableHeader.append(c)
+        for(let i = 0; i< platform_header.length; i++){
+            let col = $('<th></th>', {
+                text: platform_header[i],
+                class:"border-0"
+            })
+            tableHeader.append(col)
+        }
 
+   } else{
+        let c = $('<th></th>', {
+            text:'artist',
+            class:"border-0"
+        })
+        tableHeader.append(c)
+        for(let i = 0; i< platform_header.length; i++){
+            if(platform_header[i] === 'user_created'){
+                let col = $('<th></th>', {
+                    text: platform_header[i],
+                    class:"border-0"
+                })
+                tableHeader.append(col)
+            } else{
+                let col = $('<th></th>', {
+                    text: platform_header[i],
+                    class:"border-0"
+                })
+                tableHeader.append(col)
+                col = $('<th></th>', {
+                    text: platform_header[i] +' 의 증감 내역',
+                    class:"border-0"
+                })
+                tableHeader.append(col)
+            }
+        }
+
+   }
     return tableHeader;
 }
 
@@ -115,6 +144,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             var jsonIdx = datas.findIndex(function(key) {return key["artist"] === db_artist_list[i]});
             for(let j =0; j<platform_list.length; j++){
                 let dataCol;
+                let dataCol_0 = ''
                 if(type === '누적'){
                     if((datas[jsonIdx][platform_list[j]] || datas[jsonIdx][platform_list[j]]===0)){
                         if(!isString(datas[jsonIdx][platform_list[j]])){
@@ -131,13 +161,17 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                         if(!isString(datas[jsonIdx][platform_list[j]])){
                             if(datas[jsonIdx][platform_list[j]] >0 ){
                                 if(datas[jsonIdx][platform_list[j]+'_end']){
-                                    dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end'])+ ' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                    dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
+                                    dataCol = $('<td style="font-weight:bold;">'+ ' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                                 } else{
-                                    dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]])+ ' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                    dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]]) +'</td>')
+                                    dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                                 }
                             } else if(datas[jsonIdx][platform_list[j]] < 0 ){
-                                dataCol = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end'])+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
+                                dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                             } else{
+                                dataCol_0 = $('<td>-</td>')
                                 dataCol = $('<td>-</td>')
                             }
                         } else{
@@ -150,7 +184,12 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                         dataCol = $('<td></td>')
                     } 
                 }
-                tableRow.append(dataCol)
+                if(dataCol_0 == ''){
+                    tableRow.append(dataCol)
+                } else{
+                    tableRow.append(dataCol_0)
+                    tableRow.append(dataCol)
+                }
             }
 
         } else if(crawling_artist_list.includes(db_artist_list[i])){
@@ -161,8 +200,21 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             for(let j =0; j<platform_list.length; j++){
                 //console.log(crawling_artist_list.indexOf(db_artist_list[i]));
                 let dataCol;
-                dataCol = $('<td><input class="data-input" type="text" value="'+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
-                tableRow.append(dataCol)
+                let dataCol_0 = '';
+                if(type == '누적'){
+                    dataCol = $('<td><input class="data-input" type="text" value="'+'" style="width:100%; background-color: #f8f9fa; border:0;"></input></td>')
+                    tableRow.append(dataCol)
+                } else{
+                    if(platform_list[j] === 'user_created'){
+                        dataCol = $('<td>-</td>')
+                        tableRow.append(dataCol)
+                    } else{
+                        dataCol_0 = $('<td>-</td>')
+                        tableRow.append(dataCol_0)
+                        dataCol = $('<td>-</td>')
+                        tableRow.append(dataCol)
+                    }
+                }
             }
         } else{
             let dataCol = $('<th></th>', {
@@ -170,8 +222,20 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
             })
             tableRow.append(dataCol)
             for(let j =0; j<platform_list.length; j++){
-                let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
-                tableRow.append(dataCol)
+                if(type == '누적'){
+                    let dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
+                    tableRow.append(dataCol)
+                } else{
+                    if(platform_list[j] === 'user_created'){
+                        dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
+                        tableRow.append(dataCol)
+                    } else{
+                        dataCol_0 = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
+                        tableRow.append(dataCol_0)
+                        dataCol = $('<td><input class="data-input" type="text" value="" style="width:100%; background-color: #E5E7EB; border:0;" disabled></input></td>')
+                        tableRow.append(dataCol)
+                    }
+                }
             }
         }
         $('#board').append(tableRow);
@@ -179,7 +243,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
 }
 
 
-//create Rows for empty case
+//create Rows for empty case (누적 일 때만)
 const createEmptyRow = (platform_list,db_artist_list, crawling_artist_list) => {
     for(let i = 0; i< db_artist_list.length; i++){
         const tableRow = $('<tr></tr>')
@@ -215,17 +279,18 @@ const showCrawledData = (type,platform_list,datas,db_artist_list,crawling_artist
     if(type === '누적'){
         $('#table').css('width','70%');
     } else{
-        $('#table').css('width','90%');
+        $('#table').css('width','95%');
     }
-    $('#data-report-headers').append(createTableHeader(platform_list));
+    $('#data-report-headers').append(createTableHeader(type,platform_list));
     createRow(type,datas,platform_list,db_artist_list,crawling_artist_list);
 }
 
 
-//show empty table (when data is none)
+//show empty table (when data is none) (누적 일 때만 사용)
 const showEmptyTable = (platform_list,db_artist_list,crawling_artist_list) => {
+    var type = '누적' 
     $('#table').css('width','70%');
-    $('#data-report-headers').append(createTableHeader(platform_list));
+    $('#data-report-headers').append(createTableHeader(type,platform_list));
     createEmptyRow(platform_list,db_artist_list,crawling_artist_list);
 }
 
@@ -265,7 +330,7 @@ $(document).on('change','input[name=view_days]',function(){
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
-    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
@@ -357,7 +422,7 @@ $(document).on('change','#end_date',function(){
         refresh();
         return;
     }
-    var platform = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
+    var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
     console.log(platform);
     if(!platform){
         return false;
@@ -589,7 +654,7 @@ $('.btn-close').click(function(){
     } 
     changedDatas = [];
     $('#changed-data-list').eq(0).empty();
-    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
@@ -659,7 +724,7 @@ $('.btn-close-2').click(function(){
     } 
     $('#changed-data-list').eq(0).empty();
     changedDatas = [];
-    var platform = $(".contents-platforms").find('.btn-gray-800').val(); 
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
@@ -723,7 +788,7 @@ $('.btn-close-2').click(function(){
 
 $('#update').click(function(){
     var type = $(':radio[name="view_days"]:checked').val(); //type (누적별)
-    var platform_name = $(".contents-platforms").find('.btn-gray-800').val(); //platform name
+    var platform_name = $(".contents-platforms").find('.platform-selected').val(); //platform name
     var start_date = $('input[name=start_date]').val(); //date to change data
     var allArtists= $('#board').find('th'); //all artist list
     var th = $('#data-report-headers').find('tr').children();
@@ -770,7 +835,6 @@ $('#update').click(function(){
         modal.removeClass('show');
         modal.css('display','none');
     } 
-
 
     //update or create
     $.ajax({
@@ -826,6 +890,9 @@ $('#update').click(function(){
             location.reload();
         },
     })
+
+
+    
    
    
 })
