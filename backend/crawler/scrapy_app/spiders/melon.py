@@ -29,8 +29,11 @@ class MelonSpider(scrapy.Spider):
         listener_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="listeners")).xpath + "/text()"
         streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath + "/text()"
 
-        listener = response.xpath(listener_xpath).extract()[2].replace(",", "")
-        streaming = response.xpath(streaming_xpath).extract()[2].replace(",", "")
+        listener_target = response.xpath(listener_xpath).extract()[2]
+        streaming_target = response.xpath(streaming_xpath).extract()[2]
+
+        listener = listener_target.replace(",", "")
+        streaming = streaming_target.replace(",", "")
         url1 = response.url
         yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
                              meta={"artist": artist,
@@ -42,11 +45,11 @@ class MelonSpider(scrapy.Spider):
     def parse_melon(self, response):
         item = MelonItem()
         fans_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="fans")).xpath + "/text()"
-        fans = response.xpath(fans_xpath).get().replace(",", "")
+        fans_target = response.xpath(fans_xpath).get()
         item["artist"] = response.meta["artist"]
         item["listeners"] = response.meta["listeners"]
         item["streams"] = response.meta["streams"]
-        item["fans"] = fans
+        item["fans"] = fans_target.replace(",", "")
         item["url1"] = response.meta["url1"]
         item["url2"] = response.url
         item["reserved_date"] = datetime.now().date()

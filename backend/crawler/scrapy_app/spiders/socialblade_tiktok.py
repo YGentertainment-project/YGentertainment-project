@@ -44,9 +44,9 @@ class TiktokSpider(scrapy.Spider):
 
             item = SocialbladeTiktokItem()
             item["artist"] = artist
-            item["uploads"] = 0 if not uploads else uploads.replace(",", "")
-            item["followers"] = 0 if not followers else followers.replace(",", "")
-            item["likes"] = 0 if not likes else likes.replace(",", "")
+            item["uploads"] = uploads.replace(",", "")
+            item["followers"] = followers.replace(",", "")
+            item["likes"] = likes.replace(",", "")
             item["url"] = response.url
             item["reserved_date"] = datetime.now().date()
             yield item
