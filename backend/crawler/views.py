@@ -34,8 +34,8 @@ else:
 
 def extract_target_list(platform):
     if platform == "crowdtangle":
-        facebook_id = Platform.objects.get("facebook").id
-        instagram_id = Platform.objects.get("instagram").id
+        facebook_id = Platform.objects.get(name="facebook").id
+        instagram_id = Platform.objects.get(name="instagram").id
         crawl_infos = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
     else:
         platform_id = Platform.objects.get(name=platform).id
