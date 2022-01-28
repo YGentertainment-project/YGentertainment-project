@@ -129,6 +129,14 @@
 
 ul{list-style:none;}
 
+.page-item:hover{
+  cursor: pointer;
+}
+
+.page-link:hover{
+  cursor: pointer;
+}
+
 .tabmenu{ 
   min-height: 550px;
   height: 100%;

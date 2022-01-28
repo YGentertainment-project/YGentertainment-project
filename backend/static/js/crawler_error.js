@@ -104,10 +104,14 @@ function crawler_error_table(page){
             $('#error-report').append(creatRowForError(data))
           })
 
+          $('.page-link').eq(page)
           action_add(`<span class="page-link">처음</span>`)
           for(var i = 0; i<res.data.total_page; i++){
               action_add(`<span class="page-link">${i+1}</span>`)
           }
+
+          $('.page-link').eq(page).css("color","white")
+          $('.page-link').eq(page).css("background-color","black")
           
         },
         error: e => {
@@ -183,4 +187,5 @@ $(document).on('click','#save-error-url',function(){
 
 
 })
+
 
