@@ -37,6 +37,7 @@ RUN pip install --no-cache-dir -r /app/deploy/requirements.txt
 
 ARG DATA=/data
 RUN mkdir -p ${DATA}/log ${DATA}/config ${DATA}/public/avatar ${DATA}/public/website
+RUN mkdir -p ${DATA}/log/server ${DATA}/log/user ${DATA}/log/crawler
 RUN if [ ! -f "${DATA}/config/secret.key" ] ; then echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > "${DATA}/config/secret.key" ; fi
 
 # COPY --from=builder /build/dist /app/dist
