@@ -34,6 +34,8 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
     $('#platform-body').append(tableRow);
 }
 
+var platform_info = [];
+
 function platform_read_function(){
     $.ajax({
         url: '/dataprocess/api/platform/',
@@ -42,6 +44,7 @@ function platform_read_function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             const data_list = res.data;
+            platform_info = data_list;
             $('#platform-body').empty();
             data_list.forEach(data => {//data를 화면에 표시
                 render_platform_table(data);
@@ -54,7 +57,7 @@ function platform_read_function(){
 };
 
 function platform_update_function(){
-    document.getElementById("loading_form").style.display = "flex";
+    // document.getElementById("loading_form").style.display = "flex";
     var datas=[];
     var platform_tr = document.getElementById("platform-body").getElementsByTagName("tr");
     for(var r=0;r<platform_tr.length;r++){
@@ -63,14 +66,25 @@ function platform_update_function(){
             alert("플랫폼 이름과 URL을 입력해주세요");
             return;
         }
-        datas.push({
-            "id": cells[0].firstElementChild.value,
-            "name": cells[1].firstElementChild.value,
-            "url": cells[2].firstElementChild.value,
-            "description": cells[3].firstElementChild.value,
-            "active": cells[4].firstElementChild.checked
-        });
+        // 달라진 것만 서버에 보내기
+        if(platform_info[r]['name'] != cells[1].firstElementChild.value || platform_info[r]['url'] != cells[2].firstElementChild.value
+        || platform_info[r]['description'] != cells[3].firstElementChild.value || platform_info[r]['active'] != cells[4].firstElementChild.checked){
+            datas.push({
+                "id": cells[0].firstElementChild.value,
+                "name": cells[1].firstElementChild.value,
+                "url": cells[2].firstElementChild.value,
+                "description": cells[3].firstElementChild.value,
+                "active": cells[4].firstElementChild.checked
+            });
+            // list에 update
+            platform_info[r]['name'] = cells[1].firstElementChild.value;
+            platform_info[r]['url'] = cells[2].firstElementChild.value;
+            platform_info[r]['description'] = cells[3].firstElementChild.value;
+            platform_info[r]['active'] = cells[4].firstElementChild.checked;
+        }
     }
+    console.log("datas");
+    console.log(datas);
     $.ajax({
         url: '/dataprocess/api/platform/',
         type: 'PUT',

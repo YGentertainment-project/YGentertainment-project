@@ -101,7 +101,7 @@ $('#save-artists').click(function(){
             "name": cells[1].firstElementChild.value,
             "level": cells[2].firstElementChild.value,
             "gender": cells[3].firstElementChild.value,
-            "member_num": cells[4].firstElementChild.value,
+            "member_num": parseInt(cells[4].firstElementChild.value),
             "member_nationality": cells[5].firstElementChild.value,
             "agency":cells[6].firstElementChild.value,
             "active": cells[8].firstElementChild.checked
