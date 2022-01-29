@@ -8,13 +8,26 @@ from django.utils import timezone
 from dataprocess.models import CollectData, CollectTarget, Platform
 from django.apps import apps
 
-# DataModels = { "youtube": SocialbladeYoutube, "twitter" : SocialbladeTwitter, ... }
+
+from crawler.models import SocialbladeYoutube, SocialbladeTwitter, SocialbladeTwitter2, SocialbladeTiktok, Melon, Spotify, Vlive, Weverse, CrowdtangleFacebook, CrowdtangleInstagram
+DataModels = { 
+    "youtube": SocialbladeYoutube, 
+    "twitter" : SocialbladeTwitter, 
+    "twitter2": SocialbladeTwitter2, 
+    "tiktok": SocialbladeTiktok, 
+    "melon": Melon, 
+    "spotify": Spotify, 
+    "weverse": Weverse, 
+    "facebook": CrowdtangleFacebook, 
+    "instagram": CrowdtangleInstagram,
+    "vlive": Vlive,
+}
 
 from dataprocess.models import CollectData, CollectTarget
 
-DataModels = {
-    model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
-}
+# DataModels = {
+#     model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+# }
 
 
 def process_itemsave(spider_name, item):
