@@ -42,7 +42,7 @@ class SocialbladeTiktok(models.Model):
             ),
         ]
 
-
+        
 class SocialbladeTwitter(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.IntegerField(null=True)

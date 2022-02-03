@@ -4,10 +4,10 @@ from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
-from config.models import PlatformTargetItem, CollectTargetItem, Schedule
+from config.models import PlatformTargetItem, CollectTargetItem, Schedule, AuthInfo
 from dataprocess.models import Platform, Artist, CollectTarget, CollectData
 
-from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
+from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer, AuthInfoSerializer
 from dataprocess.serializers import ArtistSerializer, PlatformSerializer, CollectTargetSerializer
 
 def get_platform_data(artist, platform, type, start_date, end_date, collect_item_list):
@@ -262,7 +262,7 @@ def import_datareport(worksheet, excel_import_date):
                         data_json = {}
 
 
-def import_total(worksheet):
+def import_collects(worksheet):
     platform_data_list = []
     artist_data_list = []
     collect_target_data_list = []
@@ -456,6 +456,126 @@ def import_total(worksheet):
     for collect_target_item_data in collect_target_item_data_list:
         save_collect_target_item(collect_target_item_data)
 
+def import_authinfo(worksheet):
+    platform_data_list = []
+    artist_data_list = []
+    auth_info_list = []
+    platform_start_index = 1
+    row_num = 0
+    for row in worksheet.iter_rows():
+        if row_num == 0 or row_num == 3 or row_num == 4:
+            row_num += 1
+            continue
+        # 플랫폼 정보 나열
+        if row_num == 1:
+            item_num = 0
+            platform_name = "플랫폼"
+            data_json = {}
+            for i, cell in enumerate(row):
+                if i < platform_start_index:
+                    continue
+                platform_value = str(cell.value)
+                if platform_value != "None":
+                    if platform_name != "플랫폼":
+                        # 새로운 게 등장한 거므로 저장
+                        data_json["platform"] = platform_name
+                        data_json["item_num"] = item_num
+                        data_json["item_list"] = []
+                        platform_data_list.append(data_json)
+                        data_json = {}
+                    item_num = 1
+                    platform_name = platform_value
+                else:  # None일때
+                    item_num += 1
+            # 마지막 저장
+            data_json["platform"] = platform_name
+            data_json["item_num"] = item_num
+            data_json["item_list"] = []
+            platform_data_list.append(data_json)
+            row_num += 1
+        # 플랫폼 주소 나열
+        elif row_num == 2:
+            platform_index = 0
+            current_index = 0
+            for i, cell in enumerate(row):
+                if i < platform_start_index:
+                    continue
+                collect_value = str(cell.value)
+                current_index += 1
+                if collect_value != "None":
+                    platform_data_list[platform_index]["url"] = collect_value
+                if current_index >= platform_data_list[platform_index]["item_num"]:
+                    platform_index += 1
+                    current_index = 0
+            row_num += 1
+        # 지표 정보(영어) 나열
+        elif row_num == 5:
+            platform_index = 0
+            current_index = 0
+            for i, cell in enumerate(row):
+                if i < platform_start_index:
+                    continue
+                collect_value = str(cell.value)
+                if collect_value != "지표 이름":
+                    platform_data_list[platform_index]["item_list"].append(collect_value)
+                    current_index += 1
+                    if current_index >= platform_data_list[platform_index]["item_num"]:
+                        platform_index += 1
+                        current_index = 0
+            row_num += 1
+        # 아티스트 & auth_info 정보 나열
+        else:
+            platform_index = 0
+            current_index = 0
+            data_json = {}
+            data_json2 = {}
+            artist_name = ""
+            for i, cell in enumerate(row):
+                # 아티스트 이름 나열
+                if i == 0:  # 이름
+                    if str(cell.value) == "None":
+                        break
+                    data_json["name"] = str(cell.value)
+                    artist_name = str(cell.value)
+                    artist_data_list.append(artist_name)
+                else: #auth_info
+                    collect_value = str(cell.value)
+                    if collect_value != 'null' and collect_value != 'None' and collect_value != ' ':
+                        data_json2[platform_data_list[platform_index]["item_list"][current_index]] = collect_value
+                    current_index += 1
+                    if current_index >= platform_data_list[platform_index]["item_num"]:
+                        if data_json2 != {}:
+                            data_json2["artist"] = artist_name
+                            data_json2["platform"] = platform_data_list[platform_index]["platform"]
+                            auth_info_list.append(data_json2)
+                            data_json2 = {}
+                        platform_index += 1
+                        current_index = 0
+    # collecttargetitem 저장
+    for auth_info_item in auth_info_list:
+        save_auth_info(auth_info_item)
+
+def save_auth_info(data_json):
+    """
+    수집(크롤링) 데이터 저장
+    """
+    platform = data_json["platform"]
+    artist = data_json["artist"]
+    artist_object = Artist.objects.filter(name = artist).first()
+    platform_object = Platform.objects.filter(name = platform).first()
+    collect_target_object = CollectTarget.objects.filter(platform_id = platform_object.id, artist_id = artist_object.id).first()
+    new_data = {'collect_target': collect_target_object.id}
+    for key in data_json.keys():
+        if key == 'platform' or key == 'artist':
+            continue
+        new_data[key] = data_json[key]
+    obj = AuthInfo.objects.filter(collect_target=collect_target_object.id).first()
+    authinfo_serializer = AuthInfoSerializer(obj, data=new_data)
+    if authinfo_serializer.is_valid():
+        authinfo_serializer.save()
+    else:
+        print("===invalid===")
+
 
 def save_collect_data_target(data_json, platform, target_date_string):
     """
@@ -586,9 +706,9 @@ def save_schedule(collecttargetid):
     schedule_object = Schedule.objects.filter(collect_target_id = collecttargetid).first()
     schedule_data = {
         "collect_target": collecttargetid,
-        "period": "daily",
+        "schedule_type": "daily",
         "active": True,
-        "excute_time": datetime.time(9,0,0)
+        "execute_time": datetime.time(9,0,0)
     }
     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
     if schedule_serializer.is_valid():

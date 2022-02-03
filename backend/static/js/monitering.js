@@ -70,13 +70,25 @@ $(document).on('click','#save-schedule',function(){
     var hour = td.eq(1).find('#hour-select option:selected').val();
     var minute = td.eq(2).find('#minute-select option:selected').val();
 
-    console.log(platform);
-    console.log(hour);
-    console.log(minute);
-
     if(platform === 'instagram' || platform === 'facebook'){
         platform = 'crowdtangle'
     }
+
+    // schedule table에 저장
+    $.ajax({
+        url: '/dataprocess/api/schedule/',
+        type: 'PUT',
+        data: JSON.stringify({ "platform": platform, "execute_time_hour": hour, "execute_time_minute": minute, 'schedule_type':'daily' }),
+        datatype: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            console.log(res);
+        },
+        error: e => {
+            console.log(e);
+        },
+    })
+
 
     if (minute>= 0 && minute<= 59 && hour >= 0 && hour <= 23 && !isNaN(hour)) {
         // Schedule 생성 API request 보내기
@@ -87,7 +99,7 @@ $(document).on('click','#save-schedule',function(){
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                alert('저장 되었습니다.');
+                alert('저장되었습니다.');
                 location.reload(); // 데이터 불러오기
             },
             error: e => {
@@ -101,5 +113,212 @@ $(document).on('click','#save-schedule',function(){
 })
 
 
+//시간별 스케줄 테이블
+var hourly_schedule_list = [];
+function get_hourly_schedule(){
+    $.ajax({
+        url: '/dataprocess/api/schedule/?' + $.param({
+            type: '시간별'
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            var datalist = res.data;
+            $('#hourly-scheduler-body').eq(0).empty();
+            hourly_schedule_list = datalist;
+            var index = 0;
+            datalist.forEach(data => {
+                const tableRow = $('<tr></tr>');
+                let dataCol = document.createElement('td');
+                let platform = data['platform'];
+                let artists = data['artists'];
+                let tmp_index = index;
+                dataCol.onclick = function(){
+                    show_hourly_modal(platform, artists, tmp_index);
+                };
+                dataCol.innerHTML = `
+                <td>
+                    <span class="input-btn">${data['platform']}</span>
+                </td>
+                `;
+                tableRow.append(dataCol);
+
+                let dataCol2 = document.createElement('td');
+                dataCol2.innerHTML = `<td style="width: 100px;">
+                    <select id="schedule-hour-select${tmp_index}" class="form-select">
+                        <option value="0">00</option>
+                        <option value="1">01</option>
+                        <option value="2">02</option>
+                        <option value="3">03</option>
+                        <option value="4">04</option>
+                        <option value="5">05</option>
+                        <option value="6">06</option>
+                        <option value="7">07</option>
+                        <option value="8">08</option>
+                        <option value="9">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                    </select>
+                </td>`;
+                tableRow.append(dataCol2);
+                let dataCol3 = document.createElement('td');
+                dataCol3.innerHTML = `
+                <td style="width: 100px;">
+                            <select style="margin:2px;" name="minute" id="schedule-minute-select${tmp_index}" class="form-select">
+                                <option value="0">00</option>
+                                <option value="1">01</option>
+                                <option value="2">02</option>
+                                <option value="3">03</option>
+                                <option value="4">04</option>
+                                <option value="5">05</option>
+                                <option value="6">06</option>
+                                <option value="7">07</option>
+                                <option value="8">08</option>
+                                <option value="9">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                                <option value="13">13</option>
+                                <option value="14">14</option>
+                                <option value="15">15</option>
+                                <option value="16">16</option>
+                                <option value="17">17</option>
+                                <option value="18">18</option>
+                                <option value="19">19</option>
+                                <option value="20">20</option>
+                                <option value="21">21</option>
+                                <option value="22">22</option>
+                                <option value="23">23</option>
+                                <option value="24">24</option>
+                                <option value="25">25</option>
+                                <option value="26">26</option>
+                                <option value="27">27</option>
+                                <option value="28">28</option>
+                                <option value="29">29</option>
+                                <option value="30">30</option>
+                                <option value="31">31</option>
+                                <option value="32">32</option>
+                                <option value="33">33</option>
+                                <option value="34">34</option>
+                                <option value="35">35</option>
+                                <option value="36">36</option>
+                                <option value="37">37</option>
+                                <option value="38">38</option>
+                                <option value="39">39</option>
+                                <option value="40">40</option>
+                                <option value="41">41</option>
+                                <option value="42">42</option>
+                                <option value="43">43</option>
+                                <option value="44">44</option>
+                                <option value="45">45</option>
+                                <option value="46">46</option>
+                                <option value="47">47</option>
+                                <option value="48">48</option>
+                                <option value="49">49</option>
+                                <option value="50">50</option>
+                                <option value="51">51</option>
+                                <option value="52">52</option>
+                                <option value="53">53</option>
+                                <option value="54">54</option>
+                                <option value="55">55</option>
+                                <option value="56">56</option>
+                                <option value="57">57</option>
+                                <option value="58">58</option>
+                                <option value="59">59</option>
+                            </select>
+                        </td>`;
+                        // dataCol3.options["4"].selected = true;
+                // dataCol3.val("3").prop('selected',true);
+                tableRow.append(dataCol3);
+                let dataCol4 = document.createElement('td');
+                dataCol4.onclick = function(){
+                    update_hourly_platform_schedule(platform, tmp_index);
+                };
+                dataCol4.innerHTML = `
+                <label class="btn btn-primary btn-shadow border-0" style="margin: 10px; font-weight: bold;">
+                    저장
+                </label>`;
+                tableRow.append(dataCol4);
+                index += 1;
+
+                $('#hourly-scheduler-body').append(tableRow);
 
 
+                var period_time = data['period'].split(':');
+                $(`#schedule-hour-select${tmp_index}`).val(parseInt(period_time[0])).prop('selected',true);
+                var execute_time = data['execute_time'].split(':');
+                $(`#schedule-minute-select${tmp_index}`).val(parseInt(execute_time[1])).prop('selected',true);
+            })
+        },
+        error: e => {
+            console.log(e);
+        },
+    });
+}
+
+function update_hourly_platform_schedule(platform, platform_index){
+    var data = {
+        'platform': platform,
+        'period': parseInt($(`#schedule-hour-select${platform_index} option:selected`).val()),
+        'execute_time_minute': parseInt($(`#schedule-minute-select${platform_index} option:selected`).val()),
+        'schedule_type': 'hour'
+    };
+    $.ajax({
+        url: '/dataprocess/api/schedule/',
+        type: 'PUT',
+        datatype:'json',
+        data: JSON.stringify(data),
+        success: res => {
+            hourly_schedule_list[platform_index]['period'] = `${$('#schedule-hour-select option:selected').val()}:00:00`;
+            hourly_schedule_list[platform_index]['execute_time'] = `00:${$('#schedule-minute-select option:selected').val()}:00`;
+            alert('저장되었습니다.');
+            close_hourly_modal();
+        },
+        error: e => {
+            console.log(e);
+        },
+    })
+}
+
+function show_hourly_modal(platform_name, artists, index){
+    document.getElementById('schedule-modal-title').innerHTML = `${platform_name} 시간별 아티스트`;
+
+    $('#hourly-artist').eq(0).empty();
+    artists.forEach(data=>{
+        const artist = document.createElement('span');
+        artist.innerHTML = `<span style="margin-right: 8px;">${data}</span>`
+        $('#hourly-artist').append(artist);
+    })
+    var modal = $('div').find('.modal');
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } else{
+        modal.addClass('show');
+        modal.css('display','block');
+    }
+}
+
+function close_hourly_modal(){
+    var modal = $('div').find('.modal')
+    if(modal.hasClass('show')){
+        modal.removeClass('show');
+        modal.css('display','none');
+    } 
+}
+
+get_hourly_schedule();
+$(document).on('click','#schedule-close', close_hourly_modal);

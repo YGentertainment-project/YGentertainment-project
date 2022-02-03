@@ -49,7 +49,7 @@ media
 *.py[cod]
 *$py.class
 
-backend/*/migrations/*
+# backend/*/migrations/*
 backend/data/config/*
 backend/data/log/*
 backend/data/public/avatar/*
