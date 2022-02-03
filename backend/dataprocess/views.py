@@ -8,7 +8,7 @@ from dataprocess.models import CollectData
 from crawler.models import *
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
-from dataprocess.functions import export_datareport, import_datareport, import_total
+from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
 from django.views.decorators.csrf import csrf_exempt
 
@@ -128,10 +128,10 @@ def daily(request):
             return response
         elif type == 'import2':
             '''
-            import2 from excel
+            import2 from excel (collect_target_item, artist, platform)
             '''
             platforms = Platform.objects.all()  # get all platform info from db
-            if not 'importData2' in request.FILES:
+            if not 'importData' in request.FILES:
                 values = {
                     'first_depth' : '데이터 리포트',
                     'second_depth': '일별 리포트',
@@ -140,11 +140,38 @@ def daily(request):
                     }
                 request = logincheck(request)
                 return render(request, 'dataprocess/daily.html', values)
-            import_file = request.FILES['importData2']
+            import_file = request.FILES['importData']
             wb = openpyxl.load_workbook(import_file)
             sheets = wb.sheetnames
             worksheet = wb[sheets[0]]
-            import_total(worksheet)
+            import_collects(worksheet)
+            values = {
+                'first_depth' : '데이터 리포트',
+                'second_depth': '일별 리포트',
+                'platforms': platforms,
+                'alert': '저장되었습니다.'
+                }
+            request = logincheck(request)
+            return render(request, 'dataprocess/daily.html',values)
+        elif type == 'import3':
+            '''
+            import3 from excel (auth_info)
+            '''
+            platforms = Platform.objects.all()  # get all platform info from db
+            if not 'importData' in request.FILES:
+                values = {
+                    'first_depth' : '데이터 리포트',
+                    'second_depth': '일별 리포트',
+                    'platforms': platforms,
+                    'alert': '파일을 첨부해주세요.'
+                    }
+                request = logincheck(request)
+                return render(request, 'dataprocess/daily.html', values)
+            import_file = request.FILES['importData']
+            wb = openpyxl.load_workbook(import_file)
+            sheets = wb.sheetnames
+            worksheet = wb[sheets[0]]
+            import_authinfo(worksheet)
             values = {
                 'first_depth' : '데이터 리포트',
                 'second_depth': '일별 리포트',
@@ -449,14 +476,13 @@ class ArtistAPI(APIView):
                     collecttarget.save()
                     #3. 해당 collecttarget에 대한 schedule 생성(기존 platform의 daily schedule과 똑같이 하기)
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
-
                     execute_time = datetime.time(9,0,0)
                     collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id)
                     collecttarget_objects = collecttarget_objects.values()
                     for collecttarget_object in collecttarget_objects:
-                        schedule_objects = Schedule.objects.filter(schedule_type = 'daily', collect_target_id = collecttarget_object['id'])
+                        schedule_objects = Schedule.objects.filter(schedule_type = 'daily', collect_target_id = collecttarget_object['id']).values()
                         if schedule_objects.exists():
-                            execute_time = schedule_objects.values()[0]['execute_time']
+                            execute_time = schedule_objects[0]['execute_time']
                             break
                     schedule_data = {
                             'collect_target': collecttarget.id,

@@ -904,18 +904,28 @@ $("#excel-form-open1").click(function(){
     document.getElementById("excel_form1").style.display = "flex";
     document.getElementById("excel_form2").style.display = "none";
     document.getElementById("excel_form3").style.display = "none";
+    document.getElementById("excel_form4").style.display = "none";
     document.getElementById('excel_loading1').classList.add("hidden");
 });
 $("#excel-form-open2").click(function(){
     document.getElementById("excel_form1").style.display = "none";
     document.getElementById("excel_form2").style.display = "flex";
     document.getElementById("excel_form3").style.display = "none";
+    document.getElementById("excel_form4").style.display = "none";
 });
 $("#excel-form-open3").click(function(){
     document.getElementById("excel_form1").style.display = "none";
     document.getElementById("excel_form2").style.display = "none";
     document.getElementById("excel_form3").style.display = "flex";
+    document.getElementById("excel_form4").style.display = "none";
     document.getElementById('excel_loading3').classList.add("hidden");
+});
+$("#excel-form-open4").click(function(){
+    document.getElementById("excel_form1").style.display = "none";
+    document.getElementById("excel_form2").style.display = "none";
+    document.getElementById("excel_form3").style.display = "none";
+    document.getElementById("excel_form4").style.display = "flex";
+    document.getElementById('excel_loading4').classList.add("hidden");
 });
 
 document.getElementById('close_button1').onclick = function(){
@@ -929,6 +939,10 @@ document.getElementById('close_button3').onclick = function(){
     document.getElementById("excel_form3").style.display = "none";
     document.getElementById('excel_loading3').classList.add("hidden");
 }
+document.getElementById('close_button4').onclick = function(){
+    document.getElementById("excel_form4").style.display = "none";
+    document.getElementById('excel_loading4').classList.add("hidden");
+}
 
 document.getElementById('excel-btn1').onclick = function(){
     document.getElementById('excel_loading1').classList.remove("hidden");
@@ -938,6 +952,9 @@ document.getElementById('excel-btn2').onclick = function(){
 }
 document.getElementById('excel-btn3').onclick = function(){
     document.getElementById('excel_loading3').classList.remove("hidden");
+}
+document.getElementById('excel-btn4').onclick = function(){
+    document.getElementById('excel_loading4').classList.remove("hidden");
 }
 
 // default 누적 & today 설정
