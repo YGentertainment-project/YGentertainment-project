@@ -69,11 +69,11 @@ class SpotifySpider(scrapy.Spider):
             status = failure.value.response.status
             artist = failure.request.meta["artist"]
             url = failure.request.url
-            crawlinglogger.error(f"[{status}] {artist} - spotify - {url}")
+            if status == 404:
+                crawlinglogger.error(f"[400] {artist} - spotify - {url}")
+            elif status == 403:
+                crawlinglogger.error(f"[402] {artist} - spotify - {url}")
         elif failure.check(DNSLookupError):
-            # 도메인을 잘못 입력했을 때 에러코드를 무엇으로 설정할지 몰라서 문자열로 설정했습니다.
-            # DNSLookUp Error
             artist = failure.request.meta["artist"]
             url = failure.request.url
-            status = "DNSLookUp Error"
-            crawlinglogger.error(f"[{status}] {artist} - spotify - {url}")
+            crawlinglogger.error(f"[400] {artist} - spotify - {url}")
