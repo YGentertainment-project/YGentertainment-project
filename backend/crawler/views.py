@@ -10,6 +10,7 @@ from utils.shortcuts import get_env
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from config.models import Schedule
 from django.db.models import Q
 from django.apps import apps
 
@@ -45,17 +46,18 @@ def extract_target_list(platform):
 
     for crawl_info in crawl_infos:
         crawl_target_row = dict()
-        artist_name = Artist.objects.get(id=crawl_info.artist_id).name
-        target_url = crawl_info.target_url
+        if Schedule.objects.get(collect_target_id=crawl_info.id).active == 1:
+            artist_name = Artist.objects.get(id=crawl_info.artist_id).name
+            target_url = crawl_info.target_url
 
-        crawl_target_row['id'] = crawl_info.id
-        crawl_target_row['artist_name'] = artist_name
-        crawl_target_row['target_url'] = target_url
+            crawl_target_row['id'] = crawl_info.id
+            crawl_target_row['artist_name'] = artist_name
+            crawl_target_row['target_url'] = target_url
 
-        if platform == "melon" or platform == "spotify":
-            crawl_target_row['target_url_2'] = crawl_info.target_url_2
+            if platform == "melon" or platform == "spotify":
+                crawl_target_row['target_url_2'] = crawl_info.target_url_2
 
-        crawl_target.append(crawl_target_row)
+            crawl_target.append(crawl_target_row)
     return crawl_target
 
 
