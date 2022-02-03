@@ -33,7 +33,7 @@ else:
 
 
 def extract_target_list(platform):
-    if platform == "crowdtangle":
+    if platform == "crowdtangle" or platform == "crowdtangle-past":
         facebook_id = Platform.objects.get(name="facebook").id
         instagram_id = Platform.objects.get(name="instagram").id
         crawl_infos = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
@@ -47,6 +47,7 @@ def extract_target_list(platform):
         crawl_target_row = dict()
         artist_name = Artist.objects.get(id=crawl_info.artist_id).name
         target_url = crawl_info.target_url
+
         crawl_target_row['id'] = crawl_info.id
         crawl_target_row['artist_name'] = artist_name
         crawl_target_row['target_url'] = target_url
