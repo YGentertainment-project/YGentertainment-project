@@ -23,9 +23,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'facebook',
-            },
         ),
         migrations.CreateModel(
             name='CrowdtangleInstagram',
@@ -38,9 +35,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'instagram',
-            },
         ),
         migrations.CreateModel(
             name='Melon',
@@ -56,9 +50,6 @@ class Migration(migrations.Migration):
                 ('url1', models.TextField(null=True)),
                 ('url2', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'melon',
-            },
         ),
         migrations.CreateModel(
             name='SocialbladeTiktok',
@@ -73,9 +64,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'tiktok',
-            },
         ),
         migrations.CreateModel(
             name='SocialbladeTwitter',
@@ -90,9 +78,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'twitter',
-            },
         ),
         migrations.CreateModel(
             name='SocialbladeTwitter2',
@@ -107,9 +92,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'twitter2',
-            },
         ),
         migrations.CreateModel(
             name='SocialbladeYoutube',
@@ -125,9 +107,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'youtube',
-            },
         ),
         migrations.CreateModel(
             name='Spotify',
@@ -142,9 +121,6 @@ class Migration(migrations.Migration):
                 ('url1', models.TextField(null=True)),
                 ('url2', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'spotify',
-            },
         ),
         migrations.CreateModel(
             name='Vlive',
@@ -160,9 +136,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'vlive',
-            },
         ),
         migrations.CreateModel(
             name='Weverse',
@@ -175,9 +148,6 @@ class Migration(migrations.Migration):
                 ('updated_at', models.DateField(null=True)),
                 ('url', models.TextField(null=True)),
             ],
-            options={
-                'db_table': 'weverse',
-            },
         ),
         migrations.AddConstraint(
             model_name='weverse',
