@@ -8,11 +8,26 @@ from django.utils import timezone
 from dataprocess.models import CollectData, CollectTarget, Platform
 from django.apps import apps
 
-# DataModels = { "youtube": SocialbladeYoutube, "twitter" : SocialbladeTwitter, ... }
 
-DataModels = {
-    model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+from crawler.models import SocialbladeYoutube, SocialbladeTwitter, SocialbladeTwitter2, SocialbladeTiktok, Melon, Spotify, Vlive, Weverse, CrowdtangleFacebook, CrowdtangleInstagram
+DataModels = { 
+    "youtube": SocialbladeYoutube, 
+    "twitter" : SocialbladeTwitter, 
+    "twitter2": SocialbladeTwitter2, 
+    "tiktok": SocialbladeTiktok, 
+    "melon": Melon, 
+    "spotify": Spotify, 
+    "weverse": Weverse, 
+    "facebook": CrowdtangleFacebook, 
+    "instagram": CrowdtangleInstagram,
+    "vlive": Vlive,
 }
+
+from dataprocess.models import CollectData, CollectTarget
+
+# DataModels = {
+#     model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+# }
 
 
 def process_itemsave(spider_name, item):
@@ -61,10 +76,10 @@ def process_itemsave(spider_name, item):
 def update_youtube(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item["artist"],
-                                                  recorded_date__year=nowdate.year,
-                                                  recorded_date__month=nowdate.month,
-                                                  recorded_date__day=nowdate.day,
-                                                  recorded_date__hour=nowdate.hour)
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour)
     existingItem.uploads = item.get("uploads")
     existingItem.subscribers = item.get("subscribers")
     existingItem.views = item.get("views")
@@ -75,10 +90,10 @@ def update_youtube(item, name):
 def update_tiktok(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
-                                                 recorded_date__year=nowdate.year,
-                                                 recorded_date__month=nowdate.month,
-                                                 recorded_date__day=nowdate.day,
-                                                 recorded_date__hour=nowdate.hour)
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour)
     existingItem.followers = item.get("followers")
     existingItem.uploads = item.get("uploads")
     existingItem.likes = item.get("likes")
@@ -102,11 +117,11 @@ def update_twitter(item, name):
 def update_weverse(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
-                                       recorded_date__year=nowdate.year,
-                                       recorded_date__month=nowdate.month,
-                                       recorded_date__day=nowdate.day,
-                                       recorded_date__hour=nowdate.hour
-                                       )
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour
+                                                )
     existingItem.weverses = item.get("weverses")
     existingItem.recorded_date = nowdate
     existingItem.save()
@@ -115,11 +130,11 @@ def update_weverse(item, name):
 def update_vlive(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
-                                     recorded_date__year=nowdate.year,
-                                     recorded_date__month=nowdate.month,
-                                     recorded_date__day=nowdate.day,
-                                     recorded_date__hour=nowdate.hour
-                                     )
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour
+                                                )
     existingItem.members = item.get("members")
     existingItem.videos = item.get("videos")
     existingItem.likes = item.get("likes")
@@ -131,11 +146,11 @@ def update_vlive(item, name):
 def update_melon(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
-                                     recorded_date__year=nowdate.year,
-                                     recorded_date__month=nowdate.month,
-                                     recorded_date__day=nowdate.day,
-                                     recorded_date__hour=nowdate.hour
-                                     )
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour
+                                                )
     existingItem.listeners = item.get("listeners")
     existingItem.streams = item.get("streams")
     existingItem.recorded_date = nowdate
@@ -145,11 +160,11 @@ def update_melon(item, name):
 def update_spotify(item, name):
     nowdate = item["recorded_date"]
     existingItem = DataModels[name].objects.get(artist=item.get("artist"),
-                                       recorded_date__year=nowdate.year,
-                                       recorded_date__month=nowdate.month,
-                                       recorded_date__day=nowdate.day,
-                                       recorded_date__hour=nowdate.hour
-                                       )
+                                                recorded_date__year=nowdate.year,
+                                                recorded_date__month=nowdate.month,
+                                                recorded_date__day=nowdate.day,
+                                                recorded_date__hour=nowdate.hour
+                                                )
     existingItem.monthly_listens = item.get("monthly_listens")
     existingItem.followers = item.get("followers")
     existingItem.recorded_date = nowdate

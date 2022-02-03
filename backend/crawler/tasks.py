@@ -20,7 +20,7 @@ spider_loader = spiderloader.SpiderLoader.from_settings(settings)
 sys.path.append(os.path.dirname(os.path.abspath('.')))
 
 
-def crawling_start(platform, task_id):
+def crawling_start(platform, task_id, crawl_target):
     process = CrawlerProcess(settings)
     date_str = timezone.localdate().strftime('%Y-%m-%d')
     crawler_dir = "./data/log/crawler"
@@ -34,14 +34,14 @@ def crawling_start(platform, task_id):
         os.mkdir(log_dir)
     log_path = "./data/log/crawler/{}/{}/{}.log".format(platform, date_str, task_id)
     settings.set("LOG_FILE", log_path)
-    process.crawl(spider_loader.load(platform))
+    process.crawl(spider_loader.load(platform), crawl_target=crawl_target)
     process.start()
 
 
 @app.task(name="direct_crawling", bind=True, default_retry_delay=30, max_retries=2)
-def direct_crawling(self, platform):
+def direct_crawling(self, platform, crawl_target):
     try:
-        process = Process(target=crawling_start, args=[platform, self.request.id])
+        process = Process(target=crawling_start, args=[platform, self.request.id, crawl_target])
         process.start()
         process.join()
     except Exception as e:
@@ -50,9 +50,9 @@ def direct_crawling(self, platform):
 
 
 @app.task(name="schedule_crawling", bind=True, default_retry_delay=30, max_retries=2)
-def schedule_crawling(self, platform):
+def schedule_crawling(self, platform, crawl_target):
     try:
-        process = Process(target=crawling_start, args=[platform, self.request.id])
+        process = Process(target=crawling_start, args=[platform, self.request.id, crawl_target])
         process.start()
         process.join()
     except Exception as e:

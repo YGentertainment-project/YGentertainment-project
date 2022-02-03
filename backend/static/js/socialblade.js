@@ -301,6 +301,7 @@ $(document).ready(function () {
             success: res => {
               $('#task-board').html('');
               const taskinfos = res.taskinfos;
+              console.log(taskinfos)
               taskinfos.forEach(taskinfo => {
                   $('#task-board').append(createTableRow(taskinfo, 'task'));
               })

@@ -2,9 +2,6 @@ import scrapy
 from urllib.parse import urlparse
 
 from ..items import SocialbladeYoutubeItem
-from dataprocess.models import CollectTarget
-from dataprocess.models import Artist
-from dataprocess.models import Platform
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
@@ -22,14 +19,12 @@ class YoutubeSpider(scrapy.Spider):
             "crawler.scrapy_app.middlewares.NoLoginDownloaderMiddleware": 100
         },
     }
-    youtube_platform_id = Platform.objects.get(name="youtube").id
-    CrawlingTarget = CollectTarget.objects.filter(platform_id=youtube_platform_id)
 
     def start_requests(self):
-        for row in self.CrawlingTarget:
-            artist_name = Artist.objects.get(id=row.artist_id).name
-            artist_url = row.target_url
-            target_id = row.id
+        for target in self.crawl_target:
+            artist_name = target['artist_name']
+            artist_url = target['target_url']
+            target_id = target['id']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
             if urlparse(artist_url).netloc == SOCIALBLADE_DOMAIN:
@@ -70,12 +65,14 @@ class YoutubeSpider(scrapy.Spider):
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
 
             uploads = response.xpath(uploads_xpath).get()
-            uploads = self.parse_comma_text(uploads)
             subscribers = response.xpath(sub_xpath).get()
-            subscribers = self.parse_subscribers(subscribers)
             view_text = response.xpath(views_xpath).get()
-            views = self.parse_comma_text(view_text)
             user_created = response.xpath(user_created_xpath).get()
+
+            uploads = self.parse_comma_text(uploads)
+            subscribers = self.parse_subscribers(subscribers)
+            views = self.parse_comma_text(view_text)
+
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
             item["uploads"] = uploads
@@ -89,7 +86,7 @@ class YoutubeSpider(scrapy.Spider):
     def parse_youtube(self, response):
         if response.request.url == YOUTUBE_ROBOT:
             pass
-        else:
+
             views_xpath = CollectTargetItem.objects.get(
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="views")).xpath + "/text()"
             user_created_xpath = CollectTargetItem.objects.get(
@@ -97,10 +94,11 @@ class YoutubeSpider(scrapy.Spider):
 
             artist = response.request.meta["artist"]
             view_text = response.xpath(views_xpath).get()
-            # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
-            view_text = view_text[:-5].strip()
-            views = self.parse_comma_text(view_text)
             user_created = response.xpath(user_created_xpath).get()
+            # "조회수 168,048,278회" 형태의 문자열에서 조회수에 해당하는 숫자만 추출
+            view_text = view_text[4:-1].strip()
+            views = self.parse_comma_text(view_text)
+
             item = SocialbladeYoutubeItem()
             item["artist"] = artist
             item["views"] = views
