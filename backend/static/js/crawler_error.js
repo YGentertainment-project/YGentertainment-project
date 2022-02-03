@@ -142,7 +142,8 @@ $(document).on('dblclick','td.error-url',function(){
     console.log(url);
     let dataLabel = $('<input></input>',{
         value: url,
-        class: 'error-url-input'
+        class: 'error-url-input',
+        title:'URL을 수정 하세요'
     })
     $(this).append(dataLabel)
     
@@ -153,6 +154,8 @@ $(document).on('click','#save-error-url',function(){
     var tr = $(this).closest('tr')
     datas = [];
     var cells = tr[0].getElementsByTagName("td");
+
+
     console.log(cells[1].innerHTML); //artist name
     console.log(cells[2].innerHTML); //platform
     console.log(cells[3].firstElementChild.value); //new url
@@ -188,4 +191,25 @@ $(document).on('click','#save-error-url',function(){
 
 })
 
+$(document).on('click',function(e){
+    var $tgPoint = $(e.target);
+    var $popCall = $tgPoint.hasClass('error-report-table')
+    var $popCallInput = $tgPoint.hasClass('error-url-input')
 
+    var error_urls_td = $('input.error-url-input').parents('td')
+    var error_urls = $('input.error-url-input').parents('td').children()
+    
+   if(!$popCall && !$popCallInput){
+        //url list
+        urls = [];
+        for (var i = 0; i<error_urls.length; i++){
+            console.log(error_urls[i].value);
+            urls.push(error_urls[i].value)
+        }
+
+        for(var i = 0; i<error_urls_td.length; i++){
+            error_urls_td[i].innerHTML = '' //html 비우기
+            error_urls_td.text(urls[i]) //td 를 url 로 채우기
+        }
+   }
+})

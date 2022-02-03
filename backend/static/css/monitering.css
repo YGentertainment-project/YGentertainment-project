@@ -129,6 +129,10 @@
 
 ul{list-style:none;}
 
+.page-item{
+  font-size: 0.8rem;
+}
+
 .page-item:hover{
   cursor: pointer;
 }
