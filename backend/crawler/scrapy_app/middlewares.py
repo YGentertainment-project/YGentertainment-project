@@ -14,6 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from utils.shortcuts import get_env
 from datetime import datetime
 import logging
+from requests import get
 
 formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
 crawlinglogger = logging.getLogger("CRAWLING-LOG")
@@ -148,6 +149,14 @@ class NoLoginDownloaderMiddleware:
         domain = urlparse(request.url).netloc
         print("crawling url : {}".format(request.url))
         artist_name = request.meta["artist"]
+
+        # Selenium의 경우 따로 특정 HttpResponse에 대한 모듈이 없는 것 같아서
+        # python에서 제공하는 requests 속 get 모듈을 활용했습니다.
+        # 404, 403 등 200이 아닌 경우에는 return None을 통해 크롤링을 진행하지 않도록 했습니다.
+        tmp = get(request.url)
+        if tmp != 200:
+            crawlinglogger.error(f"[{tmp.status_code}] {artist_name} - {spider.name} - {request.url}")
+            return None
 
         # Socialblade Case
         if domain == SOCIALBLADE_DOMAIN:
@@ -309,6 +318,14 @@ class LoginDownloaderMiddleware:
         self.driver.get(request.url)
         artist_name = request.meta["artist"]
         print("crawling url : {}".format(request.url))
+
+        # Selenium의 경우 따로 특정 HttpResponse에 대한 모듈이 없는 것 같아서
+        # python에서 제공하는 requests 속 get 모듈을 활용했습니다.
+        # 404, 403 등 200이 아닌 경우에는 return None을 통해 크롤링을 진행하지 않도록 했습니다.
+        tmp = get(request.url)
+        if tmp != 200:
+            crawlinglogger.error(f"[{tmp.status_code}] {artist_name} - {spider.name} - {request.url}")
+            return None
 
         if spider.name == "weverse":
             if ROBOTS_TXT not in request.url:

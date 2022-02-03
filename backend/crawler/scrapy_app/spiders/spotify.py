@@ -1,6 +1,8 @@
 import json
 import scrapy
 from bs4 import BeautifulSoup
+from scrapy.spidermiddlewares.httperror import HttpError
+from twisted.internet.error import DNSLookupError, TCPTimedOutError
 
 from ..items import SpotifyItem
 from dataprocess.models import CollectTarget
@@ -22,7 +24,8 @@ class SpotifySpider(scrapy.Spider):
             artist_url = row.target_url
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
-            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name, "url": artist_url})
+            yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name, "url": artist_url},
+                                 errback=self.errback)
 
     def parse(self, response):
         artist = response.meta["artist"]
@@ -60,3 +63,17 @@ class SpotifySpider(scrapy.Spider):
             item["url2"] = None
             item["reserved_date"] = datetime.now().date()
             yield item
+
+    def errback(self, failure):
+        if failure.check(HttpError):
+            status = failure.value.response.status
+            artist = failure.request.meta["artist"]
+            url = failure.request.url
+            crawlinglogger.error(f"[{status}] {artist} - spotify - {url}")
+        elif failure.check(DNSLookupError):
+            # 도메인을 잘못 입력했을 때 에러코드를 무엇으로 설정할지 몰라서 문자열로 설정했습니다.
+            # DNSLookUp Error
+            artist = failure.request.meta["artist"]
+            url = failure.request.url
+            status = "DNSLookUp Error"
+            crawlinglogger.error(f"[{status}] {artist} - spotify - {url}")
