@@ -619,10 +619,13 @@ class CollectTargetItemAPI(APIView):
                     collecttargetitems_datas.append(collecttargetitmes_value)
                 # schedule 확인
                 schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_objects_value['id'])
+                print(schedule_object)
                 if schedule_object.exists():
+                    print(schedule_object.values())
                     schedule_type = schedule_object.values()[0]['schedule_type']
                 else:
                     schedule_type = 'daily'
+                print(schedule_type)
                 return JsonResponse(data={'success': True, 'data': {'items':collecttargetitems_datas, 'schedule_type': schedule_type}})
             else:
                 return JsonResponse(data={'success': True, 'data': {'items':[],'schedule_type':'daily'}})
@@ -680,8 +683,9 @@ class CollectTargetItemAPI(APIView):
                 if schedule_objects.exists():
                     execute_time = schedule_objects.values()[0]['execute_time']
                     break
-            Schedule.objects.filter(collect_target_id = collecttarget_object['id']).update(
-                schedule_type = collecttargetitem['schedule_type'], execute_time = execute_time, period = period)
+            collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object['id'], artist_id = artist_object["id"]).first()
+            Schedule.objects.filter(collect_target_id = collecttarget_object.id).update(
+                    schedule_type = schedule_type, execute_time = execute_time, period = period)
                 
                 
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
