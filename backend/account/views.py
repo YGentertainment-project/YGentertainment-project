@@ -66,7 +66,7 @@ class UserSimpleLoginAPI(APIView):
         values = {
             'first_depth': '데이터 리포트',
         }
-        response = redirect('dataprocess:base')
+        response = redirect('dataprocess:daily')
         response.set_cookie('username', username)
         return response
 
