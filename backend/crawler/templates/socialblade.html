@@ -48,6 +48,9 @@
             <button id="listup-tasks" type="button" class="btn btn-warning" data-toggle="modal" data-target="#taskListModal">
                 실행 Task 목록
             </button>
+            <button id="monitoring" type="button" class="btn btn-light" data-toggle="modal" data-target="#monitorModal">
+                모니터링
+            </button>
         </div>
         <div id="progress">
             <div class="spinner-border text-primary crawler-loading" role="status">
@@ -166,6 +169,45 @@
                     </tr>
                  </thead>
              <tbody id="task-board"></tbody>
+             </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="monitorModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">모니터링</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form style="display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; align-items: center">
+                  <div class="form-group">
+                    <label for="InputFromDate">From Date</label>
+                    <input type="text" class="form-control" id="InputFromDate"  placeholder="(YYYY-MM-DD)">
+                  </div>
+                  <div class="form-group">
+                    <label for="InputToDate">To Date</label>
+                    <input type="text" class="form-control" id="InputToDate" placeholder="(YYYY-MM-DD)">
+                  </div>
+                  <button id="get-monitor" style="height:40px" class="btn btn-primary">조회</button>
+              </form>
+             <table class="table">
+                 <thead>
+                    <tr>
+                        <th scope="col">Task id</th>
+                        <th scope="col">Platform</th>
+                        <th scope="col">결과</th>
+                        <th scope="col">에러 발생 개수</th>
+                    </tr>
+                 </thead>
+             <tbody id="monitor-board"></tbody>
              </table>
           </div>
           <div class="modal-footer">

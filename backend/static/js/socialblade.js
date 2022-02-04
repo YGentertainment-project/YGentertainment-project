@@ -311,4 +311,27 @@ $(document).ready(function () {
             },
         })
     })
+
+    $('#get-monitor').click((e) => {
+        e.preventDefault();
+        const fromDate = $('#InputFromDate').val()
+        const toDate = $('#InputToDate').val()
+        console.log(fromDate, toDate);
+        $.ajax({
+            url: api_domain + 'monitors/?' + $.param({
+                fromdate: fromDate,
+                todate: toDate,
+            }),
+            type: 'GET',
+            datatype: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: res => {
+                console.log(res)
+            },
+            error: e => {
+                console.log(e)
+                alert(e.responseJSON.error)
+            },
+        })
+    })
 })
