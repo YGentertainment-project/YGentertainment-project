@@ -144,7 +144,7 @@ $('input[name=artist-name]').click(function(){
         success: res => {
             //아티스트 표 작게 처리
             make_artist_hidden();
-
+            document.getElementById("artist-subtitle").style.color = "#000000";
             document.getElementById("artist-subtitle").innerHTML = artist+" 플랫폼";
             const data_list = res.data;
             $('#artist-body-platform').empty();
@@ -299,6 +299,7 @@ $(document).on('click','.platform-names',function(){
             item_open = true;
             document.getElementById("item_open").classList.remove("fa-chevron-right");
             document.getElementById("item_open").classList.add("fa-chevron-left");
+            document.getElementById("platform-subtitle").style.color = "#000000";
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
             console.log(data_list);
