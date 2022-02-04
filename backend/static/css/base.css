@@ -127,6 +127,14 @@ input{
     border-radius: 2px;
 }
 
+.sidebar-text{
+    font-size: 15px;
+}
+
+.sidebar-text-inner{
+    font-size: 12px;
+}
+
 
 .hide{
     display:none;
@@ -167,9 +175,11 @@ input{
     margin-left: 0px;
     margin-right: 10px;
     padding:10px;
-    width: 65%;
-    text-align: center;
-    justify-content: center;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    justify-content: flex-start;
 }
 
 .select-days-day{
