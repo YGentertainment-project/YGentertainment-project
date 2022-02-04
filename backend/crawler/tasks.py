@@ -47,6 +47,7 @@ def direct_crawling(self, platform, crawl_target):
     except Exception as e:
         traceback.print_exc()
         print('Error with direct {} crawling {}'.format(platform, e))
+    return {'artists': len(crawl_target)}
 
 
 @app.task(name="schedule_crawling", bind=True, default_retry_delay=30, max_retries=2)
@@ -58,3 +59,4 @@ def schedule_crawling(self, platform, crawl_target):
     except Exception as e:
         traceback.print_exc()
         print("Error with scheduled {} crawling : {}".format(platform, e))
+    return {'artists': len(crawl_target)}

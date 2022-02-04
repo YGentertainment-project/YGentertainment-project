@@ -210,15 +210,27 @@ def taskinfos(request):
 def monitors(request):
     if request.method == "GET":
         from_date_str = request.GET.get("fromdate", None)
-        to_date_str = request.GET.get("todate", None)
+        # to_date_str = request.GET.get("todate", None)
 
         try:
             from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
-            to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
-
+            # to_date_obj = datetime.strptime(to_date_str+' , '%Y-%m-%d ')
         except Exception as e:
             return JsonResponse(status=500, data={"error": "Input Date Format Error"})
 
+        # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
+        # 에러 발생한 아티스트 개수 => log에서 파싱
+
+        # 생성된 로그 파일을 기준으로 모두 체크하되,
+        # flower에서 완료되지 않은 태스크는 모니터링 카운트에서 배제한다.
+
+        # return { data: {  result: { normals: 100(처리한 아티스트 - 에러개수), errors: 5 },
+        #                   detail: [ {error: 400, artist: 'blackpink', platform: 'tiktok', url: 'https:...'}, {...}, ... ]
+        #                 }
+        #         }
+
+        platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
+        # 날짜 비교후 from-to 범위에 해당하는 task 정보를 가져오기
         tasks_json = get_all_tasks()
         for task in tasks_json.values():
             started_val = task['started']
