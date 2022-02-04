@@ -15,7 +15,7 @@ class SpotifySpider(scrapy.Spider):
     def start_requests(self):
         for target in self.crawl_target:
             artist_name = target['artist_name']
-            artist_url = [target['target_url'], target['target_url_2']]
+            artist_url = target['target_url']
             print("artist : {}, url : {}, url_len: {}".format(
                 artist_name, artist_url, len(artist_url)))
             yield scrapy.Request(url=artist_url, callback=self.parse, encoding="utf-8", meta={"artist": artist_name, "url": artist_url},

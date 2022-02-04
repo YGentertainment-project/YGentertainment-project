@@ -355,7 +355,7 @@ class LoginDownloaderMiddleware:
         # python에서 제공하는 requests 속 get 모듈을 활용했습니다.
         # 404, 403 등 200이 아닌 경우에는 return None을 통해 크롤링을 진행하지 않도록 했습니다.
         tmp = get(request.url)
-        if tmp != 200:
+        if tmp.status_code != 200:
             crawlinglogger.error(f"[{tmp.status_code}] {artist_name} - {spider.name} - {request.url}")
             return None
 
@@ -363,7 +363,7 @@ class LoginDownloaderMiddleware:
             if ROBOTS_TXT not in request.url:
                 try:
                     WebDriverWait(self.driver, 30).until(
-                        EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi.kMxZOcasdfadsf"))
+                        EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi"))
                     )
                 except TimeoutException:
                     crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
