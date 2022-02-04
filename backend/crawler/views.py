@@ -1,6 +1,5 @@
-import requests
-import json
-from datetime import datetime
+import sys, os, requests, json
+from datetime import datetime, timedelta
 
 # api utilities
 from django.http import JsonResponse
@@ -205,35 +204,82 @@ def taskinfos(request):
             return JsonResponse(data={"taskinfo": task_info})
 
 
+def get_task_result(id):
+    response = requests.get(flower_domain + f"api/task/info/{id}")
+    if response.status_code == 200:
+        task_json = json.loads(response.content.decode("utf-8"))
+        if task_json['state'] == 'SUCCESS':
+            return eval(task_json['result'])
+        elif task_json['state'] == 'started':
+            return 'started'
+        else:
+            return None
+    else:
+        return None
+
+def parse_logfile(filepath):
+    error_infos = []
+    errors = 0
+    with open(f'{filepath}', 'r') as log_file:
+        for log_line in log_file:
+            log_words = log_line.rstrip().split(' ')
+            last_word = log_words[-1]
+            if "https" in last_word:
+                error_info = dict()
+                error_info['type'] = log_words[4].strip('[]')
+                error_info['artist'] = log_words[5]
+                error_info['platform'] = log_words[7]
+                error_info['url'] = last_word
+                error_infos.append(error_info)
+                errors += 1
+    return errors, error_infos
+
 @csrf_exempt
 @require_http_methods(["GET"])
 def monitors(request):
     if request.method == "GET":
         from_date_str = request.GET.get("fromdate", None)
-        # to_date_str = request.GET.get("todate", None)
-
+        to_date_str = request.GET.get("todate", None)
+        print('from_date_str : ',from_date_str)
+        print('to_date_str : ',to_date_str)
         try:
             from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
-            # to_date_obj = datetime.strptime(to_date_str+' , '%Y-%m-%d ')
+            to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
         except Exception as e:
             return JsonResponse(status=500, data={"error": "Input Date Format Error"})
 
+
+        day_diff = (to_date_obj - from_date_obj).days
+
         # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
         # 에러 발생한 아티스트 개수 => log에서 파싱
-
         # 생성된 로그 파일을 기준으로 모두 체크하되,
         # flower에서 완료되지 않은 태스크는 모니터링 카운트에서 배제한다.
-
-        # return { data: {  result: { normals: 100(처리한 아티스트 - 에러개수), errors: 5 },
-        #                   detail: [ {error: 400, artist: 'blackpink', platform: 'tiktok', url: 'https:...'}, {...}, ... ]
-        #                 }
-        #         }
+        # crawling_start에서 경로 설정을 위해 절대경로 변경
+        # sys.path.append(os.path.dirname(os.path.abspath('..')))
 
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
-        # 날짜 비교후 from-to 범위에 해당하는 task 정보를 가져오기
-        tasks_json = get_all_tasks()
-        for task in tasks_json.values():
-            started_val = task['started']
-            started_str = datetime.fromtimestamp()
-            print(started_val)
-        return JsonResponse(data={"success": True})
+        total_artists = 0 # 처리한 총 아티스트 개수
+        total_errors = 0 # 총 에러개수
+        total_exec = 0 # 총 실행중 개수
+        error_details = [] # 전체 에러 디테일
+        for day in range(0, day_diff + 1):
+            for platform in platforms:
+                title_date = from_date_obj + timedelta(days=day)
+                title_str = title_date.strftime("%Y-%m-%d")
+                log_dir = f"./data/log/crawler/{platform}/{title_str}"
+                if os.path.isdir(log_dir) is True:
+                    file_list = os.listdir(log_dir)
+                    for file_name in file_list:
+                        task_id = file_name.split('.')[0]
+                        task_result = get_task_result(task_id)
+                        if task_result == "started":
+                            total_exec += 1
+                        elif task_result is not None:
+                            total_artists += task_result['artists']
+                            errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            total_errors += errors
+                            for error_info in error_infos:
+                                error_details.append(error_info)
+
+        return JsonResponse(data={"normals": total_artists - total_errors, "execs": total_exec, "errors": total_errors, "details": error_details})

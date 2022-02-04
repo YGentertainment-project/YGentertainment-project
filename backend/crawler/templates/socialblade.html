@@ -187,27 +187,37 @@
             </button>
           </div>
           <div class="modal-body">
-              <form style="display: grid; grid-template-columns: 1fr 80px; gap: 10px; align-items: center">
+              <form style="display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; align-items: center">
                   <div class="form-group">
                     <label for="InputFromDate">From Date</label>
-                    <input type="text" class="form-control" id="InputFromDate"  placeholder="(YYYY-MM-DD) 2022-02-04 이후만 가능">
+                    <input type="text" class="form-control" id="InputFromDate"  placeholder="(YYYY-MM-DD) 2022-02-04 부터만 가능">
                   </div>
-<!--                  <div class="form-group">-->
-<!--                    <label for="InputToDate">To Date</label>-->
-<!--                    <input type="text" class="form-control" id="InputToDate" placeholder="(YYYY-MM-DD)">-->
-<!--                  </div>-->
+                  <div class="form-group">
+                    <label for="InputToDate">To Date</label>
+                    <input type="text" class="form-control" id="InputToDate" placeholder="(YYYY-MM-DD)">
+                  </div>
                   <button id="get-monitor" style="height:40px" class="btn btn-primary">조회</button>
               </form>
+              <table class="table">
+                 <thead>
+                    <tr>
+                        <th scope="col">정상</th>
+                        <th scope="col">오류</th>
+                        <th scope="col">실행중</th>
+                    </tr>
+                 </thead>
+                 <tbody id="stats-board"></tbody>
+             </table>
              <table class="table">
                  <thead>
                     <tr>
-                        <th scope="col">Task id</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Artist</th>
                         <th scope="col">Platform</th>
-                        <th scope="col">결과</th>
-                        <th scope="col">에러 발생 개수</th>
+                        <th scope="col">Url</th>
                     </tr>
                  </thead>
-             <tbody id="monitor-board"></tbody>
+                 <tbody id="monitor-board"></tbody>
              </table>
           </div>
           <div class="modal-footer">

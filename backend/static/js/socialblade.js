@@ -135,6 +135,7 @@ $(document).ready(function () {
         const tableRow = $('<tr></tr>')
         // 해당 row에 대한 column 데이터들 넣기
         for (key in data) {
+            console.log('key : ', key)
             let dataCol;
             if (key === 'id') {
                 tableRow.attr("id", data[key])
@@ -315,18 +316,21 @@ $(document).ready(function () {
     $('#get-monitor').click((e) => {
         e.preventDefault();
         const fromDate = $('#InputFromDate').val()
-        // const toDate = $('#InputToDate').val()
-        console.log(fromDate, toDate);
+        const toDate = $('#InputToDate').val()
         $.ajax({
             url: api_domain + 'monitors/?' + $.param({
                 fromdate: fromDate,
-                // todate: toDate,
+                todate: toDate,
             }),
             type: 'GET',
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
-                console.log(res)
+                const {normals, execs, errors, details} = res
+                $('#stats-board').append(createTableRow({'normals': normals, 'execs': execs, 'errors': errors}))
+                details.forEach(detail => {
+                    tableRow = $('#monitor-board').append(createTableRow(detail) )
+                })
             },
             error: e => {
                 console.log(e)
