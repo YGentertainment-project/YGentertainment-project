@@ -413,7 +413,6 @@ class PlatformAPI(APIView):
                     past_url = data["url"]
                     cur_name = platform_object["name"]
                     cur_url = platform_object["url"]
-                    past_active = data['active']
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
                         if past_name != cur_name:
@@ -422,11 +421,14 @@ class PlatformAPI(APIView):
                             userlogger.info(f"[CHANGE]: {past_url} -> {cur_url}")
                         platform_serializer.save()
                 collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_serializer.data['id'])
+                # 해당 platform과 연관된 schedule들 수정 -> artist가 비활성인 애들은 그냥 두고 활성인 애들만 수정
                 if collecttarget_objects.exists():
                     collecttarget_values = collecttarget_objects.values()
                     for collecttarget_value in collecttarget_values:
-                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_value['id'])
-                        schedule_objects.update(active = platform_object['active'])
+                        artist_object = Artist.objects.get(pk = collecttarget_value['artist_id'])
+                        if artist_object.active == True:
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_value['id'])
+                            schedule_objects.update(active = platform_object['active'])
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
@@ -526,6 +528,15 @@ class ArtistAPI(APIView):
                     artist_serializer.save()
                 else:
                     return JsonResponse(data={'success': False, 'data': artist_serializer.errors}, status=400)
+                collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_serializer.data['id'])
+                # 해당 artist와 연관된 schedule들 수정 -> platform이 비활성인 애들은 그냥 두고 활성인 애들만 수정
+                if collecttarget_objects.exists():
+                    collecttarget_values = collecttarget_objects.values()
+                    for collecttarget_value in collecttarget_values:
+                        platform_object = Platform.objects.get(pk = collecttarget_value['platform_id'])
+                        if platform_object.active == True:
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_value['id'])
+                            schedule_objects.update(active = artist_object['active'])
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
