@@ -5252,6 +5252,7 @@ textarea.form-control-lg {
 }
 
 .btn-gray-200 {
+    font-size: 12px !important;
     color: #1F2937;
     background-color: #E5E7EB;
     border-color: #E5E7EB;

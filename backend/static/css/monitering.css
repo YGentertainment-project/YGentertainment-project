@@ -35,6 +35,7 @@
 }
 
 .no-page{
+  font-size: 12px !important;
   cursor: pointer;
 }
 
@@ -55,7 +56,7 @@
 #scheduler-header, #hourly-scheduler-header{
     color: white;
     background-color: black !important;
-    font-size: small;
+    font-size: 12px;
 }
 
 #scheduler-header td, #hourly-scheduler-header td{
@@ -123,14 +124,14 @@
   .state-description{
     line-height: 80px;
     color: whitesmoke;
-    font-size: 15px;
+    font-size: 12px;
   }
 
 
 ul{list-style:none;}
 
 .page-item{
-  font-size: 0.8rem;
+  font-size: 12px;
 }
 
 .page-item:hover{
@@ -156,7 +157,7 @@ ul{list-style:none;}
 }
 .tabmenu label{
   font-weight: bold;
-  font-size: 1.0em;
+  font-size: 12px;
   cursor: pointer;
   display: block;
   width: 100%; 
