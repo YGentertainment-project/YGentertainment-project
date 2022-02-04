@@ -1,7 +1,6 @@
 import os
 from django.contrib import auth
 from django.shortcuts import render
-from h11 import Data
 from account.models import User
 
 from dataprocess.models import CollectData
@@ -231,33 +230,6 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
-def platform_info(request):
-    if request.method == 'GET':
-        platform = request.GET.get('platform', None)
-        try:
-            platform_objects = Platform.objects.get(name = platform)
-            
-            if platform_objects.exists():
-                platform_objects_values = platform_objects.values()
-                platform_id = platform_objects_values['id']
-                collecttargets = CollectTarget.objects.filter(platform = platform_id)
-                collecttargets = collecttargets.values()
-                platform_set = set()
-                platform_list = []
-                for collecttarget in collecttargets:
-                    platform_objects = CollectTargetItem.objects.filter(collect_target_id = collecttarget['id'])
-                    platform_objects_values = platform_objects.values()
-                    for p in platform_objects_values:
-                        if p['target_name'] in platform_set:
-                            continue
-                        platform_set.add(p['target_name'])
-                        platform_list.append(p)
-                return JsonResponse(data={'success': True, 'data': platform_list})
-            else:
-                return JsonResponse(data={'success': True, 'data': []})
-        except:
-            return JsonResponse(status=400, data={'success': False})
-
 def get_crawler_log():
     filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
     log_file = open(filename,'r', encoding='utf-8')
@@ -306,7 +278,7 @@ def get_crawler_log_400():
 
 #show crawler log in monitering page
 @csrf_exempt
-@require_http_methods(["GET"])
+@require_http_methods(['GET'])
 def report_crawler_error(request):
     if request.method == 'GET':
         #상대 경로로 바꾸기, 파일 없을 때 에러 처리
@@ -409,10 +381,10 @@ class PlatformAPI(APIView):
                         platform_serializer.save()
                 else:
                     data = PlatformSerializer(platform_data).data
-                    past_name = data["name"]
-                    past_url = data["url"]
-                    cur_name = platform_object["name"]
-                    cur_url = platform_object["url"]
+                    past_name = data['name']
+                    past_url = data['url']
+                    cur_name = platform_object['name']
+                    cur_url = platform_object['url']
                     platform_serializer = PlatformSerializer(platform_data, data=platform_object)
                     if platform_serializer.is_valid():
                         if past_name != cur_name:
@@ -511,12 +483,12 @@ class ArtistAPI(APIView):
             for artist_object in artist_list:
                 artist_data = Artist.objects.get(id=artist_object["id"])
                 data = ArtistSerializer(artist_data).data
-                past_name = data["name"]
-                past_num = data["member_num"]
-                past_agency = data["agency"]
-                cur_name = artist_object["name"]
-                cur_num = artist_object["member_num"]
-                cur_agency = artist_object["agency"]
+                past_name = data['name']
+                past_num = data['member_num']
+                past_agency = data['agency']
+                cur_name = artist_object['name']
+                cur_num = artist_object['member_num']
+                cur_agency = artist_object['agency']
                 artist_serializer = ArtistSerializer(artist_data, data=artist_object)
                 if artist_serializer.is_valid():
                     if past_name != cur_name:
@@ -615,24 +587,19 @@ class CollectTargetItemAPI(APIView):
             artist = request.GET.get('artist', None)
             platform = request.GET.get('platform', None)
             # 해당 artist, platform 찾기
-            artist_object = Artist.objects.filter(name=artist)
-            artist_object = artist_object.values()[0]
-            platform_object = Platform.objects.filter(name=platform)
-            platform_object = platform_object.values()[0]
+            artist_object = Artist.objects.filter(name=artist).first()
+            platform_object = Platform.objects.filter(name=platform).first()
             # 해당 artist와 platform을 가지는 collect_target 가져오기
-            collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id=platform_object['id'])
-            if collecttarget_objects.exists():
+            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id).first()
+            if collecttarget_object.exists():
                 collecttargetitems_datas = []
-                collecttarget_objects_value = collecttarget_objects.values()[0]
-                collecttargetitmes_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget_objects_value['id'])
+                collecttargetitmes_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget_object.id)
                 collecttargetitmes_values = collecttargetitmes_objects.values()
                 for collecttargetitmes_value in collecttargetitmes_values:
                     collecttargetitems_datas.append(collecttargetitmes_value)
                 # schedule 확인
-                schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_objects_value['id'])
-                print(schedule_object)
+                schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_object.id)
                 if schedule_object.exists():
-                    print(schedule_object.values())
                     schedule_type = schedule_object.values()[0]['schedule_type']
                 else:
                     schedule_type = 'daily'
@@ -654,12 +621,9 @@ class CollectTargetItemAPI(APIView):
             platform = collecttargetitem["platform"]
             schedule_type = collecttargetitem["schedule_type"]
             collecttargetitem_list = collecttargetitem['items']
-            artist_object = Artist.objects.filter(name = collecttargetitem['artist'])
-            artist_object = artist_object.values()[0]
-            platform_object = Platform.objects.filter(name = collecttargetitem['platform'])
-            platform_object = platform_object.values()[0]
-            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object['id'], platform_id=platform_object['id'])
-            collecttarget_object = collecttarget_object.values()[0]
+            artist_object = Artist.objects.filter(name = collecttargetitem['artist']).first()
+            platform_object = Platform.objects.filter(name = collecttargetitem['platform']).first()
+            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id).first()
             for collecttargetitem_object in collecttargetitem_list:
                 # 여기 수정!!!!
                 collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'],
@@ -667,7 +631,7 @@ class CollectTargetItemAPI(APIView):
                 # 없으면 새로 저장
                 if collecttargetitem_data is None:
                     collecttargetitem_serializer = CollectTargetItemSerializer(data={
-                        'collect_target': collecttarget_object['id'],
+                        'collect_target': collecttarget_object.id,
                         'target_name': collecttargetitem_object['target_name'],
                         'xpath': collecttargetitem_object['xpath']
                     })
@@ -687,17 +651,16 @@ class CollectTargetItemAPI(APIView):
 
             execute_time = datetime.time(9,0,0) #시작 시간
             period = datetime.time(3,0,0) #주기
-            collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object['id'])
+            collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object.id)
             collecttarget_objects = collecttarget_objects.values()
-            for collecttarget_object in collecttarget_objects:
-                schedule_objects = Schedule.objects.filter(schedule_type = collecttargetitem['schedule_type'], collect_target_id = collecttarget_object['id'])
+            for collecttarget_value in collecttarget_objects:
+                schedule_objects = Schedule.objects.filter(schedule_type = collecttargetitem['schedule_type'], collect_target_id = collecttarget_value['id'])
                 if schedule_objects.exists():
                     execute_time = schedule_objects.values()[0]['execute_time']
+                    period = schedule_objects.values()[0]['period']
                     break
-            collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object['id'], artist_id = artist_object["id"]).first()
             Schedule.objects.filter(collect_target_id = collecttarget_object.id).update(
                     schedule_type = schedule_type, execute_time = execute_time, period = period)
-                
                 
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
@@ -725,10 +688,9 @@ class PlatformTargetItemAPI(APIView):
         try:
             platform = request.GET.get('platform', None)
             # 해당 platform 찾기
-            platform_object = Platform.objects.filter(name = platform)
-            platform_object = platform_object.values()[0]
+            platform_object = Platform.objects.filter(name = platform).first()
             # 해당 platform을 가지는 platform_target 가져오기
-            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object['id'])
+            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object.id)
             if collecttarget_objects.exists():
                 collecttargetitems_datas = []
                 collecttarget_objects_value = collecttarget_objects.values()[0]
@@ -750,7 +712,6 @@ class PlatformTargetItemAPI(APIView):
         try:
             collecttargetitem_list = JSONParser().parse(request)
             for i,collecttargetitem_object in enumerate(collecttargetitem_list):
-
                 collecttargetitem_data = PlatformTargetItem.objects.filter(platform_id=collecttargetitem_object['platform'])[i]
                 collecttargetitem_serializer = PlatformTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                 if collecttargetitem_serializer.is_valid():
@@ -827,7 +788,7 @@ class DataReportAPI(APIView):
                         filter_datas.append(filter_value['collect_items'])
                 # 해당날짜에 데이터가 하나라도 있을 때
                 if check:
-                    return JsonResponse(data={"success": True, "data": filter_datas, "artists": artist_list, "platform": platform_header,"crawling_artist_list": crawling_artist_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list': crawling_artist_list})
                 # 해당날짜에 데이터가 하나도 없을 때
                 else:
                     crawling_artist_list = []
@@ -849,7 +810,7 @@ class DataReportAPI(APIView):
                 objects = CollectData.objects.filter(collect_items__platform=platform)
                 objects_value = objects.values()
                 for val in objects_value:
-                    crawling_artist_list.append(val["collect_items"]["artist"])
+                    crawling_artist_list.append(val['collect_items']['artist'])
                 filter_datas_total = []
                 for artist in artist_list:
                     filter_objects_start = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
@@ -867,7 +828,7 @@ class DataReportAPI(APIView):
                         filter_objects_end_value = filter_objects_end.values()[0]
                         filter_objects_end_value = filter_objects_end_value['collect_items']
                         for field_name in filter_objects_start_value.keys():
-                            if field_name != "id" and field_name != "artist" and field_name != "user_created" and field_name != "recorded_date" and field_name != "platform" and field_name != "url" and field_name != "reserved_date" and field_name != "updated_dt":
+                            if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
                                     data_json[field_name] = filter_objects_end_value[field_name] - filter_objects_start_value[field_name]
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
@@ -886,9 +847,9 @@ class DataReportAPI(APIView):
                         filter_objects_end_value = filter_objects_end_value['collect_items']
                         filter_datas_total.append(filter_objects_end_value)
                 if check: # 양끝 모두 존재 or 끝날짜만 존재
-                    return JsonResponse(data={"success": True, "data": filter_datas_total, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
+                    return JsonResponse(data={'success': True, 'data': filter_datas_total, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
-                    return JsonResponse(status=400, data={"success": False, "data": end_date})
+                    return JsonResponse(status=400, data={'success': False, 'data': end_date})
             else:
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
@@ -896,24 +857,24 @@ class DataReportAPI(APIView):
                 objects = CollectData.objects.filter(collect_items__platform=platform)
                 objects_value = objects.values()
                 for val in objects_value:
-                    crawling_artist_list.append(val["collect_items"]["artist"])
+                    crawling_artist_list.append(val['collect_items']['artist'])
                 objects = CollectData.objects.filter(collect_items__platform=platform,
                             collect_items__reserved_date = start_date_string)
                 if objects.exists():
                     platform_queryset_values = objects.values()
                     platform_datas = []
                     for queryset_value in platform_queryset_values:
-                        platform_datas.append(queryset_value["collect_items"])
-                    return JsonResponse(data={"success": True, "data": platform_datas, "artists": artist_list, "platform": platform_header,"crawling_artist_list":crawling_artist_list})
+                        platform_datas.append(queryset_value['collect_items'])
+                    return JsonResponse(data={'success': True, 'data': platform_datas, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else:
                     return JsonResponse(status=400, data={'success': False, 'data': start_date})
         except:
-            return JsonResponse(status=400, data={'success': False})
+            return JsonResponse(status=400, data={'success': False, 'data': start_date})
     
     def post(self, request):
-        """
+        '''
         Data-Report update api
-        """
+        '''
         update_data_object = JSONParser().parse(request)
         start_date = update_data_object[len(update_data_object)-1]['start_date']
         platform = update_data_object[len(update_data_object)-1]['platform_name']
@@ -1030,7 +991,7 @@ class ScheduleAPI(APIView):
         '''
         type = request.GET.get('type', None) # 시간별 or 일별
         try:
-            if type == "시간별":
+            if type == '시간별':
                 # 해당 플랫폼에 시간별인 아티스트들 가져오기
                 platform_objects = Platform.objects.all()
                 platform_objects = platform_objects.values()
