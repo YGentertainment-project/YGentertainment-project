@@ -1,6 +1,6 @@
 import requests
 import json
-import datetime
+from datetime import datetime
 
 # api utilities
 from django.http import JsonResponse
@@ -182,7 +182,7 @@ def taskinfos(request):
                 for key, value in task.items():
                     if key in collect_list:
                         if key == "started":
-                            datetimestr = datetime.datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
+                            datetimestr = datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
                             task_info[key] = datetimestr
                         elif key == "args":
                             platform = value.split(',')[0].strip('[').strip("'")
@@ -201,3 +201,25 @@ def taskinfos(request):
                     break
 
             return JsonResponse(data={"taskinfo": task_info})
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def monitors(request):
+    if request.method == "GET":
+        from_date_str = request.GET.get("fromdate", None)
+        to_date_str = request.GET.get("todate", None)
+
+        try:
+            from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
+            to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
+
+        except Exception as e:
+            return JsonResponse(status=500, data={"error": "Input Date Format Error"})
+
+        tasks_json = get_all_tasks()
+        for task in tasks_json.values():
+            started_val = task['started']
+            started_str = datetime.fromtimestamp()
+            print(started_val)
+        return JsonResponse(data={"success": True})
