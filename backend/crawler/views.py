@@ -1,6 +1,5 @@
-import requests
-import json
-import datetime
+import sys, os, requests, json
+from datetime import datetime, timedelta
 
 # api utilities
 from django.http import JsonResponse
@@ -10,6 +9,7 @@ from utils.shortcuts import get_env
 from dataprocess.models import CollectTarget
 from dataprocess.models import Artist
 from dataprocess.models import Platform
+from config.models import Schedule
 from django.db.models import Q
 from django.apps import apps
 
@@ -46,7 +46,7 @@ else:
 
 
 def extract_target_list(platform):
-    if platform == "crowdtangle":
+    if platform == "crowdtangle" or platform == "crowdtangle-past":
         facebook_id = Platform.objects.get(name="facebook").id
         instagram_id = Platform.objects.get(name="instagram").id
         crawl_infos = CollectTarget.objects.filter(Q(platform_id=facebook_id) | Q(platform_id=instagram_id))
@@ -58,16 +58,18 @@ def extract_target_list(platform):
 
     for crawl_info in crawl_infos:
         crawl_target_row = dict()
-        artist_name = Artist.objects.get(id=crawl_info.artist_id).name
-        target_url = crawl_info.target_url
-        crawl_target_row['id'] = crawl_info.id
-        crawl_target_row['artist_name'] = artist_name
-        crawl_target_row['target_url'] = target_url
+        if Schedule.objects.get(collect_target_id=crawl_info.id).active == 1:
+            artist_name = Artist.objects.get(id=crawl_info.artist_id).name
+            target_url = crawl_info.target_url
 
-        if platform == "melon" or platform == "spotify":
-            crawl_target_row['target_url_2'] = crawl_info.target_url_2
+            crawl_target_row['id'] = crawl_info.id
+            crawl_target_row['artist_name'] = artist_name
+            crawl_target_row['target_url'] = target_url
 
-        crawl_target.append(crawl_target_row)
+            if platform == "melon" or platform == "spotify":
+                crawl_target_row['target_url_2'] = crawl_info.target_url_2
+
+            crawl_target.append(crawl_target_row)
     return crawl_target
 
 
@@ -194,7 +196,7 @@ def taskinfos(request):
                 for key, value in task.items():
                     if key in collect_list:
                         if key == "started":
-                            datetimestr = datetime.datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
+                            datetimestr = datetime.fromtimestamp(int(value)).strftime("%Y-%m-%d %H:%M:%S")
                             task_info[key] = datetimestr
                         elif key == "args":
                             platform = value.split(',')[0].strip('[').strip("'")
@@ -213,3 +215,79 @@ def taskinfos(request):
                     break
 
             return JsonResponse(data={"taskinfo": task_info})
+
+
+def get_task_result(id):
+    response = requests.get(flower_domain + f"api/task/info/{id}")
+    if response.status_code == 200:
+        task_json = json.loads(response.content.decode("utf-8"))
+        if task_json['state'] == 'SUCCESS':
+            return eval(task_json['result'])
+        elif task_json['state'] == 'STARTED':
+            return 'started'
+        else:
+            return None
+    else:
+        return None
+
+def parse_logfile(filepath):
+    error_infos = []
+    errors = 0
+    with open(f'{filepath}', 'r') as log_file:
+        for log_line in log_file:
+            log_words = log_line.rstrip().split(' ')
+            last_word = log_words[-1]
+            if "https" in last_word:
+                error_info = dict()
+                error_info['type'] = log_words[4].strip('[]')
+                error_info['artist'] = log_words[5]
+                error_info['platform'] = log_words[-3]
+                error_info['url'] = last_word
+                error_infos.append(error_info)
+                errors += 1
+    return errors, error_infos
+
+# 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
+# 에러 발생한 아티스트 개수 => log에서 파싱
+# 생성된 로그 파일을 기준으로 모두 체크하되,
+# flower상에서 확인 중이지 않은 태스크는 모니터링 카운트에서 배제한다.
+@csrf_exempt
+@require_http_methods(["GET"])
+def monitors(request):
+    if request.method == "GET":
+        from_date_str = request.GET.get("fromdate", None)
+        to_date_str = request.GET.get("todate", None)
+        try:
+            from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
+            to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
+        except Exception as e:
+            return JsonResponse(status=500, data={"error": "Input Date Format Error"})
+
+
+        day_diff = (to_date_obj - from_date_obj).days
+        platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
+        total_artists = 0 # 처리한 총 아티스트 개수
+        total_errors = 0 # 총 에러개수
+        total_exec = 0 # 총 실행중 개수
+        error_details = [] # 전체 에러 디테일
+        for day in range(0, day_diff + 1):
+            for platform in platforms:
+                title_date = from_date_obj + timedelta(days=day)
+                title_str = title_date.strftime("%Y-%m-%d")
+                log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
+                # log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+                if os.path.isdir(log_dir) is True:
+                    file_list = os.listdir(log_dir)
+                    for file_name in file_list:
+                        task_id = file_name.split('.')[0]
+                        task_result = get_task_result(task_id)
+                        if task_result == "started":
+                            total_exec += 1
+                        elif task_result is not None:
+                            total_artists += task_result['artists']
+                            errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            total_errors += errors
+                            for error_info in error_infos:
+                                error_details.append(error_info)
+
+        return JsonResponse(data={"normals": total_artists - total_errors, "execs": total_exec, "errors": total_errors, "details": error_details})

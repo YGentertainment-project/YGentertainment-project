@@ -3,6 +3,7 @@ from ..items import MelonItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
+from ..middlewares import crawlinglogger
 
 
 class MelonSpider(scrapy.Spider):
@@ -26,31 +27,53 @@ class MelonSpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta["artist"]
+        listener_target = streaming_target = None
         listener_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="listeners")).xpath + "/text()"
         streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath + "/text()"
+        try:
+            listener_target = response.xpath(listener_xpath).extract()[2]
+            streaming_target = response.xpath(streaming_xpath).extract()[2]
+        except ValueError:
+            crawlinglogger.error(f"[400] {artist} - melon - {listener_xpath}, {streaming_xpath}")
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
-        listener_target = response.xpath(listener_xpath).extract()[2]
-        streaming_target = response.xpath(streaming_xpath).extract()[2]
-
-        listener = listener_target.replace(",", "")
-        streaming = streaming_target.replace(",", "")
-        url1 = response.url
-        yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
-                             meta={"artist": artist,
-                                   "listeners": listener,
-                                   "streams": streaming,
-                                   "url1": url1,
-                                   "target_id": response.meta["target_id"]})
+        if listener_target is None or streaming_target is None:
+            crawlinglogger.error(f"[400] {artist} - melon - {listener_xpath}, {streaming_xpath}")
+            # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+            # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+            # 오류일 경우 item을 yield 하지 않아야 합니다.
+        else:
+            listener = listener_target.replace(",", "")
+            streaming = streaming_target.replace(",", "")
+            url1 = response.url
+            yield scrapy.Request(url=response.meta["next"], callback=self.parse_melon, encoding="utf-8",
+                                 meta={"artist": artist,
+                                       "listeners": listener,
+                                       "streams": streaming,
+                                       "url1": url1,
+                                       "target_id": response.meta["target_id"]})
 
     def parse_melon(self, response):
-        item = MelonItem()
+        fans_target = None
         fans_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="fans")).xpath + "/text()"
-        fans_target = response.xpath(fans_xpath).get()
-        item["artist"] = response.meta["artist"]
-        item["listeners"] = response.meta["listeners"]
-        item["streams"] = response.meta["streams"]
-        item["fans"] = fans_target.replace(",", "")
-        item["url1"] = response.meta["url1"]
-        item["url2"] = response.url
-        item["reserved_date"] = datetime.now().date()
-        yield item
+        try:
+            fans_target = response.xpath(fans_xpath).get()
+        except ValueError:
+            pass
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+
+        if fans_target is None:
+            pass
+            # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
+            # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
+            # 오류일 경우 item을 yield 하지 않아야 합니다.
+        else:
+            item = MelonItem()
+            item["artist"] = response.meta["artist"]
+            item["listeners"] = response.meta["listeners"]
+            item["streams"] = response.meta["streams"]
+            item["fans"] = fans_target.replace(",", "")
+            item["url1"] = response.meta["url1"]
+            item["url2"] = response.url
+            item["reserved_date"] = datetime.now().date()
+            yield item
