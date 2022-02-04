@@ -153,12 +153,11 @@ class NoLoginDownloaderMiddleware:
         # Selenium의 경우 따로 특정 HttpResponse에 대한 모듈이 없는 것 같아서
         # python에서 제공하는 requests 속 get 모듈을 활용했습니다.
         # 404, 403 등 200이 아닌 경우에는 return None을 통해 크롤링을 진행하지 않도록 했습니다.
+        # Socialblade의 경우 403 Response의 경우에도 User-Agent를 통한 우회를 진행하고 있으므로 계속해서 수행해야 합니다.
+        # Melon의 경우 비슷한 맥락으로 406 Response를 받고 있습니다. 이 경우는 robots 정책을 ignore하며 진행하므로 계속해서 수행해야 합니다.
         tmp = get(request.url)
         if tmp.status_code == 404:
             crawlinglogger.error(f"[400] {artist_name} - {spider.name} - {request.url}")
-            return None
-        elif tmp.status_code == 403:
-            crawlinglogger.error(f"[402] {artist_name} - {spider.name} - {request.url}")
             return None
 
         # Socialblade Case
