@@ -405,8 +405,9 @@ $(document).on('change','#start_date',function(){
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+                $('#data-report-headers').eq(0).empty();
+                $('#board').eq(0).empty();
             }
-            location.reload();
         },
     })
 })
@@ -419,7 +420,6 @@ $(document).on('change','#end_date',function(){
     var type = $(':radio[name="view_days"]:checked').val();
     if(type =="기간별" && date2 < date1){
         alert('시작 일자를 종료 일자보다 과거로 입력하세요.');
-        refresh();
         return;
     }
     var platform = $(".contents-platforms").find('.platform-selected').val(); //platform name
@@ -486,8 +486,9 @@ $(document).on('change','#end_date',function(){
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+                $('#data-report-headers').eq(0).empty();
+                $('#board').eq(0).empty();
             }
-            location.reload();
         },
     })
 })
@@ -567,8 +568,10 @@ $(document).on('click','.platform-name',function(){
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+                $('#data-report-headers').eq(0).empty();
+                $('#board').eq(0).empty();
             }
-            location.reload();
+           
         },
     })
 
