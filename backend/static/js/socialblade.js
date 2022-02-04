@@ -327,7 +327,7 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             success: res => {
                 const {normals, execs, errors, details} = res
-                $('#stats-board').append(createTableRow({'normals': normals, 'execs': execs, 'errors': errors}))
+                $('#stats-board').append(createTableRow({'normals': normals, 'errors': errors, 'execs': execs}))
                 details.forEach(detail => {
                     tableRow = $('#monitor-board').append(createTableRow(detail) )
                 })
