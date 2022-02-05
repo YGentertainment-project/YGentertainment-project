@@ -28,15 +28,15 @@
 
 
 input[type='checkbox']{
-    width: 15px !important;
-    height: 15px !important;
+    width: 14px !important;
+    height: 14px !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     -o-appearance: none;
     appearance: none;
     outline: 1px solid black;
     box-shadow: none;
-    font-size: 15px;
+    font-size: 14px;
     text-align: center;
     background: white;
 }
