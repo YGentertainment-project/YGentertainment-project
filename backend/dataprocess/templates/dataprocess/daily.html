@@ -18,7 +18,7 @@
          <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" class="column_layout">
             {% csrf_token %}
              <div class="row_layout" style="justify-content: flex-start;">
-                <span style="margin-right: 30px;">저장 날짜: </span>
+                <span style="margin-right: 30px; font-weight: bold;">저장 날짜: </span>
                 <input type="date" name="excel_import_date" id="excel_import_date"/>
              </div>
              <div style="height: 10px;"></div>
@@ -42,7 +42,7 @@
             {% csrf_token %}
             <div style="height: 15px;"></div>
             <div class="row_layout" style="text-align: center; ">
-                <label style="margin-right: 20px; font-weight: bold;">조회 일자: </label>
+                <label style="margin-right: 20px; font-weight: bold;margin-top: 5px;">조회 일자: </label>
                 <input class="form-check-input" type="radio" name="excel_export_days" value="누적" id="excel_export_days1" checked/> <label style="margin-left: 5px; margin-right: 10px;margin-top: 5px;">누적</label>
                 <input class="form-check-input" type="radio" name="excel_export_days" value="기간별" id="excel_export_days2" /> <label style="margin-left: 5px;margin-top: 5px;">기간별</label>
             </div>
@@ -70,7 +70,7 @@
             <input class="form-control" type="file" name="importData">
             <input type="text" name="type" value="import2" style="display:none;">
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" 
-            type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
+            type="submit" style="font-size: 12px; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
         </form>
         <div style="height: 10px;"></div>
         <div class="loading-box hidden" id="excel_loading3">
@@ -89,7 +89,7 @@
         <input class="form-control" type="file" name="importData">
         <input type="text" name="type" value="import3" style="display:none;">
         <button class="btn btn-primary border-0 shadow-btn" id="excel-btn4" 
-        type="submit" style="font-size: 0.7em; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
+        type="submit" style="font-size: 12px; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
     </form>
     <div style="height: 10px;"></div>
     <div class="loading-box hidden" id="excel_loading4">
@@ -118,23 +118,23 @@
                <div style="margin-right: 2.5px;">
                     <span style="font-size: 14px; font-weight:bold;">크롤링데이터</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px; font-weight: bold;" class="btn btn-gray-200" class="excel-form-open" id="excel-form-open1">엑셀 업로드</button>
+                        <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-form-open" id="excel-form-open1">엑셀 업로드</button>
                     </div>
             
                     <div class="row_layout">
                         <button title="Excel파일로 크롤링데이터 추출(다운로드 경로)" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open2"
-                        style="font-weight: bold;">엑셀 다운로드</button>
+                        >엑셀 다운로드</button>
                     </div>
                </div>
                <hr>
                 <div style="margin-left: 2.5px;">
                     <span style="font-size: 14px; font-weight:bold;">수집정보</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px; font-weight: bold;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open3">엑셀 업로드</button>
+                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open3">엑셀 업로드</button>
                     </div>
                     <span style="font-size: 14px; font-weight:bold;">인증정보</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px; font-weight: bold;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
+                        <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 *{
     font-family: 'Nanum Gothic', sans-serif !important;
     box-sizing: border-box;
+    font-size: 12px;
 }
 
 body{
@@ -86,6 +87,7 @@ input{
     background-color: lightgray;
     color: black;
     font-size: 12px;
+    font-weight: bold;
     border: 1px solid black;
     border-radius: 4px;
     cursor: pointer;
@@ -208,6 +210,8 @@ input{
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
+    background-color: whitesmoke;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5);
 }
 
 .platform-name{
@@ -294,19 +298,26 @@ input{
     border-radius: 10px;
     padding: 20px;
     margin-left: 10px;
-    background-color: rgb(255, 255, 255, 0.3);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5)
+    background-color: whitesmoke;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5);
 }
 
 #table{
    margin: auto;
+   font-size: 12px !important;
 }
 
 #board th{
     font-weight: bold !important;
+    font-size: 12px !important;
+}
+
+#board input{
+    font-size: 12px !important;
 }
 
 #data-report-headers{
+    font-size: 12px !important;
     background-color: black !important;
     position: sticky;
     top:-20px;
@@ -320,6 +331,7 @@ input{
 }
 
 .input-btn{
+    font-size: 12px;
     background-color: white !important;
     max-width: 120px;
     padding: 3px 10px 3px 10px !important;
@@ -357,5 +369,6 @@ input{
 }
 
 .shadow-btn{
+    font-size: 12px !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
 }
