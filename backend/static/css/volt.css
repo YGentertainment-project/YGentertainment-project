@@ -4711,7 +4711,7 @@ textarea.form-control-lg {
     background-color: transparent;
     border: 0.0625rem solid transparent;
     padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    font-size: 12px !important;
     border-radius: 0.5rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -4750,6 +4750,7 @@ textarea.form-control-lg {
     background-color: #1F2937;
     border-color: #1F2937;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(17, 24, 39, 0.075);
+    font-size: 12px !important;
 }
 
 .btn-primary:hover {
@@ -5252,6 +5253,7 @@ textarea.form-control-lg {
 }
 
 .btn-gray-200 {
+    font-size: 12px !important;
     color: #1F2937;
     background-color: #E5E7EB;
     border-color: #E5E7EB;
@@ -10263,6 +10265,7 @@ textarea.form-control-lg {
 }
 
 .border-0 {
+    font-size: 14px !important;
     border: 0 !important;
 }
 
@@ -27697,7 +27700,6 @@ label {
 .table thead th {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
-    font-size: 0.75rem;
     text-transform: uppercase;
     font-weight: 600;
     border-top: 0;
@@ -27730,6 +27732,7 @@ label {
 }
 
 .table .thead-dark th {
+    font-size: 13px !important;
     background-color: black;
     color: #ffffff;
 }

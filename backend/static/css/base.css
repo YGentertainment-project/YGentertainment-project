@@ -1,6 +1,7 @@
 *{
     font-family: 'Nanum Gothic', sans-serif !important;
     box-sizing: border-box;
+    font-size: 12px;
 }
 
 body{
@@ -23,12 +24,12 @@ li{
 }
 
 label{
-    font-size: 1.2rem;
+    font-size: 12px;
     font-weight: normal;
 }
 
 input{
-    font-size: 1.2rem;
+    font-size: 12px;
     font-weight: normal;
 }
 
@@ -72,7 +73,7 @@ input{
     text-decoration: none;
     color:white;
     transition: transform 250ms ease-in;
-    font-size: 1.5rem;
+    font-size: 12px;
     margin-left: 1em;
 }
 
@@ -85,7 +86,8 @@ input{
 .logout-btn, .login-btn{
     background-color: lightgray;
     color: black;
-    font-size: 0.8rem;
+    font-size: 12px;
+    font-weight: bold;
     border: 1px solid black;
     border-radius: 4px;
     cursor: pointer;
@@ -95,7 +97,7 @@ input{
 }
 
 .first-depth, .second-depth, .third-depth{
-    font-size: 1rem;
+    font-size: 12px;
     font-weight: normal;
     cursor: pointer;
 }
@@ -127,6 +129,14 @@ input{
     border-radius: 2px;
 }
 
+.sidebar-text{
+    font-size: 15px;
+}
+
+.sidebar-text-inner{
+    font-size: 12px;
+}
+
 
 .hide{
     display:none;
@@ -142,7 +152,7 @@ input{
     width: 80%;
     left : 250px;
     margin-top: 80px;
-    font-size: 1.2rem;
+    font-size: 12px;
     display: flex;
     flex-direction: column;
 }
@@ -159,7 +169,7 @@ input{
     width: 80%;
     left : 300px;
     margin-top: 60px;
-    font-size: 1.2rem;
+    font-size: 12px;
     z-index: 100;
 }
 
@@ -167,9 +177,11 @@ input{
     margin-left: 0px;
     margin-right: 10px;
     padding:10px;
-    width: 65%;
-    text-align: center;
-    justify-content: center;
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    justify-content: flex-start;
 }
 
 .select-days-day{
@@ -198,12 +210,14 @@ input{
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
+    background-color: whitesmoke;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5);
 }
 
 .platform-name{
     margin: 5px 3px 5px 3px;
     /* flex-basis: 18%; */
-    font-size: 0.9rem;
+    font-size: 12px;
     background-color: white;
     max-width: 130px;
     padding: 3px 10px 3px 10px !important;
@@ -223,7 +237,7 @@ input{
 }
 
 .platform-selected{
-    font-size: 0.9rem;
+    font-size: 12px;
     background-color: #1F2937 !important;
     max-width: 130px;
     padding: 3px 10px 3px 10px !important;
@@ -249,7 +263,7 @@ input{
     margin-right: 10px;
     text-align: center;
     position: relative;
-    font-size: 1rem;
+    font-size: 12px;
     font-weight: normal;
 }
 
@@ -284,31 +298,40 @@ input{
     border-radius: 10px;
     padding: 20px;
     margin-left: 10px;
-    background-color: rgb(255, 255, 255, 0.3);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5)
+    background-color: whitesmoke;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5);
 }
 
 #table{
    margin: auto;
+   font-size: 12px !important;
 }
 
 #board th{
     font-weight: bold !important;
+    font-size: 12px !important;
+}
+
+#board input{
+    font-size: 12px !important;
 }
 
 #data-report-headers{
+    font-size: 12px !important;
     background-color: black !important;
     position: sticky;
     top:-20px;
 }
 
 .input-transparent input{
+    font-size: 12px;
     text-align:center; 
     border: 0;
     background-color: #f8f9fa;
 }
 
 .input-btn{
+    font-size: 12px;
     background-color: white !important;
     max-width: 120px;
     padding: 3px 10px 3px 10px !important;
@@ -346,5 +369,6 @@ input{
 }
 
 .shadow-btn{
+    font-size: 12px !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255), 0 1px 2px rgba(17, 24, 39);
 }
