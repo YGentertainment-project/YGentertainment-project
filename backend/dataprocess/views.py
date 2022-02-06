@@ -231,8 +231,8 @@ def login(request):
     return render(request, 'dataprocess/login.html',values)
 
 def get_crawler_log():
+    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"  # TODO : 배포용
     #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
-    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
     log_file = open(filename,'r', encoding='utf-8')
     log_info = []
     if log_file:
@@ -254,8 +254,8 @@ def get_crawler_log():
     return log_info
 
 def get_crawler_log_400():
+    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log" # TODO : 배포용
     #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
-    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
     log_file = open(filename,'r', encoding='utf-8')
     log_info = []
     if log_file:
@@ -592,8 +592,9 @@ class CollectTargetItemAPI(APIView):
             artist_object = Artist.objects.filter(name=artist).first()
             platform_object = Platform.objects.filter(name=platform).first()
             # 해당 artist와 platform을 가지는 collect_target 가져오기
-            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id).first()
+            collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id)
             if collecttarget_object.exists():
+                collecttarget_object = collecttarget_object.first()
                 collecttargetitems_datas = []
                 collecttargetitmes_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget_object.id)
                 collecttargetitmes_values = collecttargetitmes_objects.values()
@@ -605,7 +606,6 @@ class CollectTargetItemAPI(APIView):
                     schedule_type = schedule_object.values()[0]['schedule_type']
                 else:
                     schedule_type = 'daily'
-                print(schedule_type)
                 return JsonResponse(data={'success': True, 'data': {'items':collecttargetitems_datas, 'schedule_type': schedule_type}})
             else:
                 return JsonResponse(data={'success': True, 'data': {'items':[],'schedule_type':'daily'}})

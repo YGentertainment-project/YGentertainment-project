@@ -34,10 +34,18 @@ $(document).ready(function(){
 
 
     //crawler status
+
+    var today = new Date();
+
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+
+    var dateString = year + '-' + month  + '-' + day;
    
 
-    const fromDate = '2022-02-05'
-    const toDate = '2022-02-05'
+    const fromDate = dateString
+    const toDate = dateString
     $.ajax({
         url:  '/crawler/api/monitors/?' + $.param({
             fromdate: fromDate,
