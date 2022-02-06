@@ -15,14 +15,15 @@
         <div class="header">
             <select id="crawl-select">
                 <option value="youtube">Youtube</option>
-                <option value="twitter">Twitter</option>
-                <option value="twitter2">Twitter2</option>
+<!--                <option value="twitter">Twitter</option>-->
+<!--                <option value="twitter2">Twitter2</option>-->
                 <option value="tiktok">Tiktok</option>
                 <option value="weverse">Weverse</option>
                 <option value="crowdtangle">Crowdtangle(Facebook, Instagram)</option>
                 <option value="vlive">Vlive</option>
                 <option value="melon">Melon</option>
                 <option value="spotify">Spotify</option>
+                <option value="crowdtangle-past">Crowdtangle-past</option>
             </select>
             <button id="start-crawl" class="btn btn-primary">크롤링 즉시 실행</button>
             <select id="data-select">
@@ -46,6 +47,9 @@
             </button>
             <button id="listup-tasks" type="button" class="btn btn-warning" data-toggle="modal" data-target="#taskListModal">
                 실행 Task 목록
+            </button>
+            <button id="monitoring" type="button" class="btn btn-light" data-toggle="modal" data-target="#monitorModal">
+                모니터링
             </button>
         </div>
         <div id="progress">
@@ -165,6 +169,55 @@
                     </tr>
                  </thead>
              <tbody id="task-board"></tbody>
+             </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="monitorModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">모니터링</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <form style="display: grid; grid-template-columns: 1fr 1fr 80px; gap: 10px; align-items: center">
+                  <div class="form-group">
+                    <label for="InputFromDate">From Date</label>
+                    <input type="text" class="form-control" id="InputFromDate"  placeholder="(YYYY-MM-DD) 2022-02-04 부터만 가능">
+                  </div>
+                  <div class="form-group">
+                    <label for="InputToDate">To Date</label>
+                    <input type="text" class="form-control" id="InputToDate" placeholder="(YYYY-MM-DD)">
+                  </div>
+                  <button id="get-monitor" style="height:40px" class="btn btn-primary">조회</button>
+              </form>
+              <table class="table">
+                 <thead>
+                    <tr>
+                        <th scope="col">정상</th>
+                        <th scope="col">오류</th>
+                        <th scope="col">실행중인 Task</th>
+                    </tr>
+                 </thead>
+                 <tbody id="stats-board"></tbody>
+             </table>
+             <table class="table">
+                 <thead>
+                    <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Artist</th>
+                        <th scope="col">Platform</th>
+                        <th scope="col">Url</th>
+                    </tr>
+                 </thead>
+                 <tbody id="monitor-board"></tbody>
              </table>
           </div>
           <div class="modal-footer">

@@ -2,6 +2,7 @@
 #
 # Don"t forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+from dataprocess.models import CollectData, CollectTarget
 from urllib import parse
 from django.utils import timezone
 
@@ -10,20 +11,19 @@ from django.apps import apps
 
 
 from crawler.models import SocialbladeYoutube, SocialbladeTwitter, SocialbladeTwitter2, SocialbladeTiktok, Melon, Spotify, Vlive, Weverse, CrowdtangleFacebook, CrowdtangleInstagram
-DataModels = { 
-    "youtube": SocialbladeYoutube, 
-    "twitter" : SocialbladeTwitter, 
-    "twitter2": SocialbladeTwitter2, 
-    "tiktok": SocialbladeTiktok, 
-    "melon": Melon, 
-    "spotify": Spotify, 
-    "weverse": Weverse, 
-    "facebook": CrowdtangleFacebook, 
+DataModels = {
+    "youtube": SocialbladeYoutube,
+    "twitter": SocialbladeTwitter,
+    "twitter2": SocialbladeTwitter2,
+    "tiktok": SocialbladeTiktok,
+    "melon": Melon,
+    "spotify": Spotify,
+    "weverse": Weverse,
+    "facebook": CrowdtangleFacebook,
     "instagram": CrowdtangleInstagram,
     "vlive": Vlive,
 }
 
-from dataprocess.models import CollectData, CollectTarget
 
 # DataModels = {
 #     model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
@@ -33,7 +33,7 @@ from dataprocess.models import CollectData, CollectTarget
 def process_itemsave(spider_name, item):
     nowdate = item["recorded_date"]
     model_name = None
-    if spider_name == "crowdtangle":
+    if spider_name == "crowdtangle" or spider_name == "crowdtangle-past":
         url = parse.urlparse(item["url"])
         model_name = parse.parse_qs(url.query)["platform"][0]
         dayfilter_obj = DataModels[model_name].objects.filter(artist=item["artist"],
@@ -61,7 +61,7 @@ def process_itemsave(spider_name, item):
             return update_weverse(item, spider_name)
         elif spider_name == "vlive":
             return update_vlive(item, spider_name)
-        elif spider_name == "crowdtangle":
+        elif spider_name == "crowdtangle" or spider_name == "crowdtangle-past":
             return update_crowdtangle(item, model_name)
         elif spider_name == "spotify":
             return update_spotify(item, spider_name)
@@ -225,7 +225,7 @@ def datasave(spider_name, item):
         json_obj["url"] = item.get("url")
         json_obj["platform"] = spider_name
         target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
-    elif spider_name == "crowdtangle":
+    elif spider_name == "crowdtangle" or spider_name == "crowdtangle-past":
         target_foreign_key = CollectTarget.objects.get(target_url=item.get("url"))
         platform_id = target_foreign_key.platform_id
         json_obj["platform"] = Platform.objects.get(id=platform_id).name

@@ -1,22 +1,3 @@
-//task info
-function getTaskinfo(){
-    $.ajax({
-        url: '/crawler/api/taskinfos/',
-        type: 'GET',
-        datatype: 'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-          const taskinfos = res.taskinfos;
-          return taskinfos
-        },
-        error: e => {
-            console.log(e);
-            const taskinfos = [];
-            return taskinfos
-        },
-    })
-}
-
 //플랫폼별 스케줄러 시간 로딩 및 크롤러 상태 로딩
 $(document).ready(function(){
     $.ajax({
@@ -53,14 +34,33 @@ $(document).ready(function(){
 
 
     //crawler status
-    let success = 0;
-    let error = 0;
-    let running = 0;
+   
 
-
-    $('.state-description-success').text('정상 '+success+'건');
-    $('.state-description-error').text('오류 '+error+'건');
-    $('.state-description-running').text('실행 중 ' +running+'건');
+    const fromDate = '2022-02-05'
+    const toDate = '2022-02-05'
+    $.ajax({
+        url:  '/crawler/api/monitors/?' + $.param({
+            fromdate: fromDate,
+            todate: toDate,
+        }),
+        type: 'GET',
+        datatype: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            const {normals, execs, errors, details} = res
+            
+            $('.state-description-success').text('정상 '+normals+'건');
+            $('.state-description-error').text('오류 '+errors+'건');
+            $('.state-description-running').text('실행 중 ' +execs+'건');
+           
+        },
+        error: e => {
+            console.log(e)
+            $('.state-description-success').text('정상 '+'None'+'건');
+            $('.state-description-error').text('오류 '+'None'+'건');
+            $('.state-description-running').text('실행 중 ' +'None'+'건');
+        },
+    })
 })
 
 
