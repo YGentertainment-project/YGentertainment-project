@@ -91,7 +91,7 @@
 .title-th{
     font-weight: bold;
     color: white;
-    font-size : 12px !important;
+    font-size : 10px !important;
 }
 
 .artist-add-table th, .artist-add-table td{
@@ -166,7 +166,7 @@
 }
 
 .artist-title{
-    font-size : 12px;
+    font-size : 14px;
     font-weight: bold;
 }
 
