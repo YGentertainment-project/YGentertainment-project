@@ -4711,7 +4711,6 @@ textarea.form-control-lg {
     background-color: transparent;
     border: 0.0625rem solid transparent;
     padding: 0.5rem 1rem;
-    font-size: 12px !important;
     border-radius: 0.5rem;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -4750,7 +4749,6 @@ textarea.form-control-lg {
     background-color: #1F2937;
     border-color: #1F2937;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 1px rgba(17, 24, 39, 0.075);
-    font-size: 12px !important;
 }
 
 .btn-primary:hover {

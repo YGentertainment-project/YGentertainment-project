@@ -256,7 +256,7 @@ function get_hourly_schedule(){
                     update_hourly_platform_schedule(platform, tmp_index);
                 };
                 dataCol4.innerHTML = `
-                <label class="btn btn-primary btn-shadow border-0" style="margin: 10px; font-weight: bold;">
+                <label class="btn btn-primary btn-shadow border-0" style="margin: 5px; font-weight: bold;font-size: 10px !important; width: 50px;">
                     저장
                 </label>`;
                 tableRow.append(dataCol4);

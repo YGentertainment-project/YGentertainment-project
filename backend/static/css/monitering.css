@@ -58,7 +58,6 @@
 #scheduler-header, #hourly-scheduler-header{
     color: white;
     background-color: black !important;
-    font-size: 12px;
 }
 
 #scheduler-header td, #hourly-scheduler-header td{
@@ -159,7 +158,7 @@ ul{list-style:none;}
 }
 .tabmenu label{
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
   cursor: pointer;
   display: block;
   width: 100%; 
