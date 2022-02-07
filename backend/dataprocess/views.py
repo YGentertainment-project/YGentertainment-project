@@ -231,7 +231,8 @@ def login(request):
     return render(request, 'dataprocess/login.html',values)
 
 def get_crawler_log():
-    filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
+    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"  # TODO : 배포용
+    #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
     log_file = open(filename,'r', encoding='utf-8')
     log_info = []
     if log_file:
@@ -253,7 +254,8 @@ def get_crawler_log():
     return log_info
 
 def get_crawler_log_400():
-    filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
+    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log" # TODO : 배포용
+    #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
     log_file = open(filename,'r', encoding='utf-8')
     log_info = []
     if log_file:
