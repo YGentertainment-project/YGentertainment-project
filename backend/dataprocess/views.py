@@ -266,6 +266,9 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         if task_result is not None:
                             errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
                             for error_info in error_infos:
+                                artist_id = Artist.objects.get(name = error_info['artist']).id
+                                platform_id = Platform.objects.get(name =  error_info['platform']).id
+                                error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
                                 error_details.append(error_info)
 
         return JsonResponse({"data": self.paginate(error_details, page, limit)})
