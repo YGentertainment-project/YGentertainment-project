@@ -838,7 +838,7 @@ class DataReportAPI(APIView):
                         for field_name in filter_objects_start_value.keys():
                             if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
-                                    data_json[field_name] = filter_objects_end_value[field_name] - filter_objects_start_value[field_name]
+                                    data_json[field_name] = int(filter_objects_end_value[field_name]) - int(filter_objects_start_value[field_name])
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
                                     data_json[field_name] = filter_objects_end_value[field_name]
                                 else: # 앞의 날짜가 없다면 0으로 보내기
@@ -858,7 +858,7 @@ class DataReportAPI(APIView):
                     return JsonResponse(data={'success': True, 'data': filter_datas_total, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
                     return JsonResponse(status=400, data={'success': False, 'data': end_date})
-            else:
+            else:#누적도 기간별도 아닌 경우(에러처리)
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 crawling_artist_list = []
