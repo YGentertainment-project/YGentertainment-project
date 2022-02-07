@@ -275,7 +275,7 @@ def monitors(request):
                 title_date = from_date_obj + timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
                 log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
-                # log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+                #log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
                 if os.path.isdir(log_dir) is True:
                     file_list = os.listdir(log_dir)
                     for file_name in file_list:

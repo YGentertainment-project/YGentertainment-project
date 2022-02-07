@@ -1,35 +1,3 @@
-$(document).ready(function(){
-    $.ajax({
-        url: '/dataprocess/api/crawler_error',
-        type: 'GET',
-        datatype: 'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-          console.log(res.data);
-          var log_info = res.data
-          var no_page = 0
-          var no_login = 0
-          var ect = 0
-
-          for(var i = 0; i< log_info.length; i++){
-              if(log_info[i]['error_code'] === '[400]'){
-                  no_page  = no_page + 1;
-              } else if(log_info[i]['error_code'] === '[401]'){
-                  no_login = no_login + 1;
-              } else{
-                  ect = ect + 1;
-              }
-          }
-          $('#no-page').text(no_page)
-          $('#no-login').text(no_login)
-          $('#ect').text(ect)
-        },
-        error: e => {
-           console.log(e);
-        },
-    })
-})
-
 const creatRowForError = (data) => {
     const tableRow = $('<tr></tr>')
 
@@ -74,9 +42,20 @@ function action_add(text_add){
 }
 
 function crawler_error_table(page){
+    var today = new Date();
+
+    var year = today.getFullYear();
+    var month = ('0' + (today.getMonth() + 1)).slice(-2);
+    var day = ('0' + today.getDate()).slice(-2);
+
+    var dateString = year + '-' + month  + '-' + day;
+    const fromDate = dateString
+    const toDate = dateString
     $.ajax({
         url: '/dataprocess/api/crawler_error_table/?'+ $.param({
-            page:page
+            page:page,
+            fromdate: fromDate,
+            todate: toDate,
         }),
         type: 'GET',
         datatype: 'json',
@@ -93,7 +72,7 @@ function crawler_error_table(page){
           $("ul.pagination").html('')
 
           for(var i = 0; i<log_info.length; i++){
-              if(log_info[i]['error_code'] === '[400]'){
+              if(log_info[i]['type'] == '400'){
                   no_page_info.push(log_info[i])
               } else{
                   continue
