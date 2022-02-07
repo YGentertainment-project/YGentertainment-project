@@ -56,10 +56,30 @@ $(document).ready(function(){
         contentType: 'application/json; charset=utf-8',
         success: res => {
             const {normals, execs, errors, details} = res
+
+            console.log(details);
             
             $('.state-description-success').text('정상 '+normals+'건');
             $('.state-description-error').text('오류 '+errors+'건');
             $('.state-description-running').text('실행 중 ' +execs+'건');
+
+            var no_page = 0
+            var no_login = 0
+            var ect = 0
+
+            details.forEach(detail => {
+              if(detail['type'] == '400'){
+                  no_page = no_page + 1
+              } else if(detail['type'] == '401'){
+                  no_login = no_login +1
+              } else{
+                  ect = ect +1
+              }
+            })
+
+          $('#no-page').text(no_page)
+          $('#no-login').text(no_login)
+          $('#ect').text(ect)
            
         },
         error: e => {

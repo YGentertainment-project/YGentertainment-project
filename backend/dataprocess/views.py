@@ -9,6 +9,7 @@ from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
+from crawler.views import get_task_result,parse_logfile
 from django.views.decorators.csrf import csrf_exempt
 
 from .resources import *
@@ -26,6 +27,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 import datetime
+from datetime import timedelta
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 import logging
@@ -236,73 +238,37 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
-def get_crawler_log():
-    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"  # TODO : 배포용
-    #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
-    log_file = open(filename,'r', encoding='utf-8')
-    log_info = []
-    if log_file:
-        for line in log_file:
-            log_line = line.split('-')
-            data_json = {}
-            data_json['error_code'] = log_line[6].split(' ')[1]
-            data_json['artist'] = log_line[6].split(' ')[2]
-            data_json['platform'] = log_line[7].split(' ')[1]
-            url = log_line[8].split(' ')[1]
-            url = url.strip('\n')
-            data_json['url'] = url
-            print(data_json['url'])
-            artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
-            platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
-            data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
-            log_info.append(data_json)
-    
-    return log_info
-
-def get_crawler_log_400():
-    filename = "../data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log" # TODO : 배포용
-    #filename = "./data/log/crawler/"+datetime.datetime.today().strftime('%Y-%m-%d')+".log"
-    log_file = open(filename,'r', encoding='utf-8')
-    log_info = []
-    if log_file:
-        for line in log_file:
-            log_line = line.split('-')
-            data_json = {}
-            if log_line[6].split(' ')[1] != '[400]':
-                continue
-            data_json['error_code'] = log_line[6].split(' ')[1]
-            data_json['artist'] = log_line[6].split(' ')[2]
-            data_json['platform'] = log_line[7].split(' ')[1]
-            url = log_line[8].split(' ')[1]
-            url = url.strip('\n')
-            data_json['url'] = url
-            print(data_json['url'])
-            artist_id = Artist.objects.get(name = log_line[6].split(' ')[2]).id
-            platform_id = Platform.objects.get(name = log_line[7].split(' ')[1]).id
-            data_json['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id
-            log_info.append(data_json)
-    
-    return log_info
-
-#show crawler log in monitering page
-@csrf_exempt
-@require_http_methods(['GET'])
-def report_crawler_error(request):
-    if request.method == 'GET':
-        #상대 경로로 바꾸기, 파일 없을 때 에러 처리
-        log_info = get_crawler_log()
-        return JsonResponse(data={'success': False, 'data':log_info})
-
-    else:
-        return JsonResponse(data={'success': False, 'data':'no log'})
-
 
 class ResultQueryView(ViewPaginatorMixin,APIView):
     def get(self, request):
+        from_date_str = request.GET.get("fromdate", None)
+        to_date_str = request.GET.get("todate", None)
         page = request.GET.get('page',1)
         limit = 3
-        log_info = get_crawler_log_400()
-        return JsonResponse({"data": self.paginate(log_info, page, limit)})
+        
+        from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
+        to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
+
+        day_diff = (to_date_obj - from_date_obj).days
+        platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
+        error_details = [] # 전체 에러 디테일
+        for day in range(0, day_diff + 1):
+            for platform in platforms:
+                title_date = from_date_obj + timedelta(days=day)
+                title_str = title_date.strftime("%Y-%m-%d")
+                log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
+                #log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+                if os.path.isdir(log_dir) is True:
+                    file_list = os.listdir(log_dir)
+                    for file_name in file_list:
+                        task_id = file_name.split('.')[0]
+                        task_result = get_task_result(task_id)
+                        if task_result is not None:
+                            errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            for error_info in error_infos:
+                                error_details.append(error_info)
+
+        return JsonResponse({"data": self.paginate(error_details, page, limit)})
 
 class PlatformAPI(APIView):
     # @login_required
@@ -838,7 +804,7 @@ class DataReportAPI(APIView):
                         for field_name in filter_objects_start_value.keys():
                             if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
-                                    data_json[field_name] = filter_objects_end_value[field_name] - filter_objects_start_value[field_name]
+                                    data_json[field_name] = int(filter_objects_end_value[field_name]) - int(filter_objects_start_value[field_name])
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
                                     data_json[field_name] = filter_objects_end_value[field_name]
                                 else: # 앞의 날짜가 없다면 0으로 보내기
@@ -858,7 +824,7 @@ class DataReportAPI(APIView):
                     return JsonResponse(data={'success': True, 'data': filter_datas_total, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
                     return JsonResponse(status=400, data={'success': False, 'data': end_date})
-            else:
+            else:#누적도 기간별도 아닌 경우(에러처리)
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 crawling_artist_list = []
