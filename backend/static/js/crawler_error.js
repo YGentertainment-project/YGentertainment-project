@@ -3,7 +3,7 @@ const creatRowForError = (data) => {
 
     for(key in data){
         let dataCol;
-        if(key === 'error_code'){
+        if(key === 'type'){
             dataCol = $('<td></td>',{
                 text: '페이지 없음'
             })

@@ -266,6 +266,9 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         if task_result is not None:
                             errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
                             for error_info in error_infos:
+                                artist_id = Artist.objects.get(name = error_info['artist']).id
+                                platform_id = Platform.objects.get(name =  error_info['platform']).id
+                                error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
                                 error_details.append(error_info)
 
         return JsonResponse({"data": self.paginate(error_details, page, limit)})
@@ -528,7 +531,6 @@ class PlatformOfArtistAPI(APIView):
         try:
             collecttarget_list = JSONParser().parse(request)
             data = ''
-            print(collecttarget_list)
             for collecttarget_object in collecttarget_list:
                 if collecttarget_object['type'] == 'artist-platform-update':
                     CollectTarget.objects.filter(pk=collecttarget_object['id']).update(target_url=collecttarget_object['target_url'])
@@ -802,7 +804,7 @@ class DataReportAPI(APIView):
                         filter_objects_end_value = filter_objects_end.values()[0]
                         filter_objects_end_value = filter_objects_end_value['collect_items']
                         for field_name in filter_objects_start_value.keys():
-                            if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'reserved_date' and field_name != 'updated_dt':
+                            if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'url1' and field_name != 'url2' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
                                     data_json[field_name] = int(filter_objects_end_value[field_name]) - int(filter_objects_start_value[field_name])
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
