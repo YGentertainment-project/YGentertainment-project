@@ -58,7 +58,13 @@ def extract_target_list(platform):
 
     for crawl_info in crawl_infos:
         crawl_target_row = dict()
-        if Schedule.objects.get(collect_target_id=crawl_info.id).active == 1:
+        
+        try:
+            schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id)
+        except Schedule.DoesNotExist:
+            schedule_info = None
+            
+        if schedule_info is not None and schedule_info.active == 1:
             artist_name = Artist.objects.get(id=crawl_info.artist_id).name
             target_url = crawl_info.target_url
 
