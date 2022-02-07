@@ -58,12 +58,18 @@ def logincheck(request):
 
 # Create your views here.
 def base(request):
+    '''
+    general page
+    '''
+    platforms = Platform.objects.all() #get all platform info from db
     values = {
-      'first_depth' : '데이터 리포트',
+        'first_depth' : '데이터 리포트',
+        'second_depth': '일별 리포트',
+        'platforms': platforms
     }
     request = logincheck(request)
-    return render(request, 'dataprocess/main.html',values)
-
+    return render(request, 'dataprocess/daily.html',values)
+    
 @csrf_exempt
 def daily(request):
     if request.method == 'GET':

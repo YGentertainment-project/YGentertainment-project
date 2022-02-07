@@ -12,7 +12,7 @@
    <div class="excel_form" id="excel_form1">
         <div class="popup_button_layout">
             <span>크롤링데이터 - 엑셀 업로드</span>
-            <button class="btn btn-primary border-0 shadow-btn" id="close_button1" style="font-size: 12px; font-weight: bold;">닫기</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="close_button1" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
          <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" class="column_layout">
@@ -25,7 +25,7 @@
             <input class="form-control" type="file" name="importData">
             <input type="text" name="type" value="import" style="display:none;">
             <div style="height: 10px;"></div>
-            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn1" type="submit" style="font-size: 12px; font-weight: bold; width: 100px;">Import</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn1" type="submit" style="font-size: 10px !important; font-weight: bold; width: 100px;">Import</button>
         </form>
         <div style="height: 10px;"></div>
         <div class="loading-box hidden" id="excel_loading1">
@@ -36,7 +36,7 @@
    <div class="excel_form" id="excel_form2">
         <div class="popup_button_layout">
             <span>크롤링데이터 - 엑셀 다운로드</span>
-            <button class="btn btn-primary border-0 shadow-btn" id="close_button2" style="font-size: 12px; font-weight: bold;">닫기</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="close_button2" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
@@ -54,7 +54,7 @@
             </div>
             <div style="height: 25px;"></div>
             <input type="text" name="type" value="export" style="display:none;">
-            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn2" type="submit" style="font-size: 12px; font-weight: bold; width: 100px;">Export</button>
+            <button class="btn btn-primary border-0 shadow-btn" id="excel-btn2" type="submit" style="font-size: 10px !important; font-weight: bold; width: 100px;">Export</button>
         </form>
         <div style="height: 10px;"></div>
     </div>
@@ -62,7 +62,7 @@
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
             <span>수집정보 - 엑셀 업로드</span>
-            <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 12px; font-weight: bold;">닫기</button>
+            <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
@@ -70,7 +70,7 @@
             <input class="form-control" type="file" name="importData">
             <input type="text" name="type" value="import2" style="display:none;">
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn3" 
-            type="submit" style="font-size: 12px; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
+            type="submit" style="font-size: 10px !important; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
         </form>
         <div style="height: 10px;"></div>
         <div class="loading-box hidden" id="excel_loading3">
@@ -81,7 +81,7 @@
    <div class="excel_form" id="excel_form4">
     <div class="popup_button_layout">
         <span>인증정보 - 엑셀 업로드</span>
-        <button  class="btn btn-primary border-0 shadow-btn" id="close_button4" style="font-size: 12px; font-weight: bold;">닫기</button>
+        <button  class="btn btn-primary border-0 shadow-btn" id="close_button4" style="font-size: 10px !important; font-weight: bold;">닫기</button>
     </div>
     <div style="height: 25px;"></div>
     <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
@@ -89,7 +89,7 @@
         <input class="form-control" type="file" name="importData">
         <input type="text" name="type" value="import3" style="display:none;">
         <button class="btn btn-primary border-0 shadow-btn" id="excel-btn4" 
-        type="submit" style="font-size: 12px; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
+        type="submit" style="font-size: 10px !important; font-weight: bold; width: 100px; margin-top: 8px;">Import</button>
     </form>
     <div style="height: 10px;"></div>
     <div class="loading-box hidden" id="excel_loading4">
@@ -164,7 +164,7 @@
                     </tbody>
                 </table>
                 <div class="button_layout">
-                    <label class="btn btn-primary btn-shadow border-0" id="update-data" style="display: none; margin: 10px; font-weight: bold;">
+                    <label class="btn btn-primary btn-shadow border-0" id="update-data" style="font-size: 10px !important; display: none; margin: 10px; font-weight: bold;">
                         저장
                     </label>
                 </div>
