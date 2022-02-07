@@ -11,7 +11,7 @@ function uncomma(str) {
 
 //string check
 function isString(inputText){
-    if(typeof inputText === 'string' || inputText instanceof String){
+    if((typeof inputText === 'string' || inputText instanceof String)&& parseInt(inputText)==NaN){
         //it is string
         return true;    
     }else{
