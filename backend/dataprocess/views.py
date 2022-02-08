@@ -2,6 +2,7 @@ import os
 from django.contrib import auth
 from django.shortcuts import render
 from account.models import User
+from django.http import HttpResponse
 
 from dataprocess.models import CollectData
 from crawler.models import *
@@ -22,9 +23,6 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
-
-from django.shortcuts import render
-from django.http import HttpResponse
 
 import datetime
 from datetime import timedelta
@@ -129,7 +127,7 @@ def daily(request):
             if excel_export_type == '누적':
                 filename = "datareport %s.xlsx" % (excel_export_start_date)
             elif excel_export_type == '기간별':
-                filename = "datareport기간별 %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
+                filename = "datareport %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
             return response

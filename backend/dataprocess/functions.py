@@ -49,16 +49,22 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             filter_start_value = filter_start_value["collect_items"]
             filter_end_value = filter_end_value["collect_items"]
             # 숫자필드값+user_created만 보내주기
-            for field_name in filter_start_value.keys():
-                if field_name == "user_created":
-                    filter_datas[collect_item_list.index(field_name)] = filter_start_value[field_name]
-                elif field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name != "fans":
-                    if filter_end_value[field_name] is not None and filter_start_value[field_name] is not None:
-                        filter_datas[collect_item_list.index(field_name)] = filter_end_value[field_name]-filter_start_value[field_name]
-                        # 둘 중 하나라도 field값이 없으면 NULL로 들어감
-            return filter_datas
-        else:
-            return filter_datas
+            for i, field_name in enumerate(collect_item_list):
+                # 뒤날짜 데이터가 없다면 0으로
+                if not field_name in filter_end_value:
+                    filter_datas[i] = 0
+                else:
+                    # 숫자 데이터, 문자열로 된 숫자 데이터(예: "123")
+                    if isinstance(filter_end_value[field_name], int) or filter_end_value[field_name].isdigit():
+                        if field_name in filter_start_value:
+                            filter_datas[i] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
+                        else: # 앞의 날짜를 0으로 처리한 형태
+                            filter_datas[i] = filter_end_value[field_name]
+                    # 날짜/string 데이터
+                    else:
+                        tmpdate = parse(filter_end_value[field_name])
+                        filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
+        return filter_datas
     else:
         return filter_datas
 
