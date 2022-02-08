@@ -40,11 +40,18 @@ function refresh(){
 }
 
 $(document).on('click','input[name=refresh]',function(){
+    $('input').not($(this)).removeClass("date-selected");  
     refresh();
 })
- 
 
- $(document).on('click','input[name=day]',function(){
+
+  $(document).on('click','input[name=day]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
     const today = new Date();
     const next_day = addDays(today,0);
     var year = next_day.getFullYear();
@@ -58,6 +65,12 @@ $(document).on('click','input[name=refresh]',function(){
  })
  
  $(document).on('click','input[name=week]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
      const today = new Date();
      const next_day = addDays(today,-6);
      var year = next_day.getFullYear();
@@ -71,6 +84,12 @@ $(document).on('click','input[name=refresh]',function(){
   })
  
  $(document).on('click','input[name=month]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
      const today = new Date();
      const next_day = addDays(today,-30);
      var year = next_day.getFullYear();
@@ -324,6 +343,11 @@ $(document).on('change','input[type=radio]',function(){
         $('input[name=day]').show()
         $('input[name=week]').show()
         $('input[name=month]').show()
+        $('input[name=start_date]').val("");
+        $('input[name=end_date]').val("");
+        $('input[name=day]').addClass('date-selected') //1일 default
+        document.getElementById('start_date').valueAsDate = new Date();
+        document.getElementById('end_date').valueAsDate = new Date();
     }
     changedDatas = [];
     var platform = $(".contents-platforms").find('.platform-selected').val(); 
