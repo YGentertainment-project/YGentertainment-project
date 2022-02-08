@@ -129,7 +129,7 @@ def daily(request):
             if excel_export_type == '누적':
                 filename = "datareport %s.xlsx" % (excel_export_start_date)
             elif excel_export_type == '기간별':
-                filename = "datareport기간별 %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
+                filename = "datareport %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
             return response
