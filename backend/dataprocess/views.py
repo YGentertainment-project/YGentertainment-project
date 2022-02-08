@@ -246,8 +246,8 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
         page = request.GET.get('page',1)
         limit = 3
         
-        from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
-        to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
+        from_date_obj = datetime.datetime.strptime(from_date_str, '%Y-%m-%d')
+        to_date_obj = datetime.datetime.strptime(to_date_str, '%Y-%m-%d')
 
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
