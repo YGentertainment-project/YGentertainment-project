@@ -2,6 +2,7 @@ import os
 from django.contrib import auth
 from django.shortcuts import render
 from account.models import User
+from django.http import HttpResponse
 
 from dataprocess.models import CollectData
 from crawler.models import *
@@ -22,9 +23,6 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
-
-from django.shortcuts import render
-from django.http import HttpResponse
 
 import datetime
 from datetime import timedelta

@@ -54,18 +54,17 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
                 if not field_name in filter_end_value:
                     filter_datas[i] = 0
                 else:
-                    # 숫자 데이터
-                    if isinstance(filter_end_value[field_name], int):
+                    # 숫자 데이터, 문자열로 된 숫자 데이터(예: "123")
+                    if isinstance(filter_end_value[field_name], int) or filter_end_value[field_name].isdigit():
                         if field_name in filter_start_value:
                             filter_datas[i] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
                         else: # 앞의 날짜를 0으로 처리한 형태
                             filter_datas[i] = filter_end_value[field_name]
                     # 날짜/string 데이터
                     else:
-                        filter_datas[i] = filter_end_value[field_name]
-            return filter_datas
-        else:
-            return filter_datas
+                        tmpdate = parse(filter_end_value[field_name])
+                        filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
+        return filter_datas
     else:
         return filter_datas
 
