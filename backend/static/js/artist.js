@@ -78,6 +78,7 @@ $('#add-submit').click(function(e){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
+            alert("저장되었습니다.");
             location.href = "/dataprocess/artist/";
         },
         error: e => {
@@ -100,7 +101,7 @@ $('#save-artists').click(function(){
             "name": cells[1].firstElementChild.value,
             "level": cells[2].firstElementChild.value,
             "gender": cells[3].firstElementChild.value,
-            "member_num": cells[4].firstElementChild.value,
+            "member_num": parseInt(cells[4].firstElementChild.value),
             "member_nationality": cells[5].firstElementChild.value,
             "agency":cells[6].firstElementChild.value,
             "active": cells[8].firstElementChild.checked
@@ -127,9 +128,12 @@ $('#save-artists').click(function(){
 //show platforms per artist
 //아티스트 클릭시
 $('input[name=artist-name]').click(function(){
+    $('input[name=artist-name]').removeClass("clicked-input-btn");
     var artist = $(this).val();
+    // $(this).removeClass("input-btn");
+    $(this).addClass("clicked-input-btn");
 
-    console.log(artist);
+    // console.log(artist);
 
     $.ajax({
         url: '/dataprocess/api/platform_of_artist/',
@@ -140,7 +144,7 @@ $('input[name=artist-name]').click(function(){
         success: res => {
             //아티스트 표 작게 처리
             make_artist_hidden();
-
+            document.getElementById("artist-subtitle").style.color = "#000000";
             document.getElementById("artist-subtitle").innerHTML = artist+" 플랫폼";
             const data_list = res.data;
             $('#artist-body-platform').empty();
@@ -196,6 +200,7 @@ $('#save-artists-platform').click(function(){
 
        
         datas.push({
+            "type": "artist-platform-update",
             "id": cells[2].firstElementChild.value,
             "platform": cells[3].firstElementChild.innerHTML,
             "target_url": cells[4].firstElementChild.value,
@@ -276,12 +281,11 @@ function add_new_collect_target_item(item_num){
 //show collect target of platform
 //플랫폼 클릭시
 $(document).on('click','.platform-names',function(){
-    //console.log('clicked');
-
+    $('.platform-names').removeClass("clicked-input-btn");
     var artist_name = document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼","");
-    // var artist_id = $('.hidden').find('input').val();
     var platform = $(this).text();
     clicked_platform = platform;
+    $(this).addClass("clicked-input-btn");
 
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
@@ -295,6 +299,7 @@ $(document).on('click','.platform-names',function(){
             item_open = true;
             document.getElementById("item_open").classList.remove("fa-chevron-right");
             document.getElementById("item_open").classList.add("fa-chevron-left");
+            document.getElementById("platform-subtitle").style.color = "#000000";
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
             console.log(data_list);
@@ -371,13 +376,13 @@ $(document).on('click','.platform-names',function(){
             }
             //맨 뒤에 스케줄 관련 row 붙이기
             append_schedule_row();
-            var period = res.data["period"];
-            if(period=="hour"){
-                period = "시간별";
-            }else if(period=="daily"){
-                period = "일별";
+            var schedule_type = res.data["schedule_type"];
+            if(schedule_type=="hour"){
+                schedule_type = "시간별";
+            }else if(schedule_type=="daily"){
+                schedule_type = "일별";
             }
-            document.getElementById("dropTitle").innerHTML = period;
+            document.getElementById("dropTitle").innerHTML = schedule_type;
         },
         error: e => {
             alert(e.responseText);
@@ -385,8 +390,8 @@ $(document).on('click','.platform-names',function(){
     });
 })
 
-function check_schedule(period){
-    document.getElementById("dropTitle").innerHTML = period;
+function check_schedule(schedule_type){
+    document.getElementById("dropTitle").innerHTML = schedule_type;
 }
 
 function append_schedule_row(){
@@ -447,9 +452,9 @@ $(document).on('click','#save-list',function(){
             return;
         }
     }
-    var period = "daily";
+    var schedule_type = "daily";
     if(document.getElementById("dropTitle").innerHTML=="시간별"){
-        period = "hour";
+        schedule_type = "hour";
     }
     $.ajax({
         url: '/dataprocess/api/collect_target_item/',
@@ -459,7 +464,7 @@ $(document).on('click','#save-list',function(){
             "artist": document.getElementById("artist-subtitle").innerHTML.replace(" 플랫폼",""),
             "platform": clicked_platform,
             "items": bodydatas,
-            "period": period
+            "schedule_type": schedule_type
         }),
         contentType: 'application/json; charset=utf-8',
         success: res => {

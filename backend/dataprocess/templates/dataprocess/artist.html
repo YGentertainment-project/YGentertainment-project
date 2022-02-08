@@ -10,7 +10,6 @@
             location.href = "{% url 'dataprocess:artist_add' %}";
         }
     </script>
-
    <div class="forms">
     <div class="contents">
         <table class="resizeable">
@@ -20,10 +19,11 @@
                         <div class="resiazable_column">
                             <div class="no-margin-button-layout">
                                 <button onclick=go_to_artist_add() class="btn btn-primary border-0"
-                                     style="font-size: 0.7em; font-weight: bold;">추가</button>
+                                     style="font-size: 10px !important; font-weight: bold;">추가</button>
                                 <button id="save-artists" class="btn btn-primary border-0"
-                                    style="font-size: 0.7em; font-weight: bold;">저장</button>
+                                    style="font-size: 10px !important; font-weight: bold;">저장</button>
                             </div>
+                            <span class="artist-title" style="display: hidden; color:transparent; margin-bottom: 36px;">hidden</span>
                              <table id="artist-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
                                  <thead id="artist-header" class="thead-dark">
                                      <tr>
@@ -86,9 +86,9 @@
                         <div class="resiazable_column">
                             <div class="no-margin-button-layout">
                                 <button id="save-artists-platform" class="btn btn-primary border-0"
-                                style="font-size: 0.7em; font-weight: bold;">저장</button>
+                                style="font-size: 10px !important; font-weight: bold;">저장</button>
                             </div>
-                            <span class="artist-title" id="artist-subtitle"></span>
+                            <span class="artist-title" id="artist-subtitle" style="color: transparent; margin-bottom: 36px;">hidden</span>
                             <table id="artist-table" class="table table-centered table-nowrap mb-0 rounded input-transparent">
                                 <thead id="artist-header" class="thead-dark">
                                     <tr>
@@ -112,9 +112,9 @@
                         <div class="resiazable_column">
                             <div class="no-margin-button-layout">
                                 <button id="save-list" class="btn btn-primary border-0"
-                                style="font-size: 0.7em; font-weight: bold;">저장</button>
+                                style="font-size: 10px !important; font-weight: bold;">저장</button>
                             </div>
-                            <span class="artist-title" id="platform-subtitle"></span>
+                            <span class="artist-title" id="platform-subtitle" style="color: transparent;">플랫폼</span>
                             <div class="artist_attr_button_layout">
                                 <button id="artist_attr_add_button"> + </button>
                             </div>

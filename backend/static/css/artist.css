@@ -66,7 +66,7 @@
     width: 100%;
     height: 100%;
     margin-top: 20px;
-    font-size: 1.2rem;
+    font-size: 12px;
     display: flex;
     flex-direction: column;
     
@@ -91,7 +91,7 @@
 .title-th{
     font-weight: bold;
     color: white;
-    font-size : 1rem !important;
+    font-size : 12px !important;
 }
 
 .artist-add-table th, .artist-add-table td{
@@ -115,7 +115,7 @@
 .url-description{
     color : darkblue;
     font-weight: lighter;
-    font-size: small;
+    font-size: 12px;
 }
 
 /* .add-submit{
@@ -140,7 +140,7 @@
     line-height: 40px;
     left : 300px;
     margin-top: 20px;
-    font-size: 1.2rem;
+    font-size: 12px;
     display: flex;
     flex-direction: row;
     border: 1px solid black;
@@ -166,7 +166,7 @@
 }
 
 .artist-title{
-    font-size : 1rem;
+    font-size : 14px;
     font-weight: bold;
 }
 
@@ -183,11 +183,11 @@
 }
 
 #artist-body-list{
-    font-size: 0.65em;
+    font-size: 12px;
 }
 
 .collect_target_delete{
-    font-size: 0.65em;
+    font-size: 12px;
     color: white;
     background-color: rgb(247, 78, 78) !important;
     border: 1px solid black;
@@ -217,7 +217,7 @@
   width : 50px;
   text-align: left;
   cursor : pointer;
-  font-size : 0.9em;
+  font-size : 12px;
 }
 .dropdown-content{
   display : none;
@@ -228,7 +228,7 @@
   background-color: #f9f9f9;
   min-width : 80px;
   height: 15px;
-  font-size: 0.7em;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -236,7 +236,7 @@
   display : block;
   text-decoration : none;
   color : rgb(37, 37, 37);
-  font-size : 0.9em;
+  font-size : 12px;
   padding : 12px 20px;
 }
 
@@ -257,7 +257,7 @@
 }
 
 #artist_attr_add_button, #artist_attr_delete_button{
-    font-size: 0.8em;
+    font-size: 12px;
     font-weight: bold;
     text-align: center;
     border: 1px solid rgb(107, 110, 112);

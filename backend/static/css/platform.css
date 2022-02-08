@@ -28,15 +28,15 @@
 
 
 input[type='checkbox']{
-    width: 15px !important;
-    height: 15px !important;
+    width: 14px !important;
+    height: 14px !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     -o-appearance: none;
     appearance: none;
     outline: 1px solid black;
     box-shadow: none;
-    font-size: 15px;
+    font-size: 14px;
     text-align: center;
     background: white;
 }
@@ -86,7 +86,7 @@ input[type='checkbox']:checked:after {
 
 .popup_button_layout > span{
     font-weight: bold;
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .button_layout{
@@ -95,6 +95,18 @@ input[type='checkbox']:checked:after {
     flex-direction: row;
     align-items: flex-end;
     justify-content: flex-end;
+}
+
+.button-layout{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.button-layout > button{
+    margin-right: 5px;
 }
 
 .no-margin-button-layout{
@@ -112,7 +124,7 @@ input[type='checkbox']:checked:after {
 /* 거의 모든 버튼 형태 */
 /* .excel-btn{
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 12px;
     border: 1px solid black;
     border-radius: 4px;
     width: 100px;
@@ -140,7 +152,7 @@ input[type='checkbox']:checked:after {
 .excel-form-open-hint{
     display: none;
     font-weight: normal;
-    font-size : 1.2rem;
+    font-size : 12px;
 }
 
 .excel-btn:hover{
@@ -149,11 +161,11 @@ input[type='checkbox']:checked:after {
     box-shadow: 0px 0px 10px grey;
 }
 
-.button_layout > a:hover{
+/* .button_layout > a:hover{
     top: -2px;
     border: 2px solid black;
     box-shadow: 0px 0px 10px grey;
-}
+} */
 
 /* popup form */
 .create_form, .excel_form{
@@ -225,8 +237,8 @@ input[type='checkbox']:checked:after {
 
 .table_layout table>thead{
     color: white;
-    background-color: #1F2937;
-    font-size : 1.2rem;
+    background-color: black;
+    font-size :12px;
     font-weight: bold;
 }
 

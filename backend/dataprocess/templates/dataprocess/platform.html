@@ -5,7 +5,7 @@
     {% block content %}
 
     <div class="excel_form" id="loading_form">
-        <div class="popup_button_layout">
+        <div class="popup_button_layout" style="justify-content: center; align-items: center;">
             <span>저장중</span>
         </div>
         <div style="height: 25px;"></div>
@@ -16,11 +16,11 @@
    </div>
 
     <div class="forms">
-        <div class="button_layout">
-            <button id="openform_button" class="btn btn-primary border-0 shadow-btn" style="font-size: 0.7em; font-weight: bold;">
+        <div class="button-layout">
+            <button id="openform_button" class="btn btn-primary border-0 shadow-btn" style="font-size: 10px !important; font-weight: bold;">
                 신규
             </button>
-            <button id="update_button" class="btn btn-primary border-0 shadow-btn" style="font-size: 0.7em; font-weight: bold;">
+            <button id="update_button" class="btn btn-primary border-0 shadow-btn" style="font-size: 10px !important; font-weight: bold;">
                 저장
             </button>
         </div>
@@ -70,17 +70,17 @@
     </div>
 
     <div class="create_form" id="create_form">
-        <div class="button_layout">
-            <button id="close_button" class="btn btn-primary border-0 padding-3" style="font-size: 0.7em; font-weight: bold;">취소</button>
-            <button id="create_button" class="btn btn-primary border-0 padding-3" style="font-size: 0.7em;  font-weight: bold;">저장</button>
+        <div class="button-layout">
+            <button id="close_button" class="btn btn-primary border-0 padding-3" style="font-size: 10px !important; font-weight: bold;">취소</button>
+            <button id="create_button" class="btn btn-primary border-0 padding-3" style="font-size: 10px !important;  font-weight: bold;">저장</button>
         </div>
         
         <div class="table_layout">
             <table class="table table-centered table-nowrap mb-0 rounded input-transparent">
-                <thead class="thead-dark" >
+                <thead class="thead-dark">
                     <tr>
-                        <td class="border-0 rounded-start">항목</td>
-                        <td class="border-0 rounded-end">내용</td>
+                        <td class="border-0">항목</td>
+                        <td class="border-0">내용</td>
                     </tr>
                 </thead>
                 <tbody id="platform_attribute">
@@ -102,9 +102,9 @@
             <table class="table table-centered table-nowrap mb-0 rounded input-transparent">
                 <thead class="thead-dark">
                     <tr>
-                        <td class="border-0 rounded-start">조사항목</td>
+                        <td class="border-0">조사항목</td>
                         <td class="border-0">내용</td>
-                        <td class="border-0 rounded-end">xpath</td>
+                        <td class="border-0">xpath</td>
                     </tr>
                 </thead>
                 <tbody id="crawling_attribute">

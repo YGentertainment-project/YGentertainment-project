@@ -1,4 +1,7 @@
-import sys, os, requests, json
+import sys
+import os
+import requests
+import json
 from datetime import datetime, timedelta
 
 # api utilities
@@ -19,8 +22,21 @@ from django_celery_beat.models import PeriodicTask, CrontabSchedule
 # celery
 from .tasks import direct_crawling
 
+# DataModels = {
+#     model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+# }
+from crawler.models import SocialbladeYoutube, SocialbladeTwitter, SocialbladeTwitter2, SocialbladeTiktok, Melon, Vlive, Spotify, Weverse, CrowdtangleFacebook, CrowdtangleInstagram
 DataModels = {
-    model._meta.db_table: model for model in apps.get_app_config('crawler').get_models()
+    "youtube": SocialbladeYoutube,
+    "twitter": SocialbladeTwitter,
+    "twitter2": SocialbladeTwitter2,
+    "tiktok": SocialbladeTiktok,
+    "melon": Melon,
+    "spotify": Spotify,
+    "weverse": Weverse,
+    "facebook": CrowdtangleFacebook,
+    "instagram": CrowdtangleInstagram,
+    "vlive": Vlive,
 }
 
 # flower domain config
@@ -45,7 +61,13 @@ def extract_target_list(platform):
 
     for crawl_info in crawl_infos:
         crawl_target_row = dict()
-        if Schedule.objects.get(collect_target_id=crawl_info.id).active == 1:
+
+        try:
+            schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id)
+        except Schedule.DoesNotExist:
+            schedule_info = None
+
+        if schedule_info is not None and schedule_info.active == 1:
             artist_name = Artist.objects.get(id=crawl_info.artist_id).name
             target_url = crawl_info.target_url
 
@@ -217,6 +239,7 @@ def get_task_result(id):
     else:
         return None
 
+
 def parse_logfile(filepath):
     error_infos = []
     errors = 0
@@ -238,6 +261,8 @@ def parse_logfile(filepath):
 # 에러 발생한 아티스트 개수 => log에서 파싱
 # 생성된 로그 파일을 기준으로 모두 체크하되,
 # flower상에서 확인 중이지 않은 태스크는 모니터링 카운트에서 배제한다.
+
+
 @csrf_exempt
 @require_http_methods(["GET"])
 def monitors(request):
@@ -250,18 +275,17 @@ def monitors(request):
         except Exception as e:
             return JsonResponse(status=500, data={"error": "Input Date Format Error"})
 
-
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
-        total_artists = 0 # 처리한 총 아티스트 개수
-        total_errors = 0 # 총 에러개수
-        total_exec = 0 # 총 실행중 개수
-        error_details = [] # 전체 에러 디테일
+        total_artists = 0  # 처리한 총 아티스트 개수
+        total_errors = 0  # 총 에러개수
+        total_exec = 0  # 총 실행중 개수
+        error_details = []  # 전체 에러 디테일
         for day in range(0, day_diff + 1):
             for platform in platforms:
                 title_date = from_date_obj + timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
-                log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
+                log_dir = f"../data/log/crawler/{platform}/{title_str}"  # TODO: 배포환경시 경로
                 # log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
                 if os.path.isdir(log_dir) is True:
                     file_list = os.listdir(log_dir)

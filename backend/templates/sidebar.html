@@ -1,5 +1,5 @@
 <nav style="max-width: 220px;" id="sidebarMenu" class="sidebar d-lg-block bg-gray-800 text-white collapse" data-simplebar>
-    <div class="sidebar-inner px-4 pt-3">
+    <div class="sidebar-inner px-4 pt-3" style="margin-top: 150px;">
       <ul class="nav flex-column pt-3 pt-md-0">
         <li class="nav-item">
           <a href="{% url 'account:base' %}" class="nav-link d-flex align-items-center">
@@ -28,10 +28,10 @@
             <ul class="flex-column nav">
               <li class="nav-item ">
                 <a class="nav-link" href="{% url 'dataprocess:daily' %}">
-                  <span class="sidebar-text">일별 리포트</span>
+                  <span class="sidebar-text sidebar-text-inner">일별 리포트</span>
                 </a>
                 <a class="nav-link" href="#">
-                  <span class="sidebar-text">시간별 리포트</span>
+                  <span class="sidebar-text sidebar-text-inner">시간별 리포트</span>
                 </a>
               </li>
             </ul>
@@ -56,7 +56,7 @@
               <ul class="flex-column nav">
                 <li class="nav-item ">
                   <a class="nav-link" href="{% url 'dataprocess:platform' %}">
-                    <span class="sidebar-text">플랫폼 관리</span>
+                    <span class="sidebar-text sidebar-text-inner">플랫폼 관리</span>
                   </a>
                 </li>
               </ul>
@@ -81,7 +81,7 @@
               <ul class="flex-column nav">
                 <li class="nav-item ">
                   <a class="nav-link" href="{% url 'dataprocess:artist' %}">
-                    <span class="sidebar-text">데이터 URL 관리</span>
+                    <span class="sidebar-text sidebar-text-inner">데이터 URL 관리</span>
                   </a>
                 </li>
               </ul>
@@ -106,7 +106,7 @@
               <ul class="flex-column nav">
                 <li class="nav-item ">
                   <a class="nav-link" href="{% url 'dataprocess:monitering' %}">
-                    <span class="sidebar-text">모니터링</span>
+                    <span class="sidebar-text sidebar-text-inner">모니터링</span>
                   </a>
                 </li>
               </ul>
