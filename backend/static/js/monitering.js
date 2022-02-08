@@ -65,6 +65,7 @@ $(document).ready(function(){
 
             var no_page = 0
             var no_login = 0
+            var forbidden = 0
             var ect = 0
 
             details.forEach(detail => {
@@ -72,13 +73,17 @@ $(document).ready(function(){
                   no_page = no_page + 1
               } else if(detail['type'] == '401'){
                   no_login = no_login +1
-              } else{
+              } else if(detail['type'] == '403'){
+                  forbidden = forbidden + 1
+              } 
+              else{
                   ect = ect +1
               }
             })
 
           $('#no-page').text(no_page)
           $('#no-login').text(no_login)
+          $('#forbidden').text(forbidden)
           $('#ect').text(ect)
            
         },

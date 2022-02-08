@@ -25,6 +25,21 @@ function goTop(){
 	$('#result-table').scrollTop(0);
 }
 
+
+var Month = ['None','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+var MonthNum = ['None','01','02','03','04','05','06','07','08','09','10','11','12']
+function parsingDate(date){
+    var splited_list = date.split(' ')
+    var index = Month.indexOf(splited_list[0])
+    var result = ''
+    if (index < 0){
+        return splited_list[0] //YYYY-MM-DD 형태로 반환
+    } else{
+        result = splited_list[2] + '-' + MonthNum[index] + '-' + splited_list[1].slice(0, -3); 
+        return result
+    }
+}
+
 //date setting
 
 function addDays(date, days) { 
@@ -173,8 +188,12 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                     if((datas[jsonIdx][platform_list[j]] || datas[jsonIdx][platform_list[j]]===0)){
                         if(!isString(datas[jsonIdx][platform_list[j]])){
                             dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[jsonIdx][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
-                        } else{
-                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                        } else{ //string 인 경우
+                            if(platform_list[j] === 'user_created'){
+                                dataCol = $('<td><input class="data-input" type="text" value="'+parsingDate(datas[jsonIdx][platform_list[j]])+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                            } else{
+                                dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                            }
                         }
                     }
                     else{
