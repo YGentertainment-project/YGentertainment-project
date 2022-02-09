@@ -30,8 +30,8 @@ class CollectTargetItem(models.Model):
 class Schedule(models.Model):
     collect_target = models.ForeignKey(to=CollectTarget, on_delete=models.CASCADE)
     schedule_type = models.TextField(default="hour")  # hour or daily
-    execute_time = models.TimeField() # crawling start time
-    period = models.TimeField(default=datetime.time(3,0,0)) # 주기(시간 단위)
+    execute_time = models.TimeField(null=True) # crawling start time
+    period = models.TimeField(null=True) # 주기(시간 단위)
     active = models.BooleanField(default=True)
     create_dt = models.DateTimeField(auto_now_add=True)
     update_dt = models.DateTimeField(auto_now_add=True)
