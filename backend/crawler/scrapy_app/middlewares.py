@@ -16,11 +16,17 @@ from datetime import datetime
 import logging
 from requests import get
 
-formatter = logging.Formatter('[%(asctime)s], [%(levelname)s], [%(name)s:%(lineno)d], , %(message)s', '%Y-%m-%d %H:%M:%S')
+formatter = logging.Formatter('[%(asctime)s], [%(levelname)s], [%(name)s:%(lineno)d], %(message)s', '%Y-%m-%d %H:%M:%S')
 crawlinglogger = logging.getLogger("CRAWLING-LOG")
 
+production_env = get_env("YG_ENV", "dev") == "production"
+if production_env:
+    DATA_PATH = "/data/log/crawler"
+else:
+    DATA_PATH = "./data/log/crawler"
+
 trfh = logging.handlers.TimedRotatingFileHandler(
-    filename=os.path.join("../data/log/crawler", f"{datetime.today().strftime('%Y-%m-%d')}.log"),
+    filename=os.path.join(DATA_PATH, f"{datetime.today().strftime('%Y-%m-%d')}.log"),
     when="midnight",
     interval=1,
     encoding="utf-8",
