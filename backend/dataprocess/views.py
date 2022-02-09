@@ -2,6 +2,7 @@ import os
 from django.contrib import auth
 from django.shortcuts import render
 from account.models import User
+from django.http import HttpResponse
 
 from dataprocess.models import CollectData
 from crawler.models import *
@@ -22,9 +23,6 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
-
-from django.shortcuts import render
-from django.http import HttpResponse
 
 import datetime
 from datetime import timedelta
@@ -129,7 +127,7 @@ def daily(request):
             if excel_export_type == '누적':
                 filename = "datareport %s.xlsx" % (excel_export_start_date)
             elif excel_export_type == '기간별':
-                filename = "datareport기간별 %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
+                filename = "datareport %s~%s.xlsx" % (excel_export_start_date,excel_export_end_date)
             response = HttpResponse(content=save_virtual_workbook(book), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename='+filename
             return response
@@ -807,8 +805,10 @@ class DataReportAPI(APIView):
                             if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'url1' and field_name != 'url2' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
                                     data_json[field_name] = int(filter_objects_end_value[field_name]) - int(filter_objects_start_value[field_name])
+                                    data_json[field_name+'_end'] = int(filter_objects_end_value[field_name])
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
                                     data_json[field_name] = filter_objects_end_value[field_name]
+                                    data_json[field_name+'_end'] = int(filter_objects_end_value[field_name])
                                 else: # 앞의 날짜가 없다면 0으로 보내기
                                     data_json[field_name] = 0
                                 data_json[field_name+'_end'] = filter_objects_end_value[field_name]

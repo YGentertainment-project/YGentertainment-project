@@ -149,20 +149,13 @@
                                 <tbody id="hourly-scheduler-body">
                                     <tr>
                                         <td colspan="4">
-                                            <div class="loading-box">
-                                                <div class="loader"></div>
-                                            </div>
+                                            <center>
+                                                <div class="cv-spinner" style="height: 100px; width: 100px;">
+                                                    <span class="spinner"></span>
+                                                    </div>
+                                            </center>
                                         </td>
                                     </tr>
-                                    <!-- {% if platforms %}
-                                    {% for platform in platforms %}
-                                    <tr>
-                                        <td style="font-weight: bold;">{{platform.name}}</td>
-                                        <td></td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% else %}
-                                    {% endif %} -->
                                 </tbody>
                             </table>
                         </div>
@@ -210,6 +203,10 @@
                                 <tr>
                                     <td>로그인 불가</td>
                                     <td id="no-login" style="text-align: center; font-weight: bold;"></td>
+                                </tr>
+                                <tr>
+                                    <td>접근 거부</td>
+                                    <td id="forbidden" style="text-align: center; font-weight: bold;"></td>
                                 </tr>
                                 <tr>
                                     <td>기타</td>

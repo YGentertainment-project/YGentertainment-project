@@ -173,14 +173,40 @@
 #url_add_button, #url_delete_button{
     cursor: pointer;
     text-align: center;
-    border: 1px solid black;
-    border-radius: 50px;
     width: 26px;
     height: 26px;
     margin: 0;
     align-items: flex-end;
     justify-self: flex-end;
 }
+
+#url_add_button{
+    margin-right: 3px;
+}
+
+svg #add-sub{
+  border: 0.1rem solid #CCCCCC;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+svg g {
+  stroke: #666666;
+  fill: white;
+}
+
+svg:hover g {
+  stroke: white;
+  fill: #666666;
+}
+
+svg:active g {
+  stroke: #666666;
+  fill: white;
+}
+
+
 
 #artist-body-list{
     font-size: 12px;
@@ -254,19 +280,6 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-end;
-}
-
-#artist_attr_add_button, #artist_attr_delete_button{
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    border: 1px solid rgb(107, 110, 112);
-    border-radius: 50px;
-    width: 26px;
-    height: 26px;
-    margin-left: 3px;
-    align-items: flex-end;
-    justify-self: flex-end;
 }
 
 .expand{

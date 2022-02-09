@@ -177,7 +177,7 @@ input{
     margin-left: 0px;
     margin-right: 10px;
     padding:10px;
-    width: 60%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     text-align: start;
@@ -206,13 +206,19 @@ input{
     justify-content: flex-start;
     text-align: center;
     /* width: 15%; */
-    height: 600px;
+    height: 700px;
     border: 1px solid lightgray;
     border-radius: 10px;
     padding : 20px;
     background-color: whitesmoke;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255,0.5), 0 3px 3px rgba(17, 24, 39,0.5);
 }
+
+.date-selected{
+    background-color: #1F2937 !important;
+    color: white !important;
+}
+
 
 .platform-name{
     margin: 5px 3px 5px 3px;
@@ -286,6 +292,36 @@ input{
     flex-direction: column;
 }
 /* to */
+
+/* loading spinner for data loading */
+#overlay{	
+    z-index: 100;
+    width: 100%;
+    height:100%;
+    display: none;
+  }
+  .cv-spinner {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px #ddd solid;
+    border-top: 4px #2e93e6 solid;
+    border-radius: 50%;
+    animation: sp-anime 0.8s infinite linear;
+  }
+  @keyframes sp-anime {
+    100% { 
+      transform: rotate(360deg); 
+    }
+  }
+  .is-hide{
+    display:none;
+  }
 
 
 #result-table{

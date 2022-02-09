@@ -72,8 +72,27 @@
                         <td style="text-align: center;">{{platform.name}}</td>
                         <td style="display: flex;">
                             <input class="add-target-input-1"  type="text" placeholder="URL" />
-                            <span id="url_add_button"> + </span>
-                            <span id="url_delete_button"> - </span>
+                            <span id="url_add_button">
+                                <svg id="add-sub" width="25" height="25" viewBox="0 0 100 100">
+                                    <g stroke = "black" stroke-width = "12" fill="none">
+                                         <path d="M 25 50 L 75 50
+                                                  M 50 25 L 50 75
+                                                  M 50 5
+                                                  A 45 45 0 0 0 50 95
+                                                  A 45 45 0 1 0 5 50" />
+                                     </g>
+                                 </svg>
+                            </span>
+                            <span id="url_delete_button"> 
+                                <svg id="add-sub" width="25" height="25" viewBox="0 0 100 100">
+                                    <g stroke = "black" stroke-width = "12" fill="none">
+                                         <path d="M 25 50 L 75 50
+                                                  M 50 5
+                                                  A 45 45 0 0 0 50 95
+                                                  A 45 45 0 1 0 5 50" />
+                                     </g>
+                                 </svg>
+                            </span>
                         </td>
                     </tr>
                    {% endfor %}

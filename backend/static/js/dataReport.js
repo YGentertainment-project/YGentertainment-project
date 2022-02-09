@@ -21,6 +21,25 @@ function isString(inputText){
     }
 }
 
+function goTop(){
+	$('#result-table').scrollTop(0);
+}
+
+
+var Month = ['None','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+var MonthNum = ['None','01','02','03','04','05','06','07','08','09','10','11','12']
+function parsingDate(date){
+    var splited_list = date.split(' ')
+    var index = Month.indexOf(splited_list[0])
+    var result = ''
+    if (index < 0){
+        return splited_list[0] //YYYY-MM-DD 형태로 반환
+    } else{
+        result = splited_list[2] + '-' + MonthNum[index] + '-' + splited_list[1].slice(0, -3); 
+        return result
+    }
+}
+
 //date setting
 
 function addDays(date, days) { 
@@ -36,11 +55,18 @@ function refresh(){
 }
 
 $(document).on('click','input[name=refresh]',function(){
+    $('input').not($(this)).removeClass("date-selected");  
     refresh();
 })
- 
 
- $(document).on('click','input[name=day]',function(){
+
+  $(document).on('click','input[name=day]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
     const today = new Date();
     const next_day = addDays(today,0);
     var year = next_day.getFullYear();
@@ -54,6 +80,12 @@ $(document).on('click','input[name=refresh]',function(){
  })
  
  $(document).on('click','input[name=week]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
      const today = new Date();
      const next_day = addDays(today,-6);
      var year = next_day.getFullYear();
@@ -67,6 +99,12 @@ $(document).on('click','input[name=refresh]',function(){
   })
  
  $(document).on('click','input[name=month]',function(){
+    if($(this).hasClass("date-selected")){
+        $(this).removeClass("date-selected");
+    }else{
+        $(this).addClass("date-selected");
+        $('input').not($(this)).removeClass("date-selected");  
+    }
      const today = new Date();
      const next_day = addDays(today,-30);
      var year = next_day.getFullYear();
@@ -150,8 +188,12 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                     if((datas[jsonIdx][platform_list[j]] || datas[jsonIdx][platform_list[j]]===0)){
                         if(!isString(datas[jsonIdx][platform_list[j]])){
                             dataCol = $('<td><input class="data-input" type="text" value="'+numToString(datas[jsonIdx][platform_list[j]])+'" style="width:100%; text-align:end; background-color: #f8f9fa; border:0;"></input></td>')
-                        } else{
-                            dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                        } else{ //string 인 경우
+                            if(platform_list[j] === 'user_created'){
+                                dataCol = $('<td><input class="data-input" type="text" value="'+parsingDate(datas[jsonIdx][platform_list[j]])+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                            } else{
+                                dataCol = $('<td><input class="data-input" type="text" value="'+datas[jsonIdx][platform_list[j]]+'" style="width:100%; text-align:center; background-color: #f8f9fa; border:0;"></input></td>')
+                            }
                         }
                     }
                     else{
@@ -177,7 +219,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                             }
                         } else{
                             dataCol = $('<td></td>',{
-                                text: datas[jsonIdx][platform_list[j]]
+                                text: parsingDate(datas[jsonIdx][platform_list[j]])
                             })
                         }
                     }
@@ -306,7 +348,9 @@ $('option').click(function(){
 });
 
 //누적 일 때 다른 버튼 안보이게
+//누적 & 기간별 ajax 작동
 $(document).on('change','input[type=radio]',function(){
+    goTop()
     var type = $(':radio[name="view_days"]:checked').val();
     if(type === '누적'){
         $('input[name=end_date]').hide()
@@ -318,19 +362,100 @@ $(document).on('change','input[type=radio]',function(){
         $('input[name=day]').show()
         $('input[name=week]').show()
         $('input[name=month]').show()
+        $('input[name=start_date]').val("");
+        $('input[name=end_date]').val("");
+        $('input[name=day]').addClass('date-selected') //1일 default
+        document.getElementById('start_date').valueAsDate = new Date();
+        document.getElementById('end_date').valueAsDate = new Date();
     }
-})
+    changedDatas = [];
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    if(!platform){
+        return false;
+    } 
 
-$(document).on('change','input[name=view_days]',function(){
-    var type = $(':radio[name="view_days"]:checked').val();
-    if(type === '누적'){
-        refresh();
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && end_date==""){
+        return;
     }
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        beforeSend: function(){ 
+            $('#platform-title').text(platform+' 리포트');
+            $('#overlay').fadeIn(300)
+        },
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            crawling_artist_list = res.crawling_artist_list
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+            $('#overlay').fadeOut(300)
+
+            $('#data-report-headers').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            $('#overlay').fadeOut(300)
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+                $('#data-report-headers').eq(0).empty();
+                $('#board').eq(0).empty();
+            }
+        },
+    })
 })
 
 
 //when change date(only platform button clicked)
 $(document).on('change','#start_date',function(){
+    goTop()
     var platform = $(".contents-platforms").find('.platform-selected').val(); 
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
@@ -365,10 +490,13 @@ $(document).on('change','#start_date',function(){
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
+        beforeSend : function(){
+            $('#platform-title').text(platform+' 리포트');
+            $('#overlay').fadeIn(300)
+        },
         success: res => {
             let data_list = [];
             let artist_list = [];
-            let platform_list = [];
             data_list = res.data //필터링 데이터
             artist_list = res.artists //DB 아티스트 리스트
             platform_header = res.platform //수집 항목
@@ -386,6 +514,7 @@ $(document).on('change','#start_date',function(){
             }
 
             console.log(platform_header);
+            $('#overlay').fadeOut(300)
 
             $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
@@ -402,6 +531,7 @@ $(document).on('change','#start_date',function(){
             }
         },
         error: e => {
+            $('#overlay').fadeOut(300)
             console.log(e);
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
@@ -414,6 +544,7 @@ $(document).on('change','#start_date',function(){
 })
 
 $(document).on('change','#end_date',function(){
+    goTop()
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
     var date1 = new Date(start_date);
@@ -428,10 +559,7 @@ $(document).on('change','#end_date',function(){
     if(!platform){
         return false;
     } 
-
     changedDatas = [];
-
-
     if(type == undefined){
         alert("누적/기간별 중 선택해주세요.");
         return;
@@ -450,10 +578,13 @@ $(document).on('change','#end_date',function(){
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
+        beforeSend: function(){
+            $('#platform-title').text(platform+' 리포트');
+            $('#overlay').fadeIn(300)
+        },
         success: res => {
             let data_list = [];
             let artist_list = [];
-            let platform_list = [];
             data_list = res.data //필터링 데이터
             artist_list = res.artists //DB 아티스트 리스트
             platform_list = res.platform //수집 항목
@@ -468,9 +599,8 @@ $(document).on('change','#end_date',function(){
             for (let i = 0; i<artist_list.length; i++){
                 db_artist_list.push(artist_list[i]);
             }
-
-
             console.log(platform_header);
+            $('#overlay').fadeOut(300)
 
             $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
@@ -483,6 +613,7 @@ $(document).on('change','#end_date',function(){
             showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
         },
         error: e => {
+            $('#overlay').fadeOut(300)
             console.log(e);
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
@@ -498,6 +629,8 @@ $(document).on('change','#end_date',function(){
 
 //when clicking platform name
 $(document).on('click','.platform-name',function(){
+
+    goTop()
     var platform = $(this).val();
     var type = $(':radio[name="view_days"]:checked').val();
     var start_date = $('input[name=start_date]').val();
@@ -529,10 +662,13 @@ $(document).on('click','.platform-name',function(){
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
+        beforeSend: function(){
+            $('#platform-title').text(platform+' 리포트');
+            $('#overlay').fadeIn(300)
+        },
         success: res => {
             let data_list = [];
             let artist_list = [];
-            let platform_list = [];
             data_list = res.data //필터링 데이터
             artist_list = res.artists //DB 아티스트 리스트
             platform_header = res.platform //수집 항목
@@ -551,6 +687,8 @@ $(document).on('click','.platform-name',function(){
             console.log(crawling_artist_list);
             console.log(db_artist_list);
 
+            $('#overlay').fadeOut(300)
+
             $('#data-report-headers').eq(0).empty();
             $('#board').eq(0).empty();
             if(type === '누적'){
@@ -566,6 +704,7 @@ $(document).on('click','.platform-name',function(){
             }
         },
         error: e => {
+            $('#overlay').fadeOut(300)
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
@@ -916,6 +1055,8 @@ $("#excel-form-open2").click(function(){
     document.getElementById("excel_form2").style.display = "flex";
     document.getElementById("excel_form3").style.display = "none";
     document.getElementById("excel_form4").style.display = "none";
+    document.getElementById('data_excel_download_form').style.display = "block";
+    document.getElementById('data_excel_download_span').style.display = "none";
 });
 $("#excel-form-open3").click(function(){
     document.getElementById("excel_form1").style.display = "none";
@@ -984,3 +1125,8 @@ $('input[name=end_date]').hide()
 $('input[name=day]').hide()
 $('input[name=week]').hide()
 $('input[name=month]').hide()
+
+document.getElementById('excel-btn2').onclick = function(){
+    document.getElementById('data_excel_download_form').style.display = "none";
+    document.getElementById('data_excel_download_span').style.display = "block";
+}
