@@ -805,8 +805,10 @@ class DataReportAPI(APIView):
                             if field_name != 'id' and field_name != 'artist' and field_name != 'user_created' and field_name != 'recorded_date' and field_name != 'platform' and field_name != 'url' and field_name != 'url1' and field_name != 'url2' and field_name != 'reserved_date' and field_name != 'updated_dt':
                                 if filter_objects_end_value[field_name] is not None and filter_objects_start_value[field_name] is not None:
                                     data_json[field_name] = int(filter_objects_end_value[field_name]) - int(filter_objects_start_value[field_name])
+                                    data_json[field_name+'_end'] = int(filter_objects_end_value[field_name])
                                 elif filter_objects_end_value[field_name] is not None:  # 앞의 날짜를 0으로 처리한 형태
                                     data_json[field_name] = filter_objects_end_value[field_name]
+                                    data_json[field_name+'_end'] = int(filter_objects_end_value[field_name])
                                 else: # 앞의 날짜가 없다면 0으로 보내기
                                     data_json[field_name] = 0
                                 data_json[field_name+'_end'] = filter_objects_end_value[field_name]
