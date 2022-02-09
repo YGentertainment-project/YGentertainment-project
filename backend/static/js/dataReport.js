@@ -219,7 +219,7 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                             }
                         } else{
                             dataCol = $('<td></td>',{
-                                text: datas[jsonIdx][platform_list[j]]
+                                text: parsingDate(datas[jsonIdx][platform_list[j]])
                             })
                         }
                     }
