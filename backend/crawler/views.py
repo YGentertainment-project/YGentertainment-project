@@ -290,16 +290,17 @@ def parse_logfile(filepath):
     errors = 0
     with open(f'{filepath}', 'r') as log_file:
         for log_line in log_file:
-            log_words = log_line.rstrip().split(' ')
+            log_words = log_line.rstrip().split(',')
             last_word = log_words[-1]
             if "https" in last_word:
                 error_info = dict()
-                error_info['type'] = log_words[4].strip('[]')
-                error_info['artist'] = log_words[5]
-                error_info['platform'] = log_words[-3]
+                error_info['type'] = log_words[3].strip('[]')
+                error_info['artist'] = log_words[4]
+                error_info['platform'] = log_words[5]
                 error_info['url'] = last_word
                 error_infos.append(error_info)
                 errors += 1
+                print(error_info)
     return errors, error_infos
 
 # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
@@ -317,7 +318,7 @@ def monitors(request):
         try:
             from_date_obj = datetime.strptime(from_date_str, '%Y-%m-%d')
             to_date_obj = datetime.strptime(to_date_str, '%Y-%m-%d')
-        except Exception as e:
+        except Exception:
             return JsonResponse(status=500, data={"error": "Input Date Format Error"})
 
         day_diff = (to_date_obj - from_date_obj).days

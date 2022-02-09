@@ -108,13 +108,18 @@ class YoutubeSpider(scrapy.Spider):
             artist = response.request.meta["artist"]
             try:
                 view_text = response.xpath(views_xpath).get()
+            except ValueError:
+                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}")
+            try:
                 user_created = response.xpath(user_created_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}, {user_created_xpath}")
+                crawlinglogger.error(f"[400] {artist} - youtube - {user_created_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
-            if view_text is None or user_created is None:
-                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}, {user_created_xpath}")
+            if view_text is None:
+                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}")
+            elif user_created is None:
+                crawlinglogger.error(f"[400] {artist} - youtube - {user_created_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.

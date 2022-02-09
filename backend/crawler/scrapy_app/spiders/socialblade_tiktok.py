@@ -40,13 +40,24 @@ class TiktokSpider(scrapy.Spider):
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="uploads")).xpath + "/text()"
             try:
                 uploads = response.xpath(uploads_xpath).get()
+            except ValueError:
+                crawlinglogger.error(f"[400], {artist}, tictok, {uploads_xpath}")
+            try:
                 followers = response.xpath(followers_xpath).get()
+            except ValueError:
+                crawlinglogger.error(f"[400], {artist}, tictok, {followers_xpath}")
+            try:    
                 likes = response.xpath(likes_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - tictok - {followers_xpath}, {likes_xpath}, {uploads_xpath}")
+                crawlinglogger.error(f"[400], {artist}, tictok, {likes_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
-            if uploads is None or followers is None or likes is None:
-                crawlinglogger.error(f"[400] {artist} - tictok - {followers_xpath}, {likes_xpath}, {uploads_xpath}")
+            
+            if uploads is None:
+                crawlinglogger.error(f"[400], {artist}, tictok, {uploads_xpath}")
+            elif followers is None:
+                crawlinglogger.error(f"[400], {artist}, tictok, {followers_xpath}")
+            elif likes is None:
+                crawlinglogger.error(f"[400], {artist}, tictok, {likes_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.

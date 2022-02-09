@@ -40,13 +40,24 @@ class TwitterSpider(scrapy.Spider):
                 Q(collect_target_id=response.meta["target_id"]) & Q(target_name="user_created")).xpath + "/text()"
             try:
                 followers = response.xpath(followers_xpath).get()
+            except ValueError:
+                crawlinglogger.error(f"[400], {artist}, twitter, {followers_xpath}")
+            try:
                 twits = response.xpath(twits_xpath).get()
+            except ValueError:
+                crawlinglogger.error(f"[400], {artist}, twitter, {twits_xpath}")
+            try:
                 user_created = response.xpath(user_created_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - twitter - {followers_xpath}, {twits_xpath}, {user_created_xpath}")
+                crawlinglogger.error(f"[400], {artist}, twitter, {user_created_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
-            if twits is None or followers is None or user_created is None:
-                crawlinglogger.error(f"[400] {artist} - twitter - {followers_xpath}, {twits_xpath}, {user_created_xpath}")
+            
+            if twits is None:
+                crawlinglogger.error(f"[400], {artist}, twitter, {twits_xpath}")
+            elif followers is None:
+                crawlinglogger.error(f"[400], {artist}, twitter, {followers_xpath}")
+            elif user_created is None:
+                crawlinglogger.error(f"[400], {artist}, twitter, {user_created_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.
