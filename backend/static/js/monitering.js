@@ -279,7 +279,7 @@ function get_hourly_schedule(){
 
                 if (artists.length <= 0){
                     dataCol4.onclick = function(){
-                        alert('시간별로 수집할 아티스트를 먼저 선정하세요.')
+                        alert('해당 플랫폼에서 시간별로 수집할 아티스트를 먼저 선정하세요.')
                     }
                     dataCol4.innerHTML = `
                     <label class="btn btn-primary btn-shadow border-0 disabled" style="margin: 5px; font-weight: bold;font-size: 10px !important; width: 50px;">

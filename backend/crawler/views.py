@@ -148,12 +148,13 @@ def schedules(request):
         body = json.loads(body_unicode)
         schedule_type = body.get("schedule_type")
         platform = body.get("platform")
+
         # 일별 스케줄링
         if schedule_type == 'daily':
             hour = body.get("hours")
             minutes = body.get("minutes")
-            if hour == "":
-                hour = "*"
+            if hour == "" or int(hour) < 0:
+                return JsonResponse(status=400, data={"error": "스케줄링 시간 입력이 잘못되었습니다."})
             try:
                 schedule, created = CrontabSchedule.objects.get_or_create(
                     hour="{}".format(hour),
@@ -167,13 +168,11 @@ def schedules(request):
                     task.crontab = schedule
                     task.save()
                 else:
-                    # crawl_target = extract_target_list(platform)
                     PeriodicTask.objects.create(
                         crontab=schedule,
                         name="{}_{}_daily_crawling".format(platform, hour),
                         task="schedule_crawling",
                         args=json.dumps((platform, schedule_type,)),
-                        # args=json.dumps((platform, schedule_type, crawl_target,)),
                     )
                 return JsonResponse(data={"success": True})
             except Exception as e:
