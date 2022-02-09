@@ -23,6 +23,7 @@ from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
+from utils.shortcuts import get_env
 
 import datetime
 from datetime import timedelta
@@ -34,8 +35,14 @@ formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lin
 serverlogger = logging.getLogger(__name__)
 userlogger = logging.getLogger("HTTP-Method")
 
+production_env = get_env("YG_ENV", "dev") == "production"
+if production_env:
+    LOG_PATH = "/data/log/user"
+else:
+    LOG_PATH = "./data/log/user"
+
 trfh = logging.handlers.TimedRotatingFileHandler(
-    filename = os.path.join("../data/log/user", f"{datetime.datetime.today().strftime('%Y-%m-%d')}.log"),
+    filename = os.path.join(LOG_PATH, f"{datetime.datetime.today().strftime('%Y-%m-%d')}.log"),
     when = "midnight",
     interval=1,
     encoding="utf-8",

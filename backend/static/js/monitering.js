@@ -1,7 +1,9 @@
 //플랫폼별 스케줄러 시간 로딩 및 크롤러 상태 로딩
 $(document).ready(function(){
     $.ajax({
-        url: '/crawler/api/schedules/',
+        url: '/crawler/api/schedules/?' + $.param({
+            schedule_type: 'daily'
+        }),
         type: 'GET',
         datatype: 'json',
         contentType: 'application/json; charset=utf-8',
@@ -128,7 +130,7 @@ $(document).on('click','#save-schedule',function(){
         $.ajax({
             url: '/crawler/api/schedules/',
             type: 'POST',
-            data: JSON.stringify({ "platform": platform, "hours": hour, "minutes": minute }),
+            data: JSON.stringify({ "platform": platform, "hours": hour, "minutes": minute, 'schedule_type': 'daily' }),
             datatype: 'json',
             contentType: 'application/json; charset=utf-8',
             success: res => {
@@ -150,9 +152,7 @@ $(document).on('click','#save-schedule',function(){
 var hourly_schedule_list = [];
 function get_hourly_schedule(){
     $.ajax({
-        url: '/dataprocess/api/schedule/?' + $.param({
-            type: '시간별'
-        }),
+        url: '/dataprocess/api/schedule/?type=시간별',
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
@@ -278,13 +278,25 @@ function get_hourly_schedule(){
                 // dataCol3.val("3").prop('selected',true);
                 tableRow.append(dataCol3);
                 let dataCol4 = document.createElement('td');
-                dataCol4.onclick = function(){
-                    update_hourly_platform_schedule(platform, tmp_index);
-                };
-                dataCol4.innerHTML = `
-                <label class="btn btn-primary btn-shadow border-0" style="margin: 5px; font-weight: bold;font-size: 10px !important; width: 50px;">
-                    저장
-                </label>`;
+
+                if (artists.length <= 0){
+                    dataCol4.onclick = function(){
+                        alert('해당 플랫폼에서 시간별로 수집할 아티스트를 먼저 선정하세요.')
+                    }
+                    dataCol4.innerHTML = `
+                    <label class="btn btn-primary btn-shadow border-0 disabled" style="margin: 5px; font-weight: bold;font-size: 10px !important; width: 50px;">
+                        저장
+                    </label>`;
+                }else{
+                    dataCol4.onclick = function(){
+                        update_hourly_platform_schedule(platform, tmp_index);
+                    };
+                    dataCol4.innerHTML = `
+                    <label class="btn btn-primary btn-shadow border-0" style="margin: 5px; font-weight: bold;font-size: 10px !important; width: 50px;">
+                        저장
+                    </label>`;
+                }
+
                 tableRow.append(dataCol4);
                 index += 1;
 
@@ -313,6 +325,21 @@ function update_hourly_platform_schedule(platform, platform_index){
         'execute_time_minute': parseInt($(`#schedule-minute-select${platform_index} option:selected`).val()),
         'schedule_type': 'hour'
     };
+
+    // 플랫폼이 일정주기 크롤링 하도록 설정
+    $.ajax({
+        url: '/crawler/api/schedules/',
+        type: 'POST',
+        data: JSON.stringify(data),
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        success: res => {
+            console.log(res)
+        },
+        error: e => {
+            console.log(e)
+        },
+    })
     $.ajax({
         url: '/dataprocess/api/schedule/',
         type: 'PUT',

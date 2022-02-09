@@ -32,16 +32,22 @@ class MelonSpider(scrapy.Spider):
         streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath + "/text()"
         try:
             listener_target = response.xpath(listener_xpath).extract()[2]
+        except ValueError:
+            crawlinglogger.error(f"[400], {artist}, melon, {listener_xpath}")
+            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+        
+        try:
             streaming_target = response.xpath(streaming_xpath).extract()[2]
         except ValueError:
-            crawlinglogger.error(f"[400] {artist} - melon - {listener_xpath}, {streaming_xpath}")
-            # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+            crawlinglogger.error(f"[400], {artist}, melon, {streaming_xpath}")
 
-        if listener_target is None or streaming_target is None:
-            crawlinglogger.error(f"[400] {artist} - melon - {listener_xpath}, {streaming_xpath}")
+        if listener_target is None:
+            crawlinglogger.error(f"[400], {artist}, melon, {listener_xpath}")
             # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
             # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
             # 오류일 경우 item을 yield 하지 않아야 합니다.
+        elif streaming_target is None:
+            crawlinglogger.error(f"[400], {artist}, melon, {streaming_xpath}")
         else:
             listener = listener_target.replace(",", "")
             streaming = streaming_target.replace(",", "")
