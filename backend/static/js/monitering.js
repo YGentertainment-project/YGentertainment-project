@@ -176,10 +176,11 @@ function get_hourly_schedule(){
                 </td>
                 `;
                 tableRow.append(dataCol);
-
                 let dataCol2 = document.createElement('td');
                 dataCol2.innerHTML = `<td style="width: 100px;">
                     <select id="schedule-hour-select${tmp_index}" class="form-select">
+                        <option value=""></option>
+                        <option value="0">00</option>
                         <option value="1">01</option>
                         <option value="2">02</option>
                         <option value="3">03</option>
@@ -210,6 +211,7 @@ function get_hourly_schedule(){
                 dataCol3.innerHTML = `
                 <td style="width: 100px;">
                             <select style="margin:2px;" name="minute" id="schedule-minute-select${tmp_index}" class="form-select">
+                                <option value=""></option>
                                 <option value="0">00</option>
                                 <option value="1">01</option>
                                 <option value="2">02</option>
@@ -300,11 +302,14 @@ function get_hourly_schedule(){
 
                 $('#hourly-scheduler-body').append(tableRow);
 
-
-                var period_time = data['period'].split(':');
-                $(`#schedule-hour-select${tmp_index}`).val(parseInt(period_time[0])).prop('selected',true);
-                var execute_time = data['execute_time'].split(':');
-                $(`#schedule-minute-select${tmp_index}`).val(parseInt(execute_time[1])).prop('selected',true);
+                if(data['period'] != null){
+                    var period_time = data['period'].split(':');
+                    $(`#schedule-hour-select${tmp_index}`).val(parseInt(period_time[0])).prop('selected',true);
+                }
+                if(data['execute_time']!=null){
+                    var execute_time = data['execute_time'].split(':');
+                    $(`#schedule-minute-select${tmp_index}`).val(parseInt(execute_time[1])).prop('selected',true);
+                }
             })
         },
         error: e => {
