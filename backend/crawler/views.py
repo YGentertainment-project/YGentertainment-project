@@ -48,7 +48,7 @@ else:
     flower_domain = "http://0.0.0.0:5555/"
 
 
-def extract_target_list(platform):
+def extract_target_list(platform, schedule_type="daily"):
     if platform == "crowdtangle" or platform == "crowdtangle-past":
         facebook_id = Platform.objects.get(name="facebook").id
         instagram_id = Platform.objects.get(name="instagram").id
@@ -63,7 +63,7 @@ def extract_target_list(platform):
         crawl_target_row = dict()
 
         try:
-            schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id)
+            schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id, schedule_type=schedule_type)
         except Schedule.DoesNotExist:
             schedule_info = None
 
@@ -108,20 +108,33 @@ def show_data(request):
     else:
         return JsonResponse(status=400, data={"success": False})
 
-
-def get_schedules():
+# schedule_type = "daily" or "hour" or None
+# 해당하는 schedule_type의 schedule 정보를 가져옴
+def get_schedules(schedule_type):
     schedule_list = []
     task_list = PeriodicTask.objects.values()
-    for task in task_list:
-        if "crawling" in task["name"]:
-            crontab_id = task["crontab_id"]
-            crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
-            hour = crontab_info[0]["hour"]
-            minute = crontab_info[0]["minute"]
-            schedule_dict = dict(id=task["id"], name=task["name"], hour=hour, minute=minute,
-                                 last_run=task["last_run_at"],
-                                 enabled=task["enabled"])
-            schedule_list.append(schedule_dict)
+    if schedule_type is not None:
+        for task in task_list:
+            if schedule_type in task["name"]:
+                crontab_id = task["crontab_id"]
+                crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+                hour = crontab_info[0]["hour"]
+                minute = crontab_info[0]["minute"]
+                schedule_dict = dict(id=task["id"], name=task["name"], hour=hour, minute=minute,
+                                     last_run=task["last_run_at"],
+                                     enabled=task["enabled"])
+                schedule_list.append(schedule_dict)
+    else:
+        for task in task_list:
+            if "crawling" in task["name"]:
+                crontab_id = task["crontab_id"]
+                crontab_info = CrontabSchedule.objects.filter(id=crontab_id).values()
+                hour = crontab_info[0]["hour"]
+                minute = crontab_info[0]["minute"]
+                schedule_dict = dict(id=task["id"], name=task["name"], hour=hour, minute=minute,
+                                     last_run=task["last_run_at"],
+                                     enabled=task["enabled"])
+                schedule_list.append(schedule_dict)
     return schedule_list
 
 
@@ -133,51 +146,83 @@ def schedules(request):
     if request.method == "POST":
         body_unicode = request.body.decode("utf-8")  # body값 추출
         body = json.loads(body_unicode)
+        schedule_type = body.get("schedule_type")
         platform = body.get("platform")
-        hour = body.get("hours")
-        minutes = body.get("minutes")
-        if hour == "":
-            hour = "*"
-        try:
-            schedule, created = CrontabSchedule.objects.get_or_create(
-                hour="{}".format(hour),
-                minute="{}".format(minutes),
-                timezone="Asia/Seoul",
-            )
-            # 존재하는 task는 상태 및 interval만 업데이트
-            if PeriodicTask.objects.filter(name="{}_{}_schedule_crawling".format(platform, hour)).exists():
-                task = PeriodicTask.objects.get(name="{}_{}_schedule_crawling".format(platform, hour))
-                task.enabled = True
-                task.crontab = schedule
-                task.save()
-            else:
-                crawl_target = extract_target_list(platform)
-                PeriodicTask.objects.create(
-                    crontab=schedule,
-                    name="{}_{}_schedule_crawling".format(platform, hour),
-                    task="schedule_crawling",
-                    args=json.dumps((platform, crawl_target,)),
+        # 일별 스케줄링
+        if schedule_type == 'daily':
+            hour = body.get("hours")
+            minutes = body.get("minutes")
+            if hour == "":
+                hour = "*"
+            try:
+                schedule, created = CrontabSchedule.objects.get_or_create(
+                    hour="{}".format(hour),
+                    minute="{}".format(minutes),
+                    timezone="Asia/Seoul",
                 )
-            return JsonResponse(data={"success": True})
-        except Exception as e:
-            return JsonResponse(status=400, data={"error": str(e)})
+                # 존재하는 task는 상태 및 interval만 업데이트
+                if PeriodicTask.objects.filter(name="{}_{}_daily_crawling".format(platform, hour)).exists():
+                    task = PeriodicTask.objects.get(name="{}_{}_daily_crawling".format(platform, hour))
+                    task.enabled = True
+                    task.crontab = schedule
+                    task.save()
+                else:
+                    # crawl_target = extract_target_list(platform)
+                    PeriodicTask.objects.create(
+                        crontab=schedule,
+                        name="{}_{}_daily_crawling".format(platform, hour),
+                        task="schedule_crawling",
+                        args=json.dumps((platform, schedule_type,)),
+                        # args=json.dumps((platform, schedule_type, crawl_target,)),
+                    )
+                return JsonResponse(data={"success": True})
+            except Exception as e:
+                return JsonResponse(status=400, data={"error": str(e)})
+        # 시간별 스케줄링
+        elif schedule_type == 'hour':
+            try:
+                period = body.get('period')
+                execute_time_minute = body.get('execute_time_minute')
+                # crontab schedule 생성
+                schedule, created = CrontabSchedule.objects.get_or_create(
+                    hour="*/{}".format(period),
+                    minute="{}".format(execute_time_minute),
+                    timezone="Asia/Seoul",
+                )
+
+                if PeriodicTask.objects.filter(name="{}_hour_crawling".format(platform)).exists():
+                    task = PeriodicTask.objects.get(name="{}_hour_crawling".format(platform))
+                    task.enabled = True
+                    task.crontab = schedule
+                    task.save()
+                else:
+                    PeriodicTask.objects.create(
+                        crontab=schedule,
+                        name="{}_hour_crawling".format(platform),
+                        task="schedule_crawling",
+                        args=json.dumps((platform, schedule_type,)),
+                    )
+                return JsonResponse(data={"success": True})
+            except Exception as e:
+                return JsonResponse(status=400, data={"error": str(e)})
     # 스케줄 리스트 업
     elif request.method == "GET":
+        schedule_type = request.GET.get("schedule_type", None)
         try:
-            schedule_list = get_schedules()
+            schedule_list = get_schedules(schedule_type)
             return JsonResponse(data={"schedules": schedule_list})
         except Exception as e:
             print(e)
             return JsonResponse(status=400, data={"error": str(e)})
+    # schedule 삭제
     else:
         body_unicode = request.body.decode("utf-8")  # body값 추출
         body = json.loads(body_unicode)
         scheduleId = body.get("id")
         schedule = PeriodicTask.objects.get(id=scheduleId)
         schedule.delete()
-
         try:
-            schedule_list = get_schedules()
+            schedule_list = get_schedules(None)
             return JsonResponse(data={"schedules": schedule_list})
         except Exception as e:
             print(e)

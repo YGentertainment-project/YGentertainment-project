@@ -993,8 +993,8 @@ class ScheduleAPI(APIView):
                             artist = Artist.objects.get(pk = collecttarget_object['artist_id'])
                             hour_artist_list.append(artist.name)
                     if period is None:
-                        period = datetime.time(3,0,0)
-                        execute_time = datetime.time(0,30,0)
+                        period = datetime.time(0,0,0)
+                        execute_time = datetime.time(0,0,0)
                     hourly_list.append({
                         'platform': platform_object['name'],
                         'artists': hour_artist_list,
