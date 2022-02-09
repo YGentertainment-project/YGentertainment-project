@@ -302,7 +302,6 @@ $(document).on('click','.platform-names',function(){
             document.getElementById("platform-subtitle").style.color = "#000000";
             document.getElementById("platform-subtitle").innerHTML = artist_name+" "+ platform+ " 조사항목";
             const data_list = res.data["items"];
-            console.log(data_list);
             $('#artist-body-list').empty();
             let len = 0;
             if(data_list.length>0){
@@ -433,7 +432,6 @@ $(document).on('click','#save-list',function(){
     var item_tr = $('#artist-body-list').find('tr');
     //마지막 열은 스케줄과 관련되었기 때문에 제외
     for(var r=0;r<item_tr.length-1;r++){
-        console.log(item_tr[r].classList);
         if(item_tr[r].classList == 'hidden'){
             //숨겨져 있다면 삭제된 것이므로 제외
             continue;
@@ -482,7 +480,6 @@ $(document).on('click','#url_add_button',function(){
     tr = $(this).closest('tr');
     var attri_col = $('<td style="display: flex;"><input class="add-target-input-2"  type="text" placeholder="URL 2" /></td>')
     //tr.find('td').find('.add-target-input-2').val()
-    console.log(tr.find('td').find('input').length);
     if(tr.find('td').find('input').length <= 1){
         tr.append(attri_col)
     }else{
@@ -536,14 +533,18 @@ function delete_screen_collect_target_item(index){
 
 //수집항목 +버튼
 $(document).on('click','#artist_attr_add_button',function(){
+    // 수집항목 다 보이게 처리
+    make_item_visible();
     var item_tr = $('#artist-body-list').find('tr');
     let len = item_tr.length;
     //스케줄 삭제
+    const schedule_type = document.getElementById("dropTitle").innerHTML;
     item_tr[len-1].remove();
     //끝에 append
     add_new_collect_target_item(len);
     //스케줄 추가
     append_schedule_row();
+    document.getElementById("dropTitle").innerHTML = schedule_type;
 })
 
 var artist_open = true;

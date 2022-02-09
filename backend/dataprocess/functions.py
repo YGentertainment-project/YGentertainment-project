@@ -27,10 +27,18 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             filter_value = filter_objects.values().first()
             filter_value = filter_value["collect_items"]
             # 숫자필드값+user_created만 보내주기
-            for field_name in filter_value.keys():
-                if field_name != "id" and field_name != "artist" and field_name != "recorded_date" and field_name != "updated_at" and field_name != "reserved_date" and field_name != "platform" and field_name != "url" and field_name != "url1" and field_name != "url2" and field_name != "fans":
-                    # 싱크 맞춰서 넣기
-                    filter_datas[collect_item_list.index(field_name)] = filter_value[field_name]
+            for i, field_name in enumerate(collect_item_list):
+                # 뒤날짜 데이터가 없다면 0으로
+                if not field_name in filter_value:
+                    continue
+                else:
+                    # 숫자 데이터, 문자열로 된 숫자 데이터(예: "123")
+                    if isinstance(filter_value[field_name], int) or filter_value[field_name].isdigit():
+                        filter_datas[i] = int(filter_value[field_name])
+                    # 날짜 데이터
+                    else:
+                        tmpdate = parse(filter_value[field_name])
+                        filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
             return filter_datas
         else:
             return filter_datas
@@ -60,7 +68,7 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
                             filter_datas[i] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
                         else: # 앞의 날짜를 0으로 처리한 형태
                             filter_datas[i] = filter_end_value[field_name]
-                    # 날짜/string 데이터
+                    # 날짜 데이터
                     else:
                         tmpdate = parse(filter_end_value[field_name])
                         filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
