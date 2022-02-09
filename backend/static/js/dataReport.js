@@ -12,13 +12,6 @@ function uncomma(str) {
 //string check
 function isString(inputText){
     return isNaN(Number(inputText));
-    if((typeof inputText === 'string' || inputText instanceof String) && parseInt(inputText)==NaN){
-        //it is string
-        return true;    
-    }else{
-        //it is not string
-        return false;
-    }
 }
 
 function goTop(){
