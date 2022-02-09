@@ -38,7 +38,7 @@
             <span>크롤링데이터 - 엑셀 다운로드</span>
             <button class="btn btn-primary border-0 shadow-btn" id="close_button2" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
-        <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+        <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data" id="data_excel_download_form">
             {% csrf_token %}
             <div style="height: 15px;"></div>
             <div class="row_layout" style="text-align: center; ">
@@ -56,6 +56,7 @@
             <input type="text" name="type" value="export" style="display:none;">
             <button class="btn btn-primary border-0 shadow-btn" id="excel-btn2" type="submit" style="font-size: 10px !important; font-weight: bold; width: 100px;">Export</button>
         </form>
+        <span style="font-weight: bold; display:none;" id="data_excel_download_span">다운로드가 시작되었습니다. 시간이 소요됩니다.</span>
         <div style="height: 10px;"></div>
     </div>
 
@@ -109,32 +110,44 @@
                 </div>
                 <div class="select-days-date">
                     <input type="date" name="start_date" id="start_date"/> ~ <input type="date" name="end_date" id="end_date" /> <input class="btn btn-gray-200" type="button" name="refresh" style="margin: 3px;" value="날짜 초기화"></input>
+                    <br>
                     <input class="btn btn-gray-200" type="button" name="day" style="margin: 3px;" value="1일"></input>
                     <input class="btn btn-gray-200" type="button" name="week" style="margin: 3px;" value="1주"></input>
                     <input class="btn btn-gray-200" type="button" name="month" style="margin: 3px;" value="1개월"></input>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: row; width:40%" class="row_layout flexmiddle_layout card border-0 shadow">
+            <div style="display: flex; flex-direction: row; width:50%" class="row_layout flexmiddle_layout card border-0 shadow">
                <div style="margin-right: 2.5px;">
-                    <span style="font-size: 14px; font-weight:bold;">크롤링데이터</span>
+                    <span style="font-size: 14px; font-weight:bold;">리포트 추출</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-form-open" id="excel-form-open1">엑셀 업로드</button>
+                        <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" class="excel-form-open" id="excel-form-open1">엑셀 업로드</button>
                     </div>
             
                     <div class="row_layout">
-                        <button title="Excel파일로 크롤링데이터 추출(다운로드 경로)" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open2"
+                        <button title="Excel파일로 크롤링데이터 추출(다운로드 경로)" class="input-btn" id="excel-form-open2"
                         >엑셀 다운로드</button>
                     </div>
                </div>
                <hr>
-                <div style="margin-left: 2.5px;">
+                <div style="margin-left: 2.5px; margin-right: 2.5px;">
                     <span style="font-size: 14px; font-weight:bold;">수집정보</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open3">엑셀 업로드</button>
+                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" id="excel-form-open3">엑셀 업로드</button>
                     </div>
-                    <span style="font-size: 14px; font-weight:bold;">인증정보</span>
+                    <div class="row_layout"> 
+                        <!-- 숨겨진 버튼 -->
+                        <button class="btn btn-gray-200" style="color: transparent; background-color: transparent; box-shadow: none; border: none; cursor: default;">hidden</button>
+                    </div>
+                </div>
+                <hr>
+                <div style="margin-left: 2.5px;">
+                    <span style="font-size: 14px; font-weight:bold;">로그인 정보</span>
                     <div class="row_layout">
-                        <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px;" class="btn btn-gray-200" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
+                        <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
+                    </div>
+                    <div class="row_layout"> 
+                        <!-- 숨겨진 버튼 -->
+                        <button class="btn btn-gray-200" style="color: transparent; background-color: transparent; box-shadow: none; border: none; cursor: default;">hidden</button>
                     </div>
                 </div>
             </div>
