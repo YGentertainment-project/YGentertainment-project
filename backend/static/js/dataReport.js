@@ -25,6 +25,87 @@ function goTop(){
 	$('#result-table').scrollTop(0);
 }
 
+function ajax(type,platform,start_date,end_date){
+    if(!platform){
+        return false;
+    } 
+
+    if(type == undefined){
+        alert("누적/기간별 중 선택해주세요.");
+        return;
+    }else if(type=="누적" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && start_date==""){
+        alert("시작 일자를 선택해주세요.");
+        return;
+    } else if(type=="기간별" && end_date==""){
+        return;
+    }
+
+    $.ajax({
+        url: '/dataprocess/api/daily/?' + $.param({
+            platform: platform,
+            type: type,
+            start_date: start_date,
+            end_date: end_date,
+        }),
+        type: 'GET',
+        datatype:'json',
+        contentType: 'application/json; charset=utf-8',
+        beforeSend: function(){ 
+            $('#platform-title').text(platform+' 리포트');
+            $('#overlay').fadeIn(300)
+        },
+        success: res => {
+            let data_list = [];
+            let artist_list = [];
+            data_list = res.data //필터링 데이터
+            artist_list = res.artists //DB 아티스트 리스트
+            platform_header = res.platform //수집 항목
+
+
+            console.log(data_list);
+
+
+            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
+            crawling_artist_list = res.crawling_artist_list
+
+            let db_artist_list = [] //DB 에 있는 아티스트 리스트
+            for (let i = 0; i<artist_list.length; i++){
+                db_artist_list.push(artist_list[i]);
+            }
+
+            console.log(platform_header);
+            $('#overlay').fadeOut(300)
+
+            $('#data-report-headers').eq(0).empty();
+            $('#board').eq(0).empty();
+            if(type === '누적'){
+                $('#update-data').show();
+            } else{
+                $('#update-data').hide();
+            }
+            $('#platform-title').text(platform+' 리포트');
+            if(res.data === 'no data'){
+                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
+            } else{
+                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
+            }
+        },
+        error: e => {
+            $('#overlay').fadeOut(300)
+            console.log(e);
+            if(type === '기간별'){
+                var result = JSON.parse(e.responseText);
+                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
+                $('#data-report-headers').eq(0).empty();
+                $('#board').eq(0).empty();
+            }
+        },
+    })
+}
+
 
 var Month = ['None','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 var MonthNum = ['None','01','02','03','04','05','06','07','08','09','10','11','12']
@@ -59,6 +140,7 @@ $(document).on('click','input[name=refresh]',function(){
     refresh();
 })
 
+//date input change button
 
   $(document).on('click','input[name=day]',function(){
     if($(this).hasClass("date-selected")){
@@ -77,6 +159,13 @@ $(document).on('click','input[name=refresh]',function(){
     month = ("0" + (1 + today.getMonth())).slice(-2);
     day = ("0" + today.getDate()).slice(-2);
     $('input[name=end_date]').val(year+'-'+month+'-'+day);
+
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    var type = $(':radio[name="view_days"]:checked').val();
+
+    ajax(type,platform,start_date,end_date)
  })
  
  $(document).on('click','input[name=week]',function(){
@@ -96,6 +185,13 @@ $(document).on('click','input[name=refresh]',function(){
     month = ("0" + (1 + today.getMonth())).slice(-2);
     day = ("0" + today.getDate()).slice(-2);
     $('input[name=end_date]').val(year+'-'+month+'-'+day);
+    
+    var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    var type = $(':radio[name="view_days"]:checked').val();
+
+    ajax(type,platform,start_date,end_date)
   })
  
  $(document).on('click','input[name=month]',function(){
@@ -115,6 +211,14 @@ $(document).on('click','input[name=refresh]',function(){
      month = ("0" + (1 + today.getMonth())).slice(-2);
      day = ("0" + today.getDate()).slice(-2);
      $('input[name=end_date]').val(year+'-'+month+'-'+day); 
+
+
+     var platform = $(".contents-platforms").find('.platform-selected').val(); 
+    var start_date = $('input[name=start_date]').val();
+    var end_date = $('input[name=end_date]').val();
+    var type = $(':radio[name="view_days"]:checked').val();
+
+    ajax(type,platform,start_date,end_date)
   })
 
 
