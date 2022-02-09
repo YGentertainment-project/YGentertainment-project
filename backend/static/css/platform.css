@@ -249,7 +249,7 @@ input[type='checkbox']:checked:after {
     justify-content: center;
 }
 
-#attr_add_button, #attr_delete_button{
+/* #attr_add_button, #attr_delete_button{
     text-align: center;
     border: 1px solid black;
     border-radius: 50px;
@@ -259,7 +259,7 @@ input[type='checkbox']:checked:after {
     align-items: flex-end;
     justify-self: flex-end;
     margin-bottom: 5px;
-}
+} */
 
 /* loading bar */
 .loading-box{

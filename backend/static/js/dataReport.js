@@ -1055,6 +1055,8 @@ $("#excel-form-open2").click(function(){
     document.getElementById("excel_form2").style.display = "flex";
     document.getElementById("excel_form3").style.display = "none";
     document.getElementById("excel_form4").style.display = "none";
+    document.getElementById('data_excel_download_form').style.display = "block";
+    document.getElementById('data_excel_download_span').style.display = "none";
 });
 $("#excel-form-open3").click(function(){
     document.getElementById("excel_form1").style.display = "none";
@@ -1123,3 +1125,8 @@ $('input[name=end_date]').hide()
 $('input[name=day]').hide()
 $('input[name=week]').hide()
 $('input[name=month]').hide()
+
+document.getElementById('excel-btn2').onclick = function(){
+    document.getElementById('data_excel_download_form').style.display = "none";
+    document.getElementById('data_excel_download_span').style.display = "block";
+}
