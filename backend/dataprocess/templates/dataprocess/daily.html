@@ -62,7 +62,7 @@
 
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
-            <span>수집정보 - 엑셀 업로드</span>
+            <span>수집 정보 - 엑셀 업로드</span>
             <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
@@ -81,7 +81,7 @@
 
    <div class="excel_form" id="excel_form4">
     <div class="popup_button_layout">
-        <span>인증정보 - 엑셀 업로드</span>
+        <span>로그인 정보 - 엑셀 업로드</span>
         <button  class="btn btn-primary border-0 shadow-btn" id="close_button4" style="font-size: 10px !important; font-weight: bold;">닫기</button>
     </div>
     <div style="height: 25px;"></div>
@@ -116,7 +116,8 @@
                     <input class="btn btn-gray-200" type="button" name="month" style="margin: 3px;" value="1개월"></input>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: row; width:50%" class="row_layout flexmiddle_layout card border-0 shadow">
+            <div style="display: flex; flex-direction: row; width:50%;
+            justify-content: flex-end !important;" class="row_layout flexmiddle_layout card border-0 shadow">
                <div style="margin-right: 2.5px;">
                     <span style="font-size: 14px; font-weight:bold;">리포트 추출</span>
                     <div class="row_layout">
@@ -130,7 +131,7 @@
                </div>
                <hr>
                 <div style="margin-left: 2.5px; margin-right: 2.5px;">
-                    <span style="font-size: 14px; font-weight:bold;">수집정보</span>
+                    <span style="font-size: 14px; font-weight:bold;">수집 정보</span>
                     <div class="row_layout">
                         <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" id="excel-form-open3">엑셀 업로드</button>
                     </div>
@@ -140,7 +141,7 @@
                     </div>
                 </div>
                 <hr>
-                <div style="margin-left: 2.5px;">
+                <div style="margin-left: 2.5px; margin-right: 10px;">
                     <span style="font-size: 14px; font-weight:bold;">로그인 정보</span>
                     <div class="row_layout">
                         <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
@@ -161,7 +162,7 @@
                 {% for platform in platforms %}
                 <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>
                 {% endfor %}
-                {%else%}
+                {% else %}
                 <div>플랫폼이 없습니다.</div>
                 {% endif %}
             </div>
