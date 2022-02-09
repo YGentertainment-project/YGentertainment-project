@@ -29,7 +29,7 @@ services:
 
   yg-data-analysis:
     image: data-analysis
-    # image: python:3.9-alpine3.13 #python alpine
+    # TODO: change to use ghcr image
     container_name: yg-data-analysis
     restart: always
     depends_on:
