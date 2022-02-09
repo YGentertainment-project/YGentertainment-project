@@ -214,7 +214,11 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                                 dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
                                 dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                             } else{
-                                dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
+                                if(typeof(datas[jsonIdx][platform_list[j]+'_end']) == 'undefined'){
+                                    dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]]) +'</td>')
+                                } else{
+                                    dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
+                                }
                                 dataCol = $('<td>-</td>')
                             }
                         } else{
