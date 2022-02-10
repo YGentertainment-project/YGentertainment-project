@@ -41,19 +41,20 @@
    ```
    
  ### 5) MariaDB 관리
-   ```
-   docker exec -it yg-mariadb sh
-   ```
+ - DB 컨테이너 
+    ```
+    docker exec -it yg-mariadb sh
+    ```
  - 쉘이 켜진 것을 확인
    ```
    mysql -uroot -pygenter
    ```
   - MariaDB 로그인 됨을 확인
   
-   ```
-   SHOW DATABASES;
-   USE ygenter;
-   ```
+    ```
+    SHOW DATABASES;
+    USE ygenter;
+    ```
   - Ygenter DB 존재 여부를 확인후 ygenter DB로 접속
   - 이후 쿼리를 이용해서 DB를 확인하시면 됩니다. (ex SHOW tables;)
   
