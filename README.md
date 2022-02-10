@@ -6,90 +6,102 @@
  * [Tech Stack](#Tech_stack)
  * [Advisor](#Advisor)
 
-## <div id = "About_Project">About Project 💡</div>
-### 설치절차
+# <div id = "About_Project">About Project 💡</div>
+## Production Setting 설치절차
  * 사측에서 제공한 서버에 이미 설치했지만, 서버를 옮기는 등 추가적으로 설치수요가 발생하는 경우를 대비해 서버 설치 절차를 기록합니다.
- 1)	secret.key 생성
- -	경로: YGENTERTAINMENT-PROJECT/backend/
+ ### 1)	secret.key 생성
+ - 경로: YGENTERTAINMENT-PROJECT/backend/
    ```
    echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > data/config/secret.key
    ```
  
- 2)	가상환경 생성 및 활성화, 필요한 패키지 설치
- -	경로: YGENTERTAINMENT-PROJECT/
+ ### 2)	가상환경 생성 및 활성화, 필요한 패키지 설치
+ - 경로: YGENTERTAINMENT-PROJECT/
    ```
    python3 -m venv venv
    source venv/bin/activate
    pip3 install -r backend/deploy/requirements.txt
    ```
- -	가상환경을 사용하지 않아도 되는 경우 마지막 명령어만 사용
+ - 가상환경을 사용하지 않아도 되는 경우 마지막 명령어만 사용
  
- 3)	Docker 설치
- -	제공한 repository를 그대로 사용하시는 경우 GitHub Container Registry를 통해 자동 이미지 빌드 Action를 통해 생성된 이미지를 사용할 수 있지만, 그렇지 않은 경우 직접 빌드하셔야 합니다.
+ ### 3) Docker 설치
+ - 제공한 repository를 그대로 사용하시는 경우 GitHub Container Registry를 통해 자동 이미지 빌드 Action를 통해 생성된 이미지를 사용할 수 있지만, 그렇지 않은 경우 직접 빌드하셔야 합니다.
   (GitHub Actions를 이용한 자동 빌드: https://blog.outsider.ne.kr/1531)
- -	또한 기타의 경우 docker-compose 파일을 수정하셔야 합니다.
- -	경로: YGENTERTAINMENT-PROJECT/
+ - 또한 기타의 경우 docker-compose 파일을 수정하셔야 합니다.
+ - 경로: YGENTERTAINMENT-PROJECT/
    ```
    docker build -t data-analysis .
    docker-compose up -d
    ```
    
- 4)	Docker container 접속
- -	DB나 서버 container에 접속해야 확인해야하는 경우 다음 명령어를 사용하시면 됩니다.
+ ### 4) Docker container 접속
+ - DB나 서버 container에 접속해야 확인해야하는 경우 다음 명령어를 사용하시면 됩니다.
    ```
    docker exec -it {Container Name} sh
    ```
    
- 5)	개발용 Setting 사용법
- -	경로 /backend
-   ```
-   ./init_db.sh
-   python3 manage.py runserver
-   ```
-   
- 6)	MariaDB 관리
+ ### 5) MariaDB 관리
    ```
    docker exec -it yg-mariadb sh
    ```
- -	쉘이 켜진 것을 확인
+ - 쉘이 켜진 것을 확인
    ```
    mysql -uroot -pygenter
    ```
-  -	MariaDB 로그인 됨을 확인
+  - MariaDB 로그인 됨을 확인
   
    ```
-	  SHOW DATABASES;
+   SHOW DATABASES;
    USE ygenter;
    ```
-  -	Ygenter DB 존재 여부를 확인후 ygenter DB로 접속
-  -	이후 쿼리를 이용해서 DB를 확인하시면 됩니다. (ex SHOW tables;)
+  - Ygenter DB 존재 여부를 확인후 ygenter DB로 접속
+  - 이후 쿼리를 이용해서 DB를 확인하시면 됩니다. (ex SHOW tables;)
   
-  7)	Crawler 사용
-  - 추가 
+  ### 6) Crawler 사용
+  - 추가 예정<br><br>
+  
+## Dev Setting 설치 절차
+ ### 1) secret.key 생성
+ - 경로: YGENTERTAINMENT-PROJECT/backend/
+   ```
+   echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > data/config/secret.key
+   ```
+   
+ ### 2) 개발용 DB 컨테이너 생성
+ - 경로: YGENTERTAINMENT-PROJECT/backend/
+   ```
+   ./init_db.sh
+   ```
+  
+ ### 3) 서버 실행
+  - 경로: YGENTERTAINMENT-PROJECT/backend/
+    ```
+    python3 manage.py runserver
+    ```
 
-## <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
-#### 김민희(팀장) [@minhee33](https://github.com/minhee33)<br>
+# <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
+### 김민희(팀장) [@minhee33](https://github.com/minhee33)<br>
 > Web framework - Flask 조사<br>
 > Backend 개발<br>
 
-#### 김정규 [@kingh2160](https://github.com/kingh2160)<br>
+### 김정규 [@kingh2160](https://github.com/kingh2160)<br>
 > Crawler 설계 및 개발<br>
 
-#### 양승찬 [@Yangseungchan](https://github.com/Yangseungchan)<br>
+### 양승찬 [@Yangseungchan](https://github.com/Yangseungchan)<br>
 > Crawler 설계 및 개발<br>
 > Rabbitmq-celery를 사용한 비동기 프로세스 개발<br>
 
-#### 임수민 [@soomin9106](https://github.com/soomin9106)<br>
+### 임수민 [@soomin9106](https://github.com/soomin9106)<br>
 > Web Framework - Django 조사 및 세미나<br>
 > Frontent 개발<br>
 
-#### 최영우 [@cyw320712](https://github.com/cyw320712)<br>
+### 최영우 [@cyw320712](https://github.com/cyw320712)<br>
 > 시스템 아키텍쳐 설계 및 개발 <br>
 > 서버 및 도커 설계 및 개발, 유지보수 <br>
 > backend 개발 <br>
 
 
-## <div id = "Documents">Documentation 📑</div>
+# <div id = "Documents">Documentation 📑</div>
 ### Project Schedule
 | 목표                           | 일정                 | 상태 |
 |--------------------------------|----------------------|--------|
@@ -117,7 +129,7 @@
  #### DB
 > MariaDB <br>
 
-## <div id = "Contribute">Git Contribute 🔨</div>
+# <div id = "Contribute">Git Contribute 🔨</div>
 모든 contributer는 해당 지침에 따라 commit해야합니다.<br>
 해당 메뉴에서는 이 repository에서 채택한 git branch 전략을 비롯해 전반적인 workflow를 설명합니다.<br>
 
@@ -140,6 +152,6 @@
  > git statsh list: 저장된 stash list 확인<br>
  > git stash apply {stash명}: 해당 stash 저장 (stash명 입력 없는 경우 가장 최근 stash적용)<br>
 
-## <div id="Advisor">Advisor</div>
+# <div id="Advisor">Advisor</div>
 ### 황영숙 교수님
 
