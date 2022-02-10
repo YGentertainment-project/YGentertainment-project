@@ -72,8 +72,6 @@ def base(request):
     '''
     platforms = Platform.objects.all() #get all platform info from db
     values = {
-        'first_depth' : '데이터 리포트',
-        'second_depth': '일별 리포트',
         'platforms': platforms
     }
     request = logincheck(request)
