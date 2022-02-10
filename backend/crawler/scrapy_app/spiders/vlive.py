@@ -1,4 +1,5 @@
 import json
+from json import JSONDecodeError
 
 import scrapy
 from bs4 import BeautifulSoup
@@ -38,8 +39,8 @@ class VliveSpider(scrapy.Spider):
             # 오류일 경우, 더 이상 진행할 수 없습니다.
         else:
             script = script_target.text
-            json_object = json.loads(script[27:-308])
             try:
+                json_object = json.loads(script[27:-308])
                 members = json_object["channel"]["channel"]["memberCount"]
                 videoplay = json_object["channel"]["channel"]["videoPlayCountOfStar"]
                 videocount = json_object["channel"]["channel"]["videoCountOfStar"]
@@ -48,15 +49,20 @@ class VliveSpider(scrapy.Spider):
                 crawlinglogger.error(f"[400], {artist}, vlive, {url}")
                 # 크롤링 해야할 JSON 부분의 형식이 바뀌어 element를 찾지 못하는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.
-            item = VliveItem()
-            item["artist"] = artist
-            item["likes"] = videolike
-            item["members"] = members
-            item["plays"] = videoplay
-            item["videos"] = videocount
-            item["url"] = response.url
-            item["reserved_date"] = datetime.now().date()
-            yield item
+            except JSONDecodeError:
+                crawlinglogger.error(f"[400] {artist}, vlive, {url}")
+                # 해당 페이지의 Element가 없는 경우입니다.
+                # 오류일 경우 item을 yield 하지 않아야 합니다.
+            else:
+                item = VliveItem()
+                item["artist"] = artist
+                item["likes"] = videolike
+                item["members"] = members
+                item["plays"] = videoplay
+                item["videos"] = videocount
+                item["url"] = response.url
+                item["reserved_date"] = datetime.now().date()
+                yield item
 
     def errback(self, failure):
         if failure.check(HttpError):
