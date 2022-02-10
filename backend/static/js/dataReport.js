@@ -790,8 +790,15 @@ $('#update').click(function(){
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(jsonFieldDatas),
+        beforeSend: function(){
+            $('#data-report-headers').eq(0).empty();
+            $('#board').eq(0).empty();
+            $('#overlay').fadeIn(300)
+        },
         success: res => {
             alert("저장되었습니다.");
+            $('#overlay').fadeOut(300);
+
             $('#changed-data-list').eq(0).empty();
             changedDatas = [];
 
@@ -800,8 +807,6 @@ $('#update').click(function(){
             data_list = res.data //필터링 데이터
             artist_list = res.artists //DB 아티스트 리스트
             platform_header = res.platform //수집 항목
-
-            console.log(data_list);
 
             let crawling_artist_list = [] //크롤링 된 아티스트 리스트
             crawling_artist_list = res.crawling_artist_list
@@ -835,7 +840,6 @@ $('#update').click(function(){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
             }
-            location.reload();
         },
     })
 
