@@ -51,6 +51,9 @@
             <button id="monitoring" type="button" class="btn btn-light" data-toggle="modal" data-target="#monitorModal">
                 모니터링
             </button>
+            <a class="btn btn-dark" href="{% url 'dataprocess:daily' %}">
+              데이터 리포트
+            </a>
         </div>
         <div id="progress">
             <div class="spinner-border text-primary crawler-loading" role="status">

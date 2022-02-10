@@ -259,7 +259,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
         error_details = [] # 전체 에러 디테일
         for day in range(0, day_diff + 1):
             for platform in platforms:
-                title_date = from_date_obj + timedelta(days=day)
+                title_date = from_date_obj + datetime.timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
                 log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
                 #log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
@@ -271,10 +271,20 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         if task_result is not None:
                             errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
                             for error_info in error_infos:
-                                artist_id = Artist.objects.get(name = error_info['artist']).id
-                                platform_id = Platform.objects.get(name =  error_info['platform']).id
-                                error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
-                                error_details.append(error_info)
+                                if error_info['type'] == '400':
+                                    artist_id = Artist.objects.get(name = error_info['artist']).id
+                                    if error_info['platform'] == 'crowdtangle': #instagram or facebook
+                                        splited_url = error_info['url'].split('&') #split url by & 
+                                        if "platform=facebook" in splited_url: #facebook case
+                                            platform_id = Platform.objects.get(name = 'facebook').id
+                                        else: #instagram case
+                                            platform_id = Platform.objects.get(name = 'instagram').id
+                                    else:
+                                        platform_id = Platform.objects.get(name = error_info['platform']).id
+                                    error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
+                                    error_details.append(error_info)
+                                else:
+                                     error_details.append(error_info)
 
         return JsonResponse({"data": self.paginate(error_details, page, limit)})
 
