@@ -63,6 +63,13 @@
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
             <span>수집 정보 - 엑셀 업로드</span>
+            <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" name="filename" value="collect_form" style="display:none;">
+                    <input type="text" name="type" value="export_form" style="display:none;">
+                    <button class="input-btn" 
+                    type="submit" style="font-size: 10px !important;">양식 다운로드</button>
+            </form>
             <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
@@ -82,6 +89,13 @@
    <div class="excel_form" id="excel_form4">
     <div class="popup_button_layout">
         <span>로그인 정보 - 엑셀 업로드</span>
+        <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" name="filename" value="login_form" style="display:none;">
+            <input type="text" name="type" value="export_form" style="display:none;">
+            <button class="input-btn" 
+            type="submit" style="font-size: 10px !important;">양식 다운로드</button>
+    </form>
         <button  class="btn btn-primary border-0 shadow-btn" id="close_button4" style="font-size: 10px !important; font-weight: bold;">닫기</button>
     </div>
     <div style="height: 25px;"></div>
@@ -101,8 +115,9 @@
 
    <div class="forms modal-open">
     <div>
-        <div style="display: flex; flex-direction: row;">
-            <div class="select-days card border-0 shadow">
+        <div style= "display: table; width: 100%;">
+            <div class="select-days card border-0 shadow"
+             style="white-space: nowrap; display: table-cell;">
                 <div class="select-days-day">
                     <label style="font-weight: bold;">조회 일자</label>
                     <input class="form-check-input" type="radio" name="view_days" value="누적" checked/> <label>누적</label>
@@ -110,54 +125,26 @@
                 </div>
                 <div class="select-days-date">
                     <input type="date" name="start_date" id="start_date"/> ~ <input type="date" name="end_date" id="end_date" /> <input class="btn btn-gray-200" type="button" name="refresh" style="margin: 3px;" value="날짜 초기화"></input>
-                    <br>
                     <input class="btn btn-gray-200" type="button" name="day" style="margin: 3px;" value="1일"></input>
                     <input class="btn btn-gray-200" type="button" name="week" style="margin: 3px;" value="1주"></input>
                     <input class="btn btn-gray-200" type="button" name="month" style="margin: 3px;" value="1개월"></input>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: row; width:50%;
-            justify-content: flex-end !important;" class="row_layout flexmiddle_layout card border-0 shadow">
-               <div style="margin-right: 2.5px;">
-                    <span style="font-size: 14px; font-weight:bold;">리포트 추출</span>
-                    <div class="row_layout">
-                        <button title="Excel파일로부터 크롤링데이터 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" class="excel-form-open" id="excel-form-open1">엑셀 업로드</button>
-                    </div>
-            
-                    <div class="row_layout">
-                        <button title="Excel파일로 크롤링데이터 추출(다운로드 경로)" class="input-btn" id="excel-form-open2"
-                        >엑셀 다운로드</button>
-                    </div>
-               </div>
-               <hr>
-                <div style="margin-left: 2.5px; margin-right: 2.5px;">
-                    <span style="font-size: 14px; font-weight:bold;">수집 정보</span>
-                    <div class="row_layout">
-                        <button title="Excel파일로부터 수집정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" id="excel-form-open3">엑셀 업로드</button>
-                    </div>
-                    <div class="row_layout"> 
-                        <!-- 숨겨진 버튼 -->
-                        <button class="btn btn-gray-200" style="color: transparent; background-color: transparent; box-shadow: none; border: none; cursor: default;">hidden</button>
-                    </div>
-                </div>
-                <hr>
-                <div style="margin-left: 2.5px; margin-right: 10px;">
-                    <span style="font-size: 14px; font-weight:bold;">로그인 정보</span>
-                    <div class="row_layout">
-                        <button title="Excel파일로부터 인증정보 DB에 저장하기" style="margin-bottom: 5px;" class="input-btn" class="excel-btn excel-form-open" id="excel-form-open4">엑셀 업로드</button>
-                    </div>
-                    <div class="row_layout"> 
-                        <!-- 숨겨진 버튼 -->
-                        <button class="btn btn-gray-200" style="color: transparent; background-color: transparent; box-shadow: none; border: none; cursor: default;">hidden</button>
-                    </div>
-                </div>
+
+            <div style="width: 4px;"></div>
+
+            <div style="display: flex; flex-direction: row; width: 50%; display: table-cell; vertical-align: middle;
+                justify-content: center !important;" class="row_layout flexmiddle_layout card border-0 shadow">
+                <button style="margin: 0 7px 0 7px;" class="input-btn" id="excel-form-open2">리포트 다운로드</button>
+                <button style="margin: 0 7px 0 7px;" class="input-btn" class="excel-form-open" id="excel-form-open1">리포트 업로드</button>
+                <button style="margin: 0 7px 0 7px;" class="input-btn" id="excel-form-open3">수집정보 업로드</button>
+                <button style="margin: 0 7px 0 7px;" class="input-btn" class="excel-btn excel-form-open" id="excel-form-open4">로그인 업로드</button>
             </div>
 
         </div>
         <div class="contents">
             <div class="contents-platforms">
                 <label style="margin-bottom: 5px; font-weight: bold; font-size: 14px;">플랫폼</label>
-                <!--DB 데이터로 변경 필요-->
                 {% if platforms %}
                 {% for platform in platforms %}
                 <option class="platform-name" name="{{platform.name}}" value="{{platform.name}}">{{platform.name}}</option>

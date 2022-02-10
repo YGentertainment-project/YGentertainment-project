@@ -29,6 +29,8 @@ import datetime
 from datetime import timedelta
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
+from django.http import FileResponse
+from django.core.files.storage import FileSystemStorage
 import logging
 
 formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
@@ -192,6 +194,17 @@ def daily(request):
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
+        elif type == 'export_form':
+            file_name = request.POST['filename']
+            if file_name == '':
+                return None
+            file_path = os.path.abspath("media/form")
+            file_name = os.path.basename(f"media/form/{file_name}.xlsx")
+            fs = FileSystemStorage(file_path)
+            response = FileResponse(fs.open(file_name, 'rb'),
+                                    content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = f'attachment; filename="{file_name}.xlsx"'
+            return response
     
 def platform(request):
      '''
