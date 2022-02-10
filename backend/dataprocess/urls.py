@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 app_name = "dataprocess"
 
 urlpatterns = [
-    path("", daily, name="base"),
+    path("", base, name="base"),
     path("daily/", daily, name="daily"),
     path("platform/", platform, name="platform"),
     path("artist/", artist, name="artist"),
