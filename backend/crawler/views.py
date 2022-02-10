@@ -90,8 +90,7 @@ def crawl(request):
         body_unicode = request.body.decode("utf-8")
         body = json.loads(body_unicode)  # body값 추출
         platform = body.get("platform")
-        crawl_target = extract_target_list(platform)
-        task = direct_crawling.apply_async(args=[platform, crawl_target])
+        task = direct_crawling.apply_async(args=[platform, "daily"])
         return JsonResponse({"task_id": task.id, "status": "started"})
 
 
@@ -330,8 +329,12 @@ def monitors(request):
             for platform in platforms:
                 title_date = from_date_obj + timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
-                log_dir = f"../data/log/crawler/{platform}/{title_str}"  # TODO: 배포환경시 경로
-                # log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+
+                if production_env:
+                    log_dir = f"../data/log/crawler/{platform}/{title_str}"  # TODO: 배포환경시 경로
+                else:
+                    log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+
                 if os.path.isdir(log_dir) is True:
                     file_list = os.listdir(log_dir)
                     for file_name in file_list:

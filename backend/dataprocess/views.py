@@ -11,17 +11,13 @@ from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSe
 from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
 from crawler.views import get_task_result,parse_logfile
-from django.views.decorators.csrf import csrf_exempt
 
-from .resources import *
 from .serializers import *
 from .models import *
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
-from django.views.decorators.http import require_http_methods 
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from utils.decorators import login_required
 from utils.api import APIView, validate_serializer
 from utils.shortcuts import get_env
 
@@ -30,6 +26,7 @@ from datetime import timedelta
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
 import logging
+from django_celery_beat.models import PeriodicTask
 
 formatter = logging.Formatter('[%(asctime)s] - [%(levelname)s] - [%(name)s:%(lineno)d]  - %(message)s', '%Y-%m-%d %H:%M:%S')
 serverlogger = logging.getLogger(__name__)
@@ -590,7 +587,7 @@ class CollectTargetItemAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-    # @login_required
+    # @login_required TODO : 스케줄 수정 시 해당하는 아티스트가 없으면 스케줄링에서 삭제하기
     def put(self, request):
         '''
         CollectTargetItem update api
@@ -641,6 +638,26 @@ class CollectTargetItemAPI(APIView):
                     break
             Schedule.objects.filter(collect_target_id = collecttarget_object.id).update(
                     schedule_type = schedule_type, execute_time = execute_time, period = period)
+
+
+            # Schedule 초기화 여부를 확인하는 부분
+            prev_schedule_type = "daily"
+            if schedule_type == "daily":
+                prev_schedule_type = "hour"
+            no_schedule_collect_targets = True
+            for collecttarget_value in collecttarget_objects:
+                prev_schedule_objects = Schedule.objects.filter(schedule_type = prev_schedule_type, collect_target_id = collecttarget_value['id'])
+                if prev_schedule_objects.exists():
+                    no_schedule_collect_targets = False
+                    break
+
+            if no_schedule_collect_targets:
+                try:
+                    schedule_name = f"{platform}_{prev_schedule_type}_crawling"
+                    found_schedule = PeriodicTask.objects.get(name=schedule_name)
+                    found_schedule.delete()
+                except Schedule.DoesNotExist:
+                    found_schedule = None
                 
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
