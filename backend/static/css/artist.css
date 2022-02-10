@@ -148,6 +148,8 @@
 }
 
 .artist-name{
+    font-size: 14px;
+    padding: 4px 12px 4px 12px !important;
     padding-right: 10px;
     text-align: center;
     width: 30%;
@@ -161,6 +163,8 @@
 }
 
 .artist-name-select{
+    font-size: 14px;
+    padding: 4px 12px 4px 12px !important;
     line-height: 40px;
     padding-left: 10px;
 }
