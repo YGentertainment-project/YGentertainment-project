@@ -77,8 +77,7 @@ def base(request):
         'platforms': platforms
     }
     request = logincheck(request)
-    print("main")
-    return render(request, 'dataprocess/main.html',values)
+    return render(request, 'dataprocess/base.html',values)
     
 @csrf_exempt
 def daily(request):

@@ -274,7 +274,7 @@ $(document).on('change','#start_date',function(){
 
 
     $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
+        url: '/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -359,7 +359,7 @@ $(document).on('change','#end_date',function(){
     } 
 
     $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
+        url: '/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -438,7 +438,7 @@ $(document).on('click','.platform-name',function(){
     }
 
     $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
+        url: '/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -557,7 +557,7 @@ $('#update-data').click(function(){
             'user_creation[]': user_creation, 
             'start_date':start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("Successfully save!");
                 let data_list = [];
@@ -620,7 +620,7 @@ $('#update-data').click(function(){
             'followers[]': followers, 
             'start_date': start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -686,7 +686,7 @@ $('#update-data').click(function(){
             'streams[]': streams, 
             'start_date': start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -756,7 +756,7 @@ $('#update-data').click(function(){
             'plays[]':plays, 
             'start_date':start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -809,7 +809,7 @@ $('#update-data').click(function(){
             'followers[]' : followers,  
             'start_date':start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -872,7 +872,7 @@ $('#update-data').click(function(){
             'likes[]' : likes,  
             'start_date':start_date,
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -936,7 +936,7 @@ $('#update-data').click(function(){
             'user_creation[]' : user_creation,  
             'start_date':start_date
             },
-           url: '/dataprocess/api/daily/',
+           url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 let data_list = [];
@@ -992,7 +992,7 @@ $('#update-data').click(function(){
             'weverses[]' : weverses,  
             'start_date':start_date
             },
-            url: '/dataprocess/api/daily/',
+            url: '/api/daily/',
             success: res => {
                 alert("저장되었습니다.");
                 console.log(res.success);

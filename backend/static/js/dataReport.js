@@ -37,7 +37,7 @@ function ajax(type,platform,start_date,end_date){
     }
 
     $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
+        url: '/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -101,7 +101,7 @@ function ajax(type,platform,start_date,end_date){
 
 function ajax_only(type,platform,start_date,end_date){
     $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
+        url: '/api/daily/?' + $.param({
             platform: platform,
             type: type,
             start_date: start_date,
@@ -789,7 +789,7 @@ $('#update').click(function(){
 
     //update or create
     $.ajax({
-        url: '/dataprocess/api/daily/',
+        url: '/api/daily/',
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(jsonFieldDatas),

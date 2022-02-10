@@ -52,7 +52,7 @@ function crawler_error_table(page){
     const fromDate = dateString
     const toDate = dateString
     $.ajax({
-        url: '/dataprocess/api/crawler_error_table/?'+ $.param({
+        url: '/api/crawler_error_table/?'+ $.param({
             page:page,
             fromdate: fromDate,
             todate: toDate,
@@ -151,7 +151,7 @@ $(document).on('click','#save-error-url',function(){
 
 
     $.ajax({
-        url: '/dataprocess/api/platform_of_artist/',
+        url: '/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),

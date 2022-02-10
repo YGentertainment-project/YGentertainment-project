@@ -73,13 +73,13 @@ $('#add-submit').click(function(e){
     //console.log(JSON.stringify(data));
 
     $.ajax({
-        url: "/dataprocess/api/artist/",
+        url: "/api/artist/",
         type: 'POST',
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
             alert("저장되었습니다.");
-            location.href = "/dataprocess/artist/";
+            location.href = "/artist/";
         },
         error: e => {
             console.log(e);
@@ -111,7 +111,7 @@ $('#save-artists').click(function(){
         datas.push(tmp_json);
     }
     $.ajax({
-        url: '/dataprocess/api/artist/',
+        url: '/api/artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -136,7 +136,7 @@ $('input[name=artist-name]').click(function(){
     // console.log(artist);
 
     $.ajax({
-        url: '/dataprocess/api/platform_of_artist/',
+        url: '/api/platform_of_artist/',
         type: 'GET',
         datatype:'json',
         data : {'artist':artist},
@@ -212,7 +212,7 @@ $('#save-artists-platform').click(function(){
     console.log(datas);
 
     $.ajax({
-        url: '/dataprocess/api/platform_of_artist/',
+        url: '/api/platform_of_artist/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(datas),
@@ -288,7 +288,7 @@ $(document).on('click','.platform-names',function(){
     $(this).addClass("clicked-input-btn");
 
     $.ajax({
-        url: '/dataprocess/api/collect_target_item/',
+        url: '/api/collect_target_item/',
         type: 'GET',
         datatype:'json',
         data : {'platform': platform, 'artist': artist_name},
@@ -455,7 +455,7 @@ $(document).on('click','#save-list',function(){
         schedule_type = "hour";
     }
     $.ajax({
-        url: '/dataprocess/api/collect_target_item/',
+        url: '/api/collect_target_item/',
         type: 'PUT',
         datatype:'json',
         data :JSON.stringify({
@@ -503,7 +503,7 @@ function delete_collect_target_item(id, index){
     if (confirm("삭제하시겠습니까?")) {
         var data = {"id": id};
         $.ajax({
-            url: "/dataprocess/api/collect_target_item/",
+            url: "/api/collect_target_item/",
             type: 'DELETE',
             datatype:'json',
             data: JSON.stringify(data),
