@@ -626,7 +626,6 @@ class CollectTargetItemAPI(APIView):
             platform_object = Platform.objects.filter(name = collecttargetitem['platform']).first()
             collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id).first()
             for collecttargetitem_object in collecttargetitem_list:
-                # 여기 수정!!!!
                 collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'],
                                                                           target_name=collecttargetitem_object['target_name'], xpath=collecttargetitem_object['xpath']).first()
                 # 없으면 새로 저장
@@ -1034,19 +1033,26 @@ class ScheduleAPI(APIView):
         try:
             new_schedule = JSONParser().parse(request)
             schedule_type = new_schedule['schedule_type']
-            platform_objects = Platform.objects.filter(name = new_schedule['platform'])
-            if platform_objects.exists():
-                collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
-                collecttarget_objects = collecttarget_objects.values()
-                for collecttarget_object in collecttarget_objects:
-                    if schedule_type == 'hour':
-                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
-                        if schedule_objects.exists():
-                            schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
-                    elif schedule_type == 'daily':
-                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'daily')
-                        if schedule_objects.exists():
-                            schedule_objects.update(execute_time = datetime.time(new_schedule['execute_time_hour'],new_schedule['execute_time_minute'],0))
+            platform_list = [new_schedule['platform']]
+            # instagram과 facebook의 경우 같은 crowdtangle로 묶여있기 때문에 같은 스케줄로 통일
+            if new_schedule['platform'] == 'instagram':
+                platform_list.append('facebook')
+            elif new_schedule['platform'] == 'facebook':
+                platform_list.append('instagram')
+            for platform_name in platform_list:
+                platform_objects = Platform.objects.filter(name = platform_name)
+                if platform_objects.exists():
+                    collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
+                    collecttarget_objects = collecttarget_objects.values()
+                    for collecttarget_object in collecttarget_objects:
+                        if schedule_type == 'hour':
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
+                            if schedule_objects.exists():
+                                schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
+                        elif schedule_type == 'daily':
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'daily')
+                            if schedule_objects.exists():
+                                schedule_objects.update(execute_time = datetime.time(new_schedule['execute_time_hour'],new_schedule['execute_time_minute'],0))
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
