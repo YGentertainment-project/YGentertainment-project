@@ -292,13 +292,15 @@ def parse_logfile(filepath):
             last_word = log_words[-1]
             if "https" in last_word:
                 error_info = dict()
-                error_info['type'] = log_words[3].strip('[]')
-                error_info['artist'] = log_words[4]
-                error_info['platform'] = log_words[5]
+                log_info = log_words[0].split(' ')
+                error_info['date'] = log_info[0]
+                error_info['time'] = log_info[1]
+                error_info['type'] = log_info[-1].strip('[]')
+                error_info['artist'] = log_words[1]
+                error_info['platform'] = log_words[2]
                 error_info['url'] = last_word
                 error_infos.append(error_info)
                 errors += 1
-                print(error_info)
     return errors, error_infos
 
 # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
