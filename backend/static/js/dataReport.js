@@ -222,6 +222,7 @@ $(document).on('click','input[name=refresh]',function(){
     var end_date = $('input[name=end_date]').val();
     var type = $(':radio[name="view_days"]:checked').val();
 
+    goTop()
     ajax(type,platform,start_date,end_date)
  })
  
@@ -248,6 +249,7 @@ $(document).on('click','input[name=refresh]',function(){
     var end_date = $('input[name=end_date]').val();
     var type = $(':radio[name="view_days"]:checked').val();
 
+    goTop()
     ajax(type,platform,start_date,end_date)
   })
  
@@ -275,6 +277,7 @@ $(document).on('click','input[name=refresh]',function(){
     var end_date = $('input[name=end_date]').val();
     var type = $(':radio[name="view_days"]:checked').val();
 
+    goTop()
     ajax(type,platform,start_date,end_date)
   })
 
