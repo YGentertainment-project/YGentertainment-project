@@ -712,60 +712,8 @@ $('.btn-close').click(function(){
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
 
-
-    $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let data_list = [];
-            let artist_list = [];
-            data_list = res.data //필터링 데이터
-            artist_list = res.artists //DB 아티스트 리스트
-            platform_header = res.platform //수집 항목
-
-
-            console.log(data_list);
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            crawling_artist_list = res.crawling_artist_list
-
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-
-            console.log(platform_header);
-
-            $('#data-report-headers').eq(0).empty();
-            $('#board').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform+' 리포트');
-            if(res.data === 'no data'){
-                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
-            } else{
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            }
-        },
-        error: e => {
-            console.log(e);
-            if(type === '기간별'){
-                var result = JSON.parse(e.responseText);
-                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
-            }
-            location.reload();
-        },
-    })
+    goTop()
+    ajax_only(type,platform,start_date,end_date)
 
 })
 
@@ -782,61 +730,8 @@ $('.btn-close-2').click(function(){
     var start_date = $('input[name=start_date]').val();
     var end_date = $('input[name=end_date]').val();
 
-    $.ajax({
-        url: '/dataprocess/api/daily/?' + $.param({
-            platform: platform,
-            type: type,
-            start_date: start_date,
-            end_date: end_date,
-        }),
-        type: 'GET',
-        datatype:'json',
-        contentType: 'application/json; charset=utf-8',
-        success: res => {
-            let data_list = [];
-            let artist_list = [];
-            let platform_list = [];
-            data_list = res.data //필터링 데이터
-            artist_list = res.artists //DB 아티스트 리스트
-            platform_header = res.platform //수집 항목
-
-
-            console.log(data_list);
-
-            let crawling_artist_list = [] //크롤링 된 아티스트 리스트
-            crawling_artist_list = res.crawling_artist_list
-
-            let db_artist_list = [] //DB 에 있는 아티스트 리스트
-            for (let i = 0; i<artist_list.length; i++){
-                db_artist_list.push(artist_list[i]);
-            }
-
-            console.log(platform_header);
-
-            $('#data-report-headers').eq(0).empty();
-            $('#board').eq(0).empty();
-            if(type === '누적'){
-                $('#update-data').show();
-            } else{
-                $('#update-data').hide();
-            }
-            $('#platform-title').text(platform+' 리포트');
-            if(res.data === 'no data'){
-                showEmptyTable(platform_header,db_artist_list,crawling_artist_list)
-            } else{
-                showCrawledData(type,platform_header,data_list,db_artist_list,crawling_artist_list)
-            }
-        },
-        error: e => {
-            console.log(e);
-            if(type === '기간별'){
-                var result = JSON.parse(e.responseText);
-                alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
-            }
-            location.reload();
-        },
-    })
-
+    goTop()
+   ajax_only(type,platform,start_date,end_date)
 })
 
 $('#update').click(function(){
