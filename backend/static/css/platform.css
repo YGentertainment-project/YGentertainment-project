@@ -95,6 +95,8 @@ input[type='checkbox']:checked:after {
     flex-direction: row;
     align-items: flex-end;
     justify-content: flex-end;
+    position: sticky;
+    top: -20px;
 }
 
 .button-layout{
@@ -244,9 +246,10 @@ input[type='checkbox']:checked:after {
 
 .attr_button_layout{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     justify-content: center;
+    margin-top: 50px;
 }
 
 /* #attr_add_button, #attr_delete_button{

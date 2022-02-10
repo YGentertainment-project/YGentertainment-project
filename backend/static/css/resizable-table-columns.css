@@ -10,7 +10,7 @@ th.resizeable {
 }
 .resiazable_column{
   text-align: center;
-  height: 650px;
+  height: 760px;
   overflow-y: scroll;
   border: 1px solid lightgray;
   border-radius: 10px;

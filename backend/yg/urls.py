@@ -19,7 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("config/", include("config.urls")),
-    path("dataprocess/", include("dataprocess.urls")),
-    path("", include("account.urls")),
+    path("", include("dataprocess.urls")),
+    path("account/", include("account.urls")),
     path("crawler/", include("crawler.urls")),
 ]

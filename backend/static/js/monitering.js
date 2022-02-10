@@ -111,7 +111,7 @@ $(document).on('click','#save-schedule',function(){
 
     // schedule table에 저장
     $.ajax({
-        url: '/dataprocess/api/schedule/',
+        url: '/api/schedule/',
         type: 'PUT',
         data: JSON.stringify({ "platform": platform, "execute_time_hour": hour, "execute_time_minute": minute, 'schedule_type':'daily' }),
         datatype: 'json',
@@ -152,7 +152,7 @@ $(document).on('click','#save-schedule',function(){
 var hourly_schedule_list = [];
 function get_hourly_schedule(){
     $.ajax({
-        url: '/dataprocess/api/schedule/?type=시간별',
+        url: '/api/schedule/?type=시간별',
         type: 'GET',
         datatype:'json',
         contentType: 'application/json; charset=utf-8',
@@ -341,7 +341,7 @@ function update_hourly_platform_schedule(platform, platform_index){
         },
     })
     $.ajax({
-        url: '/dataprocess/api/schedule/',
+        url: '/api/schedule/',
         type: 'PUT',
         datatype:'json',
         data: JSON.stringify(data),

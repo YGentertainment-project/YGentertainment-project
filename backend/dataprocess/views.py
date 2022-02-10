@@ -25,6 +25,8 @@ import datetime
 from datetime import timedelta
 import openpyxl
 from openpyxl.writer.excel import save_virtual_workbook
+from django.http import FileResponse
+from django.core.files.storage import FileSystemStorage
 import logging
 from django_celery_beat.models import PeriodicTask
 
@@ -67,12 +69,10 @@ def base(request):
     '''
     platforms = Platform.objects.all() #get all platform info from db
     values = {
-        'first_depth' : '데이터 리포트',
-        'second_depth': '일별 리포트',
         'platforms': platforms
     }
     request = logincheck(request)
-    return render(request, 'dataprocess/daily.html',values)
+    return render(request, 'dataprocess/base.html',values)
     
 @csrf_exempt
 def daily(request):
@@ -189,6 +189,17 @@ def daily(request):
                 }
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
+        elif type == 'export_form':
+            file_name = request.POST['filename']
+            if file_name == '':
+                return None
+            file_path = os.path.abspath("media/form")
+            file_name = os.path.basename(f"media/form/{file_name}.xlsx")
+            fs = FileSystemStorage(file_path)
+            response = FileResponse(fs.open(file_name, 'rb'),
+                                    content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = f'attachment; filename="{file_name}.xlsx"'
+            return response
     
 def platform(request):
      '''
@@ -256,7 +267,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
         error_details = [] # 전체 에러 디테일
         for day in range(0, day_diff + 1):
             for platform in platforms:
-                title_date = from_date_obj + timedelta(days=day)
+                title_date = from_date_obj + datetime.timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
                 log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
                 #log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
@@ -268,10 +279,20 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         if task_result is not None:
                             errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
                             for error_info in error_infos:
-                                artist_id = Artist.objects.get(name = error_info['artist']).id
-                                platform_id = Platform.objects.get(name =  error_info['platform']).id
-                                error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
-                                error_details.append(error_info)
+                                if error_info['type'] == '400':
+                                    artist_id = Artist.objects.get(name = error_info['artist']).id
+                                    if error_info['platform'] == 'crowdtangle': #instagram or facebook
+                                        splited_url = error_info['url'].split('&') #split url by & 
+                                        if "platform=facebook" in splited_url: #facebook case
+                                            platform_id = Platform.objects.get(name = 'facebook').id
+                                        else: #instagram case
+                                            platform_id = Platform.objects.get(name = 'instagram').id
+                                    else:
+                                        platform_id = Platform.objects.get(name = error_info['platform']).id
+                                    error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
+                                    error_details.append(error_info)
+                                else:
+                                     error_details.append(error_info)
 
         return JsonResponse({"data": self.paginate(error_details, page, limit)})
 
@@ -602,7 +623,6 @@ class CollectTargetItemAPI(APIView):
             platform_object = Platform.objects.filter(name = collecttargetitem['platform']).first()
             collecttarget_object = CollectTarget.objects.filter(artist_id=artist_object.id, platform_id=platform_object.id).first()
             for collecttargetitem_object in collecttargetitem_list:
-                # 여기 수정!!!!
                 collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'],
                                                                           target_name=collecttargetitem_object['target_name'], xpath=collecttargetitem_object['xpath']).first()
                 # 없으면 새로 저장
@@ -1030,19 +1050,26 @@ class ScheduleAPI(APIView):
         try:
             new_schedule = JSONParser().parse(request)
             schedule_type = new_schedule['schedule_type']
-            platform_objects = Platform.objects.filter(name = new_schedule['platform'])
-            if platform_objects.exists():
-                collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
-                collecttarget_objects = collecttarget_objects.values()
-                for collecttarget_object in collecttarget_objects:
-                    if schedule_type == 'hour':
-                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
-                        if schedule_objects.exists():
-                            schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
-                    elif schedule_type == 'daily':
-                        schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'daily')
-                        if schedule_objects.exists():
-                            schedule_objects.update(execute_time = datetime.time(new_schedule['execute_time_hour'],new_schedule['execute_time_minute'],0))
+            platform_list = [new_schedule['platform']]
+            # instagram과 facebook의 경우 같은 crowdtangle로 묶여있기 때문에 같은 스케줄로 통일
+            if new_schedule['platform'] == 'instagram':
+                platform_list.append('facebook')
+            elif new_schedule['platform'] == 'facebook':
+                platform_list.append('instagram')
+            for platform_name in platform_list:
+                platform_objects = Platform.objects.filter(name = platform_name)
+                if platform_objects.exists():
+                    collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
+                    collecttarget_objects = collecttarget_objects.values()
+                    for collecttarget_object in collecttarget_objects:
+                        if schedule_type == 'hour':
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
+                            if schedule_objects.exists():
+                                schedule_objects.update(period=datetime.time(new_schedule['period'],0,0), execute_time = datetime.time(0,new_schedule['execute_time_minute'],0))
+                        elif schedule_type == 'daily':
+                            schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'daily')
+                            if schedule_objects.exists():
+                                schedule_objects.update(execute_time = datetime.time(new_schedule['execute_time_hour'],new_schedule['execute_time_minute'],0))
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
