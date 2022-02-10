@@ -63,10 +63,16 @@
     <div class="excel_form" id="excel_form3">
         <div class="popup_button_layout">
             <span>수집 정보 - 엑셀 업로드</span>
+            <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" name="filename" value="collect_form" style="display:none;">
+                    <input type="text" name="type" value="export_form" style="display:none;">
+                    <button class="input-btn" 
+                    type="submit" style="font-size: 10px !important;">양식 다운로드</button>
+            </form>
             <button  class="btn btn-primary border-0 shadow-btn" id="close_button3" style="font-size: 10px !important; font-weight: bold;">닫기</button>
         </div>
         <div style="height: 25px;"></div>
-        <!-- <a href="{% static 'form/collect_form.xlsx' %}" download>Excel Format File </a> -->
         <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input class="form-control" type="file" name="importData">
@@ -83,6 +89,13 @@
    <div class="excel_form" id="excel_form4">
     <div class="popup_button_layout">
         <span>로그인 정보 - 엑셀 업로드</span>
+        <form method="post" action="{%url 'dataprocess:daily' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" name="filename" value="login_form" style="display:none;">
+            <input type="text" name="type" value="export_form" style="display:none;">
+            <button class="input-btn" 
+            type="submit" style="font-size: 10px !important;">양식 다운로드</button>
+    </form>
         <button  class="btn btn-primary border-0 shadow-btn" id="close_button4" style="font-size: 10px !important; font-weight: bold;">닫기</button>
     </div>
     <div style="height: 25px;"></div>
