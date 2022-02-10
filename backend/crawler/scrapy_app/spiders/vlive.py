@@ -12,7 +12,7 @@ from twisted.internet.error import DNSLookupError
 
 from ..items import VliveItem
 from datetime import datetime
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 
 class VliveSpider(scrapy.Spider):

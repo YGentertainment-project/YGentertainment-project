@@ -3,7 +3,7 @@ from ..items import WeverseItem
 from config.models import CollectTargetItem
 from datetime import datetime
 from django.db.models import Q
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 
 class WeverseSpider(scrapy.Spider):

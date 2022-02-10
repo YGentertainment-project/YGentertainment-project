@@ -3,7 +3,7 @@ from ..items import MelonItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 
 class MelonSpider(scrapy.Spider):

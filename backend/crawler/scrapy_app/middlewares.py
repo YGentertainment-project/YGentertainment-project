@@ -12,32 +12,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from utils.shortcuts import get_env
-from datetime import datetime
-import logging
 from requests import get
-
-formatter = logging.Formatter('[%(asctime)s], [%(levelname)s], [%(name)s:%(lineno)d], %(message)s', '%Y-%m-%d %H:%M:%S')
-
-crawlinglogger = logging.getLogger("CRAWLING-LOG")
+from ..tasks import crawlinglogger
 
 production_env = get_env("YG_ENV", "dev") == "production"
-if production_env:
-    DATA_PATH = "/data/log/crawler"
-else:
-    DATA_PATH = "./data/log/crawler"
-
-trfh = logging.handlers.TimedRotatingFileHandler(
-    filename=os.path.join(DATA_PATH, f"{datetime.today().strftime('%Y-%m-%d')}.log"),
-    when="midnight",
-    interval=1,
-    encoding="utf-8",
-)
-trfh.setFormatter(formatter)
-trfh.setLevel(logging.INFO)
-crawlinglogger.addHandler(trfh)
-crawlinglogger.setLevel(logging.ERROR)
-
-production_env = (get_env("YG_ENV", "dev") == "production")
 
 ROBOTS_TXT = "robots.txt"
 

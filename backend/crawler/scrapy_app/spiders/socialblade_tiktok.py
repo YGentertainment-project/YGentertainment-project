@@ -3,7 +3,7 @@ from ..items import SocialbladeTiktokItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"

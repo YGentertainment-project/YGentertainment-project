@@ -5,7 +5,7 @@ from ..items import SocialbladeYoutubeItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"

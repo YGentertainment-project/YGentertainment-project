@@ -6,7 +6,7 @@ from twisted.internet.error import DNSLookupError, TCPTimedOutError
 
 from ..items import SpotifyItem
 from datetime import datetime
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 
 class SpotifySpider(scrapy.Spider):

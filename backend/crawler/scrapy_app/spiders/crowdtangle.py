@@ -5,7 +5,7 @@ from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
+from crawler.tasks import crawlinglogger
 
 class CrowdTangleSpider(scrapy.Spider):
     name = "crowdtangle"
