@@ -149,7 +149,6 @@ $(document).on('click','#save-schedule',function(){
 
 
 //시간별 스케줄 테이블
-var hourly_schedule_list = [];
 function get_hourly_schedule(){
     $.ajax({
         url: '/api/schedule/?type=시간별',
@@ -159,7 +158,6 @@ function get_hourly_schedule(){
         success: res => {
             var datalist = res.data;
             $('#hourly-scheduler-body').eq(0).empty();
-            hourly_schedule_list = datalist;
             var index = 0;
             datalist.forEach(data => {
                 const tableRow = $('<tr></tr>');
@@ -319,10 +317,12 @@ function get_hourly_schedule(){
 }
 
 function update_hourly_platform_schedule(platform, platform_index){
+    var period = parseInt($(`#schedule-hour-select${platform_index} option:selected`).val());
+    var execute_time_minute = parseInt($(`#schedule-minute-select${platform_index} option:selected`).val())
     var data = {
         'platform': platform,
-        'period': parseInt($(`#schedule-hour-select${platform_index} option:selected`).val()),
-        'execute_time_minute': parseInt($(`#schedule-minute-select${platform_index} option:selected`).val()),
+        'period': period,
+        'execute_time_minute': execute_time_minute,
         'schedule_type': 'hour'
     };
 
@@ -346,8 +346,22 @@ function update_hourly_platform_schedule(platform, platform_index){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
-            hourly_schedule_list[platform_index]['period'] = `${$('#schedule-hour-select option:selected').val()}:00:00`;
-            hourly_schedule_list[platform_index]['execute_time'] = `00:${$('#schedule-minute-select option:selected').val()}:00`;
+            if(platform == 'instagram' || platform == 'facebook'){
+                var find_platform = 'facebook';
+                if(platform == 'facebook'){
+                    find_platform = 'instagram';
+                }
+                //서로라면 같은 스케줄로 통일하기
+                var childrens = document.getElementById("hourly-scheduler-body").childNodes;
+                const len = childrens.length;
+                for(var i=0; i<len ; i++){
+                    var tdchildrens = childrens[i].childNodes;
+                    if(tdchildrens[0].childNodes[1].innerHTML == find_platform){
+                        tdchildrens[1].childNodes[1].value = period;
+                        tdchildrens[2].childNodes[1].value = execute_time_minute;
+                    }
+                }
+            }
             alert('저장되었습니다.');
             close_hourly_modal();
         },
