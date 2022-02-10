@@ -165,7 +165,7 @@ function ajax_only(type,platform,start_date,end_date){
 
 
 var Month = ['None','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-var MonthNum = ['None','01','02','03','04','05','06','07','08','09','10','11','12']
+var MonthNum = ['None','1','2','3','4','5','6','7','8','9','10','11','12']
 function parsingDate(date){
     var splited_list = date.split(' ')
     var index = Month.indexOf(splited_list[0])
