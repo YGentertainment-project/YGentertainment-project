@@ -369,7 +369,7 @@ input{
 .input-btn{
     font-size: 12px;
     background-color: white !important;
-    max-width: 120px;
+    width:145px;
     padding: 3px 10px 3px 10px !important;
     cursor:pointer;
     font-weight: bold;
@@ -388,7 +388,6 @@ input{
 
 .clicked-input-btn{
     background-color: #1F2937 !important;
-    max-width: 120px;
     padding: 3px 10px 3px 10px !important;
     cursor:pointer;
     font-weight: bold;

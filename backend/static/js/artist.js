@@ -163,7 +163,7 @@ $('input[name=artist-name]').click(function(){
                         dataCol = document.createElement('td');
                         dataCol.innerHTML = `
                         <td>
-                            <span class="platform-names input-btn">${data[key]}</span>
+                            <span class="platform-names input-btn" style="display:inline-block; width: 90px;">${data[key]}</span>
                         </td>
                         `;
                     } 
