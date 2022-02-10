@@ -7,6 +7,65 @@
  * [Advisor](#Advisor)
 
 ## <div id = "About_Project">About Project 💡</div>
+### 설치절차
+ * 사측에서 제공한 서버에 이미 설치했지만, 서버를 옮기는 등 추가적으로 설치수요가 발생하는 경우를 대비해 서버 설치 절차를 기록합니다.
+ 1)	secret.key 생성
+ -	경로: YGENTERTAINMENT-PROJECT/backend/
+   ```
+   echo $(cat /dev/urandom | head -1 | md5sum | head -c 32) > data/config/secret.key
+   ```
+ 
+ 2)	가상환경 생성 및 활성화, 필요한 패키지 설치
+ -	경로: YGENTERTAINMENT-PROJECT/
+   ```
+   python3 -m venv venv
+   source venv/bin/activate
+   pip3 install -r backend/deploy/requirements.txt
+   ```
+ -	가상환경을 사용하지 않아도 되는 경우 마지막 명령어만 사용
+ 
+ 3)	Docker 설치
+ -	제공한 repository를 그대로 사용하시는 경우 GitHub Container Registry를 통해 자동 이미지 빌드 Action를 통해 생성된 이미지를 사용할 수 있지만, 그렇지 않은 경우 직접 빌드하셔야 합니다.
+  (GitHub Actions를 이용한 자동 빌드: https://blog.outsider.ne.kr/1531)
+ -	또한 기타의 경우 docker-compose 파일을 수정하셔야 합니다.
+ -	경로: YGENTERTAINMENT-PROJECT/
+   ```
+   docker build -t data-analysis .
+   docker-compose up -d
+   ```
+   
+ 4)	Docker container 접속
+ -	DB나 서버 container에 접속해야 확인해야하는 경우 다음 명령어를 사용하시면 됩니다.
+   ```
+   docker exec -it {Container Name} sh
+   ```
+   
+ 5)	개발용 Setting 사용법
+ -	경로 /backend
+   ```
+   ./init_db.sh
+   python3 manage.py runserver
+   ```
+   
+ 6)	MariaDB 관리
+   ```
+   docker exec -it yg-mariadb sh
+   ```
+ -	쉘이 켜진 것을 확인
+   ```
+   mysql -uroot -pygenter
+   ```
+  -	MariaDB 로그인 됨을 확인
+  
+   ```
+	  SHOW DATABASES;
+   USE ygenter;
+   ```
+  -	Ygenter DB 존재 여부를 확인후 ygenter DB로 접속
+  -	이후 쿼리를 이용해서 DB를 확인하시면 됩니다. (ex SHOW tables;)
+  
+  7)	Crawler 사용
+  - 추가 
 
 ## <div id = "Members">Member 🙋‍♂️🙋‍♀️</div>
 #### 김민희(팀장) [@minhee33](https://github.com/minhee33)<br>
@@ -83,5 +142,4 @@
 
 ## <div id="Advisor">Advisor</div>
 ### 황영숙 교수님
- 
- 
+
