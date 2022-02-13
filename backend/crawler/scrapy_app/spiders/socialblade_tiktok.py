@@ -3,7 +3,6 @@ from ..items import SocialbladeTiktokItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from crawler.tasks import crawlinglogger
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
@@ -41,23 +40,23 @@ class TiktokSpider(scrapy.Spider):
             try:
                 uploads = response.xpath(uploads_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400], {artist}, tictok, {uploads_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {uploads_xpath}")
             try:
                 followers = response.xpath(followers_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400], {artist}, tictok, {followers_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {followers_xpath}")
             try:    
                 likes = response.xpath(likes_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400], {artist}, tictok, {likes_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {likes_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
             
             if uploads is None:
-                crawlinglogger.error(f"[400], {artist}, tictok, {uploads_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {uploads_xpath}")
             elif followers is None:
-                crawlinglogger.error(f"[400], {artist}, tictok, {followers_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {followers_xpath}")
             elif likes is None:
-                crawlinglogger.error(f"[400], {artist}, tictok, {likes_xpath}")
+                self.crawl_logger.error(f"[400], {artist}, tictok, {likes_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.

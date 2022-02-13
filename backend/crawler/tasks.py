@@ -12,7 +12,6 @@ from django.db.models import Q
 from config.models import Schedule
 from dataprocess.models import CollectTarget, Platform, Artist
 from utils.shortcuts import get_env
-from datetime import datetime
 import logging
 
 settings = Settings()
@@ -95,7 +94,8 @@ def crawling_start(platform, task_id, crawl_target):
     trfh.setFormatter(formatter)
     trfh.setLevel(logging.INFO)
     crawlinglogger.addHandler(trfh)
-    process.crawl(spider_loader.load(platform), crawl_target=crawl_target)
+    crawlinglogger.error(f"[INFO], {platform}, {len(crawl_target)}")
+    process.crawl(spider_loader.load(platform), crawl_target=crawl_target, crawl_logger=crawlinglogger)
     process.start()
 
 
