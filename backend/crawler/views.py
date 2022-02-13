@@ -109,6 +109,8 @@ def show_data(request):
 
 # schedule_type = "daily" or "hour" or None
 # 해당하는 schedule_type의 schedule 정보를 가져옴
+
+
 def get_schedules(schedule_type):
     schedule_list = []
     task_list = PeriodicTask.objects.values()
@@ -283,25 +285,39 @@ def get_task_result(id):
         return None
 
 
+def check_valid_log(log_words):
+    if len(log_words) < 6:
+        return False
+    elif "CRAWLING-LOG" in log_words[2]:
+        return True
+    else:
+        return False
+
+
 def parse_logfile(filepath):
     error_infos = []
     errors = 0
+    platform_name = None
+    platform_artists = None
     with open(f'{filepath}', 'r') as log_file:
         for log_line in log_file:
-            log_words = log_line.rstrip().split(',')
-            last_word = log_words[-1]
-            if "https" in last_word:
-                error_info = dict()
-                log_info = log_words[0].split(' ')
-                error_info['date'] = log_info[0]
-                error_info['time'] = log_info[1]
-                error_info['type'] = log_info[-1].strip('[]')
-                error_info['artist'] = log_words[1]
-                error_info['platform'] = log_words[2]
-                error_info['url'] = last_word
-                error_infos.append(error_info)
-                errors += 1
-    return errors, error_infos
+            log_words = log_line.replace(" ", "").rstrip().split(',')
+            if check_valid_log(log_words) is True:
+                log_type = log_words[3].strip('[]')
+                if log_type == "INFO":  # 플랫폼, 아티스트 정보
+                    platform_name = log_words[-2]
+                    platform_artists = log_words[-1]
+                else:
+                    last_word = log_words[-1]
+                    if "https" in last_word:
+                        error_info = dict()
+                        error_info['type'] = log_words[3].strip('[]')
+                        error_info['artist'] = log_words[4]
+                        error_info['platform'] = log_words[5]
+                        error_info['url'] = last_word
+                        error_infos.append(error_info)
+                        errors += 1
+        return platform_name, platform_artists, errors, error_infos
 
 # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
 # 에러 발생한 아티스트 개수 => log에서 파싱
@@ -331,24 +347,22 @@ def monitors(request):
             for platform in platforms:
                 title_date = from_date_obj + timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
-
                 if production_env:
-                    log_dir = f"../data/log/crawler/{platform}/{title_str}"  # TODO: 배포환경시 경로
+                    log_dir = f"../data/log/crawler/{platform}/{title_str}"
                 else:
-                    log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
-
+                    log_dir = f"./data/log/crawler/{platform}/{title_str}"
                 if os.path.isdir(log_dir) is True:
                     file_list = os.listdir(log_dir)
                     for file_name in file_list:
                         task_id = file_name.split('.')[0]
                         task_result = get_task_result(task_id)
-                        if task_result == "started":
+                        if task_result is not None and task_result == "started":
                             total_exec += 1
-                        elif task_result is not None:
-                            total_artists += task_result['artists']
-                            errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
-                            total_errors += errors
-                            for error_info in error_infos:
-                                error_details.append(error_info)
-
+                        else:
+                            platform_name, platform_artists, errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            if platform_name is not None:
+                                total_artists += int(platform_artists)
+                                total_errors += errors
+                                for error_info in error_infos:
+                                    error_details.append(error_info)
         return JsonResponse(data={"normals": total_artists - total_errors, "execs": total_exec, "errors": total_errors, "details": error_details})

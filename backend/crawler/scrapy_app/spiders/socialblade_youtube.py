@@ -5,7 +5,6 @@ from ..items import SocialbladeYoutubeItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
 
 SOCIALBLADE_DOMAIN = "socialblade.com"
 YOUTUBE_DOMAIN = "youtube.com"
@@ -72,11 +71,11 @@ class YoutubeSpider(scrapy.Spider):
                 view_text = response.xpath(views_xpath).get()
                 user_created = response.xpath(user_created_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - youtube - {sub_xpath}, {views_xpath}, {uploads_xpath}, {user_created_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {sub_xpath}, {views_xpath}, {uploads_xpath}, {user_created_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
             if uploads is None or view_text is None or subscribers is None or user_created is None:
-                crawlinglogger.error(f"[400] {artist} - youtube - {sub_xpath}, {views_xpath}, {uploads_xpath}, {user_created_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {sub_xpath}, {views_xpath}, {uploads_xpath}, {user_created_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.
@@ -109,17 +108,17 @@ class YoutubeSpider(scrapy.Spider):
             try:
                 view_text = response.xpath(views_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {views_xpath}")
             try:
                 user_created = response.xpath(user_created_xpath).get()
             except ValueError:
-                crawlinglogger.error(f"[400] {artist} - youtube - {user_created_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {user_created_xpath}")
                 # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
             if view_text is None:
-                crawlinglogger.error(f"[400] {artist} - youtube - {views_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {views_xpath}")
             elif user_created is None:
-                crawlinglogger.error(f"[400] {artist} - youtube - {user_created_xpath}")
+                self.crawl_logger.error(f"[400] {artist} - youtube - {user_created_xpath}")
                 # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
                 # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
                 # 오류일 경우 item을 yield 하지 않아야 합니다.

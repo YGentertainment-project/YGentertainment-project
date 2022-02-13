@@ -5,7 +5,6 @@ from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
 from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
-from ..middlewares import crawlinglogger
 
 class CrowdTangleSpider(scrapy.Spider):
     name = "crowdtangle"
@@ -32,11 +31,11 @@ class CrowdTangleSpider(scrapy.Spider):
         try:
             follower_num = response.xpath(follower_xpath).get()
         except ValueError:
-            crawlinglogger.error(f"[400], {artist}, crowdtangle, {follower_xpath}")
+            self.crawl_logger.error(f"[400], {artist}, crowdtangle, {follower_xpath}")
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
         if follower_num is None:
-            crawlinglogger.error(f"[400] {artist}, crowdtangle, {follower_xpath}")
+            self.crawl_logger.error(f"[400] {artist}, crowdtangle, {follower_xpath}")
             # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
             # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
             # 오류일 경우 item을 yield 하지 않아야 합니다.
