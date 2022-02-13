@@ -69,11 +69,7 @@ def extract_target_list(platform, schedule_type="daily"):
 def crawling_start(platform, task_id, crawl_target):
     process = CrawlerProcess(settings)
     date_str = timezone.localdate().strftime('%Y-%m-%d')
-    if production_env:
-        DATA_PATH = "/data/log/crawler"
-    else:
-        DATA_PATH = "./data/log/crawler"
-
+    DATA_PATH = "./data/log/crawler"
     formatter = logging.Formatter('[%(asctime)s], [%(levelname)s], [%(name)s:%(lineno)d], %(message)s', '%Y-%m-%d %H:%M:%S')
     
     if os.path.isdir(DATA_PATH) is False:
