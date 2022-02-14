@@ -381,7 +381,7 @@ def import_collects(worksheet):
                         data_json["level"] = str(cell.value)
                 elif i == 2:  # 성별
                     if str(cell.value) != "None":
-                        data_json["level"] = str(cell.value)
+                        data_json["gender"] = str(cell.value)
                 elif i == 3:  # 멤버수
                     if str(cell.value) != "None":
                         data_json["member_num"] = int(cell.value)

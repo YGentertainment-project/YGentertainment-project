@@ -67,7 +67,7 @@ def base(request):
     '''
     general page
     '''
-    platforms = Platform.objects.all() #get all platform info from db
+    platforms = Platform.objects.filter(active=1) #get all platform info from db
     values = {
         'platforms': platforms
     }
@@ -80,7 +80,7 @@ def daily(request):
         '''
         general page
         '''
-        platforms = Platform.objects.all() #get all platform info from db
+        platforms = Platform.objects.filter(active=1) #get all platform info from db
         values = {
             'first_depth' : '데이터 리포트',
             'second_depth': '일별 리포트',
@@ -94,7 +94,7 @@ def daily(request):
             '''
             import from excel
             '''
-            platforms = Platform.objects.all()  # get all platform info from db
+            platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
                 values = {
                     'first_depth' : '데이터 리포트',
@@ -139,7 +139,7 @@ def daily(request):
             '''
             import2 from excel (collect_target_item, artist, platform)
             '''
-            platforms = Platform.objects.all()  # get all platform info from db
+            platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
                 values = {
                     'first_depth' : '데이터 리포트',
@@ -166,7 +166,7 @@ def daily(request):
             '''
             import3 from excel (auth_info)
             '''
-            platforms = Platform.objects.all()  # get all platform info from db
+            platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
                 values = {
                     'first_depth' : '데이터 리포트',
@@ -466,8 +466,7 @@ class ArtistAPI(APIView):
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
                         schedule_serializer.save()
-    
-                return JsonResponse(data={'success': True, 'data': artist_serializer.data}, status=status.HTTP_201_CREATED)
+                return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:
             return JsonResponse(data={'success': False}, status=400)
