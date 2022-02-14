@@ -671,10 +671,9 @@ class CollectTargetItemAPI(APIView):
             if no_schedule_collect_targets:
                 try:
                     schedule_name = f"{platform}_{prev_schedule_type}_crawling"
-                    # 여기서 오류
                     found_schedule = PeriodicTask.objects.get(name=schedule_name)
                     found_schedule.delete()
-                except Schedule.DoesNotExist:
+                except PeriodicTask.DoesNotExist:
                     found_schedule = None
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
