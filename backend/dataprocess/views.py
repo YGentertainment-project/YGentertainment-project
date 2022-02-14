@@ -277,7 +277,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         task_id = file_name.split('.')[0]
                         task_result = get_task_result(task_id)
                         if task_result is not None:
-                            errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            platform_name, platform_artists, errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
                             for error_info in error_infos:
                                 if error_info['type'] == '400':
                                     artist_id = Artist.objects.get(name = error_info['artist']).id
