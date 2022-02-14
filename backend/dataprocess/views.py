@@ -198,7 +198,7 @@ def daily(request):
             fs = FileSystemStorage(file_path)
             response = FileResponse(fs.open(file_name, 'rb'),
                                     content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = f'attachment; filename="{file_name}.xlsx"'
+            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
             return response
     
 def platform(request):
