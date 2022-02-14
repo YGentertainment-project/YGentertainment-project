@@ -645,7 +645,6 @@ class CollectTargetItemAPI(APIView):
                         userlogger.debug(f"{artist} - {platform} - {schedule_type}: ")
                     else:
                         return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
-
             execute_time = None # 시작 시간
             period = None #주기
             collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object.id)
@@ -659,7 +658,6 @@ class CollectTargetItemAPI(APIView):
             Schedule.objects.filter(collect_target_id = collecttarget_object.id).update(
                     schedule_type = schedule_type, execute_time = execute_time, period = period)
 
-
             # Schedule 초기화 여부를 확인하는 부분
             prev_schedule_type = "daily"
             if schedule_type == "daily":
@@ -670,15 +668,14 @@ class CollectTargetItemAPI(APIView):
                 if prev_schedule_objects.exists():
                     no_schedule_collect_targets = False
                     break
-
             if no_schedule_collect_targets:
                 try:
                     schedule_name = f"{platform}_{prev_schedule_type}_crawling"
+                    # 여기서 오류
                     found_schedule = PeriodicTask.objects.get(name=schedule_name)
                     found_schedule.delete()
                 except Schedule.DoesNotExist:
                     found_schedule = None
-                
             return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
@@ -1025,7 +1022,6 @@ class ScheduleAPI(APIView):
                     for collecttarget_object in collecttarget_objects:
                         schedule_objects = Schedule.objects.filter(schedule_type = 'hour', collect_target_id = collecttarget_object['id'])
                         if schedule_objects.exists():
-                            print(schedule_objects.values()[0])
                             period = schedule_objects.values()[0]['period']
                             execute_time = schedule_objects.values()[0]['execute_time']
                             artist = Artist.objects.get(pk = collecttarget_object['artist_id'])
