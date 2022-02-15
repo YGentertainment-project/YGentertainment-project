@@ -262,7 +262,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
         except Exception:
             return JsonResponse(status=400, data={"error": "Input Date Format Error"})
         page = request.GET.get('page',1)
-        limit = 3
+        limit = 10
 
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
@@ -286,22 +286,22 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                             if platform_name is not None:
                                 for error_info in error_infos:
                                     if error_info['type'] == "400":
-                                        artist_id = Artist.objects.get(name = error_info['artist'])
+                                        artist_id = Artist.objects.get(name = error_info['artist']).id
                                         platform_id = 0
                                         if platform == "crowdtangle": #instagram or facebook
                                             splited_url = error_info['url'].split('&') #split url by & 
                                             if "platform=facebook" in splited_url: #facebook case
-                                                platform_id = Platform.objects.get(name = 'facebook')
+                                                platform_id = Platform.objects.get(name = 'facebook').id
                                             else: #instagram case
-                                                platform_id = Platform.objects.get(name = 'instagram')
+                                                platform_id = Platform.objects.get(name = 'instagram').id
                                         else:
-                                            platform_id = Platform.objects.get(name = error_info['platform'])
+                                            platform_id = Platform.objects.get(name = error_info['platform']).id
                                         error_info['id'] = CollectTarget.objects.get(artist = artist_id, platform = platform_id).id #collect target id
                                         error_details.append(error_info)
                                     else:
                                         continue
 
-        return JsonResponse({"data": self.paginate(error_details, page, limit)})
+        return JsonResponse(data = {"data": self.paginate(error_details, page, limit)})
 
 class PlatformAPI(APIView):
     # @login_required
@@ -969,7 +969,7 @@ class DataReportAPI(APIView):
                 artist_object = artist_object.values()[0]
                 platform_object = Platform.objects.filter(name=platform)
                 platform_object = platform_object.values()[0]
-                collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object['id'],
+                collecttarget_object = CollectTarget.objects.filter(platform = platform_object['id'],
                                         artist_id = artist_object['id'])
                 collecttarget_object = collecttarget_object.values()[0]
                 CollectData.objects.update_or_create(
