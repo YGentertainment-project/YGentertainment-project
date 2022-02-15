@@ -447,6 +447,8 @@ class ArtistAPI(APIView):
                     artist_id = artist_serializer.data['id']
                     target_url = obj['url1']
                     target_url_2 = obj['url2']
+                    if target_url == "" and target_url_2 == "":
+                        continue
                     collecttarget = CollectTarget(
                         platform_id=platform_id,
                         artist_id=artist_id,
@@ -473,6 +475,20 @@ class ArtistAPI(APIView):
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
                         schedule_serializer.save()
+                    # 4. 현재 플랫폼의 존재하는 조사항목들을 default로 collect_target_item 생성
+                    # 해당 플랫폼을 참조하는 첫번째 COLLECT_TARGET 가져옴
+                    collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id, platform_id = platform_id)
+                    collecttarget_object = collecttarget_objects.values().first()
+                    first_collect_target = CollectTarget.objects.filter(platform_id=platform_id).first()
+                    collect_target_items_objects = CollectTargetItem.objects.filter(collect_target = first_collect_target.id)
+                    for collect_target_items_object in collect_target_items_objects:
+                        collecttargetitem_serializer = CollectTargetItemSerializer(data={
+                            'collect_target': collecttarget_object['id'],
+                            'target_name': collect_target_items_object.target_name,
+                            'xpath': ""
+                        })
+                    if collecttargetitem_serializer.is_valid():
+                        collecttargetitem_serializer.save()
                 return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': artist_serializer.errors}, status=400)
         except:

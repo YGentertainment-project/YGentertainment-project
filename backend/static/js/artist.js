@@ -52,6 +52,7 @@ $('#add-submit').click(function(e){
         e.preventDefault();
         return;
     }
+    document.getElementById("loading_form").style.display = "flex";
     var data = {
         "name": trs_value[0].value,
         "level": trs_value[1].value,
@@ -59,15 +60,11 @@ $('#add-submit').click(function(e){
         "member_num": trs_value[3].value,
         "member_nationality": trs_value[4].value,
         "agency":trs_value[5].value,
-        // "debut_date": trs_value[6].value,
         "urls": datas,
     };
     if(trs_value[6].value!=""){
         data["debut_date"] = trs_value[6].value;
     }
-
-    //console.log(JSON.stringify(data));
-    console.log("start");
     $.ajax({
         url: "/api/artist/",
         type: 'POST',
@@ -75,11 +72,13 @@ $('#add-submit').click(function(e){
         data: JSON.stringify(data),
         success: res => {
             alert("저장되었습니다.");
+            document.getElementById("loading_form").style.display = "none";
             location.href = "/artist/";
         },
         error: e => {
             console.log(e);
             alert(e.responseText);
+            document.getElementById("loading_form").style.display = "none";
         },
     });
     
