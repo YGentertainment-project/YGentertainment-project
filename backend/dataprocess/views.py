@@ -260,7 +260,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
             from_date_obj = datetime.datetime.strptime(from_date_str, '%Y-%m-%d')
             to_date_obj = datetime.datetime.strptime(to_date_str, '%Y-%m-%d')
         except Exception:
-            return JsonResponse(status=500, data={"error": "Input Date Format Error"})
+            return JsonResponse(status=400, data={"error": "Input Date Format Error"})
         page = request.GET.get('page',1)
         limit = 3
 
@@ -286,17 +286,17 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                             if platform_name is not None:
                                 for error_info in error_infos:
                                     if error_info['type'] == "400":
-                                        artist_id = Artist.objects.get(name = error_info['artist']).id
+                                        artist_id = Artist.objects.get(name = error_info['artist'])
                                         platform_id = 0
                                         if platform == "crowdtangle": #instagram or facebook
                                             splited_url = error_info['url'].split('&') #split url by & 
                                             if "platform=facebook" in splited_url: #facebook case
-                                                platform_id = Platform.objects.get(name = 'facebook').id
+                                                platform_id = Platform.objects.get(name = 'facebook')
                                             else: #instagram case
-                                                platform_id = Platform.objects.get(name = 'instagram').id
+                                                platform_id = Platform.objects.get(name = 'instagram')
                                         else:
-                                            platform_id = Platform.objects.get(name = error_info['platform']).id
-                                        error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
+                                            platform_id = Platform.objects.get(name = error_info['platform'])
+                                        error_info['id'] = CollectTarget.objects.get(artist = artist_id, platform = platform_id).id #collect target id
                                         error_details.append(error_info)
                                     else:
                                         continue
