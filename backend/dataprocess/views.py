@@ -1,6 +1,6 @@
 import os
 from django.contrib import auth
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from account.models import User
 from django.http import HttpResponse
 
@@ -10,7 +10,7 @@ from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
-from crawler.views import get_task_result,parse_logfile
+from crawler.views import get_task_result,parse_logfile, parse_logfile_for_error
 
 from .serializers import *
 from .models import *
@@ -263,7 +263,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
             return JsonResponse(status=400, data={"error": "Input Date Format Error"})
         page = request.GET.get('page',1)
         limit = 10
-
+        
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
         error_details = [] # 전체 에러 디테일
@@ -282,11 +282,11 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                         if task_result is not None and task_result == "started":
                             total_exec += 1
                         else:
-                            platform_name, platform_artists, errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
+                            platform_name, platform_artists, errors, error_infos = parse_logfile_for_error(f'{log_dir}/{file_name}')
                             if platform_name is not None:
                                 for error_info in error_infos:
                                     if error_info['type'] == "400":
-                                        artist_id = Artist.objects.get(name = error_info['artist']).id
+                                        artist_id = Artist.objects.get_object_or_404(name = error_info['artist']).id
                                         platform_id = 0
                                         if platform == "crowdtangle": #instagram or facebook
                                             splited_url = error_info['url'].split('&') #split url by & 
@@ -970,7 +970,7 @@ class DataReportAPI(APIView):
                 platform_object = Platform.objects.filter(name=platform)
                 platform_object = platform_object.values()[0]
                 collecttarget_object = CollectTarget.objects.filter(platform = platform_object['id'],
-                                        artist_id = artist_object['id'])
+                                        artist = artist_object['id'])
                 collecttarget_object = collecttarget_object.values()[0]
                 CollectData.objects.update_or_create(
                         collect_target_id = collecttarget_object['id'],

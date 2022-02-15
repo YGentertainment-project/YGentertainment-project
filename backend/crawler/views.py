@@ -319,6 +319,30 @@ def parse_logfile(filepath):
                         errors += 1
         return platform_name, platform_artists, errors, error_infos
 
+def parse_logfile_for_error(filepath):
+    error_infos = []
+    errors = 0
+    platform_name = None
+    platform_artists = None
+    with open(f'{filepath}', 'r') as log_file:
+        for log_line in log_file:
+            log_words = log_line.split(',')
+            log_type = log_words[3].strip().strip('[]')
+            if log_type == "INFO":  # 플랫폼, 아티스트 정보
+                platform_name = log_words[-2].strip()
+                platform_artists = log_words[-1].strip()
+            else:
+                last_word = log_words[-1].strip()
+                if "https" in last_word:
+                    error_info = dict()
+                    error_info['type'] = log_words[3].strip().strip('[]')
+                    error_info['artist'] = log_words[4].strip()
+                    error_info['platform'] = log_words[5].strip()
+                    error_info['url'] = last_word.strip()
+                    error_infos.append(error_info)
+                    errors += 1
+        return platform_name, platform_artists, errors, error_infos
+
 # 처리한 아티스트 개수 => flower에서 task의 result로부터 가져오기
 # 에러 발생한 아티스트 개수 => log에서 파싱
 # 생성된 로그 파일을 기준으로 모두 체크하되,
