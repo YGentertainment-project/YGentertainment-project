@@ -256,15 +256,18 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
     def get(self, request):
         from_date_str = request.GET.get("fromdate", None)
         to_date_str = request.GET.get("todate", None)
+        try:
+            from_date_obj = datetime.datetime.strptime(from_date_str, '%Y-%m-%d')
+            to_date_obj = datetime.datetime.strptime(to_date_str, '%Y-%m-%d')
+        except Exception:
+            return JsonResponse(status=500, data={"error": "Input Date Format Error"})
         page = request.GET.get('page',1)
         limit = 3
-        
-        from_date_obj = datetime.datetime.strptime(from_date_str, '%Y-%m-%d')
-        to_date_obj = datetime.datetime.strptime(to_date_str, '%Y-%m-%d')
 
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
         error_details = [] # 전체 에러 디테일
+        total_exec = 0
         for day in range(0, day_diff + 1):
             for platform in platforms:
                 title_date = from_date_obj + datetime.timedelta(days=day)
@@ -276,23 +279,27 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                     for file_name in file_list:
                         task_id = file_name.split('.')[0]
                         task_result = get_task_result(task_id)
-                        if task_result is not None:
+                        if task_result is not None and task_result == "started":
+                            total_exec += 1
+                        else:
                             platform_name, platform_artists, errors, error_infos = parse_logfile(f'{log_dir}/{file_name}')
-                            for error_info in error_infos:
-                                if error_info['type'] == '400':
-                                    artist_id = Artist.objects.get(name = error_info['artist']).id
-                                    if error_info['platform'] == 'crowdtangle': #instagram or facebook
-                                        splited_url = error_info['url'].split('&') #split url by & 
-                                        if "platform=facebook" in splited_url: #facebook case
-                                            platform_id = Platform.objects.get(name = 'facebook').id
-                                        else: #instagram case
-                                            platform_id = Platform.objects.get(name = 'instagram').id
+                            if platform_name is not None:
+                                for error_info in error_infos:
+                                    if error_info['type'] == "400":
+                                        artist_id = Artist.objects.get(name = error_info['artist']).id
+                                        platform_id = 0
+                                        if platform == "crowdtangle": #instagram or facebook
+                                            splited_url = error_info['url'].split('&') #split url by & 
+                                            if "platform=facebook" in splited_url: #facebook case
+                                                platform_id = Platform.objects.get(name = 'facebook').id
+                                            else: #instagram case
+                                                platform_id = Platform.objects.get(name = 'instagram').id
+                                        else:
+                                            platform_id = Platform.objects.get(name = error_info['platform']).id
+                                        error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
+                                        error_details.append(error_info)
                                     else:
-                                        platform_id = Platform.objects.get(name = error_info['platform']).id
-                                    error_info['id'] = CollectTarget.objects.get(artist_id = artist_id, platform_id = platform_id).id #collect target id
-                                    error_details.append(error_info)
-                                else:
-                                     error_details.append(error_info)
+                                        continue
 
         return JsonResponse({"data": self.paginate(error_details, page, limit)})
 

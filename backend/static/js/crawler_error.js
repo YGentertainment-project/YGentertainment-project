@@ -72,11 +72,7 @@ function crawler_error_table(page){
           $("ul.pagination").html('')
 
           for(var i = 0; i<log_info.length; i++){
-              if(log_info[i]['type'] == '400'){
-                  no_page_info.push(log_info[i])
-              } else{
-                  continue
-              }
+            no_page_info.push(log_info[i])
           }
 
           no_page_info.forEach(data => {
