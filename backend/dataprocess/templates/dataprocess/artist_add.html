@@ -9,15 +9,24 @@
             location.href = "{% url 'dataprocess:artist' %}";
         }
      </script>
+
+    <div class="excel_form" id="loading_form">
+        <div class="popup_button_layout" style="justify-content: center; align-items: center;">
+            <span>저장중</span>
+        </div>
+        <div style="height: 25px;"></div>
+        <div class="loading-box" id="platform_loading">
+            <div class="loader"></div>
+        </div>
+        <div style="height: 25px;"></div>
+    </div>
     
     <div class="forms">
-        <form method="POST" class="add-form">
            <div class="row_layout flexstart_layout" style="margin-bottom: 10px;">
                 <a href="{% url 'dataprocess:artist' %}" class="btn btn-primary border-0"
                 style="font-size: 10px !important; text-decoration-line: none;font-weight: bold; margin-right: 5px;">
                     취소
                 </a>
-                <!-- <button class="excel-btn" onclick=go_to_artist2()>취소</button> -->
                 <button class="btn btn-primary border-0" id="add-submit" style="font-size: 10px !important; font-weight: bold;">저장</button>
             </div>
             <div class="row_layout flexstart_layout">
@@ -103,8 +112,6 @@
             </div>
         
 
-
-        </form>
     </div>
     {% endblock content %}
 </html>
