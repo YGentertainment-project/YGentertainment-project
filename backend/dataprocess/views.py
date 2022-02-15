@@ -296,7 +296,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                                                 platform_id = Platform.objects.get(name = 'instagram').id
                                         else:
                                             platform_id = Platform.objects.get(name = error_info['platform']).id
-                                        error_info['id'] = CollectTarget.objects.get(artist = artist_id, platform = platform_id).id #collect target id
+                                        error_info['id'] = CollectTarget.objects.filter(artist = artist_id, platform = platform_id).first().id #collect target id
                                         error_details.append(error_info)
                                     else:
                                         continue
