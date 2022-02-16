@@ -206,15 +206,16 @@ $(document).on('click','input[name=refresh]',function(){
         $(this).addClass("date-selected");
         $('input').not($(this)).removeClass("date-selected");  
     }
-    const today = new Date();
-    const next_day = addDays(today,0);
+    var today = new Date();
+    var yesterday = new Date(today.setDate(today.getDate() -1 ));
+    const next_day = addDays(yesterday,0);
     var year = next_day.getFullYear();
     var month = ("0" + (1 + next_day.getMonth())).slice(-2);
     var day = ("0" + next_day.getDate()).slice(-2);
     $('input[name=start_date]').val(year+'-'+month+'-'+day);
-    year = today.getFullYear();
-    month = ("0" + (1 + today.getMonth())).slice(-2);
-    day = ("0" + today.getDate()).slice(-2);
+    year = yesterday.getFullYear();
+    month = ("0" + (1 + yesterday.getMonth())).slice(-2);
+    day = ("0" + yesterday.getDate()).slice(-2);
     $('input[name=end_date]').val(year+'-'+month+'-'+day);
 
     var platform = $(".contents-platforms").find('.platform-selected').val(); 
@@ -233,15 +234,16 @@ $(document).on('click','input[name=refresh]',function(){
         $(this).addClass("date-selected");
         $('input').not($(this)).removeClass("date-selected");  
     }
-     const today = new Date();
-     const next_day = addDays(today,-6);
+     var today = new Date();
+    var yesterday = new Date(today.setDate(today.getDate() -1 ));
+     const next_day = addDays(yesterday,-6);
      var year = next_day.getFullYear();
      var month = ("0" + (1 + next_day.getMonth())).slice(-2);
      var day = ("0" + next_day.getDate()).slice(-2);
      $('input[name=start_date]').val(year+'-'+month+'-'+day);
-     year = today.getFullYear();
-    month = ("0" + (1 + today.getMonth())).slice(-2);
-    day = ("0" + today.getDate()).slice(-2);
+     year = yesterday.getFullYear();
+    month = ("0" + (1 + yesterday.getMonth())).slice(-2);
+    day = ("0" + yesterday.getDate()).slice(-2);
     $('input[name=end_date]').val(year+'-'+month+'-'+day);
 
     var platform = $(".contents-platforms").find('.platform-selected').val(); 
@@ -260,15 +262,16 @@ $(document).on('click','input[name=refresh]',function(){
         $(this).addClass("date-selected");
         $('input').not($(this)).removeClass("date-selected");  
     }
-     const today = new Date();
-     const next_day = addDays(today,-30);
+     var today = new Date();
+     var yesterday = new Date(today.setDate(today.getDate() -1 ));
+     const next_day = addDays(yesterday,-30);
      var year = next_day.getFullYear();
      var month = ("0" + (1 + next_day.getMonth())).slice(-2);
      var day = ("0" + next_day.getDate()).slice(-2);
      $('input[name=start_date]').val(year+'-'+month+'-'+day);
-     year = today.getFullYear();
-     month = ("0" + (1 + today.getMonth())).slice(-2);
-     day = ("0" + today.getDate()).slice(-2);
+     year = yesterday.getFullYear();
+     month = ("0" + (1 + yesterday.getMonth())).slice(-2);
+     day = ("0" + yesterday.getDate()).slice(-2);
      $('input[name=end_date]').val(year+'-'+month+'-'+day); 
 
 
@@ -533,8 +536,10 @@ $(document).on('change','input[type=radio]',function(){
         $('input[name=start_date]').val("");
         $('input[name=end_date]').val("");
         $('input[name=day]').addClass('date-selected') //1일 default
-        document.getElementById('start_date').valueAsDate = new Date();
-        document.getElementById('end_date').valueAsDate = new Date();
+        var today = new Date();
+        var yesterday = new Date(today.setDate(today.getDate() -1 ));
+        document.getElementById('start_date').valueAsDate = yesterday
+        document.getElementById('end_date').valueAsDate = yesterday
     }
     changedDatas = [];
     var platform = $(".contents-platforms").find('.platform-selected').val(); 
@@ -915,10 +920,12 @@ document.getElementById('excel-btn4').onclick = function(){
 }
 
 // default 누적 & today 설정
-document.getElementById('excel_import_date').valueAsDate = new Date();
-document.getElementById('excel_export_start_date').valueAsDate = new Date();
-document.getElementById('start_date').valueAsDate = new Date();
-document.getElementById('end_date').valueAsDate = new Date();
+var today = new Date();
+var yesterday = new Date(today.setDate(today.getDate() -1 ));
+document.getElementById('excel_import_date').valueAsDate = yesterday;
+document.getElementById('excel_export_start_date').valueAsDate = yesterday;
+document.getElementById('start_date').valueAsDate = yesterday;
+document.getElementById('end_date').valueAsDate = yesterday;
 document.getElementById('excel_export_date_text').style.display = "none";
 document.getElementById('excel_export_end_date').style.display = "none";
 document.getElementById('excel_export_days1').onclick = function(){
@@ -928,7 +935,7 @@ document.getElementById('excel_export_days1').onclick = function(){
 }
 document.getElementById('excel_export_days2').onclick = function(){
     //excel form - 기간별 선택
-    document.getElementById('excel_export_end_date').valueAsDate = new Date();
+    document.getElementById('excel_export_end_date').valueAsDate = yesterday;
     document.getElementById('excel_export_date_text').style.display = "block";
     document.getElementById('excel_export_end_date').style.display = "block";
 }
