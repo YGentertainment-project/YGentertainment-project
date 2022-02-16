@@ -377,9 +377,9 @@ const createRow = (type,datas, platform_list,db_artist_list, crawling_artist_lis
                                     dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]]) +'</td>')
                                     dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#E11D48;"><i class="fas fa-caret-up"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
                                 }
-                            } else if(datas[jsonIdx][platform_list[j]] < 0 ){
+                            } else if(datas[jsonIdx][platform_list[j]] < 0 ){ //음수
                                 dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]+'_end']) +'</td>')
-                                dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(datas[jsonIdx][platform_list[j]])+'</span></td>')
+                                dataCol = $('<td style="font-weight:bold;">'+' <span style="color:#2361ce; "><i class="fas fa-caret-down"></i> '+numToString(Math.abs(datas[jsonIdx][platform_list[j]]))+'</span></td>')
                             } else{
                                 if(typeof(datas[jsonIdx][platform_list[j]+'_end']) == 'undefined'){
                                     dataCol_0 = $('<td style="font-weight:bold;">'+numToString(datas[jsonIdx][platform_list[j]]) +'</td>')
