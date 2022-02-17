@@ -26,27 +26,30 @@ class MelonSpider(scrapy.Spider):
 
     def parse(self, response):
         artist = response.meta["artist"]
+        url = response.url
         listener_target = streaming_target = None
         listener_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="listeners")).xpath + "/text()"
         streaming_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="streams")).xpath + "/text()"
         try:
             listener_target = response.xpath(listener_xpath).extract()[2]
         except ValueError:
-            self.crawl_logger.error(f"[400], {artist}, melon, {listener_xpath}")
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {listener_xpath}")
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+        except IndexError:
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {listener_xpath}")
         
         try:
             streaming_target = response.xpath(streaming_xpath).extract()[2]
         except ValueError:
-            self.crawl_logger.error(f"[400], {artist}, melon, {streaming_xpath}")
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {streaming_xpath}")
+        except IndexError:
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {streaming_xpath}")
 
-        if listener_target is None:
-            self.crawl_logger.error(f"[400], {artist}, melon, {listener_xpath}")
+        if listener_target is None or streaming_target is None:
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {url}")
             # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
             # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
             # 오류일 경우 item을 yield 하지 않아야 합니다.
-        elif streaming_target is None:
-            self.crawl_logger.error(f"[400], {artist}, melon, {streaming_xpath}")
         else:
             listener = listener_target.replace(",", "")
             streaming = streaming_target.replace(",", "")
@@ -59,16 +62,18 @@ class MelonSpider(scrapy.Spider):
                                        "target_id": response.meta["target_id"]})
 
     def parse_melon(self, response):
+        url = response.url
+        artist = response.meta['artist']
         fans_target = None
         fans_xpath = CollectTargetItem.objects.get(Q(collect_target_id=response.meta["target_id"]) & Q(target_name="fans")).xpath + "/text()"
         try:
             fans_target = response.xpath(fans_xpath).get()
         except ValueError:
-            pass
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {fans_xpath}")
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
 
         if fans_target is None:
-            pass
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {url}")
             # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
             # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
             # 오류일 경우 item을 yield 하지 않아야 합니다.

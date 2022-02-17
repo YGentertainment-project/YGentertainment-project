@@ -155,8 +155,7 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
-                    # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
 
@@ -170,8 +169,7 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
-                    # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
 
@@ -185,8 +183,7 @@ class NoLoginDownloaderMiddleware:
                         )
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
-                    # 크롤링할 페이지가 정상적으로 로드되지 않았을 때 발생합니다.
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
         elif domain == MELON_DOMAIN:
@@ -196,7 +193,7 @@ class NoLoginDownloaderMiddleware:
                         MelonElementIsPositive((By.ID, "d_like_count"))
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
         body = to_bytes(text=self.driver.page_source)
@@ -350,7 +347,7 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "sc-pcxhi"))
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
         else:
@@ -360,7 +357,7 @@ class LoginDownloaderMiddleware:
                         EC.presence_of_element_located((By.CLASS_NAME, "report-top-level-metrics"))
                     )
                 except TimeoutException:
-                    crawlinglogger.error(f"[400], {artist_name}, {spider.name}, {request.url}")
+                    pass
                 except Exception:
                     crawlinglogger.error(f"[499]")
         body = to_bytes(text=self.driver.page_source)
