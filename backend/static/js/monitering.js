@@ -159,6 +159,7 @@ function get_hourly_schedule(){
             var datalist = res.data;
             $('#hourly-scheduler-body').eq(0).empty();
             var index = 0;
+            console.log(datalist);
             datalist.forEach(data => {
                 const tableRow = $('<tr></tr>');
                 let dataCol = document.createElement('td');
@@ -320,7 +321,7 @@ function update_hourly_platform_schedule(platform, platform_index){
     var period = parseInt($(`#schedule-hour-select${platform_index} option:selected`).val());
     var execute_time_minute = parseInt($(`#schedule-minute-select${platform_index} option:selected`).val())
     var data = {
-        'platform': platform,
+        'platform': (platform === "instagram" || platform === "facebook") ? "crowdtangle" : platform,
         'period': period,
         'execute_time_minute': execute_time_minute,
         'schedule_type': 'hour'

@@ -1067,12 +1067,10 @@ class ScheduleAPI(APIView):
         try:
             new_schedule = JSONParser().parse(request)
             schedule_type = new_schedule['schedule_type']
-            platform_list = [new_schedule['platform']]
-            # instagram과 facebook의 경우 같은 crowdtangle로 묶여있기 때문에 같은 스케줄로 통일
-            if new_schedule['platform'] == 'instagram':
-                platform_list.append('facebook')
-            elif new_schedule['platform'] == 'facebook':
-                platform_list.append('instagram')
+            if new_schedule['platform'] == 'crowdtangle':
+                platform_list = ['facebook', 'instagram']
+            else:
+                platform_list = [new_schedule['platform']]
             for platform_name in platform_list:
                 platform_objects = Platform.objects.filter(name = platform_name)
                 if platform_objects.exists():
