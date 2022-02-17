@@ -46,10 +46,16 @@ def extract_target_list(platform, schedule_type="daily"):
     for crawl_info in crawl_infos:
         crawl_target_row = dict()
 
-        try:
-            schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id, schedule_type=schedule_type)
-        except Schedule.DoesNotExist:
-            schedule_info = None
+        if platform == "crowdtangle-past":
+            try:
+                schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id)
+            except Schedule.DoesNotExist:
+                schedule_info = None
+        else:
+            try:
+                schedule_info = Schedule.objects.get(collect_target_id=crawl_info.id, schedule_type=schedule_type)
+            except Schedule.DoesNotExist:
+                schedule_info = None
 
         if schedule_info is not None and schedule_info.active == 1:
             artist_name = Artist.objects.get(id=crawl_info.artist_id).name

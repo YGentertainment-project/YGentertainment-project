@@ -28,8 +28,12 @@ class SpotifySpider(scrapy.Spider):
         url = response.meta["url"]
         listen = follow = None
         try:
-            listen = response.xpath("//*[contains(@class,'DrwCs')]/text()").get()
-            follow = response.xpath("//*[contains(@class,'jxvBiz')]/text()").get()
+            target = response.xpath("//*[contains(@class,'Type__TypeElement-goli3j-0')]/text()").extract()
+            listen = target[0]
+            for i in target[1:]:
+                if i.replace(",","").isdecimal():
+                    follow = i
+                    break
         except ValueError:
             self.crawl_logger.error(f"[400], {artist}, spotify, {url}")
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
