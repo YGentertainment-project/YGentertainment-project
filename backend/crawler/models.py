@@ -1,7 +1,15 @@
+# 용도 : Crawler에서 사용되는 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
+
+
 from django.db import models
 from django.utils.timezone import now
 
 
+# 용도 : Socialblade 중 Youtube 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class SocialbladeYoutube(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     uploads = models.IntegerField(null=True)  # 업로드 개수
@@ -23,6 +31,9 @@ class SocialbladeYoutube(models.Model):
         ]
 
 
+# 용도 : Socialblade 중 Tiktok 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class SocialbladeTiktok(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.IntegerField(null=True)
@@ -42,7 +53,10 @@ class SocialbladeTiktok(models.Model):
             ),
         ]
 
-        
+
+# 용도 : Socialblade 중 Twitter 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class SocialbladeTwitter(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.IntegerField(null=True)
@@ -63,6 +77,9 @@ class SocialbladeTwitter(models.Model):
         ]
 
 
+# 용도 : Socialblade 중 Twitter 2차계정 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class SocialbladeTwitter2(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.IntegerField(null=True)
@@ -83,6 +100,9 @@ class SocialbladeTwitter2(models.Model):
         ]
 
 
+# 용도 : Weverse 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class Weverse(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     weverses = models.IntegerField(null=True)
@@ -101,6 +121,9 @@ class Weverse(models.Model):
         ]
 
 
+# 용도 : Crowdtangle 중 Instagram 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class CrowdtangleInstagram(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField(null=True)
@@ -119,6 +142,9 @@ class CrowdtangleInstagram(models.Model):
         ]
 
 
+# 용도 : Crowdtangle 중 Facebook 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class CrowdtangleFacebook(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     followers = models.BigIntegerField(null=True)
@@ -137,6 +163,9 @@ class CrowdtangleFacebook(models.Model):
         ]
 
 
+# 용도 : Vlive 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class Vlive(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     members = models.IntegerField(null=True)
@@ -158,6 +187,9 @@ class Vlive(models.Model):
         ]
 
 
+# 용도 : Melon 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class Melon(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     listeners = models.BigIntegerField(null=True)
@@ -179,6 +211,9 @@ class Melon(models.Model):
         ]
 
 
+# 용도 : Spotify 관련 데이터 모델
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class Spotify(models.Model):
     artist = models.CharField(max_length=100)  # 아티스트 이름
     monthly_listens = models.BigIntegerField(null=True)

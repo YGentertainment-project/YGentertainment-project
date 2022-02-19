@@ -1,7 +1,10 @@
+# 용도 : models.py로 정의된 모델에 대한 serializer
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
+
 from .models import (SocialbladeYoutube, SocialbladeTiktok, SocialbladeTwitter, SocialbladeTwitter2,
                      Weverse, CrowdtangleInstagram, CrowdtangleFacebook, Vlive, Melon, Spotify)
 from rest_framework import serializers
-
 
 class SocialbladeYoutubeSerializer(serializers.ModelSerializer):
     class Meta:

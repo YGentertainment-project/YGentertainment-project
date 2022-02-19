@@ -10,7 +10,7 @@ from config.models import PlatformTargetItem, CollectTargetItem, Schedule
 from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
-from crawler.views import get_task_result,parse_logfile, parse_logfile_for_error
+from crawler.views import get_task_result, parse_logfile_for_error
 
 from .serializers import *
 from .models import *
@@ -272,8 +272,10 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
             for platform in platforms:
                 title_date = from_date_obj + datetime.timedelta(days=day)
                 title_str = title_date.strftime("%Y-%m-%d")
-                log_dir = f"../data/log/crawler/{platform}/{title_str}" # TODO: 배포환경시 경로
-                #log_dir = f"./data/log/crawler/{platform}/{title_str}" # TODO: 개발환경시 경로
+                if production_env:
+                    log_dir = f"../data/log/crawler/{platform}/{title_str}"
+                else:
+                    log_dir = f"./data/log/crawler/{platform}/{title_str}"
                 if os.path.isdir(log_dir) is True:
                     file_list = os.listdir(log_dir)
                     for file_name in file_list:

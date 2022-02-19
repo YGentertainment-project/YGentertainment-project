@@ -6,7 +6,9 @@ from django.core.management.base import BaseCommand  # the class we need to buil
 
 # https://docs.djangoproject.com/en/2.1/howto/custom-management-commands/#module-django.core.management
 
-
+# 용도 : Database 실행 상태를 확인하는 manage.py 명령어
+# 개발자 : 양승찬, uvzone@naver.com
+# 최종수정일 : 2022-02-19
 class Command(BaseCommand):  # django command to pause execution till database is available
 
     def handle(self, *args, **options):
