@@ -27,26 +27,30 @@ class SpotifySpider(scrapy.Spider):
         artist = response.meta["artist"]
         url = response.meta["url"]
         listen = follow = None
+        target_xpath = "//*[contains(@class,'Type__TypeElement-goli3j-0')]/text()"
         try:
-            target = response.xpath("//*[contains(@class,'Type__TypeElement-goli3j-0')]/text()").extract()
+            target = response.xpath(target_xpath).extract()
             listen = target[0]
             for i in target[1:]:
-                if i.replace(",","").isdecimal():
+                if i.replace(",", "").isdecimal():
                     follow = i
                     break
         except ValueError:
-            self.crawl_logger.error(f"[400], {artist}, spotify, {url}")
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {target_xpath}")
             # Xpath Error라고 나올 경우, 잘못된 Xpath 형식으로 생긴 문제입니다.
+        except IndexError:
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {target_xpath}")
+
         if listen is None or follow is None:
-            self.crawl_logger.error(f"[400], {artist}, spotify, {url}")
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {url}")
             # Xpath가 오류여서 해당 페이지에서 element를 찾을 수 없는 경우입니다.
             # 혹은, Xpath에는 문제가 없으나 해당 페이지의 Element가 없는 경우입니다.
             # 오류일 경우 item을 yield 하지 않아야 합니다.
         else:
             item = SpotifyItem()
             item["artist"] = artist
-            item["monthly_listens"] = listen[:-18].replace(",","")
-            item["followers"] = follow.replace(",","")
+            item["monthly_listens"] = listen[:-18].replace(",", "")
+            item["followers"] = follow.replace(",", "")
             item["url1"] = response.url
             item["url2"] = response.meta["url2"]
             item["reserved_date"] = datetime.now().date()
@@ -58,10 +62,10 @@ class SpotifySpider(scrapy.Spider):
             artist = failure.request.meta["artist"]
             url = failure.request.url
             if status == 404:
-                self.crawl_logger.error(f"[400], {artist}, spotify, {url}")
+                self.crawl_logger.error(f"[400], {artist}, {self.name}, {url}")
             elif status == 403:
-                self.crawl_logger.error(f"[402], {artist}, spotify, {url}")
+                self.crawl_logger.error(f"[402], {artist}, {self.name}, {url}")
         elif failure.check(DNSLookupError):
             artist = failure.request.meta["artist"]
             url = failure.request.url
-            self.crawl_logger.error(f"[400], {artist}, spotify, {url}")
+            self.crawl_logger.error(f"[400], {artist}, {self.name}, {url}")
