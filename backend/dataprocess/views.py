@@ -292,7 +292,6 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
             return JsonResponse(status=400, data={"error": "Input Date Format Error"})
         page = request.GET.get('page',1)
         limit = 10
-
         day_diff = (to_date_obj - from_date_obj).days
         platforms = ["crowdtangle", "melon", "spotify", "tiktok", "twitter", "twitter2", "vlive", "weverse", "youtube"]
         error_details = [] # 전체 에러 디테일
@@ -317,7 +316,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                             if platform_name is not None:
                                 for error_info in error_infos:
                                     if error_info['type'] == "400":
-                                        artist_id = get_object_or_404(Artist,name = error_info['artist']).id
+                                        # artist_id = get_object_or_404(Artist,name = error_info['artist']).id
                                         platform_id = 0
                                         if platform == "crowdtangle": #instagram or facebook
                                             splited_url = error_info['url'].split('&') #split url by & 
@@ -327,7 +326,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                                                 platform_id = Platform.objects.get(name = 'instagram').id
                                         else:
                                             platform_id = Platform.objects.get(name = error_info['platform']).id
-                                        error_info['id'] = CollectTarget.objects.filter(artist = artist_id, platform = platform_id).first().id #collect target id
+                                        # error_info['id'] = CollectTarget.objects.filter(artist = artist_id, platform = platform_id).first().id #collect target id
                                         error_details.append(error_info)
                                     else:
                                         continue
