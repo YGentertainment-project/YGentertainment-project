@@ -273,7 +273,7 @@ def check_valid_log(log_words):
 # 목적 : 주어진 파일 경로의 로그 파일을 파싱하여 에러 상태를 지표들을 반환하는 함수
 # 멤버함수 : check_valid_log
 # 개발자 : 양승찬, uvzone@naver.com
-# 최종수정일 : 2022-02-19
+# 최종수정일 : 2022-02-20
 def parse_logfile_for_error(filepath):
     error_infos = []
     errors = 0
@@ -281,7 +281,7 @@ def parse_logfile_for_error(filepath):
     platform_artists = None
     with open(f'{filepath}', 'r') as log_file:
         for log_line in log_file:
-            log_words = log_line.replace(" ", "").rstrip().split(',')
+            log_words = log_line.split(',')
             if check_valid_log(log_words) is True:
                 log_type = log_words[3].strip().strip('[]')
                 if log_type == "INFO":  # 플랫폼, 아티스트 정보

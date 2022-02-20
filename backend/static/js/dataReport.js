@@ -89,6 +89,9 @@ function ajax(type,platform,start_date,end_date){
         error: e => {
             $('#overlay').fadeOut(300)
             console.log(e);
+            if(type === '누적'){
+                alert('데이터를 불러올 수 없습니다.')
+            }
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
@@ -153,6 +156,9 @@ function ajax_only(type,platform,start_date,end_date){
         error: e => {
             $('#overlay').fadeOut(300)
             console.log(e);
+            if(type === '누적'){
+                alert('데이터를 불러올 수 없습니다.')
+            }
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');
@@ -843,7 +849,11 @@ $('#update').click(function(){
             }
         },
         error: e => {
+            $('#overlay').fadeOut(300)
             console.log(e);
+            if(type === '누적'){
+                alert('데이터를 저장하는데 실패했습니다.')
+            }
             if(type === '기간별'){
                 var result = JSON.parse(e.responseText);
                 alert(result.data+ ' 에 데이터가 없습니다. 날짜를 조정해주세요.');

@@ -62,7 +62,11 @@ def logincheck(request):
             auth.login(request, user)
     return request
 
-# Create your views here.
+# 정의 : base
+# 목적 : 웹 페이지 시작 페이지 로딩 
+# 멤버함수 : logincheck
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 
 def base(request):
     '''
     general page
@@ -200,7 +204,12 @@ def daily(request):
                                     content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = f'attachment; filename="{file_name}"'
             return response
-    
+
+# 정의 : platform 페이지
+# 목적 : 웹 페이지 플랫폼 관리 페이지 로딩 
+# 멤버함수 : logincheck
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 
 def platform(request):
      '''
      general page
@@ -212,6 +221,11 @@ def platform(request):
      request = logincheck(request)
      return render(request, 'dataprocess/platform.html',values)
 
+# 정의 : artist 페이지
+# 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지  
+# 멤버함수 : logincheck
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 
 def artist(request):
     artists = Artist.objects.all()
     values = {
@@ -222,6 +236,11 @@ def artist(request):
     request = logincheck(request)
     return render(request, 'dataprocess/artist.html',values)
 
+# 정의 : artist 페이지
+# 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지 중 아티스트 추가 페이지
+# 멤버함수 : logincheck
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 
 @csrf_exempt
 def artist_add(request):
     platforms = Platform.objects.all()
@@ -233,6 +252,12 @@ def artist_add(request):
     request = logincheck(request)
     return render(request, 'dataprocess/artist_add.html',values)
 
+
+#정의 : monitering 페이지
+# 목적 : 웹 페이지 모니터링 중 모니터링 페이지 
+# 멤버함수 : logincheck
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 
 def monitering(request):
     platforms = Platform.objects.all()
     values = {
@@ -251,7 +276,11 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
-
+#정의 : 모니터링 URL 오류 관련 페이지네이션 기능
+# 목적 : 모니터링 페이지에서 URL 오류 관련한 URL 정보들을 페이지네이션 된 데이터 조각으로 리턴
+# 멤버함수 : get
+# 개발자 : 임수민, soomin910612@gmail.com
+# 최종수정일 : 2020-02-18
 class ResultQueryView(ViewPaginatorMixin,APIView):
     def get(self, request):
         from_date_str = request.GET.get("fromdate", None)
@@ -537,6 +566,11 @@ class ArtistAPI(APIView):
             return JsonResponse(data={'success': False}, status=400)
 
 
+# 정의 : 아티스트별 플랫폼 정보 URL 불러오기/수정 
+# 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지에서 아티스트 클릭 시 나오는 플랫폼별 URL을 불러오고 수정한다.   
+# 멤버함수 : get, put
+# 개발자 : 김민희,  (get)/ 임수민, soomin910612@gmail.com(put)
+# 최종수정일 : 
 class PlatformOfArtistAPI(APIView):
     # @login_required
     def get(self, request):
@@ -759,7 +793,11 @@ class PlatformTargetItemAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
-
+# 정의 : 데이터 리포트 일별 데이터 불러오기 및 수정
+# 목적 : 크롤링 된 데이터를 불러오고 수정한다. 크롤링 데이터 형식은 json 이다. 
+# 멤버함수 : get, post
+# 개발자 : 김민희,  (get)/ 임수민, soomin910612@gmail.com(post)
+# 최종수정일 : 
 class DataReportAPI(APIView):
     def get(self, request):
         '''
