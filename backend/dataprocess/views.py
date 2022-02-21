@@ -962,10 +962,11 @@ class DataReportAPI(APIView):
         update_data_object = JSONParser().parse(request)
         start_date = update_data_object[len(update_data_object)-1]['start_date']
         platform = update_data_object[len(update_data_object)-1]['platform_name']
+        
         # artist name
         artist_objects = Artist.objects.filter(active=1)
-
-        artist_objects_values = artist_objects.values()
+        artist_objects_values = list(artist_objects.values())
+        artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
         artist_list = []
         for a in artist_objects_values:
             artist_list.append(a['name'])
