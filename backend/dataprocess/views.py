@@ -316,7 +316,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                             if platform_name is not None:
                                 for error_info in error_infos:
                                     if error_info['type'] == "400":
-                                        # artist_id = get_object_or_404(Artist,name = error_info['artist']).id
+                                        artist_id = get_object_or_404(Artist,name = error_info['artist']).id
                                         platform_id = 0
                                         if platform == "crowdtangle": #instagram or facebook
                                             splited_url = error_info['url'].split('&') #split url by & 
@@ -326,7 +326,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
                                                 platform_id = Platform.objects.get(name = 'instagram').id
                                         else:
                                             platform_id = Platform.objects.get(name = error_info['platform']).id
-                                        # error_info['id'] = CollectTarget.objects.filter(artist = artist_id, platform = platform_id).first().id #collect target id
+                                        error_info['id'] = CollectTarget.objects.filter(artist = artist_id, platform = platform_id).first().id #collect target id
                                         error_details.append(error_info)
                                     else:
                                         continue
