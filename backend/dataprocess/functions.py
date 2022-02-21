@@ -5,6 +5,7 @@ from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
+from openpyxl.utils import get_column_letter
 from config.models import PlatformTargetItem, CollectTargetItem, Schedule, AuthInfo
 from dataprocess.models import Platform, Artist, CollectTarget, CollectData
 
@@ -59,6 +60,8 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             filter_end_value = filter_end_value["collect_items"]
             # 숫자필드값+user_created만 보내주기
             for i, field_name in enumerate(collect_item_list):
+                if "증감내역" in field_name:
+                    continue
                 # 뒤날짜 데이터가 없다면 0으로
                 if not field_name in filter_end_value:
                     filter_datas[i] = 0
@@ -66,9 +69,16 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
                     # 숫자 데이터, 문자열로 된 숫자 데이터(예: "123")
                     if isinstance(filter_end_value[field_name], int) or filter_end_value[field_name].isdigit():
                         if field_name in filter_start_value:
-                            filter_datas[i] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
+                            # 뒤의 날짜 값
+                            filter_datas[i] = int(filter_end_value[field_name])
+                            if type=="기간별":
+                                # 증감내역
+                                filter_datas[i+1] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
                         else: # 앞의 날짜를 0으로 처리한 형태
                             filter_datas[i] = filter_end_value[field_name]
+                            if type=="기간별":
+                                # 증감내역
+                                filter_datas[i+1] = 0
                     # 날짜 데이터
                     else:
                         tmpdate = parse(filter_end_value[field_name])
@@ -95,6 +105,8 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                     if p["target_name"] in collect_item:
                         continue
                     collect_item.add(p["target_name"])
+                    if excel_export_type=="기간별" and p["target_name"] != 'user_created':
+                        collect_item.add(p["target_name"]+" 의 증감내역")
             collect_item = list(collect_item)
 
             platform_header = []
@@ -105,6 +117,8 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                 for key in key_list:
                     if key in collect_item:
                         platform_header.append(key)
+                        if excel_export_type=="기간별" and key != 'user_created':
+                            platform_header.append(key+" 의 증감내역")
                     else:
                         continue
             else:
@@ -143,9 +157,10 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     sheet.cell(row=2, column=1).value = "아티스트"
     sheet.cell(row=2, column=1).border = thick_border
     sheet.cell(row=2, column=1).alignment = Alignment(horizontal="center", vertical="center")
+    sheet.cell(row=2, column=1).font = fonts.Font(bold=True)
     col += 1
     sheet.row_dimensions[2].height = 35
-    sheet.column_dimensions["A"].width = 40
+    sheet.column_dimensions["A"].width = 25
 
     # 플랫폼 이름과 수집항목 띄우기
     for data in db_platform_datas:
@@ -159,6 +174,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
         sheet.cell(row=row, column=col).font = fonts.Font(bold=True)
 
         for i, collect_data in enumerate(data["collect_item"]):
+            sheet.column_dimensions[get_column_letter(col+i)].width = 20
             sheet.cell(row=row+1, column=col+i).value = collect_data
             sheet.cell(row=row+1, column=col+i).border = thick_border
             sheet.cell(row=row+1, column=col+i).alignment = Alignment(horizontal="center", vertical="center")
