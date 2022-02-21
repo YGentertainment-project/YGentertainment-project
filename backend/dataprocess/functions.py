@@ -1,5 +1,6 @@
 import datetime
 from gc import collect
+import re
 from dateutil.parser import parse
 import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
@@ -117,7 +118,8 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
     db_artists = []
     artists = Artist.objects.all()
     if artists.exists():
-        artist_objects_values = artists.values()
+        artist_objects_values = list(artists.values())
+        artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
         for artist_value in artist_objects_values:
             db_artists.append(artist_value["name"])
 

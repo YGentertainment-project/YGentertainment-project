@@ -1,4 +1,5 @@
 import os
+import re
 from django.contrib import auth
 from django.shortcuts import render,get_object_or_404
 from account.models import User
@@ -228,6 +229,9 @@ def platform(request):
 # 최종수정일 : 
 def artist(request):
     artists = Artist.objects.all()
+    # artist 이름 가나다순 정렬
+    artists = list(artists.values())
+    artists = sorted(sorted(artists, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
     values = {
       'first_depth' : '아티스트 관리',
       'second_depth': '데이터 URL 관리',
@@ -450,7 +454,9 @@ class ArtistAPI(APIView):
         try:
             artist_objects = Artist.objects.all()
             if artist_objects.exists():
-                artist_objects_values = artist_objects.values()
+                # artist 이름 가나다순 정렬
+                artist_objects_values = list(artist_objects.values())
+                artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
                 artist_datas = []
                 for artist_value in artist_objects_values:
                     artist_datas.append(artist_value)
@@ -809,7 +815,8 @@ class DataReportAPI(APIView):
 
         #artist name
         artist_objects = Artist.objects.filter(active=1)
-        artist_objects_values = artist_objects.values()
+        artist_objects_values = list(artist_objects.values())
+        artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
         artist_list = []
         for a in artist_objects_values:
             artist_list.append(a['name'])
@@ -1086,6 +1093,7 @@ class ScheduleAPI(APIView):
                             execute_time = schedule_objects.values()[0]['execute_time']
                             artist = Artist.objects.get(pk = collecttarget_object['artist_id'])
                             hour_artist_list.append(artist.name)
+                    hour_artist_list = sorted(sorted(hour_artist_list), key=lambda c:0 if re.search('[ㄱ-힣]', c[0]) else 1)
                     hourly_list.append({
                         'platform': platform_object['name'],
                         'artists': hour_artist_list,
