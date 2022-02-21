@@ -52,7 +52,11 @@ trfh.setLevel(logging.INFO)
 userlogger.addHandler(trfh)
 userlogger.setLevel(logging.DEBUG)
 
-# login check using cookie
+# 정의 : logincheck
+# 목적 : 웹사이트의 쿠키를 보고 로그인 유무 판별
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 def logincheck(request):
     # 로그인 정보를 받기 위해 cookie사용
     username = request.COOKIES.get('username')
@@ -79,6 +83,11 @@ def base(request):
     request = logincheck(request)
     return render(request, 'dataprocess/base.html',values)
     
+# 정의 : daily
+# 목적 : 데이터리포트 화면 로딩 및 엑셀 export/import 기능
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 @csrf_exempt
 def daily(request):
     if request.method == 'GET':
@@ -272,7 +281,11 @@ def monitering(request):
     request = logincheck(request)
     return render(request, 'dataprocess/monitering.html', values)
 
-
+# 정의 : login 페이지
+# 목적 : 로그인 페이지
+# 멤버함수 : logincheck
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 def login(request):
     values = {
       'first_depth' : '로그인'
@@ -337,6 +350,11 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
 
         return JsonResponse(data = {"data": self.paginate(error_details, page, limit)})
 
+# 정의 : platform api
+# 목적 : 플랫폼과 관련된 CRU api들
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 class PlatformAPI(APIView):
     # @login_required
     def get(self, request):
@@ -445,6 +463,11 @@ class PlatformAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
+# 정의 : artist api
+# 목적 : 아티스트와 관련된 CRU api들
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 class ArtistAPI(APIView):
     # @login_required
     def get(self, request):
@@ -574,7 +597,7 @@ class ArtistAPI(APIView):
 # 정의 : 아티스트별 플랫폼 정보 URL 불러오기/수정 
 # 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지에서 아티스트 클릭 시 나오는 플랫폼별 URL을 불러오고 수정한다.   
 # 멤버함수 : get, put
-# 개발자 : 김민희,  (get)/ 임수민, soomin910612@gmail.com(put)
+# 개발자 : 김민희, minheekim3@naver.com(get)/ 임수민, soomin910612@gmail.com(put)
 # 최종수정일 : 
 class PlatformOfArtistAPI(APIView):
     # @login_required
@@ -637,7 +660,11 @@ class PlatformOfArtistAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
-
+# 정의 : collecttargetitem(조사항목) api
+# 목적 : 조사항목과 관련된 RUD api들
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 class CollectTargetItemAPI(APIView):
     # @login_required
     def get(self, request):
@@ -751,50 +778,6 @@ class CollectTargetItemAPI(APIView):
             obj = CollectTargetItem.objects.filter(id = delete_id)
             obj.delete()
             return JsonResponse(data={'success': True}, status=status.HTTP_200_OK)
-        except:
-            return JsonResponse(data={'success': False}, status=400)
-
-#platform collect target API 
-class PlatformTargetItemAPI(APIView):
-    # @login_required
-    def get(self, request):
-        '''
-        PlatformTargetItem read api
-        '''
-        try:
-            platform = request.GET.get('platform', None)
-            # 해당 platform 찾기
-            platform_object = Platform.objects.filter(name = platform).first()
-            # 해당 platform을 가지는 platform_target 가져오기
-            collecttarget_objects = PlatformTargetItem.objects.filter(platform_id = platform_object.id)
-            if collecttarget_objects.exists():
-                collecttargetitems_datas = []
-                collecttarget_objects_value = collecttarget_objects.values()[0]
-                collecttargetitmes_objects = PlatformTargetItem.objects.filter(platform_id=collecttarget_objects_value['platform_id'])
-                collecttargetitmes_values = collecttargetitmes_objects.values()
-                for collecttargetitmes_value in collecttargetitmes_values:
-                    collecttargetitems_datas.append(collecttargetitmes_value)
-                return JsonResponse(data={'success': True, 'data': collecttargetitems_datas,'platform_id':collecttarget_objects_value['platform_id']})
-            else:
-                return JsonResponse(data={'success': True, 'data': []})
-        except:
-            return JsonResponse(status=400, data={'success': False})
-
-    # @login_required
-    def put(self, request):
-        '''
-        PlatformTargetItem update api
-        '''
-        try:
-            collecttargetitem_list = JSONParser().parse(request)
-            for i,collecttargetitem_object in enumerate(collecttargetitem_list):
-                collecttargetitem_data = PlatformTargetItem.objects.filter(platform_id=collecttargetitem_object['platform'])[i]
-                collecttargetitem_serializer = PlatformTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
-                if collecttargetitem_serializer.is_valid():
-                    collecttargetitem_serializer.save()
-                else:
-                    return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
-            return JsonResponse(data={'success': True}, status=status.HTTP_201_CREATED)
         except:
             return JsonResponse(data={'success': False}, status=400)
 
@@ -1068,7 +1051,11 @@ class DataReportAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-
+# 정의 : schedule(스케줄) api
+# 목적 : 조사항목과 관련된 RU api들
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 
 class ScheduleAPI(APIView):
     def get(self, request):
         '''
