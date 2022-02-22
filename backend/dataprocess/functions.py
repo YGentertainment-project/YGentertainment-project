@@ -5,19 +5,37 @@ import openpyxl
 from openpyxl.styles import PatternFill, Border, Side, fonts
 from openpyxl.styles.alignment import Alignment
 from openpyxl.utils import get_column_letter
-from config.models import PlatformTargetItem, CollectTargetItem, Schedule, AuthInfo
+from config.models import CollectTargetItem, Schedule, AuthInfo
 from dataprocess.models import Platform, Artist, CollectTarget, CollectData
 
-from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer, AuthInfoSerializer
+from config.serializers import CollectTargetItemSerializer, ScheduleSerializer, AuthInfoSerializer
 from dataprocess.serializers import ArtistSerializer, PlatformSerializer, CollectTargetSerializer
 
+# 정의 : collect_data table을 조회하여 특정 플랫폼, 아티스트의 크롤링 데이터 list를 반환한다.
+# 이때 반환하는 list는 엑셀파일 내의 조사항목 헤더와 싱크가 맞아야 한다.
+# 목적 : 크롤링데이터 엑셀 다운로드(export)를 위해 크롤링 데이터 반환
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def get_platform_data(artist, platform, type, start_date, end_date, collect_item_list):
+    '''
+    <<input>>
+    artist: 아티스트 이름
+    platform: 플랫폼 이름
+    type: 누적 or 기간별
+    start_date: 시작날짜
+    end_date: 끝날짜 (type=누적인 경우 null)
+    collect_item_list: 해당 플랫폼,아티스트의 조사항목 list
+
+    <<output>>
+    크롤링 데이터 list
+    '''
+    # return list
     filter_datas = []
-    # 길이 초기화
+    # list 길이 초기화
     for i in collect_item_list:
         filter_datas.append("NULL")
 
-    # 오늘 날짜 기준으로 가져오기
     if type == "누적":
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
@@ -25,17 +43,18 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
             collect_items__reserved_date = start_date_string)
         if filter_objects.exists():
             filter_value = filter_objects.values().first()
+            # 아티스트-플랫폼가 해당날짜에 크롤링한 첫번째 데이터
             filter_value = filter_value["collect_items"]
-            # 숫자필드값+user_created만 보내주기
+            # 숫자 데이터, 날짜 데이터만 보내주기(id 등 제외)
             for i, field_name in enumerate(collect_item_list):
-                # 뒤날짜 데이터가 없다면 0으로
+                # 수집항목에 포함되는 것만 list에 포함
                 if not field_name in filter_value:
                     continue
                 else:
                     # 숫자 데이터, 문자열로 된 숫자 데이터(예: "123")
                     if isinstance(filter_value[field_name], int) or filter_value[field_name].isdigit():
                         filter_datas[i] = int(filter_value[field_name])
-                    # 날짜 데이터
+                    # 날짜 데이터(0000-00-00형태로 반환)
                     else:
                         tmpdate = parse(filter_value[field_name])
                         filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
@@ -54,13 +73,15 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
         if filter_start_objects.exists() and filter_end_objects.exists():
             filter_start_value = filter_start_objects.values().first()
             filter_end_value = filter_end_objects.values().first()
+            # 아티스트-플랫폼가 시작날짜에 크롤링한 첫번째 데이터
             filter_start_value = filter_start_value["collect_items"]
+            # 아티스트-플랫폼가 끝날짜에 크롤링한 첫번째 데이터
             filter_end_value = filter_end_value["collect_items"]
-            # 숫자필드값+user_created만 보내주기
+            # 숫자 데이터, 날짜 데이터만 보내주기(id 등 제외)
             for i, field_name in enumerate(collect_item_list):
                 if "증감내역" in field_name:
                     continue
-                # 뒤날짜 데이터가 없다면 0으로
+                # 끝날짜 데이터가 없다면 0으로
                 if not field_name in filter_end_value:
                     filter_datas[i] = 0
                 else:
@@ -70,14 +91,15 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
                             # 뒤의 날짜 값
                             filter_datas[i] = int(filter_end_value[field_name])
                             if type=="기간별":
-                                # 증감내역
+                                # 증감내역 데이터
                                 filter_datas[i+1] = int(filter_end_value[field_name]) - int(filter_start_value[field_name])
-                        else: # 앞의 날짜를 0으로 처리한 형태
+                        # 시작날짜 데이터가 없는 경우
+                        else: # 시작날짜값을 0으로 처리한 형태
                             filter_datas[i] = filter_end_value[field_name]
                             if type=="기간별":
-                                # 증감내역
+                                # 증감내역 데이터
                                 filter_datas[i+1] = 0
-                    # 날짜 데이터
+                    # 날짜 데이터(0000-00-00형태로 반환)
                     else:
                         tmpdate = parse(filter_end_value[field_name])
                         filter_datas[i] = tmpdate.strftime("%Y-%m-%d")
@@ -85,9 +107,22 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
     else:
         return filter_datas
 
-
+# 정의 : 데이터리포트 - 크롤링데이터 엑셀파일을 생성(추출)한다.
+# 목적 : 크롤링데이터 엑셀 다운로드(export)를 위해 엑셀파일 생성
+# 멤버함수 : get_platform_data
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def export_datareport(excel_export_type, excel_export_start_date, excel_export_end_date):
-    # DB에서 platform과 platform_target_item 가져오기
+    '''
+    <<input>>
+    excel_export_type: 누적 or 기간별
+    excel_export_start_date: 시작날짜
+    excel_export_end_date: 끝날짜 (type=누적인 경우 null)
+
+    <<output>>
+    엑셀 file
+    '''
+    # db에서 platform과 platform_target_item 가져오기
     db_platform_datas = []
     platforms = Platform.objects.all()
     if platforms.exists():
@@ -126,7 +161,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
                 "collect_item": platform_header
             })
 
-    # DB에서 artist 가져오기
+    # db에서 artist 가져오기
     db_artists = []
     artists = Artist.objects.all()
     if artists.exists():
@@ -135,7 +170,7 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
         for artist_value in artist_objects_values:
             db_artists.append(artist_value["name"])
 
-    # export excel
+    # return할 excel file 생성
     book = openpyxl.Workbook()
     sheet = book.active
 
@@ -204,17 +239,32 @@ def export_datareport(excel_export_type, excel_export_start_date, excel_export_e
         col = 1
     return book
 
-
+# 정의 : 데이터리포트 - 크롤링데이터 엑셀파일로부터 db의 collect_data table에 저장한다.
+# 목적 : 크롤링데이터 엑셀 업로드(import)를 통해 db에 크롤링데이터 저장
+# 멤버함수 : save_collect_data_target
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def import_datareport(worksheet, excel_import_date):
+    '''
+    <<input>>
+    worksheet: 엑셀 파일 sheet
+    excel_import_date: db에 저장하고자하는 날짜
+
+    <<output>>
+    x
+    '''
     platform_data_list = []
     row_num = 0
 
     if excel_import_date is None:
+        # 날짜가 없다면 default는 해당날짜
         target_date = datetime.datetime.today()
     else:
         target_date = datetime.datetime.strptime(excel_import_date, "%Y-%m-%d")
     target_date = datetime.date(target_date.year, target_date.month, target_date.day)
     target_date_string = target_date.strftime("%Y-%m-%d")
+
+    # 엑셀파일 파싱
     for row in worksheet.iter_rows():
         # 플랫폼 정보 나열
         if row_num == 0:
@@ -237,7 +287,7 @@ def import_datareport(worksheet, excel_import_date):
                     platform_name = platform_value
                 else:  # None일때
                     item_num += 1
-            # 마지막 저장
+            # platform_data_list에 저장
             data_json["platform"] = platform_name
             data_json["item_num"] = item_num
             data_json["item_list"] = []
@@ -256,7 +306,7 @@ def import_datareport(worksheet, excel_import_date):
                         platform_index += 1
                         current_index = 0
             row_num += 1
-        # 데이터 정보 나열
+        # 크롤링데이터 정보 나열
         else:
             platform_index = 0
             current_index = 0
@@ -291,14 +341,27 @@ def import_datareport(worksheet, excel_import_date):
                         current_index = 0
                         data_json = {}
 
-
+# 정의 : 데이터리포트 - 수집정보 엑셀파일로부터 db의 platform, artist, collect_target, collect_target_item, schedule table에 저장한다.
+# 목적 : 수집정보 엑셀 업로드(import)를 통해 db에 수집정보 저장
+# 멤버함수 : save_platform, save_artist, save_collect_target, save_schedule, save_collect_target_item
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def import_collects(worksheet):
+    '''
+    <<input>>
+    worksheet: 엑셀 파일 sheet
+
+    <<output>>
+    x
+    '''
     platform_data_list = []
     artist_data_list = []
     collect_target_data_list = []
     collect_target_item_data_list = []
     platform_start_index = 7
     row_num = 0
+
+    # 엑셀파일 파싱
     for row in worksheet.iter_rows():
         if row_num == 0 or row_num == 3 or row_num == 4:
             row_num += 1
@@ -325,7 +388,7 @@ def import_collects(worksheet):
                     platform_name = platform_value
                 else:  # None일때
                     item_num += 1
-            # 마지막 저장
+            # platform_data_list에 저장
             data_json["platform"] = platform_name
             data_json["item_num"] = item_num
             data_json["item_list"] = []
@@ -362,21 +425,6 @@ def import_collects(worksheet):
                         platform_index += 1
                         current_index = 0
             row_num += 1
-        # # 지표 xpath 정보 나열
-        # elif row_num == 6:
-        #     platform_index = 0
-        #     current_index = 0
-        #     for i, cell in enumerate(row):
-        #         if i < platform_start_index:
-        #             continue
-        #         collect_value = str(cell.value)
-        #         if collect_value != "xpath":
-        #             platform_data_list[platform_index]["item_xpath_list"].append(collect_value)
-        #             current_index += 1
-        #             if current_index >= platform_data_list[platform_index]["item_num"]:
-        #                 platform_index += 1
-        #                 current_index = 0
-        #     row_num += 1
         # 아티스트 & target_url 정보 나열
         else:
             platform_index = 0
@@ -436,13 +484,14 @@ def import_collects(worksheet):
                         collect_target_data_list.append(data_json2)
                         data_json2 = {}
 
-    # platform 저장
+    # db에 저장
+    # platform table에 저장
     for platform_data in platform_data_list:
         save_platform({
             "name": platform_data["platform"],
             "url": platform_data["url"]
         })
-    # artist 저장
+    # artist table에 저장
     collect_target_index = 0
     for artist_data in artist_data_list:
         save_artist(artist_data)
@@ -455,32 +504,49 @@ def import_collects(worksheet):
                 artist_filter_object = artist_filter_object.values().first()
                 if 'target_url_2' in collect_target_data_list[collect_target_index]:
                     save_collect_target({
-                    "artist": artist_filter_object['id'],
-                    "platform": platform_filter_object['id'],
-                    "target_url": collect_target_data_list[collect_target_index]['target_url'],
-                    "target_url_2": collect_target_data_list[collect_target_index]['target_url_2'],
+                        "artist": artist_filter_object['id'],
+                        "platform": platform_filter_object['id'],
+                        "target_url": collect_target_data_list[collect_target_index]['target_url'],
+                        "target_url_2": collect_target_data_list[collect_target_index]['target_url_2'],
                     })
                 else:
-                    save_collect_target({"artist": artist_filter_object["id"],
-                                         "platform": platform_filter_object["id"],
-                                         "target_url": collect_target_data_list[collect_target_index]["target_url"]
+                    save_collect_target({
+                        "artist": artist_filter_object["id"],
+                        "platform": platform_filter_object["id"],
+                        "target_url": collect_target_data_list[collect_target_index]["target_url"]
                     })
                 collecttarget_object = CollectTarget.objects.filter(artist_id = artist_filter_object['id'],
                     platform=platform_filter_object['id'])
                 collecttarget_object = collecttarget_object.values().first()
                 collecttargetid = collecttarget_object["id"]
+                # schedule table에 저장
                 save_schedule(collecttargetid)
             collect_target_index += 1
-    # collecttargetitem 저장
+    # collect_target_item table에 저장
     for collect_target_item_data in collect_target_item_data_list:
         save_collect_target_item(collect_target_item_data)
 
+
+# 정의 : 데이터리포트 - 로그인정보 엑셀파일로부터 db의 auth_info table에 저장한다.
+# 목적 : 로그인정보 엑셀 업로드(import)를 통해 db에 수집정보 저장
+# 멤버함수 : save_auth_info
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def import_authinfo(worksheet):
+    '''
+    <<input>>
+    worksheet: 엑셀 파일 sheet
+
+    <<output>>
+    x
+    '''
     platform_data_list = []
     artist_data_list = []
     auth_info_list = []
     platform_start_index = 1
     row_num = 0
+
+    # 엑셀파일 파싱
     for row in worksheet.iter_rows():
         if row_num == 0 or row_num == 3 or row_num == 4:
             row_num += 1
@@ -506,7 +572,7 @@ def import_authinfo(worksheet):
                     platform_name = platform_value
                 else:  # None일때
                     item_num += 1
-            # 마지막 저장
+            # platform_data_list에 저장
             data_json["platform"] = platform_name
             data_json["item_num"] = item_num
             data_json["item_list"] = []
@@ -570,14 +636,28 @@ def import_authinfo(worksheet):
                             data_json2 = {}
                         platform_index += 1
                         current_index = 0
-    # collecttargetitem 저장
+
+    # db에 저장하는 부분
+    # auth_info table에 저장
     for auth_info_item in auth_info_list:
         save_auth_info(auth_info_item)
 
+
+# 정의 : db의 auth_info table에 데이터를 저장한다.
+# 목적 : import_authinfo 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_auth_info(data_json):
-    """
-    수집(크롤링) 데이터 저장
-    """
+    '''
+    기능: 로그인정보 저장
+
+    <<input>>
+    data_json: auth_info에 저장하고자하는 json형태의 데이터
+
+    <<output>>
+    x
+    '''
     platform = data_json["platform"]
     artist = data_json["artist"]
     artist_object = Artist.objects.filter(name = artist).first()
@@ -594,10 +674,24 @@ def save_auth_info(data_json):
         authinfo_serializer.save()
 
 
+# 정의 : db의 collect_data table에 데이터를 저장한다.
+# 목적 : import_datareport 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_collect_data_target(data_json, platform, target_date_string):
-    """
-    수집(크롤링) 데이터 저장
-    """
+    '''
+    기능: CollectData table에 생성 및 업데이트
+
+    <<input>>
+    data_json: collect_data에 저장하고자하는 json형태의 크롤링데이터
+    platform: 플랫폼 이름
+    target_date_string: 수집날짜
+
+    <<output>>
+    x
+    '''
+    # 조사항목이 없으므로 저장하지 않음
     if len(data_json.keys())==1:
         return
     # collectdata 저장
@@ -607,54 +701,76 @@ def save_collect_data_target(data_json, platform, target_date_string):
     artist_object = artist_object.values()[0]
     platform_object = Platform.objects.filter(name=platform)
     platform_object = platform_object.values()[0]
-    collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object["id"],
-                            artist_id = artist_object["id"])
+    collecttarget_object = CollectTarget.objects.filter(platform_id = platform_object["id"], artist_id = artist_object["id"])
     collecttarget_object = collecttarget_object.values()[0]
+    # 해당 날짜의 데이터 생성 및 업데이트
     CollectData.objects.update_or_create(
         collect_target_id = collecttarget_object['id'],
         collect_items__reserved_date = target_date_string,
+        # 업데이트하고자하는 값
         defaults = {"collect_items": data_json}
     )
 
 
+# 정의 : db의 platform table에 데이터를 저장한다.
+# 목적 : import_collects 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_platform(data_json):
-    """
-    플랫폼 저장
-    """
+    '''
+    기능: platform table에 생성 및 업데이트
+
+    <<input>>
+    data_json: platform에 저장하고자하는 json형태의 크롤링데이터
+
+    <<output>>
+    x
+    '''
     obj = Platform.objects.filter(name=data_json["name"]).first()
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        platform_serializer = PlatformSerializer(data=data_json)
-        if platform_serializer.is_valid():
-            platform_serializer.save()
-    # 있는 건 업데이트
-    else:
-        platform_serializer = PlatformSerializer(obj, data=data_json)
-        if platform_serializer.is_valid():
-            platform_serializer.save()
+    # 생성 및 업데이트
+    platform_serializer = PlatformSerializer(obj, data=data_json)
+    if platform_serializer.is_valid():
+        platform_serializer.save()
 
 
+# 정의 : db의 artist table에 데이터를 저장한다.
+# 목적 : import_collects 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_artist(data_json):
-    """
-    아티스트 저장
-    """
+    '''
+    기능: artist table에 생성 및 업데이트
+
+    <<input>>
+    data_json: artist에 저장하고자하는 json형태의 크롤링데이터
+
+    <<output>>
+    x
+    '''
     obj = Artist.objects.filter(name=data_json["name"]).first()
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        artist_serializer = ArtistSerializer(data=data_json)
-        if artist_serializer.is_valid():
-            artist_serializer.save()
-    # 있는 건 업데이트
-    else:
-        artist_serializer = ArtistSerializer(obj, data=data_json)
-        if artist_serializer.is_valid():
-            artist_serializer.save()
+    # 생성 및 업데이트
+    artist_serializer = ArtistSerializer(obj, data=data_json)
+    if artist_serializer.is_valid():
+        artist_serializer.save()
 
 
+# 정의 : db의 collect_target_item table에 데이터를 저장한다.
+# 목적 : import_collects 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_collect_target_item(data_json):
-    """
-    collect수집(조사)항목 저장
-    """
+    '''
+    기능: CollectTargetItem(조사항목) table에 생성 및 업데이트
+
+    <<input>>
+    data_json: collect_target_item에 저장하고자하는 json형태의 크롤링데이터
+
+    <<output>>
+    x
+    '''
     artist_object = Artist.objects.filter(name=data_json["artist"])
     artist_object = artist_object.values()[0]
     platform_object = Platform.objects.filter(name=data_json["platform"])
@@ -667,38 +783,48 @@ def save_collect_target_item(data_json):
         "target_name": data_json["target_name"],
         "xpath": data_json["xpath"]
     }
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        target_item_serializer = CollectTargetItemSerializer(data=data_json)
-        if target_item_serializer.is_valid():
-            target_item_serializer.save()
-    # 있는 건 업데이트
-    else:
-        target_item_serializer = CollectTargetItemSerializer(obj, data=data_json)
-        if target_item_serializer.is_valid():
-            target_item_serializer.save()
+    # 생성 및 업데이트
+    target_item_serializer = CollectTargetItemSerializer(obj, data=data_json)
+    if target_item_serializer.is_valid():
+        target_item_serializer.save()
     
 
-
+# 정의 : db의 collect_target table에 데이터를 저장한다.
+# 목적 : import_collects 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_collect_target(data_json):
-    """
-    수집대상 저장
-    """
-    obj = CollectTarget.objects.filter(platform=data_json["platform"], artist=data_json["artist"]).first()
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        collect_target_item_serializer = CollectTargetSerializer(data=data_json)
-        if collect_target_item_serializer.is_valid():
-            collect_target_item_serializer.save()
-    # 있는 건 업데이트
-    else:
-        collect_target_item_serializer = CollectTargetSerializer(obj, data=data_json)
-        if collect_target_item_serializer.is_valid():
-            collect_target_item_serializer.save()
+    '''
+    기능: CollectTarget(조사대상) table에 생성 및 업데이트
 
+    <<input>>
+    data_json: collect_target에 저장하고자하는 json형태의 크롤링데이터
+
+    <<output>>
+    x
+    '''
+    obj = CollectTarget.objects.filter(platform=data_json["platform"], artist=data_json["artist"]).first()
+    # 생성 및 업데이트
+    collect_target_item_serializer = CollectTargetSerializer(obj, data=data_json)
+    if collect_target_item_serializer.is_valid():
+        collect_target_item_serializer.save()
+
+
+# 정의 : db의 schedule table에 데이터를 저장한다.
+# 목적 : import_collects 함수 내에서 사용
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def save_schedule(collecttargetid):
     '''
-    수집대상의 스케줄 저장
+    기능: Schedule(조사대상) table에 생성 및 업데이트
+
+    <<input>>
+    collecttargetid: 만들고자 하는 schedule이 참조하는 collect_target_id 값
+
+    <<output>>
+    x
     '''
     schedule_object = Schedule.objects.filter(collect_target_id = collecttargetid).first()
     schedule_data = {
@@ -706,6 +832,7 @@ def save_schedule(collecttargetid):
         "schedule_type": "daily",
         "active": True
     }
+    # 생성 및 업데이트
     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
     if schedule_serializer.is_valid():
         schedule_serializer.save()

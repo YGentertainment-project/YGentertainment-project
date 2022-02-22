@@ -10,42 +10,30 @@ from utils.decorators import login_required
 from .models import User
 from .serializers import *
 
-# "/"로 접속시 사이트 시작화면
 
-
+# 정의 : base
+# 목적 : 웹 페이지 시작 페이지 로딩 
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 def base(request):
     return render(request, 'account/main.html')
 
 
-class UserLoginAPI(APIView):
-    @validate_serializer(UserLoginSerializer)
-    def post(self, request):
-        """
-        User login api
-        """
-        data = request.data
-        user = auth.authenticate(username=data["username"], password=data["password"])
-        # None is returned if username or password is wrong
-        if not user:
-            return self.error("Invalid username or password")
-        if user.is_disabled:
-            return self.error("Your account has been disabled")
-        if not user.has_email_auth:
-            return self.error("Your need to authenticate your email")
-        auth.login(request, user)
-        return self.success("Succeeded")
-
-
-# default 정보를 이용한 간단한 login 구현
+# 정의 : user simple login api
+# 목적 : default 정보를 이용한 형식적인 simple login 구현
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 class UserSimpleLoginAPI(APIView):
     def get(self, request):
-        """
+        '''
         User simple login api
-        """
+        '''
         # default id and pw
-        username = "yg"
-        password = "ygenter1234"
-        yg_email = "ygenter@mail.com"
+        username = 'yg'
+        password = 'ygenter1234'
+        yg_email = 'ygenter@mail.com'
         if User.objects.filter(username=username).exists():
             # 이미 존재하는 username -> 로그인
             user = User.objects.filter(username=username).first()
@@ -62,32 +50,66 @@ class UserSimpleLoginAPI(APIView):
             user.save()
             # register 후 login
             auth.login(request, user)
-
-        values = {
-            'first_depth': '데이터 리포트',
-        }
         response = redirect('dataprocess:daily')
+        # 로그인 정보를 web cookie에 저장
         response.set_cookie('username', username)
         return response
 
 
+# 정의 : user simple logout api
+# 목적 : simple login으로부터 로그아웃
+# 멤버함수 : 
+# 개발자 : 김민희, minheekim3@naver.com
+# 최종수정일 : 2022-02-22
 class UserLogoutAPI(APIView):
     def get(self, request):
+        '''
+        User simple logout api
+        '''
         auth.logout(request)
-        values = {
-            'first_depth': '로그인'
-        }
         response = redirect('dataprocess:base')
+        # 로그인 정보를 web cookie에서 삭제
         response.delete_cookie('username')
         return response
 
 
+# 정의 : 
+# 목적 : 
+# 멤버함수 : 
+# 개발자 : 
+# 최종수정일 : 
+class UserLoginAPI(APIView):
+    @validate_serializer(UserLoginSerializer)
+    def post(self, request):
+        '''
+        User login api
+        현재 사용x
+        '''
+        data = request.data
+        user = auth.authenticate(username=data['username'], password=data['password'])
+        # None is returned if username or password is wrong
+        if not user:
+            return self.error("Invalid username or password")
+        if user.is_disabled:
+            return self.error("Your account has been disabled")
+        if not user.has_email_auth:
+            return self.error("Your need to authenticate your email")
+        auth.login(request, user)
+        return self.success("Succeeded")
+
+
+# 정의 : 
+# 목적 : 
+# 멤버함수 : 
+# 개발자 : 
+# 최종수정일 : 
 class UserRegisterAPI(APIView):
     @validate_serializer(UserRegisterSerializer)
     def post(self, request):
-        """
+        '''
         User register api
-        """
+        현재 사용x
+        '''
         data = request.data
         data["username"] = data["username"].lower()
         data["email"] = data["email"].lower()
@@ -108,13 +130,19 @@ class UserRegisterAPI(APIView):
         return self.success("Succeeded")
 
 
+# 정의 : 
+# 목적 : 
+# 멤버함수 : 
+# 개발자 : 
+# 최종수정일 : 
 class UserChangePasswordAPI(APIView):
     @validate_serializer(UserChangePasswordSerializer)
     @login_required
     def post(self, request):
-        """
+        '''
         User change password api
-        """
+        현재 사용x
+        '''
         data = request.data
         username = request.user.username
         user = auth.authenticate(username=username, password=data["old_password"])

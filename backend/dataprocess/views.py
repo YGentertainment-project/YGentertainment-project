@@ -56,7 +56,7 @@ userlogger.setLevel(logging.DEBUG)
 # 목적 : 웹사이트의 쿠키를 보고 로그인 유무 판별
 # 멤버함수 : 
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def logincheck(request):
     # 로그인 정보를 받기 위해 cookie사용
     username = request.COOKIES.get('username')
@@ -71,7 +71,7 @@ def logincheck(request):
 # 목적 : 웹 페이지 시작 페이지 로딩 
 # 멤버함수 : logincheck
 # 개발자 : 임수민, soomin910612@gmail.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def base(request):
     '''
     general page
@@ -87,7 +87,7 @@ def base(request):
 # 목적 : 데이터리포트 화면 로딩(get) 및 엑셀 export/import 기능(post)
 # 멤버함수 : 
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 @csrf_exempt
 def daily(request):
     if request.method == 'GET':
@@ -234,7 +234,7 @@ def daily(request):
 # 목적 : 웹 페이지 플랫폼 관리 페이지 로딩 
 # 멤버함수 : logincheck
 # 개발자 : 임수민, soomin910612@gmail.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def platform(request):
      '''
      general page
@@ -250,7 +250,7 @@ def platform(request):
 # 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지  
 # 멤버함수 : logincheck
 # 개발자 : 임수민, soomin910612@gmail.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def artist(request):
     artists = Artist.objects.all()
     # artist 이름 가나다순 정렬
@@ -268,7 +268,7 @@ def artist(request):
 # 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지 중 아티스트 추가 페이지
 # 멤버함수 : logincheck
 # 개발자 : 임수민, soomin910612@gmail.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 @csrf_exempt
 def artist_add(request):
     platforms = Platform.objects.all()
@@ -285,7 +285,7 @@ def artist_add(request):
 # 목적 : 웹 페이지 모니터링 중 모니터링 페이지 
 # 멤버함수 : logincheck
 # 개발자 : 임수민, soomin910612@gmail.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def monitering(request):
     platforms = Platform.objects.all()
     values = {
@@ -300,7 +300,7 @@ def monitering(request):
 # 목적 : 로그인 페이지
 # 멤버함수 : logincheck
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 def login(request):
     values = {
       'first_depth' : '로그인'
@@ -369,9 +369,8 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
 # 목적 : 플랫폼과 관련된 CRU api들
 # 멤버함수 : get, post, put
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 class PlatformAPI(APIView):
-    # @login_required
     def get(self, request):
         '''
         Platform read api
@@ -390,7 +389,6 @@ class PlatformAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-    # @login_required
     def post(self, request):
         '''
         Platform create api
@@ -439,7 +437,6 @@ class PlatformAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
-    # @login_required
     def put(self, request):
         '''
         Platform update api
@@ -486,9 +483,8 @@ class PlatformAPI(APIView):
 # 목적 : 아티스트와 관련된 CRU api들
 # 멤버함수 : get, post, put
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 class ArtistAPI(APIView):
-    # @login_required
     def get(self, request):
         '''
         Artist read api
@@ -509,7 +505,6 @@ class ArtistAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-    # @login_required
     def post(self, request):
         '''
         Artist create api
@@ -576,7 +571,6 @@ class ArtistAPI(APIView):
         except:
             return JsonResponse(data={'success': False}, status=400)
 
-    # @login_required
     def put(self, request):
         '''
         Artist update api
@@ -624,9 +618,8 @@ class ArtistAPI(APIView):
 # 목적 : 웹 페이지 아티스트 중 데이터 URL 관리 페이지에서 아티스트 클릭 시 나오는 플랫폼별 URL을 불러오고 수정한다.   
 # 멤버함수 : get, put
 # 개발자 : 김민희, minheekim3@naver.com(get)/ 임수민, soomin910612@gmail.com(put)
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 class PlatformOfArtistAPI(APIView):
-    # @login_required
     def get(self, request):
         '''
         Platform of Artist read api
@@ -658,7 +651,6 @@ class PlatformOfArtistAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-    # @login_required
     def put(self, request):
         '''
         Platform of Artist update api
@@ -691,10 +683,8 @@ class PlatformOfArtistAPI(APIView):
 # 정의 : collecttargetitem(조사항목) api
 # 목적 : 조사항목과 관련된 RUD api들
 # 멤버함수 : get, put, delete
-# 개발자 : 김민희, minheekim3@naver.com / 양승찬, (put)
-# 최종수정일 : 
-class CollectTargetItemAPI(APIView):
-    # @login_required
+# 개발자 : 김민희, minheekim3@naver.com / 양승찬, uvzone@naver.com(put)
+# 최종수정일 : 2022-02-22
     def get(self, request):
         '''
         CollectTargetItem read api
@@ -728,7 +718,7 @@ class CollectTargetItemAPI(APIView):
         except:
             return JsonResponse(status=400, data={'success': False})
 
-    # @login_required TODO : 스케줄 수정 시 해당하는 아티스트가 없으면 스케줄링에서 삭제하기
+    # TODO : 스케줄 수정 시 해당하는 아티스트가 없으면 스케줄링에서 삭제하기
     def put(self, request):
         '''
         CollectTargetItem update api
@@ -818,7 +808,7 @@ class CollectTargetItemAPI(APIView):
 # 목적 : 크롤링 된 데이터를 불러오고 수정한다. 크롤링 데이터 형식은 json 이다. 
 # 멤버함수 : get, post
 # 개발자 : 김민희,  minheekim3@naveer.com(get)/ 임수민, soomin910612@gmail.com(post)
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 class DataReportAPI(APIView):
     def get(self, request):
         '''
@@ -1101,7 +1091,7 @@ class DataReportAPI(APIView):
 # 목적 : 조사항목과 관련된 RU api들
 # 멤버함수 : get, put
 # 개발자 : 김민희, minheekim3@naver.com
-# 최종수정일 : 
+# 최종수정일 : 2022-02-22
 class ScheduleAPI(APIView):
     def get(self, request):
         '''
