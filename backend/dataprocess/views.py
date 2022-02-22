@@ -685,6 +685,7 @@ class PlatformOfArtistAPI(APIView):
 # 멤버함수 : get, put, delete
 # 개발자 : 김민희, minheekim3@naver.com / 양승찬, uvzone@naver.com(put)
 # 최종수정일 : 2022-02-22
+class CollectTargetItemAPI(APIView):
     def get(self, request):
         '''
         CollectTargetItem read api

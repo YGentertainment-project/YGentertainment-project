@@ -1,6 +1,5 @@
 function render_platform_table(data){//parsing한 데이터 화면에 render
     const tableRow = $('<tr></tr>')
-    console.log(data);
     // 해당 row에 대한 column 데이터들 넣기
     for(key in data){
         let dataCol;
@@ -83,8 +82,6 @@ function platform_update_function(){
             platform_info[r]['active'] = cells[4].firstElementChild.checked;
         }
     }
-    console.log("datas");
-    console.log(datas);
     $.ajax({
         url: '/api/platform/',
         type: 'PUT',
@@ -139,14 +136,12 @@ function platform_create_function(){
         datatype:'json',
         data: JSON.stringify(data),
         success: res => {
-            console.log(res);
             alert("저장되었습니다.");
             document.getElementById("loading_form").style.display = "none";
             //reload-page
             location.reload();
         },
         error: e => {
-            console.log(e);
             alert(e.responseText);
             document.getElementById("loading_form").style.display = "none";
         },

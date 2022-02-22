@@ -50,7 +50,7 @@ class UserSimpleLoginAPI(APIView):
             user.save()
             # register 후 login
             auth.login(request, user)
-        response = redirect('dataprocess:daily')
+        response = redirect('dataprocess:base')
         # 로그인 정보를 web cookie에 저장
         response.set_cookie('username', username)
         return response
