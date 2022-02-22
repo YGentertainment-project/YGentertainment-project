@@ -25,9 +25,9 @@
  - 가상환경을 사용하지 않아도 되는 경우 마지막 명령어만 사용
  
  ### 3) Docker 설치
- - 제공한 repository를 그대로 사용하시는 경우 GitHub Container Registry를 통해 자동 이미지 빌드 Action를 통해 생성된 이미지를 사용할 수 있지만, 그렇지 않은 경우 직접 빌드하셔야 합니다.
+ - GitHub Container Registry를 통해 자동 이미지 빌드 Action를 통해 생성된 이미지를 사용할 수 있습니다.
+ - 위의 경우 docker-compose에서 사용 이미지를 모두 변경해야합니다.
   (GitHub Actions를 이용한 자동 빌드: https://blog.outsider.ne.kr/1531)
- - 또한 기타의 경우 docker-compose 파일을 수정하셔야 합니다.
  - 경로: YGENTERTAINMENT-PROJECT/
    ```
    docker build -t data-analysis .
@@ -35,7 +35,7 @@
    ```
    
  ### 4) Docker container 접속
- - DB나 서버 container에 접속해야 확인해야하는 경우 다음 명령어를 사용하시면 됩니다.
+ - container에 접속해야 확인해야하는 경우 다음 명령어를 사용하시면 됩니다.
    ```
    docker exec -it {Container Name} sh
    ```
