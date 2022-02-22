@@ -84,13 +84,14 @@ def base(request):
     return render(request, 'dataprocess/base.html',values)
     
 # 정의 : daily
-# 목적 : 데이터리포트 화면 로딩 및 엑셀 export/import 기능
+# 목적 : 데이터리포트 화면 로딩(get) 및 엑셀 export/import 기능(post)
 # 멤버함수 : 
 # 개발자 : 김민희, minheekim3@naver.com
 # 최종수정일 : 
 @csrf_exempt
 def daily(request):
     if request.method == 'GET':
+        # get을 통해 화면 로딩
         '''
         general page
         '''
@@ -103,13 +104,16 @@ def daily(request):
         request = logincheck(request)
         return render(request, 'dataprocess/daily.html',values)
     else:
+        # post를 통해 엑셀 export/import 기능 수행
         type = request.POST['type']
         if type == 'import':
             '''
             import from excel
+            기능: 데이터리포트-크롤링데이터 엑셀 업로드
             '''
             platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
+                # 첨부파일이 없는 경우 에러메시지
                 values = {
                     'first_depth' : '데이터 리포트',
                     'second_depth': '일별 리포트',
@@ -137,6 +141,7 @@ def daily(request):
         elif type == 'export':
             '''
             export to excel
+            기능: 데이터리포트-크롤링데이터 엑셀 다운로드
             '''
             excel_export_type = request.POST.get('excel_export_days', None) # 누적 or 기간별
             excel_export_start_date = request.POST.get('excel_export_start_date', None) # 0000-0-0 형태
@@ -151,10 +156,13 @@ def daily(request):
             return response
         elif type == 'import2':
             '''
-            import2 from excel (collect_target_item, artist, platform)
+            import2 from excel
+            기능: 데이터리포트-수집정보 엑셀 업로드
+            저장되는 DB table: collect_target_item, artist, platform
             '''
             platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
+                # 첨부파일이 없는 경우 에러메시지
                 values = {
                     'first_depth' : '데이터 리포트',
                     'second_depth': '일별 리포트',
@@ -178,10 +186,13 @@ def daily(request):
             return render(request, 'dataprocess/daily.html',values)
         elif type == 'import3':
             '''
-            import3 from excel (auth_info)
+            import3 from excel
+            기능: 데이터리포트-로그인정보 엑셀 업로드
+            저장되는 DB table: auth_info
             '''
             platforms = Platform.objects.filter(active=1)  # get all platform info from db
             if not 'importData' in request.FILES:
+                # 첨부파일이 없는 경우 에러메시지
                 values = {
                     'first_depth' : '데이터 리포트',
                     'second_depth': '일별 리포트',
@@ -204,6 +215,10 @@ def daily(request):
             request = logincheck(request)
             return render(request, 'dataprocess/daily.html',values)
         elif type == 'export_form':
+            '''
+            export_form to excel (데이터리포트-인증정보(collect_form), 로그인정보(login_form) 엑셀양식 다운로드)
+            기능: media directory에 있는 파일을 전달
+            '''
             file_name = request.POST['filename']
             if file_name == '':
                 return None
@@ -293,7 +308,7 @@ def login(request):
     request = logincheck(request)
     return render(request, 'dataprocess/login.html',values)
 
-#정의 : 모니터링 URL 오류 관련 페이지네이션 기능
+# 정의 : 모니터링 URL 오류 관련 페이지네이션 기능
 # 목적 : 모니터링 페이지에서 URL 오류 관련한 URL 정보들을 페이지네이션 된 데이터 조각으로 리턴
 # 멤버함수 : get
 # 개발자 : 임수민, soomin910612@gmail.com
@@ -352,7 +367,7 @@ class ResultQueryView(ViewPaginatorMixin,APIView):
 
 # 정의 : platform api
 # 목적 : 플랫폼과 관련된 CRU api들
-# 멤버함수 : 
+# 멤버함수 : get, post, put
 # 개발자 : 김민희, minheekim3@naver.com
 # 최종수정일 : 
 class PlatformAPI(APIView):
@@ -360,6 +375,7 @@ class PlatformAPI(APIView):
     def get(self, request):
         '''
         Platform read api
+        기능: platform table에 존재하는 모든 platform을 조회한다.
         '''
         try:
             platform_objects = Platform.objects.all()
@@ -378,6 +394,7 @@ class PlatformAPI(APIView):
     def post(self, request):
         '''
         Platform create api
+        기능: platform, collect_target, schedule, collect_target_item table에 새로운 platform을 생성한다.
         '''
         try:
             platform_object = JSONParser().parse(request)
@@ -386,8 +403,8 @@ class PlatformAPI(APIView):
                 # 1. platform 생성
                 platform_serializer.save()
 
-                #특정 아티스트 전용 collect_target 생성 시 사용할 코드
-                # 2. 현재 존재하는 모든 artist에 대해 collect_target 생성 -> platform과 연결
+                # 2. 현재 존재하는 모든 artist에 대해 collect_target 생성
+                # 위에서 생성한 platform_id 참조
                 artist_objects = Artist.objects.all()
                 artist_objects_values = artist_objects.values()
                 for artist_objects_value in artist_objects_values:
@@ -396,7 +413,7 @@ class PlatformAPI(APIView):
                         artist_id = artist_objects_value['id']
                         )
                     collecttarget.save()
-                    #3. 해당 collecttarget에 대한 schedule 생성
+                    # 3. 해당 collect_target에 대한 schedule 생성
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
                     schedule_data = {
                             'collect_target': collecttarget.id,
@@ -406,7 +423,7 @@ class PlatformAPI(APIView):
                     schedule_serializer = ScheduleSerializer(schedule_object, data=schedule_data)
                     if schedule_serializer.is_valid():
                         schedule_serializer.save()
-                    #4. 만든 collect target에 대해 수집항목들 생성
+                    #4. 생성한 collect target에 대해 collect_target_item(수집항목)들 생성
                     collecttarget_object = CollectTarget.objects.filter(platform = platform_serializer.data['id'],
                             artist = artist_objects_value['id'])
                     collecttarget_object = collecttarget_object.values()[0]
@@ -417,7 +434,6 @@ class PlatformAPI(APIView):
                             xpath=collect_item['xpath']
                         )
                         collect_item.save()
-
                 return JsonResponse(data={'success': True, 'data': platform_serializer.data}, status=status.HTTP_201_CREATED)
             return JsonResponse(data={'success': False,'data': platform_serializer.errors}, status=400)
         except:
@@ -427,17 +443,19 @@ class PlatformAPI(APIView):
     def put(self, request):
         '''
         Platform update api
+        기능: platform, schedule table을 수정한다.
         '''
         try:
             platform_list = JSONParser().parse(request)
             for platform_object in platform_list:
                 platform_data = Platform.objects.filter(pk=platform_object['id']).first()
                 if platform_data is None:
-                    # 원래 없는 건 새로 저장
+                    # 없는 경우 platform 신규 생성
                     platform_serializer = PlatformSerializer(data=platform_object)
                     if platform_serializer.is_valid():
                         platform_serializer.save()
                 else:
+                    # 있는 경우 기존 platform 업데이트
                     data = PlatformSerializer(platform_data).data
                     past_name = data['name']
                     past_url = data['url']
@@ -451,7 +469,8 @@ class PlatformAPI(APIView):
                             userlogger.info(f"[CHANGE]: {past_url} -> {cur_url}")
                         platform_serializer.save()
                 collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_serializer.data['id'])
-                # 해당 platform과 연관된 schedule들 수정 -> artist가 비활성인 애들은 그냥 두고 활성인 애들만 수정
+                # 해당 platform과 연관된 schedule들의 active 수정
+                # 비활성이 우선이기 때문에 artist가 비활성이라면 넘어가고 활성일 경우에만 새로운 active값으로 수정
                 if collecttarget_objects.exists():
                     collecttarget_values = collecttarget_objects.values()
                     for collecttarget_value in collecttarget_values:
@@ -465,7 +484,7 @@ class PlatformAPI(APIView):
 
 # 정의 : artist api
 # 목적 : 아티스트와 관련된 CRU api들
-# 멤버함수 : 
+# 멤버함수 : get, post, put
 # 개발자 : 김민희, minheekim3@naver.com
 # 최종수정일 : 
 class ArtistAPI(APIView):
@@ -473,6 +492,7 @@ class ArtistAPI(APIView):
     def get(self, request):
         '''
         Artist read api
+        기능: artist table에 존재하는 모든 artist들을 조회한다.
         '''
         try:
             artist_objects = Artist.objects.all()
@@ -493,14 +513,16 @@ class ArtistAPI(APIView):
     def post(self, request):
         '''
         Artist create api
+        기능: artist, collect_target, schedule, collect_target_item table에 새로운 artist를 생성한다.
         '''
         try:
             artist_object = JSONParser().parse(request)
             artist_serializer = ArtistSerializer(data=artist_object)
             if artist_serializer.is_valid():
-                # 1. artist 생성
+                # 1. artist 신규 생성
                 artist_serializer.save()
-                # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성 -> artist와 연결
+                # 2. 현재 존재하는 모든 platform에 대해 collect_target 생성
+                # 위에서 생성한 artist_id 참조
                 for obj in artist_object['urls']:
                     platform_id = Platform.objects.get(name = obj['platform_name']).id
                     artist_id = artist_serializer.data['id']
@@ -515,7 +537,8 @@ class ArtistAPI(APIView):
                         target_url_2=target_url_2
                     )
                     collecttarget.save()
-                    #3. 해당 collecttarget에 대한 schedule 생성(기존 platform의 daily schedule과 똑같이 하기)
+                    # 3. 해당 collect_target에 대한 schedule 생성
+                    # 기존 platform의 daily schedule과 똑같은 execute_time 사용
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
                     collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id)
                     collecttarget_objects = collecttarget_objects.values()
@@ -535,7 +558,7 @@ class ArtistAPI(APIView):
                     if schedule_serializer.is_valid():
                         schedule_serializer.save()
                     # 4. 현재 플랫폼의 존재하는 조사항목들을 default로 collect_target_item 생성
-                    # 해당 플랫폼을 참조하는 첫번째 COLLECT_TARGET 가져옴
+                    # 해당 플랫폼을 참조하는 첫번째 collect_target의 collect_target_item들 사용
                     collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id, platform_id = platform_id)
                     collecttarget_object = collecttarget_objects.values().first()
                     first_collect_target = CollectTarget.objects.filter(platform_id=platform_id).first()
@@ -557,6 +580,7 @@ class ArtistAPI(APIView):
     def put(self, request):
         '''
         Artist update api
+        기능: artist, schedule table을 수정한다.
         '''
         try:
             artist_list = JSONParser().parse(request)
@@ -577,11 +601,13 @@ class ArtistAPI(APIView):
                         userlogger.info(f"[CHANGE]: {past_num} -> {cur_num}")
                     if past_agency != cur_agency:
                         userlogger.info(f"[CHANGE]: {past_agency} -> {cur_agency}")
+                    # artist 수정
                     artist_serializer.save()
                 else:
                     return JsonResponse(data={'success': False, 'data': artist_serializer.errors}, status=400)
                 collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_serializer.data['id'])
-                # 해당 artist와 연관된 schedule들 수정 -> platform이 비활성인 애들은 그냥 두고 활성인 애들만 수정
+                # artist와 연관된 schedule들 수정
+                # 비활성이 우선이기 때문에 platform이 비활성이라면 넘어가고 활성일 경우에만 새로운 active값으로 수정
                 if collecttarget_objects.exists():
                     collecttarget_values = collecttarget_objects.values()
                     for collecttarget_value in collecttarget_values:
@@ -604,20 +630,21 @@ class PlatformOfArtistAPI(APIView):
     def get(self, request):
         '''
         Platform of Artist read api
+        기능: 해당 아티스트가 수집하고자하는 플랫폼들을 조회한다.
         '''
         try:
             artist = request.GET.get('artist', None)
             # 해당 artist 찾기
             artist_object = Artist.objects.filter(name = artist)
             artist_object = artist_object.values()[0]
-            # 해당 artist를 가지는 collect_target들 가져오기
+            # 해당 artist_id를 참조하는 collect_target들 조회
             collecttarget_objects = CollectTarget.objects.filter(artist_id=artist_object['id'])
             if collecttarget_objects.exists():
                 collecttarget_objects_values = collecttarget_objects.values()
                 platform_datas = []
                 for collecttarget_value in collecttarget_objects_values:
                     platform_object = Platform.objects.get(pk=collecttarget_value['platform_id'])
-                    platform_datas.append({  
+                    platform_datas.append({
                         'artist_id':artist_object['id'],
                         'platform_id' : collecttarget_value['platform_id'],
                         'id': collecttarget_value['id'],
@@ -635,6 +662,7 @@ class PlatformOfArtistAPI(APIView):
     def put(self, request):
         '''
         Platform of Artist update api
+        기능: collect_target table을 수정한다.
         '''
         try:
             collecttarget_list = JSONParser().parse(request)
@@ -662,14 +690,15 @@ class PlatformOfArtistAPI(APIView):
 
 # 정의 : collecttargetitem(조사항목) api
 # 목적 : 조사항목과 관련된 RUD api들
-# 멤버함수 : 
-# 개발자 : 김민희, minheekim3@naver.com
+# 멤버함수 : get, put, delete
+# 개발자 : 김민희, minheekim3@naver.com / 양승찬, (put)
 # 최종수정일 : 
 class CollectTargetItemAPI(APIView):
     # @login_required
     def get(self, request):
         '''
         CollectTargetItem read api
+        기능: 아티스트-플랫폼이 수집하고자하는 조사항목들을 조회한다.
         '''
         try:
             artist = request.GET.get('artist', None)
@@ -682,11 +711,12 @@ class CollectTargetItemAPI(APIView):
             if collecttarget_object.exists():
                 collecttarget_object = collecttarget_object.first()
                 collecttargetitems_datas = []
+                # 조사항목들 조회
                 collecttargetitmes_objects = CollectTargetItem.objects.filter(collect_target_id=collecttarget_object.id)
                 collecttargetitmes_values = collecttargetitmes_objects.values()
                 for collecttargetitmes_value in collecttargetitmes_values:
                     collecttargetitems_datas.append(collecttargetitmes_value)
-                # schedule 확인
+                # schedule 조회
                 schedule_object = Schedule.objects.filter(collect_target_id = collecttarget_object.id)
                 if schedule_object.exists():
                     schedule_type = schedule_object.values()[0]['schedule_type']
@@ -702,12 +732,13 @@ class CollectTargetItemAPI(APIView):
     def put(self, request):
         '''
         CollectTargetItem update api
+        기능: collect_target_item, schedule table을 수정한다.
         '''
         try:
             collecttargetitem = JSONParser().parse(request)
-            artist = collecttargetitem["artist"]
-            platform = collecttargetitem["platform"]
-            schedule_type = collecttargetitem["schedule_type"]
+            artist = collecttargetitem['artist']
+            platform = collecttargetitem['platform']
+            schedule_type = collecttargetitem['schedule_type']
             collecttargetitem_list = collecttargetitem['items']
             artist_object = Artist.objects.filter(name = collecttargetitem['artist']).first()
             platform_object = Platform.objects.filter(name = collecttargetitem['platform']).first()
@@ -715,7 +746,7 @@ class CollectTargetItemAPI(APIView):
             for collecttargetitem_object in collecttargetitem_list:
                 collecttargetitem_data = CollectTargetItem.objects.filter(id=collecttargetitem_object['id'],
                                                                           target_name=collecttargetitem_object['target_name'], xpath=collecttargetitem_object['xpath']).first()
-                # 없으면 새로 저장
+                # 조사항목이 없다면 신규 생성
                 if collecttargetitem_data is None:
                     collecttargetitem_serializer = CollectTargetItemSerializer(data={
                         'collect_target': collecttarget_object.id,
@@ -725,9 +756,8 @@ class CollectTargetItemAPI(APIView):
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
                     else:
-                        # return JsonResponse(data={"success": False, "data": collecttargetitem_serializer.errors}, status=400)
                         return JsonResponse(data={'success': False}, status=400)
-                # 있으면 업데이트
+                # 조사항목이 있으면 업데이트
                 else:
                     collecttargetitem_serializer = CollectTargetItemSerializer(collecttargetitem_data, data=collecttargetitem_object)
                     if collecttargetitem_serializer.is_valid():
@@ -735,8 +765,10 @@ class CollectTargetItemAPI(APIView):
                         userlogger.debug(f"{artist} - {platform} - {schedule_type}: ")
                     else:
                         return JsonResponse(data={'success': False,'data': collecttargetitem_serializer.errors}, status=400)
+            # 해당 schedule 업데이트
+            # platform내의 다른 schedule과 execute_time, period 동일시
             execute_time = None # 시작 시간
-            period = None #주기
+            period = None # 주기
             collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object.id)
             collecttarget_objects = collecttarget_objects.values()
             for collecttarget_value in collecttarget_objects:
@@ -749,9 +781,9 @@ class CollectTargetItemAPI(APIView):
                     schedule_type = schedule_type, execute_time = execute_time, period = period)
 
             # Schedule 초기화 여부를 확인하는 부분
-            prev_schedule_type = "daily"
-            if schedule_type == "daily":
-                prev_schedule_type = "hour"
+            prev_schedule_type = 'daily'
+            if schedule_type == 'daily':
+                prev_schedule_type = 'hour'
             no_schedule_collect_targets = True
             for collecttarget_value in collecttarget_objects:
                 prev_schedule_objects = Schedule.objects.filter(schedule_type = prev_schedule_type, collect_target_id = collecttarget_value['id'])
@@ -772,6 +804,7 @@ class CollectTargetItemAPI(APIView):
     def delete(self, request):
         '''
         CollectTargetItem delete api
+        기능: collect_target_item table에서 조사항목을 삭제한다.
         '''
         try:
             delete_id = JSONParser().parse(request)['id']
@@ -784,21 +817,23 @@ class CollectTargetItemAPI(APIView):
 # 정의 : 데이터 리포트 일별 데이터 불러오기 및 수정
 # 목적 : 크롤링 된 데이터를 불러오고 수정한다. 크롤링 데이터 형식은 json 이다. 
 # 멤버함수 : get, post
-# 개발자 : 김민희,  (get)/ 임수민, soomin910612@gmail.com(post)
+# 개발자 : 김민희,  minheekim3@naveer.com(get)/ 임수민, soomin910612@gmail.com(post)
 # 최종수정일 : 
 class DataReportAPI(APIView):
     def get(self, request):
         '''
         Data-Report read api
+        기능: 원하는 날짜의 데이터 리포트 일별/시간별 데이터를 조회한다.
         '''
         platform = request.GET.get('platform', None)
         type = request.GET.get('type', None)
         start_date = request.GET.get('start_date', None)
         end_date = request.GET.get('end_date', None)
 
-        #artist name
+        # artist name
         artist_objects = Artist.objects.filter(active=1)
         artist_objects_values = list(artist_objects.values())
+        # artist name 가나다순 정렬
         artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
         artist_list = []
         for a in artist_objects_values:
@@ -833,8 +868,12 @@ class DataReportAPI(APIView):
 
         try:
             if type == '누적':
+                '''
+                누적 데이터 조회
+                '''
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
+                # 해당날짜에 데이터가 존재하는지 저장하는 변수 check
                 check = False
                 crawling_artist_list = []
                 objects = CollectData.objects.filter(collect_items__platform=platform)
@@ -847,7 +886,7 @@ class DataReportAPI(APIView):
                         collect_items__reserved_date = start_date_string)
                     if filter_objects.exists():
                         check = True
-                        # 같은 날짜에 여러개 있을 때 가장 앞의 것 가져오기
+                        # 같은 날짜에 여러개 있을 때 가장 앞의 데이터를 가져온다
                         filter_value = filter_objects.values()[0]
                         filter_datas.append(filter_value['collect_items'])
                 # 해당날짜에 데이터가 하나라도 있을 때
@@ -864,11 +903,15 @@ class DataReportAPI(APIView):
                                                         'crawling_artist_list': crawling_artist_list})
 
             elif type == '기간별':
-                # 전날 값을 구함
+                '''
+                기간별 데이터 조회
+                '''
+                # 하루 전날의 date를 가져옴
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
                 end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 end_date_string = end_date_dateobject.strftime("%Y-%m-%d")
+                # 해당날짜에 데이터가 존재하는지 저장하는 변수 check
                 check = False
                 crawling_artist_list = []
                 objects = CollectData.objects.filter(collect_items__platform=platform)
@@ -881,12 +924,11 @@ class DataReportAPI(APIView):
                             collect_items__reserved_date = start_date_string)
                     filter_objects_end = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
                             collect_items__reserved_date = end_date_string)
-                    # 둘 다 존재할 때
+                    # 양끝날짜 데이터 모두 존재할 때
                     if filter_objects_start.exists() and filter_objects_end.exists():
                         check = True
                         filter_objects_start_value = filter_objects_start.values()[0]
                         filter_objects_start_value = filter_objects_start_value['collect_items']
-
                         # id랑 artist, date 빼고 보내주기
                         data_json = {}
                         filter_objects_end_value = filter_objects_end.values()[0]
@@ -917,7 +959,10 @@ class DataReportAPI(APIView):
                     return JsonResponse(data={'success': True, 'data': filter_datas_total, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
                     return JsonResponse(status=400, data={'success': False, 'data': end_date})
-            else:#누적도 기간별도 아닌 경우(에러처리)
+            else:
+                '''
+                누적도 기간별도 아닌 경우(에러처리)
+                '''
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 crawling_artist_list = []
@@ -941,6 +986,7 @@ class DataReportAPI(APIView):
     def post(self, request):
         '''
         Data-Report update api
+        기능: 누적 데이터를 수정한다.
         '''
         update_data_object = JSONParser().parse(request)
         start_date = update_data_object[len(update_data_object)-1]['start_date']
@@ -1053,13 +1099,15 @@ class DataReportAPI(APIView):
 
 # 정의 : schedule(스케줄) api
 # 목적 : 조사항목과 관련된 RU api들
-# 멤버함수 : 
+# 멤버함수 : get, put
 # 개발자 : 김민희, minheekim3@naver.com
 # 최종수정일 : 
 class ScheduleAPI(APIView):
     def get(self, request):
         '''
         Schedule read api
+        기능: 시간별 또는 일별을 입력받아 플랫폼마다의 schedule 정보를 조회한다.
+        현재는 '시간별'일 경우에만 api 사용중임
         '''
         type = request.GET.get('type', None) # 시간별 or 일별
         try:
@@ -1075,6 +1123,7 @@ class ScheduleAPI(APIView):
                     collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_object['id'])
                     collecttarget_objects = collecttarget_objects.values()
                     for collecttarget_object in collecttarget_objects:
+                        # 특정 platform의 시간별 artist 조회
                         schedule_objects = Schedule.objects.filter(schedule_type = 'hour', collect_target_id = collecttarget_object['id'])
                         if schedule_objects.exists():
                             period = schedule_objects.values()[0]['period']
@@ -1090,6 +1139,7 @@ class ScheduleAPI(APIView):
                     })
                 return JsonResponse(data={'success': True, 'data': hourly_list})
             elif type == "일별":
+                # 현재 "일별"일 경우 이 api 사용하지 않고 있음
                 hourly_list = []
                 return JsonResponse(data={'success': True, 'data': hourly_list})
         except:
@@ -1098,10 +1148,13 @@ class ScheduleAPI(APIView):
     def put(self, request):
         '''
         Schedule update api
+        기능: schedule table을 업데이트한다.
         '''
         try:
             new_schedule = JSONParser().parse(request)
             schedule_type = new_schedule['schedule_type']
+            # platform: facebook, instagram인 경우 crowdtangle라는 이름으로 프론트에서 전달
+            # 함께 schedule 관리되어야함
             if new_schedule['platform'] == 'crowdtangle':
                 platform_list = ['facebook', 'instagram']
             else:
@@ -1112,6 +1165,7 @@ class ScheduleAPI(APIView):
                     collecttarget_objects = CollectTarget.objects.filter(platform_id = platform_objects.values()[0]['id'])
                     collecttarget_objects = collecttarget_objects.values()
                     for collecttarget_object in collecttarget_objects:
+                        # 해당 platform과 연결된 schedule들의 모든 값 수정
                         if schedule_type == 'hour':
                             schedule_objects = Schedule.objects.filter(collect_target_id = collecttarget_object['id'], schedule_type = 'hour')
                             if schedule_objects.exists():

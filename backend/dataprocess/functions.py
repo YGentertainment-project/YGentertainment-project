@@ -1,5 +1,4 @@
 import datetime
-from gc import collect
 import re
 from dateutil.parser import parse
 import openpyxl
@@ -20,7 +19,6 @@ def get_platform_data(artist, platform, type, start_date, end_date, collect_item
 
     # 오늘 날짜 기준으로 가져오기
     if type == "누적":
-        # today_date = datetime.datetime.today()
         start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
         filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
@@ -444,17 +442,6 @@ def import_collects(worksheet):
             "name": platform_data["platform"],
             "url": platform_data["url"]
         })
-        # #platform_target_item 저장
-        # for j in range(platform_data["item_num"]):
-        #     if platform_data["item_list"][j] != "None" and platform_data["item_list"][j] != "url" and platform_data["item_list"][j] != "url1"and platform_data["item_list"][j] != "url2"and platform_data["item_xpath_list"][j] != "수집불가":
-        #         platform_filter_object = Platform.objects.filter(name = platform_data["platform"])
-        #         if platform_filter_object.exists():
-        #             platform_filter_object = platform_filter_object.values().first()
-        #             save_platform_target_item({
-        #                 "platform": platform_filter_object["id"],
-        #                 "target_name": platform_data["item_list"][j],
-        #                 "xpath": platform_data["item_xpath_list"][j],
-        #             })
     # artist 저장
     collect_target_index = 0
     for artist_data in artist_data_list:
@@ -605,8 +592,6 @@ def save_auth_info(data_json):
     authinfo_serializer = AuthInfoSerializer(obj, data=new_data)
     if authinfo_serializer.is_valid():
         authinfo_serializer.save()
-    else:
-        print("===invalid===")
 
 
 def save_collect_data_target(data_json, platform, target_date_string):
@@ -666,25 +651,6 @@ def save_artist(data_json):
             artist_serializer.save()
 
 
-def save_platform_target_item(data_json):
-    """
-    지금은 사용x
-    platform 수집(조사)항목 저장
-    """
-    obj = PlatformTargetItem.objects.filter(platform=data_json["platform"], target_name=data_json["target_name"],
-    xpath=data_json["xpath"]).first()
-    if obj is None:
-    # 원래 없는 건 새로 저장
-        target_item_serializer = PlatformTargetItemSerializer(data=data_json)
-        if target_item_serializer.is_valid():
-            target_item_serializer.save()
-    # 있는 건 업데이트
-    else:
-        target_item_serializer = PlatformTargetItemSerializer(obj, data=data_json)
-        if target_item_serializer.is_valid():
-            target_item_serializer.save()
-
-
 def save_collect_target_item(data_json):
     """
     collect수집(조사)항목 저장
@@ -718,8 +684,7 @@ def save_collect_target(data_json):
     """
     수집대상 저장
     """
-    obj = CollectTarget.objects.filter(platform=data_json["platform"], artist=data_json["artist"],
-        target_url=data_json["target_url"]).first()
+    obj = CollectTarget.objects.filter(platform=data_json["platform"], artist=data_json["artist"]).first()
     if obj is None:
     # 원래 없는 건 새로 저장
         collect_target_item_serializer = CollectTargetSerializer(data=data_json)
@@ -727,7 +692,7 @@ def save_collect_target(data_json):
             collect_target_item_serializer.save()
     # 있는 건 업데이트
     else:
-        collect_target_item_serializer = PlatformTargetItemSerializer(obj, data=data_json)
+        collect_target_item_serializer = CollectTargetSerializer(obj, data=data_json)
         if collect_target_item_serializer.is_valid():
             collect_target_item_serializer.save()
 
