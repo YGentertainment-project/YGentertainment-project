@@ -73,11 +73,11 @@ class UserLogoutAPI(APIView):
         return response
 
 
-# 정의 : 
-# 목적 : 
+# 정의 : login API (현재 사용 x)
+# 목적 : DB에 저장된 사용자 계정과 매치시켜 로그인 검증 (YG API 사용시 대체)
 # 멤버함수 : 
-# 개발자 : 
-# 최종수정일 : 
+# 개발자 : 최영우, cyw7515@naver.com
+# 최종수정일 : 2022-01-03
 class UserLoginAPI(APIView):
     @validate_serializer(UserLoginSerializer)
     def post(self, request):
@@ -98,11 +98,11 @@ class UserLoginAPI(APIView):
         return self.success("Succeeded")
 
 
-# 정의 : 
-# 목적 : 
+# 정의 : 회원가입 API (현재 사용 x)
+# 목적 : 사용자로부터 입력받은 데이터로 계정 생성 (YG API 사용시 삭제)
 # 멤버함수 : 
-# 개발자 : 
-# 최종수정일 : 
+# 개발자 : 최영우, cyw7515@naver.com
+# 최종수정일 : 2022-01-03
 class UserRegisterAPI(APIView):
     @validate_serializer(UserRegisterSerializer)
     def post(self, request):
@@ -130,11 +130,11 @@ class UserRegisterAPI(APIView):
         return self.success("Succeeded")
 
 
-# 정의 : 
-# 목적 : 
+# 정의 : 비밀번호 변경 API (현재 사용 x)
+# 목적 : 사용자 계정 비밀번호 변경 (YG API 사용시 대체)
 # 멤버함수 : 
-# 개발자 : 
-# 최종수정일 : 
+# 개발자 : 최영우, cyw7515@naver.com
+# 최종수정일 : 2022-01-03
 class UserChangePasswordAPI(APIView):
     @validate_serializer(UserChangePasswordSerializer)
     @login_required

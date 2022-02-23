@@ -41,6 +41,7 @@ if production_env:
 else:
     LOG_PATH = "./data/log/user"
 
+#trfh == Time Rotating File Handler (Logging handler)
 trfh = logging.handlers.TimedRotatingFileHandler(
     filename = os.path.join(LOG_PATH, f"{datetime.datetime.today().strftime('%Y-%m-%d')}.log"),
     when = "midnight",
@@ -48,7 +49,7 @@ trfh = logging.handlers.TimedRotatingFileHandler(
     encoding="utf-8",
 )
 trfh.setFormatter(formatter)
-trfh.setLevel(logging.INFO)
+trfh.setLevel(logging.DEBUG)
 userlogger.addHandler(trfh)
 userlogger.setLevel(logging.DEBUG)
 

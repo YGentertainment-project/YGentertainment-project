@@ -100,6 +100,8 @@ def crawling_start(platform, task_id, crawl_target):
     if os.path.isdir(log_dir) is False:
         os.mkdir(log_dir)
     log_path = "{}/{}/{}/{}.log".format(DATA_PATH, platform, date_str, task_id)
+
+    #trfh == Time Rotating File Handler (Logging handler)
     trfh = logging.handlers.TimedRotatingFileHandler(
         filename=log_path,
         when="midnight",

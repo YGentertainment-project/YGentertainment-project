@@ -35,14 +35,19 @@ class JSONResponse(object):
         return resp
 
 
+# 정의 : Cutwom APIView
+# 목적 : API View의 success, error 타입 등을 원하는 데로 수정하기 위해 제작
+# 멤버함수 : _get_request_data, extract_errors, invalid_serializer, dispatch, validate_serializer
+# 개발자 : 최영우, cyw7515@naver.com
+# 최종수정일 : 2022-01-03
 class APIView(View):
     """
-    The parent class of Django view, and the usage of django-rest-framework is basically the same
-      - request.data to get parsed json or urlencoded data, dict type
-      - self.success, self.error and self.invalid_serializer can be modified according to industry needs,
-        Written in the parent class is to develop a unified writing for different people, and no longer use your own success/error format
-      - self.response returns a django HttpResponse, which is implemented in self.response_class
-      - The parse request class needs to be defined in request_parser, currently only supports json and urlencoded types, used to parse the requested data
+      Django view의 부모 클래스와 django-rest-framework의 사용법은 기본적으로 동일합니다.
+      - request.data 를 통해 parsed json or urlencoded data, dict type를 얻을 수 있습니다.
+      - self.success, self.error and self.invalid_serializer는 의도에 맞게 수정할 수 있습니다.
+        (success, error format을 수정할 수 있도록 따로 APIView를 제작)
+      - self.response는 self.response_class에 구현된 django HttpResponse를 반환합니다.
+      - parse request class는 request_parser에 정의되어야 하며, 현재는 requested data 파싱에 json 및 urlencoded types만 지원합니다.
     """
     response_class = JSONResponse
     parser_classes = [JSONParser, FormParser, MultiPartParser]
@@ -101,35 +106,6 @@ class APIView(View):
 
     def server_error(self):
         return self.error(err="server-error", msg="server error")
-
-    def paginate_data(self, request, query_set, object_serializer=None):
-        """
-        :param request: django's request
-        :param query_set: django model query set or other list like objects
-        :param object_serializer: Used to serialize the query set, if it is None, slice the query set directly
-        :return:
-        """
-        try:
-            limit = int(request.GET.get("limit", "10"))
-        except ValueError:
-            limit = 10
-        if limit < 0 or limit > 250:
-            limit = 10
-        try:
-            offset = int(request.GET.get("offset", "0"))
-        except ValueError:
-            offset = 0
-        if offset < 0:
-            offset = 0
-        results = query_set[offset:offset + limit]
-        if object_serializer:
-            count = query_set.count()
-            results = object_serializer(results, many=True).data
-        else:
-            count = query_set.count()
-        data = {"results": results,
-                "total": count}
-        return data
 
     def dispatch(self, request, *args, **kwargs):
         if self.parser_classes:
