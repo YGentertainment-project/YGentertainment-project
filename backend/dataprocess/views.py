@@ -7,8 +7,8 @@ from django.http import HttpResponse
 
 from dataprocess.models import CollectData
 from crawler.models import *
-from config.models import PlatformTargetItem, CollectTargetItem, Schedule
-from config.serializers import PlatformTargetItemSerializer, CollectTargetItemSerializer, ScheduleSerializer
+from config.models import CollectTargetItem, Schedule
+from config.serializers import CollectTargetItemSerializer, ScheduleSerializer
 from dataprocess.functions import export_datareport, import_datareport, import_collects, import_authinfo
 from dataprocess.pagination import ViewPaginatorMixin
 from crawler.views import get_task_result, parse_logfile_for_error
@@ -481,31 +481,11 @@ class PlatformAPI(APIView):
             return JsonResponse(data={'success': False}, status=400)
 
 # 정의 : artist api
-# 목적 : 아티스트와 관련된 CRU api들
-# 멤버함수 : get, post, put
+# 목적 : 아티스트와 관련된 CU api들
+# 멤버함수 : post, put
 # 개발자 : 김민희, minheekim3@naver.com
 # 최종수정일 : 2022-02-22
 class ArtistAPI(APIView):
-    def get(self, request):
-        '''
-        Artist read api
-        기능: artist table에 존재하는 모든 artist들을 조회한다.
-        '''
-        try:
-            artist_objects = Artist.objects.all()
-            if artist_objects.exists():
-                # artist 이름 가나다순 정렬
-                artist_objects_values = list(artist_objects.values())
-                artist_objects_values = sorted(sorted(artist_objects_values, key=lambda c:c['name']), key=lambda c:0 if re.search('[ㄱ-힣]', c['name'][0]) else 1)
-                artist_datas = []
-                for artist_value in artist_objects_values:
-                    artist_datas.append(artist_value)
-                return JsonResponse(status=200,data={'success': True, 'data': artist_datas})
-            else:
-                return JsonResponse(data={'success': True, 'data': []})
-        except:
-            return JsonResponse(status=400, data={'success': False})
-
     def post(self, request):
         '''
         Artist create api
