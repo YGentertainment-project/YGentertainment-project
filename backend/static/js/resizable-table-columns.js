@@ -1,3 +1,4 @@
+//아티스트 관리 페이지에서 섹션 넓히기/좁히기 가능
 (function () {
     var thElm;
     var startOffset;

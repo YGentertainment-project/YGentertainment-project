@@ -33,8 +33,10 @@ function render_platform_table(data){//parsing한 데이터 화면에 render
     $('#platform-body').append(tableRow);
 }
 
+// 달라진 platform을 저장하기 위해 사용하는 변수
 var platform_info = [];
 
+// platform 조회 (api 연결)
 function platform_read_function(){
     $.ajax({
         url: '/api/platform/',
@@ -55,6 +57,7 @@ function platform_read_function(){
     })
 };
 
+// platform 수정 (api 연결)
 function platform_update_function(){
     // document.getElementById("loading_form").style.display = "flex";
     var datas=[];
@@ -98,6 +101,7 @@ function platform_update_function(){
     })
 };
 
+// 플랫폼 생성 (api 연결)
 function platform_create_function(){
     var created_platform_tr = document.getElementById("platform_attribute").getElementsByTagName("tr");
     var created_attribute_tr = document.getElementById("crawling_attribute").getElementsByTagName("tr");
