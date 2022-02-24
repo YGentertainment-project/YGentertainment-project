@@ -849,14 +849,13 @@ class DataReportAPI(APIView):
                 # 해당날짜에 데이터가 존재하는지 저장하는 변수 check
                 check = False
                 crawling_artist_list = []
-                objects = CollectData.objects.filter(collect_items__platform=platform)
                 objects_value = objects.values()
                 for val in objects_value:
                     crawling_artist_list.append(val["collect_items"]["artist"])
                 filter_datas = []
+                filtered_objects = objects.filter(collect_items__reserved_date = start_date_string)
                 for artist in artist_list:
-                    filter_objects = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                        collect_items__reserved_date = start_date_string)
+                    filter_objects = filtered_objects.filter(collect_items__artist=artist)
                     if filter_objects.exists():
                         check = True
                         # 같은 날짜에 여러개 있을 때 가장 앞의 데이터를 가져온다
@@ -868,7 +867,6 @@ class DataReportAPI(APIView):
                 # 해당날짜에 데이터가 하나도 없을 때
                 else:
                     crawling_artist_list = []
-                    objects = CollectData.objects.filter(collect_items__platform=platform)
                     objects_value = objects.values()
                     for val in objects_value:
                         crawling_artist_list.append(val['collect_items']['artist'])
@@ -887,16 +885,15 @@ class DataReportAPI(APIView):
                 # 해당날짜에 데이터가 존재하는지 저장하는 변수 check
                 check = False
                 crawling_artist_list = []
-                objects = CollectData.objects.filter(collect_items__platform=platform)
                 objects_value = objects.values()
                 for val in objects_value:
                     crawling_artist_list.append(val['collect_items']['artist'])
                 filter_datas_total = []
+                start_date_filtered_objects = objects.filter(collect_items__reserved_date = start_date_string)
+                end_date_filtered_objects = objects.filter(collect_items__reserved_date = end_date_string)
                 for artist in artist_list:
-                    filter_objects_start = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                            collect_items__reserved_date = start_date_string)
-                    filter_objects_end = CollectData.objects.filter(collect_items__artist=artist, collect_items__platform=platform,
-                            collect_items__reserved_date = end_date_string)
+                    filter_objects_start = start_date_filtered_objects.filter(collect_items__artist=artist)
+                    filter_objects_end = end_date_filtered_objects.filter(collect_items__artist=artist)
                     # 양끝날짜 데이터 모두 존재할 때
                     if filter_objects_start.exists() and filter_objects_end.exists():
                         check = True
@@ -939,12 +936,10 @@ class DataReportAPI(APIView):
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d")
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
                 crawling_artist_list = []
-                objects = CollectData.objects.filter(collect_items__platform=platform)
                 objects_value = objects.values()
                 for val in objects_value:
                     crawling_artist_list.append(val['collect_items']['artist'])
-                objects = CollectData.objects.filter(collect_items__platform=platform,
-                            collect_items__reserved_date = start_date_string)
+                objects = objects.filter(collect_items__reserved_date = start_date_string)
                 if objects.exists():
                     platform_queryset_values = objects.values()
                     platform_datas = []
@@ -996,7 +991,7 @@ class DataReportAPI(APIView):
 
         #플랫폼 헤더 정보 순서와 db 칼럼 저장 순서 싱크 맞추기
         platform_header = []
-        objects = CollectData.objects.filter(collect_items__platform=platform)
+        objects = a_objects
         objects_values = objects.values()
         if len(objects_values) > 0:
             key_list = list(objects_values[0]['collect_items'].keys())
@@ -1030,8 +1025,7 @@ class DataReportAPI(APIView):
                 )
                     
             artist_set = set()
-            filter_objects = CollectData.objects.filter(collect_items__platform=platform,
-                            collect_items__reserved_date = start_date_string)
+            filter_objects = a_objects.filter(collect_items__reserved_date = start_date_string)
             if filter_objects.exists():
                 filter_objects_values=filter_objects.values()
                 filter_datas=[]
