@@ -361,9 +361,10 @@ function update_hourly_platform_schedule(platform, platform_index){
                 const len = childrens.length;
                 for(var i=0; i<len ; i++){
                     var tdchildrens = childrens[i].childNodes;
+                    // 시간별 테이블 html구조가 바뀐다면 반드시 수정해줘야함(instagram과 facebook이 통일되도록!)
                     if(tdchildrens[0].childNodes[1].innerHTML == find_platform){
-                        tdchildrens[1].childNodes[1].value = period;
-                        tdchildrens[2].childNodes[1].value = execute_time_minute;
+                        tdchildrens[1].childNodes[1].childNodes[1].value = period;
+                        tdchildrens[2].childNodes[1].childNodes[1].value = execute_time_minute;
                     }
                 }
             }

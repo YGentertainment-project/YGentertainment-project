@@ -636,3 +636,46 @@ $("#item_open_btn").click(function (){
         make_item_visible();
     }
 });
+
+
+//아티스트 필수입력 관련
+//이름 필수입력
+$('#artist_name_input').on('change keydown paste input', function(){
+    if($('#artist_name_input').val()==""){
+        $('#artist_name_input').removeClass('add-target-input');
+        $('#artist_name_input').addClass('error-add-target-input');
+    }else{
+        $('#artist_name_input').addClass('add-target-input');
+        $('#artist_name_input').removeClass('error-add-target-input');
+    }
+});
+//구분 필수입력
+$('#level_input').on('change keydown paste input', function(){
+    if($('#level_input').val()==""){
+        $('#level_input').removeClass('add-target-input');
+        $('#level_input').addClass('error-add-target-input');
+    }else{
+        $('#level_input').addClass('add-target-input');
+        $('#level_input').removeClass('error-add-target-input');
+    }
+});
+//성별 필수입력
+$('#gender_input').on('change keydown paste input', function(){
+    if($('#gender_input').val()==""){
+        $('#gender_input').removeClass('add-target-input');
+        $('#gender_input').addClass('error-add-target-input');
+    }else{
+        $('#gender_input').addClass('add-target-input');
+        $('#gender_input').removeClass('error-add-target-input');
+    }
+});
+//멤버수 필수입력
+$('#membernum_input').on('change keydown paste input', function(){
+    if($('#membernum_input').val()==""){
+        $('#membernum_input').removeClass('add-target-input');
+        $('#membernum_input').addClass('error-add-target-input');
+    }else{
+        $('#membernum_input').addClass('add-target-input');
+        $('#membernum_input').removeClass('error-add-target-input');
+    }
+});

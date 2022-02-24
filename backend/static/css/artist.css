@@ -112,6 +112,11 @@
     /* float: left; */
 }
 
+/* 필수입력 에러 class */
+.error-add-target-input{
+    border: 1px solid #ff0000 !important;
+}
+
 .url-description{
     color : darkblue;
     font-weight: lighter;
