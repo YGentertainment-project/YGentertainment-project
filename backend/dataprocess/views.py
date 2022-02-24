@@ -517,13 +517,14 @@ class ArtistAPI(APIView):
                     # 기존 platform의 daily schedule과 똑같은 execute_time 사용
                     schedule_object = Schedule.objects.filter(collect_target_id = collecttarget.id).first()
                     collecttarget_objects = CollectTarget.objects.filter(artist_id = artist_id)
-                    collecttarget_objects = collecttarget_objects.values()
                     execute_time = None
-                    for collecttarget_object in collecttarget_objects:
-                        schedule_objects = Schedule.objects.filter(schedule_type = 'daily', collect_target_id = collecttarget_object['id']).values()
-                        if schedule_objects.exists():
-                            execute_time = schedule_objects[0]['execute_time']
-                            break
+                    if collecttarget_objects.exists():
+                        collecttarget_objects = collecttarget_objects.values()
+                        for collecttarget_object in collecttarget_objects:
+                            schedule_objects = Schedule.objects.filter(schedule_type = 'daily', collect_target_id = collecttarget_object['id']).values()
+                            if schedule_objects.exists():
+                                execute_time = schedule_objects[0]['execute_time']
+                                break
                     schedule_data = {
                             'collect_target': collecttarget.id,
                             'schedule_type': 'daily',
@@ -543,7 +544,7 @@ class ArtistAPI(APIView):
                         collecttargetitem_serializer = CollectTargetItemSerializer(data={
                             'collect_target': collecttarget_object['id'],
                             'target_name': collect_target_items_object.target_name,
-                            'xpath': ""
+                            'xpath': ''
                         })
                     if collecttargetitem_serializer.is_valid():
                         collecttargetitem_serializer.save()
