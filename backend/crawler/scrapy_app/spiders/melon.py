@@ -4,7 +4,11 @@ from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
 
-
+# 정의 : 가이섬과 Melon 크롤링을 담당하는 Spider(가이섬, Melon에 해당)
+# 목적 : 로그인 과정은 없으나 Selenium은 활용하는 NoLoginDownloaderMiddleware 사용, parse 함수에서 DB에 저장된 Locator(Xpath)에 따라 팔로워 수집
+#       target_url(가이섬 URL) 먼저 parse함수에서 크롤링을 수행하고 정상적으로 수행됐다면 target_url_2(Melon URL)에 따라 parse_melon함수에서 크롤링을 수행
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class MelonSpider(scrapy.Spider):
     name = "melon"
     custom_settings = {

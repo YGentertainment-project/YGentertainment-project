@@ -24,12 +24,20 @@ YOUTUBE_DOMAIN = "youtube.com"
 GUYSOME_DOMAIN = "xn--o39an51b2re.com"
 MELON_DOMAIN = "melon.com"
 
+# 로그인이 필요한 플랫폼별 ID와 PW값
 WEVERSE_ID = "sunrinkingh2160@gmail.com"
 WEVERSE_PW = "!eogksalsrnr123"
 CROWDTANGLE_ID = "jaewon@ygmail.net"
 CROWDTANGLE_PW = "Ygfamily1234@"
 
-
+# 정의 : Melon을 크롤링할 때 필요한 Selenium Custom Wait
+# 목적 : driver가 가르키고 있는 현재 페이지에서 전달 받은 locator로 수집하고자 하는 element를 찾는데, 이 값이 0 이상일 경우 해당 요소를 return, 아닐 경우 false return
+#       WebDriverWait(self.driver, 10).until()로 기다리고 있으므로 해당 return값이 false가 아닐 때까지 반복하여 기다린다.
+#       Melon의 경우 팬 수를 나타내는 값이 0에서 시작하여 실제 값이 화면에 나타나는 script가 있는데 이를 기다리기 위함.
+#       새로운 아티스트가 추가되어 실제로 팬 수가 0일 경우 계속해서 Wait하게 되지만 최대 10초까지 기다리기 때문에 큰 Overhead로 예상되지 않음.
+#       자세한 내용은 기술문서에 추가로 작성되어 있음.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class MelonElementIsPositive(object):
     def __init__(self, locator):
         self.locator = locator
@@ -66,7 +74,11 @@ class ScrapyAppSpiderMiddleware:
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
 
-
+# 정의 : driver_setting(), 크롤링을 담당하는 Selenium driver에 대한 기본적인 설정들을 수행.
+# 목적 : 크롤링하는 데 있어서 꼭 필요한 기능들과 성능 향상을 위한 옵션들이 담겨있음.
+#       주요 옵션들로는 Bot detection bypass를 위한 user-agent값 추가, 실제로 화면을 띄우지 않고 진행하는 headless 모드, 성능 향상을 위해 불필요한 기능들을 preferences 값을 2로 설정하여 disable하고 있음.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 def driver_setting():
     chrome_options = Options()
     prefs = {
@@ -119,7 +131,13 @@ def driver_setting():
     driver = webdriver.Chrome(service=s, options=chrome_options)
     return driver
 
-
+# 정의 : Selenium을 사용하는 Spider들을 위한 DownloaderMiddleware 중 로그인 기능이 필요 없는 Spider들에 해당.
+# 목적 : 각 Spider의 Request들이 yield되면 spider_opened() 메소드가 실행되어 위에 설정한 대로 Selenium Driver를 생성합니다.
+#       이후, process_request()에서 플랫폼 별로 수집할 대상을 나타내는 element의 locator에 따라서 해당 element가 현재 driver에 load될 때까지 Wait하고
+#       그 결과를 HtmlResponse로 바꿔 각 Spider의 지정된 call_back함수로 넘겨줍니다.
+#       이 과정이 모두 끝나면, spider_closed에서 Spider가 닫히면서 사용했던 driver object도 종료합니다.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class NoLoginDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):
@@ -213,7 +231,15 @@ class NoLoginDownloaderMiddleware:
         self.driver.quit()
         self.driver = None
 
-
+# 정의 : Selenium을 사용하는 Spider들을 위한 DownloaderMiddleware 중 로그인 기능이 필요한 Spider들에 해당.
+# 목적 : 각 Spider의 Request들이 yield되면 spider_opened() 메소드가 실행되어 위에 설정한 대로 Selenium Driver를 생성합니다.
+#       Driver object가 생성된 뒤 login_process()가 수행됩니다. 현재, 로그인이 필요한 플랫폼은 Weverse와 Crowdtangle이 있는데, 각 플랫폼의 기본 페이지에 접근하여
+#       위에 변수로 저장해준 ID와 PW값을 통해 login을 수행합니다. 이후 내용은 같습니다.
+#       process_request()에서 플랫폼 별로 수집할 대상을 나타내는 element의 locator에 따라서 해당 element가 현재 driver에 load될 때까지 Wait하고
+#       그 결과를 HtmlResponse로 바꿔 각 Spider의 지정된 call_back함수로 넘겨줍니다.
+#       이 과정이 모두 끝나면, spider_closed에서 Spider가 닫히면서 사용했던 driver object도 종료합니다.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class LoginDownloaderMiddleware:
     @classmethod
     def from_crawler(cls, crawler):

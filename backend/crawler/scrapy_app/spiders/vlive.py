@@ -9,7 +9,10 @@ from twisted.internet.error import DNSLookupError
 from ..items import VliveItem
 from datetime import datetime
 
-
+# 정의 : Vlive 크롤링을 담당하는 Spider(Vlive 해당)
+# 목적 : Selenium을 사용하지 않아 추가적인 미들웨어는 사용하지 않음, parse 함수에서 크롤링할 데이터의 JSON 형식에 따라 맞춰 파싱을 진행. 정상적인 Response가 아니거나 도메인 문제일 경우 errback에서 처리
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class VliveSpider(scrapy.Spider):
     name = "vlive"
 

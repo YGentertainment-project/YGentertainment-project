@@ -5,6 +5,11 @@ from ..items import CrowdtangleFacebookItem, CrowdtangleInstagramItem
 from datetime import datetime
 
 
+# 정의 : Crowdtangle 크롤링을 담당하는 Spider(Facebook, Instagram에 해당), Crowdtangle에서 30일을 기준으로 과거 데이터를 수집
+# 목적 : 로그인 과정을 수행하는 LoginDownloaderMiddleware 사용, parse 함수에서 DB에 저장된 Locator(Xpath)에 따라 팔로워 수집
+#       일부 누락된 데이터를 얻기 위한 Spot성 Spider, 따로 스케줄링을 걸어두지 않음.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class CrowdTangleSpider(scrapy.Spider):
     name = "crowdtangle-past"
     custom_settings = {

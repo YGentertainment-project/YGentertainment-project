@@ -6,6 +6,10 @@ from datetime import datetime
 from config.models import CollectTargetItem
 from django.db.models import Q
 
+# 정의 : Crowdtangle 크롤링을 담당하는 Spider(Facebook, Instagram에 해당)
+# 목적 : 로그인 과정을 수행하는 LoginDownloaderMiddleware 사용, parse 함수에서 DB에 저장된 Locator(Xpath)에 따라 팔로워 수집
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class CrowdTangleSpider(scrapy.Spider):
     name = "crowdtangle"
     custom_settings = {

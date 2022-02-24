@@ -11,7 +11,11 @@ YOUTUBE_DOMAIN = "youtube.com"
 SOCIALBLADE_ROBOT = "https://socialblade.com/robots.txt"
 YOUTUBE_ROBOT = "https://youtube.com/robots.txt"
 
-
+# 정의 : Socialblade 크롤링을 담당하는 Spider(Youtube 해당)
+# 목적 : 로그인 과정은 없으나 Selenium은 활용하는 NoLoginDownloaderMiddleware 사용, parse 함수에서 DB에 저장된 Locator(Xpath)에 따라 팔로워 수집
+#       URL에 따라 Socialblade의 경우 parse_social에서 Youtube 채널의 경우 parse_youtube에서 처리
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 class YoutubeSpider(scrapy.Spider):
     name = "youtube"
     custom_settings = {

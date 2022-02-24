@@ -183,7 +183,10 @@ def update_crowdtangle(item, name):
     existingItem.recorded_date = nowdate
     existingItem.save()
 
-
+# 정의 : 데이터가 실제로 저장되는 collect_data table에 크롤링한 item을 저장하는 함수
+# 목적 : 플랫폼별로 수집 항목이 다르기 때문에 Spider명을 통해 플랫폼별로 JSON Field를 채워넣고 있음.
+# 담당자 : 성균관대학교 김정규, sunrinkingh2160@gmail.com
+# 수정일 : 2022-02-23
 def datasave(spider_name, item):
     Target_row = CollectData()
     json_obj = {
