@@ -1,16 +1,6 @@
 from .models import *
 from rest_framework import serializers
-from dataprocess.serializers import CollectTargetSerializer, PlatformSerializer
-
-
-class PlatformTargetItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PlatformTargetItem
-        fields = '__all__'
-
-    def to_representation(self, instance):
-        self.fields['platform'] = PlatformSerializer(read_only=True)
-        return super(PlatformSerializer, self).to_representation(instance)
+from dataprocess.serializers import CollectTargetSerializer
 
 
 class CollectTargetItemSerializer(serializers.ModelSerializer):

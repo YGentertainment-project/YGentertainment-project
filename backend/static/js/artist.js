@@ -125,10 +125,7 @@ $('#save-artists').click(function(){
 $('input[name=artist-name]').click(function(){
     $('input[name=artist-name]').removeClass("clicked-input-btn");
     var artist = $(this).val();
-    // $(this).removeClass("input-btn");
     $(this).addClass("clicked-input-btn");
-
-    // console.log(artist);
 
     $.ajax({
         url: '/api/platform_of_artist/',
@@ -203,8 +200,6 @@ $('#save-artists-platform').click(function(){
         });
 
     }
-
-    console.log(datas);
 
     $.ajax({
         url: '/api/platform_of_artist/',
@@ -485,7 +480,6 @@ $(document).on('click','#url_add_button',function(){
 
 $(document).on('click','#url_delete_button',function(){
     tr = $(this).closest('tr');
-    //tr.find('td').find('.add-target-input-2').val()
     if(tr.find('td').find('input').length > 1){
         tr.find("td:last").remove();
     } else{
@@ -493,7 +487,7 @@ $(document).on('click','#url_delete_button',function(){
     }
 })
 
-//delete collect_target_item (api상)
+//delete collect_target_item (api 연결)
 function delete_collect_target_item(id, index){
     if (confirm("삭제하시겠습니까?")) {
         var data = {"id": id};
