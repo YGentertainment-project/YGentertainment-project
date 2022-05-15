@@ -877,7 +877,6 @@ class DataReportAPI(APIView):
 
             elif type == '기간별':
                 # 전날 값을 구함
-                st_time = time()
                 start_date_dateobject = datetime.datetime.strptime(start_date, "%Y-%m-%d").date() - datetime.timedelta(1)
                 end_date_dateobject = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
                 start_date_string = start_date_dateobject.strftime("%Y-%m-%d")
@@ -933,8 +932,6 @@ class DataReportAPI(APIView):
                         check = True
                         filter_objects_end_value = filter_objects_end[0]
                         filter_datas_total.append(filter_objects_end_value)
-                ed_time = time()
-                print(ed_time - st_time)
                 if check: # 양끝 모두 존재 or 끝날짜만 존재
                     return JsonResponse(data={'success': True, 'data': filter_datas_total, 'artists': artist_list, 'platform': platform_header,'crawling_artist_list':crawling_artist_list})
                 else: # 끝날짜의 데이터가 아예 존재하지 않을 때
