@@ -845,6 +845,7 @@ class DataReportAPI(APIView):
                 # Mainly Improved logic: GET Crawled Data
                 # BY Caching, Improve performance of searching data 3.099s -> 0.065s
                 # 두 번째로 오래 걸리는 critical path로 약 5배의 성능 상승을 도출함
+                crawling_artist_list = []
                 for data in crawlered_data_list:
                     crawling_artist_list.append(data["artist"])
                 
